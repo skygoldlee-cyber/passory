@@ -174,6 +174,13 @@ describe('Formula OS — 체크리스트 세트 (FO-34)', () => {
         expect(el('comp-list').textContent).not.toContain('맞춤형화장품판매업 신고');
     });
 
+    it('sales 세트 — 식약처 보고 섹션에 원료 목록 사전보고·실적 보고 포함', () => {
+        setBizType('sales');
+        openCompliancePanel();
+        expect(el('comp-list').textContent).toContain('원료 목록 사전 보고');
+        expect(el('comp-list').textContent).toContain('생산·수입실적 매년 2월 말 보고');
+    });
+
     it('체크 상태는 세트별 분리 — custom 체크가 sales에 섞이지 않음', () => {
         setBizType('custom');
         openCompliancePanel();

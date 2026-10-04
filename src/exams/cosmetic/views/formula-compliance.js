@@ -225,6 +225,15 @@ const SALES_SECTIONS = [
     ],
   },
   {
+    id: 'sales-report',
+    title: '식약처 보고',
+    icon: 'fa-file-export',
+    items: [
+      { id: 'sales-materials', text: '판매 예정 화장품의 원료 목록 사전 보고', note: '유통·판매 전 식약처 보고 의무 — 화장품법 제5조⑤·시행규칙 제13조②. 보고 목록이 변경된 경우에도 동일', refs: ['law', 'rule'] },
+      { id: 'sales-perf', text: '생산·수입실적 매년 2월 말 보고', note: '전년도 실적을 화장품업 단체(대한화장품협회 등) 경유 보고 — 시행규칙 제13조①', refs: ['law', 'rule'] },
+    ],
+  },
+  {
     id: 'sales-label',
     title: '표시사항 (화장품법 제10조)',
     icon: 'fa-tag',
