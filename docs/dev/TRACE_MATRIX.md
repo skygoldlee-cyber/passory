@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: b69d34d365af4402
-> 생성: 2026-10-04 · 원천: SPEC.md(432개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 41a3003adbb58204
+> 생성: 2026-10-04 · 원천: SPEC.md(433개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 432개 — 문서 연결 276 · 소스 연결 400 · 테스트 연결 420 · 보고서 연결 109
+**커버리지 요약**: 요구사항 433개 — 문서 연결 276 · 소스 연결 401 · 테스트 연결 421 · 보고서 연결 109
 
 ---
 
@@ -189,6 +189,7 @@
 | TS-08 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/dom/study-search.dom.test.js | — | — |
 | TS-09 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/dom/study-search.dom.test.js | — | — |
 | TS-10 | ✅ | 테스트 | DOC-DEV-41 | src/views/textbook-search.js | tests/dom/story-search.dom.test.js | — | — |
+| TS-11 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/unit/textbook-search-ref.test.js | — | — |
 
 ## 3.10 성분 사전
 

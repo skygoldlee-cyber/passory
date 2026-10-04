@@ -245,6 +245,7 @@
 | TS-08 | 역색인(inverted index) 기반 검색: 공백 토큰화 + 2-gram 보조 인덱스, 후보 교집합 계산 | ✅ |
 | TS-09 | 역색인 자동 캐싱 (과목 키 변경 시에만 재구축, 반복 검색 성능 향상) | ✅ |
 | TS-10 | **이야기형 서사 검색**: `features.story_textbook` 활성 시 첫 검색에서 storyFile을 지연 로드해 `story:start/end` 블록만 인덱스에 병합 (로드 완료 시 동일 검색어 재실행). 서사 결과는 '서사' 배지 + storyFile 링크로 구분 (`_ensureStoryIndex`, `_extractStoryBlocks`) | ✅ |
+| TS-11 | **참조자료 검색**: 첫 검색 시 pdf-registry(`REF_MD_SUBJECTS`·`SUBJECT_DIR_MAP`·`REFERENCE_*`)로 활성 시험의 과목 귀속 ref_md 문서+원료 목록을 지연 fetch해 문서 단위로 인덱스 병합. 결과는 '참조자료' 배지+문서명+매치 스니펫, `ExamViewer.openExam` 라인 딥링크, 교재 결과 뒤 배치·히트수 정렬·상한 15건 (`_ensureRefIndex`, `_listRefDocs`, `_matchSnippet`) | ✅ |
 
 ### 3.10 성분 사전 (Dictionary)
 
