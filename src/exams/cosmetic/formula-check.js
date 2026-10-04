@@ -7,6 +7,8 @@
 // 핵심 원칙: 파싱 실패·모호한 경우는 반드시 'unknown'.
 // 잘못된 ok/warn 판정보다 사람이 원문을 확인하게 하는 미탐이 안전하다.
 
+import { normalizeEntityName } from '../../utils.js';
+
 export const CHECK = Object.freeze({
   OK: 'ok',
   WARN: 'warn',
@@ -154,6 +156,40 @@ export function buildIngredientIndex(ingredients) {
   return index;
 }
 
+// 인덱스 인스턴스별 정규화 키 맵 — getIndex() 재구축 시 인스턴스가 바뀌므로
+// WeakMap으로 묶어 캐시한다 (공백·대소문자 차이만 있는 입력의 미스매치 방지)
+const _normIndexCache = new WeakMap();
+
+function normalizedIndex(index) {
+  let m = _normIndexCache.get(index);
+  if (!m) {
+    m = new Map();
+    if (index && typeof index.forEach === 'function') {
+      index.forEach((v, k) => {
+        const nk = normalizeEntityName(k);
+        if (nk && !m.has(nk)) m.set(nk, v);
+      });
+    }
+    _normIndexCache.set(index, m);
+  }
+  return m;
+}
+
+/**
+ * 원료 조회 — 정확 일치 우선, 실패 시 정규화(공백·대소문자 무시) 폴백.
+ * 전성분 붙여넣기·OCR 결과의 띄어쓰기 오차가 '미등록'으로 오분류되는 것을 막는다.
+ * @param {Map<string,object>} index - buildIngredientIndex() 결과 (자가 병합 포함)
+ * @param {string} name
+ * @returns {object|null}
+ */
+export function findIngredient(index, name) {
+  if (!index || typeof index.get !== 'function' || typeof name !== 'string') return null;
+  const direct = index.get(name);
+  if (direct) return direct;
+  const norm = normalizeEntityName(name);
+  return norm ? normalizedIndex(index).get(norm) || null : null;
+}
+
 /**
  * 포뮬러의 원료 배열 전체를 검증한다.
  * @param {Array<{name:string, concentration:number|string}>} items
@@ -167,7 +203,7 @@ export function checkFormulaItems(items, index) {
 
   for (const item of items) {
     if (!item) continue;
-    const ingredient = index && typeof item.name === 'string' ? index.get(item.name) : null;
+    const ingredient = index && typeof item.name === 'string' ? findIngredient(index, item.name) : null;
     const r = checkIngredient(ingredient, item.concentration);
     results.push({ name: item.name, ...r });
     summary[r.check] += 1;

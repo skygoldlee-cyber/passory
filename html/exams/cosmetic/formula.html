@@ -839,6 +839,11 @@
                                         <input type="password" id="prod-gemini-key" class="form-input" maxlength="200" autocomplete="off" placeholder="Gemini API 키" aria-label="Gemini API 키">
                                         <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionKeySave">저장</button>
                                         <button type="button" class="btn btn-secondary btn-sm f-danger" data-click="productVisionKeyClear">삭제</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionKeyTest" title="저장된 키로 모델 접근이 가능한지 확인"><i class="fa-solid fa-plug-circle-check" aria-hidden="true"></i> 키 확인</button>
+                                    </div>
+                                    <div class="prod-key-row">
+                                        <input type="text" id="prod-gemini-model" class="form-input" maxlength="80" autocomplete="off" placeholder="모델명 (기본 gemini-2.0-flash)" aria-label="Gemini 모델명">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionModelSave" title="모델명 저장 — 비우면 기본값">모델 저장</button>
                                     </div>
                                 </details>
                                 <input type="file" id="prod-photo-front" class="is-hidden" accept="image/*" capture="environment" aria-label="제품 정면 사진">

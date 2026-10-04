@@ -6,6 +6,21 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-04 기성품 전성분 분석 보완 — 매칭 정규화·분석 확장·비전 설정화 (FO-37~40 수정 + FO-44~47 신규)
+
+- A군 결함 수정
+  - 제형 라디오 잔류: `productNew()`가 `catEl.value=''`를 대입했으나 `#prod-category`는 라디오 칩 그룹(div)이라 무동작 — 수정 후 이전 제형이 신규 폼에 유지돼 그대로 저장되던 결함. 전 라디오 `checked` 리셋 + '미선택' 기본값 복귀로 수정 (FO-37)
+  - 성분 매칭 비정규화: 인덱스·`classifyIngredient`는 원문 키 조회, `findAllergyHits`·`compareWithFormula`·`findProductsByIngredient`는 `normalizeEntityName` 사용으로 경로 불일치 — 공백만 다른 성분명이 '미등록'으로 오분류되던 결함. `formula-check.js`에 `findIngredient()` 정규화 폴백(정확→공백·대소문자 제거)을 신설하고 `classifyIngredient`·`renderInciChips`·`checkFormulaItems` 경로에 통일 적용. 원문 표기는 그대로 보존, 공식>자가 우선순위·미등록 판정 경계 유지 (FO-39)
+  - 제한 원료 한도 모바일 접근: `한도:` 정보가 배지 `title` 툴팁에만 있어 터치 불가 — 성분 행에 `prod-ing-note` 인라인 노트로 상시 표시 ('한도: …(함량 미표기라 초과 여부는 원문 확인)' 안전 문구 유지) (FO-39)
+- B군 기능 확장 (SPEC FO-44~47 선행 선언)
+  - FO-44 전성분 순서 힌트: `detectOrderHint()` — 색소(황색4호·적색○○호 등 `COLORANT_RE`)가 마지막 성분이 아니면 '중간 위치 색소' 경고 힌트를 상세 패널에 표시. 표기 순서 관행에 대한 힌트이며 법적 판정 아님
+  - FO-45 교차 분석 확장: `compareWithProduct()`(제품↔제품 3분할 비교 셀렉트)·`rankFormulasByOverlap()`(보유 포뮬러 중첩 랭킹 칩, 클릭 시 기존 제품↔포뮬러 비교에 연결)·`serializeProductAnalysis()`(분석 리포트 JSON 내보내기 — 라이브 판정 스냅샷, 원문/정규화/안전 문구 포함)
+  - FO-46 비전 보완: 추출 스키마에 `category` 추가 → 라디오 칩 '·' 별칭 정확일치 프리필('크림'→'선크림' 오매칭 방지), 추출 성분 정규화 dedupe, `FORMULA_GEMINI_MODEL` 로컬 키로 모델명 설정(기본 gemini-2.0-flash, 공백 정제·대문자 제거는 미적용), `validateVisionKey()` 키 확인 버튼(GET 모델 조회 — nokey/성공/키오류/404/네트워크 분기)
+  - FO-47 미등록 일괄 사전등록: 칩 영역 '미등록 N종 일괄 사전등록' 버튼 — `createCustomIngredient` 순회, 공식명 충돌·중복·한도(50종) 실패는 건너뛰고 성공 수만 토스트, 칩 즉시 재판정
+  - 성분 행 → 사전 링크: 공식/비공식 행에 `dictOpenByName` 사전 버튼 — 사전 뷰 상세로 직행(역방향 '함유 기성품' 링크와 대칭)
+- 안전 경계 유지: 미등록≠위험·등재≠안전 문구 유지, 금지명 매칭은 경고일 뿐 법적 판정 아님, 함량 미표기라 한도 초과 판정 불가 문구 유지, 키는 로컬 전용·백업/동기화 제외 계약 유지(모델명은 크리덴셜 아닌 환경설정)
+- 테스트: 유닛 product-store +14·product-vision +5, DOM formula-products +7 (신규 전부 회귀 단언 포함)
+
 ## 2026-10-04 인트라뷰 전환 스크롤 잔류 전수조사 — resetMainScroll 공유 헬퍼로 일괄 정규화 (UX-NAV-07)
 
 - 결함 클래스: `.main-content`는 전 뷰 공유 스크롤 컨테이너라 `is-hidden` 토글만으로 화면을 바꾸는 인트라뷰 전환(서브패널·문항 교체·innerHTML 교체)은 이전 화면의 scrollTop을 그대로 물려받아 새 화면 상단이 뷰포트 위로 잘림 — 2026-10-04 Formula OS `showPanel` 수정(바로 아래 항목)과 동형 결함의 전수조사
