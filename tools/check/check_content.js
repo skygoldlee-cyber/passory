@@ -36,6 +36,8 @@ const STEPS = [
     '구조', '교재/문제은행 파일 ↔ manifest·sw.js MD_ASSETS 구조 드리프트', true],
   ['node', ['tools/sync/sync_citation_lines.js', '--check'], false,
     '인용', '문제은행 → 교재 #L라인번호 인용 동기화 상태', true],
+  ['node', ['tools/check/check_answer_overlap.js'], false,
+    '인용', '문제 정답 ↔ 인용 근거 구절 의미적 지지 (정답 미지지 기준선 게이트)', true],
   ['node', ['tools/check/check_ref_subjects.js'], false,
     '귀속', 'ref_md 문서의 과목 귀속 vs 실제 인용 득표 (정보 단계 — 불일치는 참고 보고)', true],
   ['node', ['tools/check/check_reflayout.js'], false,

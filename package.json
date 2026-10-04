@@ -30,6 +30,7 @@
     "check:reffresh": "node tools/check/check_ref_freshness.js",
     "check:reflines": "node tools/check/check_ref_lines.js",
     "check:drillfresh": "node tools/check/check_drill_freshness.js",
+    "check:answers": "node tools/check/check_answer_overlap.js",
     "check:docbundles": "node tools/build/build_doc_bundles.js --check",
     "check:datafresh": "node tools/check/check_data_freshness.js",
     "check:hooks": "node tools/check/check_hooks.js",

@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 95e6f435aa4e7d0c
-> 생성: 2026-10-04 · 원천: SPEC.md(431개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 6e25f0317791c93c
+> 생성: 2026-10-04 · 원천: SPEC.md(432개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 431개 — 문서 연결 276 · 소스 연결 399 · 테스트 연결 419 · 보고서 연결 109
+**커버리지 요약**: 요구사항 432개 — 문서 연결 276 · 소스 연결 400 · 테스트 연결 420 · 보고서 연결 109
 
 ---
 
@@ -277,6 +277,7 @@
 | CQ-03 | ✅ | 테스트 | — | tools/check/audit_card_quality.js | tests/unit/audit-quality.test.js | — | — |
 | CQ-04 | ✅ | 테스트 | — | tools/check/audit_card_quality.js | tests/unit/audit-quality.test.js | — | — |
 | CQ-05 | ✅ | 테스트 | — | tools/check/audit_combo.js<br>tools/check/check_combo_pilot.js | tests/unit/audit-quality.test.js | — | — |
+| CQ-06 | ✅ | 테스트 | — | tools/check/check_answer_overlap.js | tests/unit/answer-overlap.test.js | — | — |
 
 ## 3.18 Formula OS — 실전 배합 작업실
 
