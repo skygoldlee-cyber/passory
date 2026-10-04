@@ -1,5 +1,5 @@
 // tests/unit/formula-check.test.js
-// @spec FO-02
+// @spec FO-02,FO-55
 // src/exams/cosmetic/formula-check.js — Formula OS 규정 Check 엔진 골든 테스트.
 // 파서 변경·판정 기준 변경 시 회귀를 감지한다.
 // 핵심 불변식: 모호한 입력은 절대 ok/warn이 아니라 unknown.
@@ -12,6 +12,7 @@ import {
   checkIngredient,
   buildIngredientIndex,
   checkFormulaItems,
+  suspectOcrSubstitutions,
 } from '../../../../src/exams/cosmetic/formula-check.js';
 
 const ing = (type, limit, extra = {}) => ({ name: '테스트원료', type, limit, ...extra });
@@ -153,4 +154,31 @@ test('checkFormulaItems: 전체 포뮬러 검증 + 요약 카운트', () => {
 test('checkFormulaItems: 빈 배열/null 입력 → 빈 결과', () => {
   assert.deepEqual(checkFormulaItems([], new Map()).summary, { ok: 0, warn: 0, banned: 0, unknown: 0 });
   assert.deepEqual(checkFormulaItems(null, new Map()).results, []);
+});
+
+// ── suspectOcrSubstitutions (FO-55) ─────────────────────────
+
+test('OCR 의심 — 사전과 1자 차이 미해석명은 대조 제안 반환', () => {
+  const index = buildIngredientIndex([
+    { name: '메칠파라벤', type: 'restricted', limit: '0.4%' },
+    { name: '디프로필렌글라이콜', type: 'approved', limit: '' },
+  ]);
+  const r = suspectOcrSubstitutions(['메칠파라빈', '디프로필렌글라콤', '정제수'], index);
+  assert.deepEqual(r, [
+    { input: '메칠파라빈', suggestion: '메칠파라벤' },
+    { input: '디프로필렌글라콤', suggestion: '디프로필렌글라이콜' }, // 8자+ → 2자까지
+  ]);
+});
+
+test('OCR 의심 — 해석되는 성분·짧은 이름·먼 이름은 제외', () => {
+  const index = buildIngredientIndex([
+    { name: '메칠파라벤', type: 'restricted', limit: '0.4%' },
+    { name: '파라벤류', type: 'restricted', limit: '0.4%' },
+  ]);
+  // '메칠파라벤' 자체는 해석됨 → 의심 아님 / '수'는 4자 미만 / '완전히다른성분명'은 거리 초과
+  const r = suspectOcrSubstitutions(['메칠파라벤', '수', '완전히다른성분명'], index);
+  assert.deepEqual(r, []);
+  // 동의어 속칭도 후보 — '메틸파라빈'은 '메틸파라벤' 속칭과 1자 차이
+  const r2 = suspectOcrSubstitutions(['메틸파라빈'], index);
+  assert.deepEqual(r2, [{ input: '메틸파라빈', suggestion: '메틸파라벤' }]);
 });

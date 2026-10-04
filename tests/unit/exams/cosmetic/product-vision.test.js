@@ -84,6 +84,8 @@ test('프롬프트 — 자릿수 쉼표·순서·추측 금지 규칙 포함', (
   assert.match(p, /1,2-헥산디올/);
   assert.match(p, /표시 순서/);
   assert.match(p, /추측하지/);
+  assert.match(p, /그대로 옮겨라/);   // FO-55 — 유사어 치환·'교정' 금지
+  assert.match(p, /치환하지/);
 });
 
 test('요청 바디 — 프롬프트 + inlineData 이미지 + JSON 스키마', () => {

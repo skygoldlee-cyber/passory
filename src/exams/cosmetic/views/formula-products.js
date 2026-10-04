@@ -28,7 +28,7 @@ import {
 } from '../product-store.js';
 import { listCustomers } from '../customer-store.js';
 import { listFormulas } from '../formula-store.js';
-import { findIngredient } from '../formula-check.js';
+import { findIngredient, suspectOcrSubstitutions } from '../formula-check.js';
 import { createCustomIngredient } from '../custom-ingredient-store.js';
 import { downloadJson } from './formula-recommend.js';
 import { CUSTOMER_OPTIONS } from '../formula-store.js';
@@ -360,7 +360,16 @@ export async function productVisionRead() {
       .map(s => `<img src="data:${vision[s].mimeType};base64,${vision[s].data}" alt="참조용 원본 사진 — ${s === 'back' ? '후면 전성분' : '정면'}">`)
       .join('');
   }
-  visionStatus(`인식 초안 ${ingredients.length}종 — 원본 라벨과 대조 후 저장하세요.`);
+  // OCR 치환 의심 (FO-55) — 미등록 칩 중 사전 표준명·속칭과 1~2자 차이는 대조 제안 표시
+  const suspects = suspectOcrSubstitutions(ingredients, getIndex());
+  const susEl = getEl('prod-vision-suspect');
+  if (susEl) {
+    susEl.classList.toggle('is-hidden', !suspects.length);
+    susEl.innerHTML = suspects.length
+      ? `<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <strong>인식 의심 ${suspects.length}종</strong> — ${suspects.map(s => `'${esc(s.input)}' → 사전의 '${esc(s.suggestion)}'과(와) 유사`).join(' · ')}. 원본 사진과 대조해 확인하세요.`
+      : '';
+  }
+  visionStatus(`인식 초안 ${ingredients.length}종 — 원본 라벨과 대조 후 저장하세요.${suspects.length ? ` 인식 의심 ${suspects.length}종이 표시됩니다.` : ''}`);
 }
 
 export function productVisionCancel() {
@@ -414,6 +423,8 @@ function resetVisionState() {
     renderPhotoSlot(s);
   });
   visionStatus('');
+  const susEl = getEl('prod-vision-suspect');
+  if (susEl) { susEl.classList.add('is-hidden'); susEl.innerHTML = ''; }
   const panel = getEl('prod-photo-panel');
   if (panel) panel.classList.add('is-hidden');
 }

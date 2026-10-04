@@ -1,5 +1,5 @@
 // src/exams/cosmetic/formula-check.js — Formula OS 규정 Check 엔진 (Phase 5-A)
-// @spec FO-02,FO-50,DI-07
+// @spec FO-02,FO-50,FO-55,DI-07
 //
 // 원료 + 배합 농도(%) → 법정 한도 검증. 배합을 "생성"하지 않고 공식 고시
 // 데이터로 "검증"만 수행한다 (생성·검증 분리 원칙).
@@ -277,6 +277,75 @@ export function findIngredient(index, name) {
     return index.get(alias) || idx.get(ingredientMatchKey(alias)) || null;
   }
   return null;
+}
+
+/* =======================================================
+   OCR 치환 의심 — 근사 매칭 검토 유도 (FO-55)
+   ======================================================= */
+
+/**
+ * 경계 편집거리 — max 초과 시 Infinity로 조기 종료.
+ * 사진 인식의 1~2자 오인(메칠↔메틸, 이탄올↔에탄올)을 잡기 위한 상한 계산.
+ */
+function boundedEditDistance(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return Infinity;
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    let rowMin = row[0];
+    for (let j = 1; j <= b.length; j++) {
+      const t = row[j];
+      row[j] = Math.min(t + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = t;
+      if (row[j] < rowMin) rowMin = row[j];
+    }
+    if (rowMin > max) return Infinity;
+  }
+  return row[b.length];
+}
+
+/**
+ * 인식 초안의 치환 의심 — 사전 표준명·동의어 속칭과 키가 1~2자만 다른
+ * 미등록 성분을 '라벨 원문 대조' 제안으로 돌려준다 (FO-55).
+ * findIngredient로 해석되는 성분(정확·병기·동의어)은 제외하고, 키 길이
+ * 4자 미만이거나 3자 이상 다른 이름도 걸러 노이즈를 제한한다.
+ * 판정이 아닌 검토 유도 — 사용자가 원본 사진과 최종 대조한다.
+ * @param {string[]} names
+ * @param {Map<string,object>} index - buildIngredientIndex() 결과 (자가 병합 포함)
+ * @returns {Array<{input:string, suggestion:string}>}
+ */
+export function suspectOcrSubstitutions(names, index) {
+  if (!index || typeof index.forEach !== 'function') return [];
+  // 후보 키 — 사전 표준명 + 동의어 속칭 (표시는 라벨에 가까운 속칭 우선)
+  const known = new Map();
+  index.forEach(v => {
+    if (v && typeof v.name === 'string') {
+      const k = ingredientMatchKey(v.name);
+      if (k && !known.has(k)) known.set(k, v.name);
+    }
+  });
+  for (const k of Object.keys(INGREDIENT_ALIASES)) {
+    if (!known.has(k)) known.set(k, k);
+  }
+  const out = [];
+  const seen = new Set();
+  for (const n of names || []) {
+    const key = ingredientMatchKey(n);
+    if (!key || key.length < 4 || seen.has(key)) continue;
+    seen.add(key);
+    if (known.has(key) || findIngredient(index, n)) continue;
+    const max = key.length >= 8 ? 2 : 1;
+    let best = null;
+    let bestD = Infinity;
+    for (const [k, label] of known) {
+      if (Math.abs(k.length - key.length) > max) continue;
+      const d = boundedEditDistance(key, k, max);
+      if (d > 0 && d < bestD) { bestD = d; best = label; }
+    }
+    if (best) out.push({ input: n, suggestion: best });
+  }
+  return out;
 }
 
 /**

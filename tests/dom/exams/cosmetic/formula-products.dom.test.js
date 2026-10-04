@@ -1,5 +1,5 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52,FO-54
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52,FO-54,FO-55
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
 //       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
@@ -558,6 +558,27 @@ describe('기성품 사진 인식 — BYOK 키·슬롯·프리필 (FO-41~43)', (
         productSave();
         expect(listProducts().length).toBe(1);
         expect(listProducts()[0].name).toBe('인식크림');
+    });
+
+    it('AI 읽기 — 사전과 1자 차이 미해석명은 인식 의심 대조 제안 (FO-55)', async () => {
+        vi.mocked(extractProductFromImages).mockResolvedValueOnce({
+            ok: true, name: '', brand: '', ingredients: ['정제수', '살리실삭'],
+        });
+        productNew();
+        el('prod-gemini-key').value = 'test-key';
+        productVisionKeySave();
+        productPhotoPick('back');
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        await productVisionRead();
+
+        const sus = el('prod-vision-suspect');
+        expect(sus.classList.contains('is-hidden')).toBe(false);
+        expect(sus.textContent).toContain('살리실삭');
+        expect(sus.textContent).toContain('살리실산');       // 사전 표준명 제안
+        expect(el('prod-vision-status').textContent).toContain('의심');
+        expect(sus.textContent).not.toContain('정제수');    // 해석된 성분은 의심 아님
     });
 
     it('AI 읽기 실패 — 오류 상태 표시 + 폼 오염 없음', async () => {
