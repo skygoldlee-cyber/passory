@@ -220,12 +220,16 @@ const MD_ASSETS = [
 const EXAM_MEDIA_ASSETS = [
   // EXAM_MEDIA:BEGIN
   './content/exams/cosmetic/교재/law/images/1과목_삽화.webp',
+  './content/exams/cosmetic/교재/law/images/1과목_암기요약.webp',
   './content/exams/cosmetic/교재/law/images/CCTV 설치안내판 예시.webp',
   './content/exams/cosmetic/교재/manufacturing/images/2과목_삽화.webp',
+  './content/exams/cosmetic/교재/manufacturing/images/2과목_암기요약.webp',
   './content/exams/cosmetic/교재/manufacturing/images/계면활성제 구조와 유화.webp',
   './content/exams/cosmetic/교재/manufacturing/images/바코드의 종류 및 구성체계.webp',
   './content/exams/cosmetic/교재/safety/images/3과목_삽화.webp',
+  './content/exams/cosmetic/교재/safety/images/3과목_암기요약.webp',
   './content/exams/cosmetic/교재/understanding/images/4과목_삽화.webp',
+  './content/exams/cosmetic/교재/understanding/images/4과목_암기요약.webp',
   './content/exams/cosmetic/교재/understanding/images/모발의 구조 단면도 보완_인포그래픽.webp',
   './content/exams/cosmetic/교재/understanding/images/피부의 구조 단면도 보완_인포그래픽.webp',
   // EXAM_MEDIA:END
