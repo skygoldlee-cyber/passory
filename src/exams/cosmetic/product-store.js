@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
@@ -20,7 +20,7 @@
 
 import { STORAGE_KEYS } from '../../storage-keys.js';
 import { normalizeEntityName } from '../../utils.js';
-import { BAN_TEXT_RE, findIngredient } from './formula-check.js';
+import { BAN_TEXT_RE, findIngredient, ingredientMatchKey, INGREDIENT_ALIASES } from './formula-check.js';
 import {
   loadItems, saveItems, newId, clampStr, pickEnum,
 } from './store-utils.js';
@@ -267,10 +267,18 @@ export function classifyProductIngredients(product, index) {
  * @returns {object[]} 해당 성분을 함유한 제품 목록
  */
 export function findProductsByIngredient(name) {
-  const norm = normalizeEntityName(name);
-  if (!norm) return [];
+  const target = ingredientMatchKey(name);
+  if (!target) return [];
+  const keys = new Set([target]);
+  // 동의어 양방향 확장 — '메칠파라벤' 검색은 '파라벤류' 함유 제품까지,
+  // '파라벤류' 검색은 개별 파라벤 속칭 함유 제품까지 커버 (FO-50)
+  for (const [k, v] of Object.entries(INGREDIENT_ALIASES)) {
+    const kv = ingredientMatchKey(v);
+    if (kv === target) keys.add(k);
+    if (k === target) keys.add(kv);
+  }
   return listProducts().filter(p =>
-    (p.ingredients || []).some(n => normalizeEntityName(n) === norm));
+    (p.ingredients || []).some(n => keys.has(ingredientMatchKey(n))));
 }
 
 /**
@@ -284,10 +292,10 @@ export function findAllergyHits(product, allergies) {
   if (!list.length || !product || !Array.isArray(product.ingredients)) return [];
   const hits = [];
   for (const ing of product.ingredients) {
-    const n = normalizeEntityName(ing);
+    const n = ingredientMatchKey(ing);
     if (!n) continue;
     if (list.some(a => {
-      const an = normalizeEntityName(a);
+      const an = ingredientMatchKey(a);
       return an && (n.includes(an) || an.includes(n));
     })) {
       hits.push(ing);
@@ -306,8 +314,8 @@ export function compareIngredientLists(aList, bList) {
   const a = Array.isArray(aList) ? aList : [];
   const b = Array.isArray(bList) ? bList : [];
   if (!a.length || !b.length) return null;
-  const aNorm = new Map(a.map(n => [normalizeEntityName(n), n]));
-  const bNorm = new Map(b.map(n => [normalizeEntityName(n), n]));
+  const aNorm = new Map(a.map(n => [ingredientMatchKey(n), n]));
+  const bNorm = new Map(b.map(n => [ingredientMatchKey(n), n]));
   const common = [];
   const aOnly = [];
   aNorm.forEach((orig, norm) => (bNorm.has(norm) ? common : aOnly).push(orig));

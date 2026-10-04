@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -17,7 +17,7 @@ import {
   compareWithProduct, rankFormulasByOverlap, detectOrderHint,
   serializeProduct, serializeProductAnalysis, importProduct,
 } from '../../../../src/exams/cosmetic/product-store.js';
-import { buildIngredientIndex } from '../../../../src/exams/cosmetic/formula-check.js';
+import { buildIngredientIndex, findIngredient } from '../../../../src/exams/cosmetic/formula-check.js';
 
 function createMockStorage() {
   const store = {};
@@ -235,6 +235,45 @@ test('분류 — 공백·대소문자 오차는 정규화 폴백으로 매칭 (�
 /* =======================================================
    교차 분석 (FO-40)
    ======================================================= */
+
+test('매칭 — 하이픈↔공백 변형은 조회 정규화로 해석 (FO-50)', () => {
+  const idx = buildIngredientIndex([{ name: '1,2-헥산디올', type: 'approved', limit: '' }]);
+  assert.equal(findIngredient(idx, '1,2 헥산디올').name, '1,2-헥산디올');
+  assert.equal(findIngredient(idx, '1,2-헥산디올').name, '1,2-헥산디올');
+});
+
+test('매칭 — 괄호 병기 부분 키 해석 (FO-50)', () => {
+  const idx = buildIngredientIndex([{ name: '토코페롤(비타민E)', type: 'approved', limit: '' }]);
+  assert.equal(findIngredient(idx, '비타민E').name, '토코페롤(비타민E)');
+  assert.equal(findIngredient(idx, '토코페롤').name, '토코페롤(비타민E)');
+  // 입력 쪽 병기도 바깥 부분으로 해석 — '살리실산(베타)' → '살리실산'
+  assert.equal(findIngredient(INDEX, '살리실산(베타)').name, '살리실산');
+});
+
+test('매칭 — 명시 동의어 속칭·영문 → 표준명 (FO-50)', () => {
+  const idx = buildIngredientIndex([
+    { name: '파라벤류', type: 'approved', limit: '0.4% (단일), 0.8% (혼합)' },
+    { name: '징크옥사이드', type: 'restricted', limit: '25%' },
+  ]);
+  assert.equal(findIngredient(idx, '메칠파라벤').name, '파라벤류');
+  assert.equal(findIngredient(idx, '에틸파라벤').name, '파라벤류');
+  assert.equal(findIngredient(idx, '산화아연').name, '징크옥사이드');
+  assert.equal(findIngredient(INDEX, 'BHA').name, '살리실산'); // 영문 약칭 → 표준명 (INDEX는 살리실산 보유)
+});
+
+test('매칭 — 동의어가 아닌 별개 성분은 건드리지 않음 (FO-50)', () => {
+  // 스쿠알란↔스쿠알렌은 화학적으로 별개 — 의도적 미등록 유지
+  const idx = buildIngredientIndex([{ name: '스쿠알렌', type: 'approved', limit: '' }]);
+  assert.equal(findIngredient(idx, '스쿠알란'), null);
+});
+
+test('역조회 — 동의어 양방향 확장 (FO-50)', () => {
+  createProduct({ name: 'A제품', brand: '', ingredients: ['파라벤류', '정제수'] });
+  assert.equal(findProductsByIngredient('메칠파라벤').length, 1); // 속칭 → 클래스
+  assert.equal(findProductsByIngredient('파라벤류').length, 1);
+  createProduct({ name: 'B제품', brand: '', ingredients: ['메칠파라벤'] });
+  assert.equal(findProductsByIngredient('파라벤류').length, 2); // 클래스 → 속칭 양방향
+});
 
 test('역조회 — 성분 정규화(공백·대소문자)로 함유 제품 검색', () => {
   createProduct({ name: 'A', ingredients: ['정제수', '메칠파라벤'] });

@@ -1,5 +1,5 @@
 // src/exams/cosmetic/formula-check.js — Formula OS 규정 Check 엔진 (Phase 5-A)
-// @spec FO-02,DI-07
+// @spec FO-02,FO-50,DI-07
 //
 // 원료 + 배합 농도(%) → 법정 한도 검증. 배합을 "생성"하지 않고 공식 고시
 // 데이터로 "검증"만 수행한다 (생성·검증 분리 원칙).
@@ -157,7 +157,76 @@ export function buildIngredientIndex(ingredients) {
 }
 
 // 인덱스 인스턴스별 정규화 키 맵 — getIndex() 재구축 시 인스턴스가 바뀌므로
-// WeakMap으로 묶어 캐시한다 (공백·대소문자 차이만 있는 입력의 미스매치 방지)
+/**
+ * 조회 전용 정규화 — normalizeEntityName(공백·대소문자)에 하이픈·대시 제거 추가 (FO-50).
+ * '1,2-헥산디올' ↔ '1,2 헥산디올'·'피이지-100' ↔ '피이지 100' 띄어쓰기-하이픈
+ * 변형의 미스매치 방지. 식별(중복 검사)은 normalizeEntityName 유지 — 표기 변형이
+ * 다른 항목을 합치지 않도록 조회 경로에만 느슨한 키를 쓴다.
+ * @param {*} name
+ * @returns {string}
+ */
+export function ingredientMatchKey(name) {
+  return normalizeEntityName(name).replace(/[-‐-―–—−]/g, '');
+}
+
+// 괄호 안의 설명·제외 문구 — 병기 부분 키에서 걸러낸다
+const PAREN_ANNOTATION_RE = /제외|한함|이하|이상|까지|로서|부가|예\s*:/;
+
+/**
+ * 괄호 병기명의 부분 키 — '토코페롤(비타민E)'는 '토코페롤'·'비타민E'로도
+ * 해석한다. DB가 '성분명(속칭)'·'클래스(구성원 A, B에 한함)' 형태를 쓰므로
+ * 바깥쪽·괄호 내 각 요소를 부분 키로 등록한다 (FO-50).
+ * @param {string} name
+ * @returns {string[]}
+ */
+export function parenNameParts(name) {
+  if (typeof name !== 'string' || !/[(\[（]/.test(name)) return [];
+  const parts = [];
+  const outer = name.replace(/[(\[（][^)\]）]*[)\]）]/g, '').trim();
+  if (outer) parts.push(outer);
+  const innerRe = /[(\[（]([^)\]）]*)[)\]）]/g;
+  let m;
+  while ((m = innerRe.exec(name)) !== null) {
+    for (const p of m[1].split(/[,·/]/)) {
+      const t = p.trim();
+      if (t.length >= 2 && !PAREN_ANNOTATION_RE.test(t)) parts.push(t);
+    }
+  }
+  return parts;
+}
+
+/**
+ * 명시 동의어 — 판매 페이지 속칭·영문 → 표준명 (키는 ingredientMatchKey 정규화값).
+ * 괄호 병기로 해결되지 않는 쌍만 등록한다. 염·유도체가 다른 성분(스쿠알렌↔
+ * 스쿠알란, 세틸↔세테아릴)은 화학적으로 별개라 등록하지 않는다.
+ */
+export const INGREDIENT_ALIASES = Object.freeze({
+  'bha': '살리실산',
+  '비타민a': '레티놀',
+  '비타민b3': '나이아신아마이드',
+  '프로비타민b5': '판테놀',
+  '아스코빅애씨드': '아스코르브산',
+  '산화아연': '징크옥사이드',
+  '이산화티타늄': '티타늄디옥사이드',
+  '티타늄이산화물': '티타늄디옥사이드',
+  '소듐하이알루로네이트': '히알루론산',
+  '소디움하이알루로네이트': '히알루론산',
+  '히알루론산나트륨': '히알루론산',
+  '히아루론산': '히알루론산',
+  '알코올': '에탄올',
+  '글리세롤': '글리세린',
+  '호호바씨오일': '호호바오일',
+  '메칠파라벤': '파라벤류',
+  '메틸파라벤': '파라벤류',
+  '에칠파라벤': '파라벤류',
+  '에틸파라벤': '파라벤류',
+  '프로필파라벤': '파라벤류',
+  '부틸파라벤': '파라벤류',
+  '이소프로필파라벤': '파라벤류',
+  '이소부틸파라벤': '파라벤류',
+});
+
+// WeakMap으로 묶어 캐시한다 (공백·대소문자·하이픈 차이만 있는 입력의 미스매치 방지)
 const _normIndexCache = new WeakMap();
 
 function normalizedIndex(index) {
@@ -166,8 +235,13 @@ function normalizedIndex(index) {
     m = new Map();
     if (index && typeof index.forEach === 'function') {
       index.forEach((v, k) => {
-        const nk = normalizeEntityName(k);
+        const nk = ingredientMatchKey(k);
         if (nk && !m.has(nk)) m.set(nk, v);
+        // 괄호 병기 부분 키 — '토코페롤(비타민E)' → '토코페롤'·'비타민e' (FO-50)
+        for (const part of parenNameParts(k)) {
+          const pk = ingredientMatchKey(part);
+          if (pk && !m.has(pk)) m.set(pk, v);
+        }
       });
     }
     _normIndexCache.set(index, m);
@@ -176,8 +250,9 @@ function normalizedIndex(index) {
 }
 
 /**
- * 원료 조회 — 정확 일치 우선, 실패 시 정규화(공백·대소문자 무시) 폴백.
- * 전성분 붙여넣기·OCR 결과의 띄어쓰기 오차가 '미등록'으로 오분류되는 것을 막는다.
+ * 원료 조회 — 정확 일치 우선, 실패 시 matchKey(공백·대소문자·하이픈 무시) 폴백
+ * → 입력 자체의 괄호 부분 → 명시 동의어 순으로 해석한다 (FO-50).
+ * 전성분 붙여넣기·OCR·속칭 입력이 '미등록'으로 오분류되는 것을 막는다.
  * @param {Map<string,object>} index - buildIngredientIndex() 결과 (자가 병합 포함)
  * @param {string} name
  * @returns {object|null}
@@ -186,8 +261,22 @@ export function findIngredient(index, name) {
   if (!index || typeof index.get !== 'function' || typeof name !== 'string') return null;
   const direct = index.get(name);
   if (direct) return direct;
-  const norm = normalizeEntityName(name);
-  return norm ? normalizedIndex(index).get(norm) || null : null;
+  const idx = normalizedIndex(index);
+  const norm = ingredientMatchKey(name);
+  let hit = norm ? idx.get(norm) : null;
+  if (hit) return hit;
+  // 입력 자체의 괄호 병기 — '살리실산(베타)'는 바깥·안쪽 부분으로도 해석
+  for (const part of parenNameParts(name)) {
+    const pk = ingredientMatchKey(part);
+    hit = pk ? idx.get(pk) : null;
+    if (hit) return hit;
+  }
+  // 명시 동의어 — 속칭·영문 → 표준명 (1회 전이, 순환 없음)
+  const alias = norm && INGREDIENT_ALIASES[norm];
+  if (alias) {
+    return index.get(alias) || idx.get(ingredientMatchKey(alias)) || null;
+  }
+  return null;
 }
 
 /**
