@@ -1,5 +1,5 @@
-// src/exams/cosmetic/product-vision.js — 기성품 사진 인식 (FO-41~43, FO-46)
-// @spec FO-41,FO-42,FO-43,FO-46
+// src/exams/cosmetic/product-vision.js — 기성품 사진 인식 (FO-41~43, FO-46, FO-54)
+// @spec FO-41,FO-42,FO-43,FO-46,FO-54
 //
 // 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내
 // 전성분을 JSON으로 추출한다. 추출 결과는 기성품 폼에 프리필되는 초안이며
@@ -37,11 +37,29 @@ export function saveVisionModel(model) {
   return safe;
 }
 
+/** 고해상도 모드 여부 — 전송량 증가와 인식률의 트레이드오프를 사용자가 선택 (FO-54) */
+export function getVisionHiRes() {
+  return getItem(STORAGE_KEYS.FORMULA_VISION_HIRES) === '1';
+}
+
+export function saveVisionHiRes(on) {
+  if (on) setItem(STORAGE_KEYS.FORMULA_VISION_HIRES, '1');
+  else removeItem(STORAGE_KEYS.FORMULA_VISION_HIRES);
+  return getVisionHiRes();
+}
+
+/** 현재 설정 기준 리사이즈 장변 상한 */
+export function visionMaxSide() {
+  return getVisionHiRes() ? MAX_SIDE_HIRES : MAX_SIDE;
+}
+
 function visionEndpoint() {
   return `${API_BASE}/${getVisionModel()}:generateContent`;
 }
 
 const MAX_SIDE = 1024;
+/** 고해상도 모드 장변 — 촘촘한 전성분표 인식률 우선 (FO-54, opt-in) */
+const MAX_SIDE_HIRES = 2048;
 const JPEG_QUALITY = 0.85;
 const MAX_ING_LEN = 120;
 const MAX_ING_COUNT = 150;
@@ -77,12 +95,14 @@ export function maskVisionKey(key) {
    ======================================================= */
 
 /**
- * 이미지 파일을 장변 MAX_SIDE 이하 JPEG로 압축해 base64로 반환.
- * jsdom 등 canvas 미지원 환경에서는 실패 결과를 돌려준다.
+ * 이미지 파일을 장변 상한 이하 JPEG로 압축해 base64로 반환.
+ * 상한은 opts.maxSide — 미지정 시 현재 설정(visionMaxSide: 기본 1024 ·
+ * 고해상도 모드 2048, FO-54). jsdom 등 canvas 미지원 환경에서는 실패 결과를 돌려준다.
  * @param {Blob|File} file
+ * @param {object} [opts] - {maxSide?: number}
  * @returns {Promise<{ok:boolean, data?:string, mimeType?:string, width?:number, height?:number, error?:string}>}
  */
-export async function fileToBase64Jpeg(file) {
+export async function fileToBase64Jpeg(file, opts = {}) {
   try {
     if (!file) return { ok: false, error: '이미지가 없습니다.' };
     /** @type {ImageBitmap|HTMLImageElement} */
@@ -97,7 +117,8 @@ export async function fileToBase64Jpeg(file) {
         img.src = URL.createObjectURL(file);
       });
     }
-    const scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    const maxSide = Number.isFinite(opts.maxSide) && opts.maxSide > 0 ? opts.maxSide : visionMaxSide();
+    const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
     const w = Math.max(1, Math.round(bmp.width * scale));
     const h = Math.max(1, Math.round(bmp.height * scale));
     const canvas = document.createElement('canvas');

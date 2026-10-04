@@ -112,7 +112,7 @@ const formula = {
             'productVisionToggle', 'productPhotoPick', 'productPhotoRemove',
             'productVisionRead', 'productVisionCancel',
             'productVisionKeySave', 'productVisionKeyClear',
-            'productVisionKeyTest', 'productVisionModelSave',
+            'productVisionKeyTest', 'productVisionModelSave', 'productVisionHiRes',
         ]],
         ['notice', [
             'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus',

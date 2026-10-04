@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-vision.test.js
-// @spec FO-41,FO-42,FO-43,FO-46
+// @spec FO-41,FO-42,FO-43,FO-46,FO-54
 // product-vision.js — 기성품 사진 인식 (BYOK Gemini).
 // 검증: API 키 저장 계약(디바이스 로컬·백업 제외·마스킹),
 //       요청 형상(프롬프트·inlineData·JSON 스키마·x-goog-api-key 헤더),
@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import {
   getVisionKey, saveVisionKey, clearVisionKey, maskVisionKey,
   getVisionModel, saveVisionModel, validateVisionKey,
+  getVisionHiRes, saveVisionHiRes, visionMaxSide,
   buildExtractionPrompt, buildRequestBody, parseExtractionResponse,
   extractProductFromImages, fileToBase64Jpeg,
 } from '../../../../src/exams/cosmetic/product-vision.js';
@@ -194,6 +195,28 @@ test('모델 설정 — 기본값, 저장·정제·리셋', () => {
 
 test('모델명은 백업 대상 — 크리덴셜 아닌 환경설정 계약', () => {
   assert.equal(BACKUP_KEYS.includes(STORAGE_KEYS.FORMULA_GEMINI_MODEL), true);
+});
+
+test('고해상도 모드 — 기본 1024, 켜면 2048, 끄면 복귀 (FO-54)', () => {
+  assert.equal(getVisionHiRes(), false);
+  assert.equal(visionMaxSide(), 1024);
+  assert.equal(saveVisionHiRes(true), true);
+  assert.equal(getVisionHiRes(), true);
+  assert.equal(visionMaxSide(), 2048);
+  assert.equal(saveVisionHiRes(false), false);
+  assert.equal(visionMaxSide(), 1024);
+});
+
+test('고해상도 설정도 백업 대상 — 환경설정 계약 (FO-54)', () => {
+  assert.equal(BACKUP_KEYS.includes(STORAGE_KEYS.FORMULA_VISION_HIRES), true);
+  // 크리덴셜은 여전히 백업 제외
+  assert.equal(BACKUP_KEYS.includes(STORAGE_KEYS.FORMULA_GEMINI_KEY), false);
+});
+
+test('전처리 옵션 — opts.maxSide를 받는 시그니처 (FO-54)', async () => {
+  // jsdom은 canvas 미지원 — 파일 없이도 오류 경로만 확인 (시그니처 회귀 가드)
+  const r = await fileToBase64Jpeg(null, { maxSide: 2048 });
+  assert.equal(r.ok, false);
 });
 
 test('호출 URL — 설정 모델명이 엔드포인트에 반영', async () => {

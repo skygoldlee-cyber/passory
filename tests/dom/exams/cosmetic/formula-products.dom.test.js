@@ -1,5 +1,5 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52,FO-54
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
 //       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
@@ -39,12 +39,12 @@ import {
     productIngRegisterAll, productRankPick,
     productVisionToggle, productPhotoPick, productPhotoRemove,
     productVisionRead, productVisionKeySave, productVisionKeyClear,
-    productVisionModelSave,
+    productVisionModelSave, productVisionHiRes,
 } from '../../../../src/exams/cosmetic/views/formula-products.js';
 import { listProducts } from '../../../../src/exams/cosmetic/product-store.js';
 import { listCustomIngredients } from '../../../../src/exams/cosmetic/custom-ingredient-store.js';
 import {
-    getVisionKey, getVisionModel, extractProductFromImages,
+    getVisionKey, getVisionModel, extractProductFromImages, getVisionHiRes,
 } from '../../../../src/exams/cosmetic/product-vision.js';
 import { createFormula } from '../../../../src/exams/cosmetic/formula-store.js';
 import { createCustomer } from '../../../../src/exams/cosmetic/customer-store.js';
@@ -485,6 +485,24 @@ describe('기성품 사진 인식 — BYOK 키·슬롯·프리필 (FO-41~43)', (
         expect(el('prod-key-block').open).toBe(true);       // 키 미설정 → 자동 펼침
         expect(el('prod-vision-read').disabled).toBe(true); // 후면 사진 없음
         expect(el('prod-key-state').textContent).toContain('미설정');
+    });
+
+    it('고해상도 모드 — 체크박스 토글이 설정값을 저장하고 상태가 유지된다 (FO-54)', () => {
+        productNew();
+        productVisionToggle();
+        const cb = el('prod-vision-hires');
+        expect(cb.checked).toBe(false);           // 기본 off
+        cb.checked = true;
+        productVisionHiRes();
+        expect(getVisionHiRes()).toBe(true);
+        expect(el('prod-vision-status').textContent).toContain('2048');
+        // 패널 재오픈 시 체크 상태 복원
+        productVisionToggle();
+        productVisionToggle();
+        expect(el('prod-vision-hires').checked).toBe(true);
+        el('prod-vision-hires').checked = false;
+        productVisionHiRes();
+        expect(getVisionHiRes()).toBe(false);
     });
 
     it('API 키 저장 — 마스킹 상태 표시 + 삭제 복귀', () => {

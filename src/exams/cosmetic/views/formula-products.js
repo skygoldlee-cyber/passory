@@ -36,6 +36,7 @@ import {
   getVisionKey, saveVisionKey, clearVisionKey, maskVisionKey,
   getVisionModel, saveVisionModel, validateVisionKey,
   fileToBase64Jpeg, extractProductFromImages,
+  getVisionHiRes, saveVisionHiRes,
 } from '../product-vision.js';
 
 /* =======================================================
@@ -253,9 +254,21 @@ export function productVisionToggle() {
   const btn = document.querySelector('[data-click="productVisionToggle"]');
   if (btn) btn.setAttribute('aria-expanded', String(!open));
   renderVisionKeyState();
+  const hires = /** @type {HTMLInputElement|null} */ (getEl('prod-vision-hires'));
+  if (hires) hires.checked = getVisionHiRes();
   // 키 미설정이면 키 블록 자동 펼침 — 첫 사용 안내
   const keyBlock = /** @type {HTMLDetailsElement|null} */ (document.getElementById('prod-key-block'));
   if (keyBlock && !getVisionKey()) keyBlock.open = true;
+}
+
+/** 고해상도 모드 토글 — 설정값 저장, 이미 올린 사진은 다음 촬영부터 적용 (FO-54) */
+export function productVisionHiRes() {
+  const cb = /** @type {HTMLInputElement|null} */ (getEl('prod-vision-hires'));
+  if (!cb) return;
+  saveVisionHiRes(cb.checked);
+  visionStatus(cb.checked
+    ? '고해상도 모드 — 다음 촬영부터 장변 2048px로 읽습니다 (전송량·비용 증가).'
+    : '기본 해상도로 돌아갔습니다 (장변 1024px).');
 }
 
 /** 슬롯별 file input 론치 — change는 1회 바인딩 */

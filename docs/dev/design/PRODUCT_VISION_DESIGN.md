@@ -2,8 +2,8 @@
 
 > 상위 문서: [`PRODUCT_DB_DESIGN.md`](PRODUCT_DB_DESIGN.md) (기성품 전성분 DB — FO-37~40)
 > 범위: 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내 전성분을 추출, 기존 등록 폼에 프리필
-> 상태: ✅ 구현 완료 — BYOK + Gemini Flash + 멀티샷 (FO-41~43) + 보완 (FO-46)
-> **관련 SPEC ID**: `FO-41,FO-42,FO-43,FO-46` (SPEC §3.18) · 선행 `FO-37~40`(기성품 DB) · `FO-32`(미등록 원료 즉시 등록)
+> 상태: ✅ 구현 완료 — BYOK + Gemini Flash + 멀티샷 (FO-41~43) + 보완 (FO-46·FO-54)
+> **관련 SPEC ID**: `FO-41,FO-42,FO-43,FO-46,FO-54` (SPEC §3.18) · 선행 `FO-37~40`(기성품 DB) · `FO-32`(미등록 원료 즉시 등록)
 > **문서 ID**: DOC-DSN-13
 
 ---
@@ -39,8 +39,9 @@
 [사진 수집 패널]  <input type="file" accept="image/*" capture="environment">
     │            정면(선택) + 후면(필수) 슬롯, 각각 썸네일·재촬영
     ▼
-[전처리]        캔버스 리사이즈(장변 ≤1024px) → JPEG quality 0.85 → base64
+[전처리]        캔버스 리사이즈(장변 ≤1024px · 고해상도 모드 ≤2048px) → JPEG quality 0.85 → base64
     │            목표: 사진당 ~100–300KB (모바일 업로드·토큰 비용 절감)
+    │            고해상도 모드(FO-54): 촘촘한 전성분표 인식률 우선 — 전송량·비용 증가를 사용자가 선택
     ▼
 [Gemini 호출]   POST generativelanguage.googleapis.com/v1beta/models/
     │           gemini-2.0-flash:generateContent?key=<BYOK>
@@ -179,6 +180,12 @@
 - **성분 dedupe** — 추출 배열을 `normalizeEntityName` 기준으로 중복 제거(원문·순서 보존)
 - **모델 설정** — `FORMULA_GEMINI_MODEL` 키(기본 `gemini-2.0-flash`). 모델명은 크리덴셜이 아니므로 백업·동기 대상(BACKUP_KEYS 포함) — API 키(`FORMULA_GEMINI_KEY`)는 기존대로 백업·동기·URL에서 제외
 - **키 유효성 확인** — `validateVisionKey()`가 `models/<모델>` GET으로 nokey/성공/키오류(400·403)/모델없음(404)/네트워크를 분기 — 추출 전에 키·모델 유효성 확인 가능
+
+## 8.2 구현 보완 (FO-54 — 2026-10-19)
+
+- **고해상도 모드** — `FORMULA_VISION_HIRES` 설정값 + 사진 패널 '고해상도' 체크박스. 켜면 `fileToBase64Jpeg`의 장변 상한이 1024→2048px — 촘촘한 다단 전성분표·소형 폰트 라벨의 인식률 우선. 기본값은 기존 1024 유지(전송량·토큰 비용 절감이 기본 정책이므로 opt-in)
+- 저장 키는 크리덴셜이 아닌 환경설정 — `FORMULA_GEMINI_MODEL`과 동일하게 BACKUP_KEYS 포함·동기 대상
+- 2048 상한 근거: Gemini 이미지 입력 최대 해상도·권장 길이 이하에서 인식률 향상 구간 — 그 이상은 토큰 비용만 증가
 
 ## 9. 후속 범위 (미승인 — 착수 시 신규 ID)
 

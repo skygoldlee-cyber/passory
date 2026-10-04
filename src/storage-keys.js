@@ -97,6 +97,10 @@ export const STORAGE_KEYS = {
   // Formula OS — 사진 인식 Gemini 모델명 설정 (product-vision.js, FO-46)
   // 크리덴셜이 아닌 환경설정값 — 백업·동기 대상에 포함해 기기 간 유지
   FORMULA_GEMINI_MODEL: 'formula_gemini_model',
+
+  // Formula OS — 사진 인식 고해상도 모드 (product-vision.js, FO-54)
+  // '1'이면 리사이즈 장변 2048 — 환경설정값, 백업·동기 포함
+  FORMULA_VISION_HIRES: 'formula_vision_hires',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)
@@ -171,6 +175,7 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.FORMULA_LABEL_DRAFT, // 표시사항 검토 폼 — 작업 데이터 (FO-35)
   STORAGE_KEYS.PRODUCT_ITEMS,     // 기성품 전성분 DB — 백업·동기 대상 (FO-37)
   STORAGE_KEYS.FORMULA_GEMINI_MODEL, // 사진 인식 모델명 설정 — 환경설정 (FO-46)
+  STORAGE_KEYS.FORMULA_VISION_HIRES, // 사진 고해상도 모드 — 환경설정 (FO-54)
 ];
 
 // 전체 초기화(Reset Progress) 시 제거할 키 목록
