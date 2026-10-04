@@ -1,42 +1,42 @@
 {
   "subjects": {
     "law": {
-      "cards": 178,
-      "quizzes": 76,
+      "cards": 183,
+      "quizzes": 82,
       "files": {
         "교재/law/1과목_화장품법의이해_표준형.md": {
-          "cards": 191,
-          "quizzes": 76
+          "cards": 197,
+          "quizzes": 82
         }
       }
     },
     "manufacturing": {
-      "cards": 370,
-      "quizzes": 167,
+      "cards": 379,
+      "quizzes": 175,
       "files": {
         "교재/manufacturing/2과목_제조및품질관리_표준형.md": {
-          "cards": 411,
-          "quizzes": 180
+          "cards": 422,
+          "quizzes": 188
         }
       }
     },
     "safety": {
-      "cards": 186,
-      "quizzes": 57,
+      "cards": 198,
+      "quizzes": 63,
       "files": {
         "교재/safety/3과목_유통화장품안전관리_표준형.md": {
-          "cards": 231,
-          "quizzes": 57
+          "cards": 246,
+          "quizzes": 63
         }
       }
     },
     "understanding": {
-      "cards": 347,
-      "quizzes": 113,
+      "cards": 363,
+      "quizzes": 125,
       "files": {
         "교재/understanding/4과목_맞춤형화장품의이해_표준형.md": {
-          "cards": 385,
-          "quizzes": 116
+          "cards": 402,
+          "quizzes": 128
         }
       }
     }

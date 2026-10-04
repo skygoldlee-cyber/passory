@@ -36,9 +36,22 @@ test.beforeEach(({ page }) => {
 });
 
 test.describe('리더 마커·다이어그램 파이프라인', () => {
-    test('기출·중요 숫자가 하이라이트 섹션으로 렌더된다 (TR-05)', async ({ page }) => {
+    test('기출·중요 마커가 하이라이트 카드로 추출·강조된다 (TR-05)', async ({ page }) => {
         test.setTimeout(60_000);
-        await openReader(page, 1); // 1과목(law) — number-drills에 isKey 항목 존재
+        await openReader(page, 1); // 1과목(law) — 🔖기출/📌중요 마커 + number-drills isKey 항목 존재
+        // ① 소스 마커 추출 카드 — 🔖기출/📌중요 라인이 '기출 핵심' 카드로 집계
+        const hl = page.locator('#exam-highlight-card');
+        await expect(hl).toBeVisible({ timeout: 15_000 });
+        const hm = await page.evaluate(() => ({
+            items: document.querySelectorAll('#exam-highlight-card .exam-highlight-list li').length,
+            // 카드 본문에는 마커 자체가 정제되어 있어야 함
+            raw: document.querySelector('#exam-highlight-card')?.textContent || '',
+        }));
+        expect(hm.items).toBeGreaterThan(0);
+        expect(hm.raw).not.toContain('🔖기출');
+        expect(hm.raw).not.toContain('📌중요');
+
+        // ② 숫자 암기표의 기출·중요 섹션 — isKey 데이터가 별도 강조 영역으로 렌더
         const card = page.locator('#number-drill-card');
         await expect(card).toBeVisible({ timeout: 15_000 });
         const m = await page.evaluate(() => ({

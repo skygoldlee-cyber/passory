@@ -6,11 +6,18 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 교재 🔖기출/📌중요 마커 부활 — 기출 핵심 카드 재활성 (TR-05)
+
+- 4개 과목 표준형의 `**핵심 3가지**` 불릿 57건에 마커 삽입 — 🔖기출 19(빈출 태그·핵심 정의)/📌중요 38. `extractExamHighlights`가 추출해 리더에 '기출 핵심' 카드 렌더 (기존 죽은 경로 재활성) + `textbook-parser`가 🔖기출 라인에서 기출 플래그 플래시카드·빈칸 퀴즈 생성
+- 파서 제약 대응 — 용어명이 일반 접미사(`구분·분류·단계·사항·금지`)로 끝나면 카드 생성 차단(`isGenericTerm`) → 7건 라벨을 의미 보존 비일반형으로 수정(예: '영유아 금지 성분', 'CGMP 핵심 요소'), 빈칸 정답용 볼드 보강. 마커 감시 경고 7→0
+- 이야기형 4개 재생성 — 동일 마커 반영. `sync:citations`가 암기요약 삽입 시점부터 누적된 문제은행 인용 라인번호 드리프트 84건 자동 교정 (순수 L#### 번호 갱신 — 본문 변경 없음)
+- `reader-markers.spec.js` TR-05 테스트를 실제 계약으로 강화 — `#exam-highlight-card` 렌더·마커 정제(카드 본문에 🔖기출/📌중요 잔존 0건) 어설션 추가 (기존 number-drills is-key 커버는 유지)
+
 ## 2026-10-19 UI/UX E2E 갭 기준선 15→1 — 14개 요구사항 실브라우저 커버리지 추가 (UX-VFY-03)
 
 - `tests/e2e/app-chrome.spec.js` 신설 (9 tests) — 설정 버전 표시(UX-SET-04)·메뉴 닫힘 규약 외부클릭/Escape/항목선택(UX-SET-05)·커스텀 확인 오버레이+네이티브 alert/confirm 0회(UX-FB-02)·SW controllerchange → 업데이트 토스트+자동 리로드(UX-PWA-03)·beforeinstallprompt 캡처/standalone 숨김(UX-PWA-04)·safe-area env() 규칙 존재(R-03)·스크롤바 규약 뷰포트 분기(UX-SCR-02)·테마별 스크롤바 색상(UX-SCR-03)
 - `tests/e2e/reader-markers.spec.js` 신설 (6 tests) — 기출·중요 숫자 하이라이트 섹션(TR-05)·Mermaid 유형별 클래스+svg 렌더(TR-07)·mermaid 내부 링크 0건 보호(TR-08)·마크다운 링크 앵커 변환(TR-09)·과목 전환 즉시 저장+진도 초기화로 위치 키 제거(TR-13)·첫 방문 엣지 힌트 펄스+재방문 해제(UX-FB-03)
-- `check_spec_refs.js` — `UIUX_E2E_GAP_BASELINE` 15→1 (잔여 1개 = UX-VFY-06 정적 체커 규약형 — e2e 실측 대상 아님으로 의도 유지). TR-05는 🔖기출/📌중요 소스 마커가 현 교재에 부재해 기출 핵심 카드는 미렌더 — 동일 계약의 number-drills `is-key` 하이라이트 섹션으로 커버
+- `check_spec_refs.js` — `UIUX_E2E_GAP_BASELINE` 15→1 (잔여 1개 = UX-VFY-06 정적 체커 규약형 — e2e 실측 대상 아님으로 의도 유지). TR-05는 작성 시점 🔖기출/📌중요 소스 마커 부재로 number-drills `is-key` 하이라이트 섹션으로 커버 — 마커 부활 후 실제 `#exam-highlight-card` 어설션으로 강화 (후속 항목 참조)
 
 ## 2026-10-19 템플릿 이스케이프 자동화 인프라 — html`` + check:escape (ROAD-Q5 진행중)
 
