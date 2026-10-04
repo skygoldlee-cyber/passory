@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261005-5e0abea",
+    "date": "2026-10-05",
+    "notes": [
+      "[수정·search] 교재 검색 명칭을 참조자료 포함 범위에 맞게 정정"
+    ]
+  },
+  {
     "version": "v20261005-d48d716",
     "date": "2026-10-05",
     "notes": [
@@ -144,13 +151,6 @@
     "notes": [
       "[수정·formula] 서브패널 전환 시 스크롤 리셋 — 모바일에서 폼 상단이 잘려 보이지 않던 결함",
       "[수정·build] manifest.<id>.webmanifest 재생성 시 shortcuts 소실 수정 — exams.json pwaShortcuts 패스스루 (UX-PWA-06)"
-    ]
-  },
-  {
-    "version": "v20261004-307ee41",
-    "date": "2026-10-04",
-    "notes": [
-      "[수정·formula] 기성품 폼 모바일 행 분리 — 제품명·브랜드 세로 스택"
     ]
   }
 ]
