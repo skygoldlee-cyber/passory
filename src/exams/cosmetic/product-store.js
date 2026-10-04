@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
@@ -55,6 +55,14 @@ const PROTECTED_COMMA_RE = /(\d),(\d)/g;
 const COMMA_GUARD = '\u0000';
 // 전성분 구분자 — 쉼표·중점·개행·세미콜론·파이프
 const SEP_RE = /[,·•\n;|]+/;
+// 필드 라벨 — 판매 페이지·라벨 원문 복사 시 '전성분:' 같은 필드 표기가 첫 성분
+// 토큰에 딸려 오는 오염 방지. 성분명이 될 수 없는 키워드만 구분자로 승격한다
+// (뒤따르는 괄호 주석·콜론·공백까지 흡수 — "전성분(배합 순서): " 패턴 대응).
+// '제품명:' 등 다른 필드는 의도적으로 남긴다 — 원문 보존 원칙 (FO-48).
+const FIELD_LABEL_RE = /(?:전\s*성\s*분\s*표?|全\s*成\s*分|성\s*분\s*표|ingredients?\b(?:\s+list)?)\s*(?:[(\[（][^)\]）]{0,40}[)\]）])?\s*[:：]?\s*/gi;
+// 토큰 양끝 장식 — 따옴표·괄호에 문장부호(마침표·줄임표·콜론) 추가. 한국 INCI
+// 성분명은 이 문자들로 시작·끝나지 않으므로 무손실 제거다 (FO-48).
+const TOKEN_EDGE_RE = /^["'「『(\[〈《.。…:：]+|["'」』)\]〉》。.…:：]+$/g;
 
 /**
  * 전성분 텍스트를 성분명 배열로 파싱한다 — 표시 순서 보존.
@@ -66,9 +74,10 @@ const SEP_RE = /[,·•\n;|]+/;
 export function parseFullIngredients(text) {
   if (typeof text !== 'string' || !text.trim()) return [];
   return text
+    .replace(FIELD_LABEL_RE, '\n')
     .replace(PROTECTED_COMMA_RE, `$1${COMMA_GUARD}$2`)
     .split(SEP_RE)
-    .map(s => s.replace(new RegExp(COMMA_GUARD, 'g'), ',').trim().replace(/^["'「『(\[〈《]+|["'」』)\]〉》]+$/g, '').trim())
+    .map(s => s.replace(new RegExp(COMMA_GUARD, 'g'), ',').trim().replace(TOKEN_EDGE_RE, '').trim())
     .filter(Boolean)
     .slice(0, MAX_ING_COUNT)
     .map(s => s.slice(0, MAX_ING_NAME_LEN));

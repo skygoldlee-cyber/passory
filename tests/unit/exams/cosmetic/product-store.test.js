@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -84,6 +84,31 @@ test('파서 — 빈 입력·비문자열은 빈 배열', () => {
 test('파서 — 미등록 성분도 원문 보존 (정보 손실 없음)', () => {
   const r = parseFullIngredients('정제수, 우리집비법원료, 글리세린');
   assert.deepEqual(r[1], '우리집비법원료');
+});
+
+test('파서 — 전성분 필드 라벨은 구분자로 승격 (FO-48)', () => {
+  const want = ['정제수', '글리세린'];
+  assert.deepEqual(parseFullIngredients('전성분: 정제수, 글리세린'), want);
+  assert.deepEqual(parseFullIngredients('전 성분\n정제수, 글리세린'), want);
+  assert.deepEqual(parseFullIngredients('전성분표 : 정제수, 글리세린'), want);
+  assert.deepEqual(parseFullIngredients('全成分：정제수, 글리세린'), want);
+  assert.deepEqual(parseFullIngredients('INGREDIENTS: 정제수, 글리세린'), want);
+  assert.deepEqual(parseFullIngredients('전성분(배합 순서): 정제수, 글리세린'), want);
+});
+
+test('파서 — 문장 끝 마침표·줄임표 제거 (FO-48)', () => {
+  assert.deepEqual(
+    parseFullIngredients('정제수, 글리세린, 부틸렌글라이콜.'),
+    ['정제수', '글리세린', '부틸렌글라이콜']);
+  assert.deepEqual(
+    parseFullIngredients('정제수, 글리세린, 부틸렌글라이콜…'),
+    ['정제수', '글리세린', '부틸렌글라이콜']);
+});
+
+test('파서 — 다른 필드 라벨은 제거하지 않음 — 칩 삭제로 처리 (FO-48)', () => {
+  // '제품명:' 같은 비전성분 필드는 원문 보존 — 라벨 승격은 성분명 불가 키워드 한정
+  const r = parseFullIngredients('제품명: 어떤세럼, 전성분: 정제수, 글리세린');
+  assert.deepEqual(r, ['제품명: 어떤세럼', '정제수', '글리세린']);
 });
 
 /* =======================================================
