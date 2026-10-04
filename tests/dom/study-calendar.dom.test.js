@@ -118,4 +118,15 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(el('goal-settings-modal')).toBeNull();
         expect(storedJson(STORAGE_KEYS.STUDY_GOALS)).toBeNull();
     });
+
+    it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {
+        openGoalSettings();
+
+        const modal = el('goal-settings-modal');
+        expect(modal.getAttribute('role')).toBe('dialog');
+        expect(modal.getAttribute('aria-modal')).toBe('true');
+        expect(modal.style.height).toContain('--app-height');
+        // 내용 초과 시 내부 스크롤되는 규약 클래스 (check:mobilesafe)
+        expect(modal.querySelector('.dialog-card')).not.toBeNull();
+    });
 });

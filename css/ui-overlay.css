@@ -94,6 +94,10 @@
   .nav-init-fail-banner {
     bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   }
+  /* SW 업데이트 토스트도 탭 바 위로 — 인라인 스타일 덮기 */
+  #sw-update-toast {
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
 /* ── 컨펌 모달 / 변경 이력 모달 공용 백드롭 ── */
@@ -130,8 +134,9 @@
   padding: 1.5rem;
   max-width: 400px;
   width: 90vw;
-  /* 모바일·가로 모드 — 긴 내용이 뷰포트를 넘을 때 다이얼로그 내부 스크롤 */
-  max-height: 90dvh;
+  /* 모바일·가로 모드 — 긴 내용이 뷰포트를 넘을 때 다이얼로그 내부 스크롤.
+     JS 실측 뷰포트 — PWA 콜드스타트 dvh 과대측정·가상 키보드 대응 (UX-PWA-05) */
+  max-height: calc(var(--app-height, 100dvh) * 0.9);
   overflow-y: auto;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
   transform: scale(0.95);
@@ -370,7 +375,7 @@
   width: 100%;
   max-width: 380px;
   /* 모바일·가로 모드 — 필드+안내 문구가 뷰포트를 넘을 때 내부 스크롤 */
-  max-height: 90dvh;
+  max-height: calc(var(--app-height, 100dvh) * 0.9);
   overflow-y: auto;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -725,6 +730,6 @@
 
 /* 통계 표가 길어질 때 대비 — 뷰포트 내 스크롤 */
 #usage-stats-overlay .app-confirm-dialog {
-  max-height: 85vh;
+  max-height: calc(var(--app-height, 100dvh) * 0.85);
   overflow-y: auto;
 }

@@ -155,6 +155,19 @@ describe('데일리 챌린지 — 생성·진행·완료·스트릭', () => {
         expect(el('daily-modal-answer-area').textContent).toContain('완벽히 외움');
     });
 
+    it('챌린지 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', async () => {
+        setupDailyData();
+        startDailyChallenge();
+        await flushAsync();
+
+        const modal = el('daily-challenge-modal');
+        expect(modal.getAttribute('role')).toBe('dialog');
+        expect(modal.getAttribute('aria-modal')).toBe('true');
+        expect(modal.style.height).toContain('--app-height');
+        // 내용 초과 시 내부 스크롤되는 규약 클래스 (check:mobilesafe)
+        expect(modal.querySelector('.dialog-card')).not.toBeNull();
+    });
+
     it('카드 문항 외움 표시 → memorizedCards + 피드백 + 다음 버튼', async () => {
         setupDailyData();
         startDailyChallenge();

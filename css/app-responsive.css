@@ -188,6 +188,11 @@
         -webkit-overflow-scrolling: touch;
     }
 
+    /* 설정 드롭다운 — 패널 하단이 하단 탭 바(70px+safe, z-drawer) 아래로 가려지지 않도록 상한 축소 */
+    .settings-panel {
+        max-height: calc(var(--app-height, 100dvh) - 5rem - 76px - env(safe-area-inset-bottom, 0px));
+    }
+
     /* 헤더 간소화 + sticky */
     .app-header {
         padding: 1rem 1.25rem;
@@ -370,7 +375,7 @@
         background: var(--bg-sidebar);
         border-top: 1px solid var(--border-color);
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        max-height: 72vh;
+        max-height: calc(var(--app-height, 100dvh) * 0.72);
         display: flex;
         flex-direction: column;
         box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
@@ -655,7 +660,7 @@
     position: relative;
     width: 100%;
     max-width: 420px;
-    max-height: 86vh;
+    max-height: calc(var(--app-height, 100dvh) * 0.86);
     overflow-y: auto;
     background: var(--bg-card);
     border: 1px solid var(--border-color);

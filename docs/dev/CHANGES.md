@@ -6,6 +6,16 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 모바일 가림·잘림 유사 결함 전수조사 — 9곳 일괄 정규화
+
+- 배경: 자가 등록 모달 탭 바 가림(직전 항목)과 동일 계열을 전수 조사 — CSS fixed/sticky 37곳 + JS 동적 생성 오버레이 7곳 인벤토리
+- **z-index 계층 오류 (동일 계열 확정)**: `.reader-table-modal`(표 확대·mermaid 줌·이미지 라이트박스 3종 공용)이 `--z-popover`(200)라 모바일 탭 바(1400)·TOC 드로어(1400/1500) 아래에 그려짐 → `var(--z-modal, 2000)` 상향
+- **스크롤 계약 부재 (초기 cing 버그와 동형)**: `#daily-challenge-modal`·`#goal-settings-modal` 카드에 max-height+스크롤이 없어 내용 초과 시 중앙정렬로 상·하단 잘림 → `.dialog-card` 적용 + `role="dialog"`·`aria-modal` 부여(mobilesafe 정적 스캔 편입 — 다이얼로그 12→14곳) + 오버레이도 `var(--app-height)` 실측 높이로 제한(입력 필드 키보드 대응)
+- **raw vh/dvh 정규화**: `.app-confirm-dialog`(컨펌·의견·Pro·온보딩·변경이력 공용)·`.auth-modal-card`·usage-stats·`.reader-table-modal-content`·`.more-sheet-panel`·`.pwa-modal-card` → `calc(var(--app-height, 100dvh) × N)` — PWA 콜드스타트 dvh 과대측정·가상 키보드 동일 잠재 결함 차단 (UX-PWA-05)
+- **minor**: `.settings-panel` 모바일 상한을 탭 바 위로 축소(드롭다운 하단이 z-drawer 아래로 가려지던 것), `#sw-update-toast` 모바일 위치를 탭 바 위로 이동(시각 겹침 — pointer-events:none 정보 전용)
+- **테스트**: `study-calendar.dom` +1·`study-challenge.dom` +1 — 두 모달의 잘림 계약(role=dialog·aria-modal·dialog-card·--app-height) 단언
+- 확인된 정상: 토스트·배너·리더 하단 버튼군은 이미 탭 바 위 오프셋 규약 적용됨, 공용 오버레이(컨펌·수동·문서·html-ref·exit·loading) 전부 modal/banner 계층 정상
+
 ## 2026-10-19 자가 등록 모달 하단 잘림 실원인 — 모바일 탭 바 z-index 가림
 
 - 증상: 실기기 모바일에서 자가 성분 등록 창이 커졌을 때 하단(등록·취소 버튼)이 여전히 잘림 — `--app-height` 뷰포트 수정 후에도 동일

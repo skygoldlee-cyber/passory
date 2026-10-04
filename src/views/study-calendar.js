@@ -192,8 +192,8 @@ export function openGoalSettings() {
     if (oldModal) oldModal.remove();
 
     const modalHTML = `
-        <div id="goal-settings-modal" class="modal-overlay" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(11,15,25,0.85);backdrop-filter:blur(10px);">
-            <div class="glass-card" style="width:90%;max-width:480px;padding:2rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);">
+        <div id="goal-settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="학습 목표 설정" style="position:fixed;top:0;left:0;right:0;height:var(--app-height,100dvh);z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(11,15,25,0.85);backdrop-filter:blur(10px);">
+            <div class="glass-card dialog-card" style="width:90%;max-width:480px;padding:2rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
                     <h3 style="font-weight:700;color:var(--color-primary);margin:0;">
                         <i class="fa-solid fa-bullseye" aria-hidden="true"></i> 학습 목표 설정
