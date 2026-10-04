@@ -29,6 +29,7 @@
     "check:reflayout": "node tools/check/check_reflayout.js",
     "check:reffresh": "node tools/check/check_ref_freshness.js",
     "check:reflines": "node tools/check/check_ref_lines.js",
+    "check:numbering": "node tools/check/check_numbering.js",
     "check:drillfresh": "node tools/check/check_drill_freshness.js",
     "check:answers": "node tools/check/check_answer_overlap.js",
     "fix:quotes": "node tools/sync/fix_answer_quotes.js",

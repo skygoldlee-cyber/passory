@@ -36,6 +36,8 @@ const STEPS = [
     '구조', '교재/문제은행 파일 ↔ manifest·sw.js MD_ASSETS 구조 드리프트', true],
   ['node', ['tools/sync/sync_citation_lines.js', '--check'], false,
     '인용', '문제은행 → 교재 #L라인번호 인용 동기화 상태', true],
+  ['node', ['tools/check/check_numbering.js'], false,
+    '번호', '교재 십진법 번호체계 — 구식 잔재·연속성·계층·중복 (표준↔이야기 동기화는 경고)', true],
   ['node', ['tools/check/check_answer_overlap.js'], false,
     '인용', '문제 정답 ↔ 인용 근거 구절 의미적 지지 (정답 미지지 기준선 게이트)', true],
   ['node', ['tools/check/check_ref_subjects.js'], false,
