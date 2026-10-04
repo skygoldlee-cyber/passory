@@ -97,9 +97,12 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
 
         productNew();
         expect(isVisible('formula-product-form-panel')).toBe(true);
-        // 제형 콤보는 소수치용 unit 축소 클래스가 아닌 일반 폭이어야 텍스트가 안 잘림
-        expect(el('prod-category').closest('.formula-field').classList.contains('formula-field-unit')).toBe(false);
+        // 제형은 팝업이 없는 라디오 칩 그룹 — 모바일 탭 바 침범 결함 방지
+        const catGroup = el('prod-category');
+        expect(catGroup.getAttribute('role')).toBe('radiogroup');
+        expect(catGroup.querySelectorAll('input[name="prod-cat"]').length).toBe(10); // 미선택 + 제형 9종
         el('prod-name').value = '수분 크림';
+        catGroup.querySelector('input[value="크림·밤"]').checked = true;
         el('prod-brand').value = 'OO랩';
         setInciInput('정제수, 살리실산, 1,2-헥산디올·우리집비법원료');
 
@@ -113,6 +116,7 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         productSave();
         expect(isVisible('formula-product-detail-panel')).toBe(true);
         expect(listProducts().length).toBe(1);
+        expect(listProducts()[0].category).toBe('크림·밤'); // 칩 선택이 저장 계약으로 이어짐
         const detail = el('product-detail').innerHTML;
         expect(detail).toContain('수분 크림');
         expect(detail).toContain('공식 등록 1');

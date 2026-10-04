@@ -181,7 +181,11 @@ export function productEdit(id) {
   openProductForm('기성품 수정');
   getEl('prod-name').value = p.name || '';
   getEl('prod-brand').value = p.brand || '';
-  getEl('prod-category').value = p.category || '';
+  const catEl = getEl('prod-category');
+  if (catEl) catEl.querySelectorAll('input[name="prod-cat"]').forEach(r => {
+    const inp = /** @type {HTMLInputElement} */ (r);
+    inp.checked = inp.value === (p.category || '');
+  });
   getEl('prod-note').value = p.note || '';
   getEl('prod-inci-input').value = (p.ingredients || []).join(', ');
   renderInciChips();
@@ -359,10 +363,12 @@ function openProductForm(title) {
   const titleEl = getEl('product-form-title');
   if (titleEl) titleEl.textContent = title;
   // 제형 선택지 — CUSTOMER_OPTIONS.formulation 공유 (스토어 계약과 동일 enum)
-  const catEl = /** @type {HTMLSelectElement|null} */ (document.getElementById('prod-category'));
-  if (catEl && !catEl.options.length) {
-    catEl.innerHTML = '<option value="">미선택</option>'
-      + CUSTOMER_OPTIONS.formulation.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+  // 네이티브 select 팝업이 모바일 탭 바 영역을 침범하는 결함 → 라디오 칩 그룹
+  const catEl = getEl('prod-category');
+  if (catEl && !catEl.children.length) {
+    catEl.innerHTML = [''].concat(CUSTOMER_OPTIONS.formulation).map((f, i) =>
+      `<label class="formula-chip"><input type="radio" name="prod-cat" value="${esc(f)}"${i === 0 ? ' checked' : ''}><span>${esc(f || '미선택')}</span></label>`
+    ).join('');
   }
   const ta = getEl('prod-inci-input');
   if (ta && !ta.dataset.bound) {
@@ -421,10 +427,12 @@ export function productIngRegister(name) {
 }
 
 export function productSave() {
+  const catGroup = getEl('prod-category');
+  const catChecked = /** @type {HTMLInputElement|null} */ (catGroup && catGroup.querySelector('input[name="prod-cat"]:checked'));
   const data = {
     name: getEl('prod-name').value,
     brand: getEl('prod-brand').value,
-    category: getEl('prod-category').value,
+    category: catChecked ? catChecked.value : '',
     ingredients: prodForm.ingredients,
     note: getEl('prod-note').value,
   };

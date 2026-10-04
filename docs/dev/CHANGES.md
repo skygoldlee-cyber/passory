@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 기성품 폼 제형 콤보 탭 바 침범 — 네이티브 select → 라디오 칩 그룹
+
+- `prod-category`를 `<select>`에서 `formula-chip` 라디오 그룹(role=radiogroup)으로 교체 — 네이티브 팝업이 펼쳐질 때 하단 항목이 모바일 탭 바 영역을 침범하던 결함 제거 (팝업 자체가 사라짐)
+- 선택지는 `CUSTOMER_OPTIONS.formulation` 공유 유지, '미선택' 칩 포함 10개 — 편집·저장·표시 계약 동일
+- DOM 단언 보강: radiogroup 역할·칩 10개·칩 선택→category 저장
+
 ## 2026-10-19 기성품 폼 제형 콤보 글자 잘림 — unit 축소 클래스 제거
 
 - `prod-category` 라벨에서 `formula-field-unit`(flex 0 0 110px — 나이·pH 등 소수치 필드용)을 제거해 일반 필드 폭(flex 1, min 140px)으로 교정 — '로션·에멀전' 등 옵션 텍스트가 화살표 영역까지 침범해 잘리던 문제
