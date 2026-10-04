@@ -6,6 +6,13 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-04 생성물 드리프트 수정 — 시험별 webmanifest shortcuts 생성기 패스스루 (UX-PWA-06)
+
+- `build_exams_list.js`가 `manifest.<id>.webmanifest` 재생성 시 `shortcuts`를 소실시키던 결함 수정 — 8a155e92에서 SPEC 선행으로 수동 편집된 '배합 계산기' shortcut이 `build:data`마다 사라져 `check:datafresh`가 드리프트로 검출
+- exams.json에 시험별 선택 필드 `pwaShortcuts` 신설 (cosmetic에 '배합 계산기' `#/formula` 딥링크 선언) → `buildExamManifest()`(순수 함수로 추출·export)가 `shortcuts`로 패스스루 — 플랫폼 공통 `manifest.webmanifest`는 여전히 shortcuts 없음 (SPEC "시험별 매니페스트에만 선언" 유지)
+- 생성물 동기화: `registry.js`·`study_md/manifest.js`에 `knowledge.productKey`(FO-37 기성품 연동) 반영 — upstream이 manifest.json 갱신 후 번들 재생성을 누락한 드리프트 커밋
+- 테스트: `pwa-sw.test.js`에 UX-PWA-06 단언 2건 (패스스루 계약 + 생성물↔exams.json 일치)
+
 ## 2026-10-19 기성품 폼 모바일 행 분리 — 제품명·브랜드·제형 세로 스택
 
 - `prod-meta-row` 클래스 추가 + ≤700px에서 자식 필드를 `flex: 0 0 100%`로 전환 — 모바일에서 제품명·브랜드가 한 행에 나란히 눌려 입력폭이 잘리던 문제 해소

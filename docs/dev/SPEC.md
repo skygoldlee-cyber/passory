@@ -616,7 +616,7 @@
 | UX-PWA-03 | **SW Cache First는 CSS/JS 즉시 반영 안 됨**: 배포 후 최소 1~2회 재실행 필요 (구 SW 서빙 → 새 SW 설치 → 재실행 시 반영) | "배포했는데 안 바뀐다" 보고의 대부분이 이 패턴. 사용자 안내 문구와 업데이트 토스트 필수 |
 | UX-PWA-04 | **설치 버튼은 `beforeinstallprompt` 캡처 후에만 표시** | 미설치 상태에서만 노출, 설치 후 자동 숨김 — 헤더 공간 절약 |
 | UX-PWA-05 | **앱 셸 높이는 JS 실측 `--app-height` 사용**: `.app-container { height: var(--app-height, 100dvh) }` + `visualViewport.height`/`innerHeight` 측정, resize 계열 이벤트에 자동 갱신 | PWA 콜드 스타트에서 `dvh`가 실제 화면보다 크게 측정되면 `.main-content` 끝이 화면 밖으로 밀려 스크롤 끝 콘텐츠가 탭 바에 가려짐(대시보드 '내 학습 분석·도구' 실제 장애). JS 미실행 시 `100dvh` 폴백 |
-| UX-PWA-06 | **manifest `shortcuts`로 작업 직행 제공**: cosmetic 매니페스트에 '배합 계산기' 딥링크(`./index.html#/formula`) 등록 — 설치형 PWA의 앱 아이콘 길게 눌러 바로 진입 | 현장(실습·조제실)에서 대시보드 경유 탭을 생략. 시험 도메인 기능이라 플랫폼 공통 `manifest.webmanifest`가 아닌 시험별 매니페스트에만 선언 |
+| UX-PWA-06 | **manifest `shortcuts`로 작업 직행 제공**: cosmetic 매니페스트에 '배합 계산기' 딥링크(`./index.html#/formula`) 등록 — 설치형 PWA의 앱 아이콘 길게 눌러 바로 진입 | 현장(실습·조제실)에서 대시보드 경유 탭을 생략. 시험 도메인 기능이라 플랫폼 공통 `manifest.webmanifest`가 아닌 시험별 매니페스트에만 선언 — exams.json `pwaShortcuts` → `build_exams_list.js` 패스스루 |
 
 #### 4.8.6 폼·입력
 

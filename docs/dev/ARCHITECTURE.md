@@ -424,7 +424,7 @@ passory/
 │   │   ├── build_doc_bundles.js    #   학습안내서/매뉴얼 폴백 번들
 │   │   ├── build_exam_bundles.js   #   문제은행 폴백 번들
 │   │   ├── build_study_md_bundle.js #  교재 폴백 번들 (과목별 분할)
-│   │   ├── build_exams_list.js     #   exams.json → data/exams.js 레지스트리 번들
+│   │   ├── build_exams_list.js     #   exams.json → data/exams.js 레지스트리 번들 + manifest.<id>.webmanifest
 │   │   ├── build_all_data.js       #   전 시험 순회 빌드 오케스트레이터
 │   │   ├── build_question_chapters.js # 문항→챕터 매핑 번들
 │   │   ├── build_id_migration.js   #   진도 이관 맵 생성
@@ -1937,6 +1937,7 @@ npm.cmd run deploy
 | 파일 | 생성 스크립트 |
 |------|-------------|
 | `data/exams.js` | `tools/build/build_exams_list.js` |
+| `manifest.<id>.webmanifest` | `tools/build/build_exams_list.js` (exams.json `pwaShortcuts` → `shortcuts` 패스스루) |
 | `<droot>/registry.js` | `tools/build/index.js` |
 | `<droot>/exams/*.hash.js` | `tools/build/index.js` (exams.plugin.js) |
 | `<droot>/exams_md/*.js` | `tools/build/build_exam_bundles.js` |
