@@ -32,6 +32,7 @@
     "check:drillfresh": "node tools/check/check_drill_freshness.js",
     "check:answers": "node tools/check/check_answer_overlap.js",
     "fix:quotes": "node tools/sync/fix_answer_quotes.js",
+    "fix:citations": "node tools/sync/fix_citation_targets.js",
     "check:docbundles": "node tools/build/build_doc_bundles.js --check",
     "check:datafresh": "node tools/check/check_data_freshness.js",
     "check:hooks": "node tools/check/check_hooks.js",

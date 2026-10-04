@@ -74,6 +74,7 @@ npm.cmd run check:reflines              # 교재 (LNN)/📌출처 조문 ↔ ref
 npm.cmd run check:drillfresh            # 드릴 번들 ↔ 문제은행 번들 신선도 (stale 시 npm run build:drills)
 npm.cmd run check:answers               # 문제 정답 ↔ 인용 근거 구절 의미적 지지 (내장 인용문→인용 원문 2단계, 정답 미지지 기준선 게이트 — 신규 무근거 인용 차단)
 npm.cmd run fix:quotes                  # 부실 인용문 자동 보강 — 원문이 정답을 지지하는데 내장 구절이 절단된 경우 인용 라인 이후로 확장·블록 내 지지 라인으로 교체 (--check=보고만)
+npm.cmd run fix:citations               # 정답 미지지 문항 인용 위치 자동 교정 — 인용 파일→시험 코퍼스(교재→참조자료) 순으로 실제 지지 위치를 탐색해 링크·인용문 재지정 (--check=보고만)
 npm.cmd run check:docbundles           # docs_md 번들 ↔ 원본 문서 신선도 (check:content에 포함)
 npm.cmd run check:datafresh            # data/·생성물 ↔ 원본 신선도 — 빌드 체인 실행 후 git diff 비교·자동 원복 (생성물 경로가 clean이어야 실행 가능)
 npm.cmd run check:docs                  # README·AGENTS·docs/*.md 내 경로 참조 존재 검증 + 문서 ID 누락·중복 검증 + 디렉토리 구조 정합 (check_inventory) + npm 명령 정합 (check_npm_commands) + 플랜 키 정합 (check_plan_features) + 도메인 기능 플래그 정합 (check_feature_flags) + 저장소 접근 탐지 (check_storage_access) + 릴리스 노트 정합 (check_release_notes) + CI 패리티 (check_ci_parity)

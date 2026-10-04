@@ -46,6 +46,24 @@ function strongShare(a, b) {
     return false;
 }
 
+// 숫자 정답의 주제 일치 — stem과 text가 비숫자 4-gram을 2개 이상 공유해야 한다.
+// 단일 4-gram("화장품법" 등 도메인 상용구)으로는 같은 숫자의 무관한 조항
+// (예: "15일 이내" → 과징금 독촉 조항)과 구분되지 않으므로 다중 공유를 요구한다.
+function stemTopicMatch(stem, text) {
+    if (!stem) return true; // stem 정보가 없으면 게이트 생략
+    const A = compact(stem), B = compact(text);
+    if (!A || !B) return true;
+    let hits = 0;
+    const seen = new Set();
+    for (let i = 0; i + 4 <= A.length; i++) {
+        const g = A.slice(i, i + 4);
+        if (/\d/.test(g) || seen.has(g)) continue;
+        seen.add(g);
+        if (B.includes(g) && ++hits >= 2) return true;
+    }
+    return false;
+}
+
 // 수정 후보 텍스트가 정답을 '강하게' 지지하는가 — isSupported보다 엄격한 게이트
 function stronglySupported(q, a, text) {
     const isChoice = /^[①-⑤]$/.test(a.answer);
@@ -59,7 +77,11 @@ function stronglySupported(q, a, text) {
     }
     if (!q) return false;
     const opt = q.options[CIRCLED_IDX[a.answer] - 1] || '';
-    if (/해설/.test(text)) return true; // 해설 존재 자체가 지지
+    if (/해설/.test(text)) {
+        // 해설은 '이 문항과 관련된' 설명이어야 지지 — 선택지 중 하나와라도 겹쳐야 함
+        // (교재 내 확인문제 라인 "(정답: ④) **해설**"이 무관한 문항에 오작동하는 것을 차단)
+        if (q.options.some(o => strongShare(o, text))) return true;
+    }
     if (!NEGATIVE_STEM_RE.test(q.stem)) {
         return strongShare(opt, text); // 긍정형: 정답 강한 지지
     }
@@ -187,4 +209,4 @@ function run() {
 }
 
 if (require.main === module) run();
-module.exports = { expandForward, bestBlockLine, quoteWindow, strongShare, stronglySupported };
+module.exports = { expandForward, bestBlockLine, quoteWindow, strongShare, stronglySupported, stemTopicMatch };

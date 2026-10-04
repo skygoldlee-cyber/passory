@@ -92,3 +92,43 @@ test('quoteWindow — 래핑된 조문은 문단 경계까지 포함한다', () 
     assert.equal(win[0], src[2]);
     assert.equal(win[win.length - 1], src[3]);
 });
+
+// ── fix_citation_targets: 숫자 정답의 stem 주제 일치 요구 ──────
+import targets from '../../tools/sync/fix_citation_targets.js';
+const { labelOf, isDigitAnswer } = targets;
+const { stemTopicMatch, stronglySupported } = fixer;
+
+test('stronglySupported — 정답 지지 판정 (주제 게이트는 findSupport 책임)', () => {
+    const q = choiceQ(['금속이온봉쇄제', '보존제', '점증제', '유화제', '색소'], '원료의 역할은?');
+    assert.ok(stronglySupported(q, ans('①'), '금속이온봉쇄제는 원료 내 금속이온과 결합해 변색을 방지한다'));
+    // 무관한 라인은 지지 아님
+    assert.ok(!stronglySupported(q, ans('①'), '보존제는 미생물 증식을 억제한다'));
+});
+
+test('stemTopicMatch — 숫자 정답의 주제 일치로 무관한 동일-숫자 조항을 걸러낸다', () => {
+    const stem = '화장품 표시·광고의 실증자료 제출을 요구받은 경우 제출 기한은?';
+    // 실증자료 규정 — 주제 4-gram 2개+("실증자료"+"자료제출") 공유 → 일치
+    assert.ok(stemTopicMatch(stem, '실증 자료의 범위 및 요건(자료 제출 요청일로부터 15일 이내 제출)'));
+    // 같은 "15일"이지만 주제가 다른 조항 → 불일치
+    assert.ok(!stemTopicMatch(stem, '과징금 납부의 의무자가 납부기한까지 내지 않으면 기한이 지난 후 15일 이내에 독촉장을 발급한다'));
+    assert.ok(!stemTopicMatch(stem, '해설: 중대한 유해사례는 15일 이내 신속보고한다'));
+    // 단일 범용 4-gram("화장품법")만 공유하는 라인도 불일치 (다중 공유 요구)
+    assert.ok(!stemTopicMatch(stem, '화장품법에 따라 15일 이내 보고한다'));
+    // stem 없음/빈 경우 게이트 생략
+    assert.ok(stemTopicMatch('', '아무 텍스트'));
+});
+
+test('isDigitAnswer — 숫자 포함 정답(선택지·단답) 판별', () => {
+    const q = choiceQ(['7일 이내', '15일 이내', '30일 이내', '60일 이내', '90일 이내']);
+    assert.ok(isDigitAnswer(q, ans('②')));
+    assert.ok(!isDigitAnswer(choiceQ(['금속이온봉쇄제', '보존제', '점증제', '유화제', '색소']), ans('①')));
+    assert.ok(isDigitAnswer(null, ans('30')));
+    assert.ok(!isDigitAnswer(null, ans('피부')));
+});
+
+test('labelOf — 참조자료 파일명에서 문서 라벨을 추출한다', () => {
+    const root = 'C:/content/exams/cosmetic';
+    assert.equal(labelOf(`${root}/교재/law/1과목_표준형.md`, root), '교재');
+    const ref = `${root}/참조자료/ref_md/과목1/화장품법 시행규칙(총리령)(제02109호)(20260402)/화장품법 시행규칙(총리령)(제02109호)(20260402).md`;
+    assert.equal(labelOf(ref, root), '화장품법 시행규칙');
+});

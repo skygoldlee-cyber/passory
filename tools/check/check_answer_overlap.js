@@ -34,7 +34,7 @@ const VERBOSE = process.argv.includes('--verbose');
 
 // 정답 미지지 기준선 — 실측 잔여(기존 콘텐츠 점진 정리 대상).
 // 신규 문항의 무근거 인용 유입은 즉시 실패로 차단한다.
-const ANSWER_OVERLAP_BASELINE = 467;
+const ANSWER_OVERLAP_BASELINE = 199;
 
 const CIRCLED = { '①': 1, '②': 2, '③': 3, '④': 4, '⑤': 5 };
 const NEGATIVE_STEM_RE = /(아닌 것|않는 것|올바르지 않은|옳지 않은|틀린 것|해당하지 않는|포함되지 않는|아닌것|잘못된)/;
@@ -105,7 +105,7 @@ function parseQuestionBank(filePath) {
 
         // 정답부
         const am = line.match(/^\*\*Q(\d+)\.\*\*\s*$/);
-        if (am) { flushA(); curAns = { num: +am[1], answer: '', allowed: [], passage: '', cite: '' }; continue; }
+        if (am) { flushA(); curAns = { num: +am[1], answer: '', allowed: [], passage: '', cite: '', entryStart: li }; continue; }
         if (!curAns) continue;
 
         const block = line.replace(/^>\s?/, '');
