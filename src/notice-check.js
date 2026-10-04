@@ -1,5 +1,5 @@
 // notice-check.js — 참조 법령·고시 감지 배너 (Formula OS 최초 진입 시)
-// @spec FO-24,RR-19
+// @spec FO-24,RR-19,DI-11
 //
 // 감시 대상은 시험별 references.json의 referenceLaw/noticeCore에서 유도된다
 // (cosmetic은 식약처 고시). GitHub Actions(주1회)가 law.go.kr 오픈API로
@@ -13,6 +13,7 @@ import { getActiveExamId } from './exam-context.js';
 import { escapeHTML } from './sanitize.js';
 import { lawUrlFor } from './law-links.js';
 import { getRefTables } from './pdf-registry.js';
+import { todayKey } from './utils.js';
 
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const LAW_BASE = 'https://www.law.go.kr';
@@ -339,6 +340,79 @@ export async function viewMfdsNoticeStatus() {
       <a href="${lawLink}" target="_blank" rel="noopener">고시 원문(law.go.kr)</a>
       <span class="notice-status-src">출처: ${source}</span>
     </div>`;
+}
+
+// ——— 성분사전 성분 고시 확인 (DI-11) ———
+
+/**
+ * 감시 문서 subset 필터 (순수 함수 — 테스트용)
+ * @param {Array} docs parseRefDoc 결과 목록
+ * @param {Array<string>|undefined} names 허용 문서명 (references.json.noticeIngredientDocs — 미선언 시 빈 subset)
+ */
+export function filterIngredientDocs(docs, names) {
+  const set = new Set(Array.isArray(names) ? names : []);
+  return docs.filter(d => set.has(d.name));
+}
+
+/** 활성 시험의 성분 관련 고시 문서 — 사전 '고시 확인' 버튼 노출 게이트 (DI-11) */
+export function dictNoticeDocs() {
+  return filterIngredientDocs(watchDocs(), getRefTables().NOTICE_INGREDIENT_DOCS);
+}
+
+/**
+ * 문서 1종의 기준↔최신 비교 행 (순수 함수 — 테스트용)
+ * @param {Object} doc parseRefDoc 결과
+ * @param {Object|null} live fetchLatestFor 결과 (실패 시 null)
+ * @param {string} today 'YYYY-MM-DD' — 시행 예정 개정본 판정 기준
+ * @returns {{name:string, text:string, mark:string, level:string, url:string}}
+ */
+export function dictNoticeRow(doc, live, today) {
+  const base = `${doc.baselineNotice || '—'}(${doc.baselineDate || '—'})`;
+  if (!live) {
+    return { name: doc.name, text: `${base} → 조회 실패`, mark: '❌', level: 'error', url: doc.url || LAW_BASE };
+  }
+  const latest = `${live.notice || '—'}(${live.effectiveDate || '—'})`;
+  const url = ruleInfoUrl(live.serial, doc.target, live.effectiveDate, doc.url);
+  let mark = '✅', level = 'ok';
+  if (doc.baselineDate && live.effectiveDate && live.effectiveDate > doc.baselineDate) {
+    level = live.effectiveDate > today ? 'pending' : 'newer';
+    mark = level === 'pending' ? '⏳ 시행 예정' : '⚠ 개정 감지';
+  }
+  return { name: doc.name, text: `${base} → ${latest}`, mark, level, url };
+}
+
+/** 사전 '고시 확인' 버튼 (data-click 위임) — 성분 관련 고시 subset을 law.go.kr에서 병렬 조회 (DI-11) */
+export async function checkDictNoticeNow() {
+  const panel = document.getElementById('dict-notice-result');
+  if (!panel) return;
+  if (!panel.classList.contains('is-hidden')) { panel.classList.add('is-hidden'); return; }
+  panel.classList.remove('is-hidden');
+  const docs = dictNoticeDocs();
+  if (!docs.length) {
+    panel.innerHTML = '<div class="dict-notice-loading">이 시험에는 성분 관련 고시 감시 대상이 선언되어 있지 않습니다.</div>';
+    return;
+  }
+  const btn = /** @type {HTMLButtonElement|null} */ (document.querySelector('[data-click="checkDictNoticeNow"]'));
+  panel.innerHTML = '<div class="dict-notice-loading">law.go.kr 확인 중…</div>';
+  if (btn) btn.disabled = true;
+  try {
+    const results = await Promise.allSettled(docs.map(d => fetchLatestFor(d)));
+    const today = todayKey();
+    const rows = docs.map((d, i) =>
+      dictNoticeRow(d, results[i].status === 'fulfilled' ? results[i].value : null, today));
+    const changed = rows.filter(r => r.level === 'newer' || r.level === 'pending').length;
+    const failed = rows.filter(r => r.level === 'error').length;
+    const head = changed
+      ? `⚠ 개정 감지 ${changed}종 — 원문을 확인하세요`
+      : `✅ 성분 관련 고시 ${docs.length - failed}종 모두 기준과 일치`;
+    panel.innerHTML = `
+      <div class="dict-notice-row dict-notice-head">${escapeHTML(head)}${failed ? ` (${failed}종 조회 실패)` : ''}</div>
+      ${rows.map(r => `<div class="dict-notice-row"><span class="dict-notice-name">· ${escapeHTML(r.name)}</span><span>${escapeHTML(r.text)} ${escapeHTML(r.mark)} <a href="${escapeHTML(r.url)}" target="_blank" rel="noopener">원문</a></span></div>`).join('')}`;
+  } catch (_) {
+    panel.innerHTML = '<div class="dict-notice-loading">확인 실패 — 네트워크 또는 law.go.kr 응답 오류. 잠시 후 다시 시도하세요.</div>';
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 /** 배너 닫기 (data-click 위임) — 같은 시행일의 고시는 다시 표시하지 않음 */

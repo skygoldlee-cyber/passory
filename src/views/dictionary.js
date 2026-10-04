@@ -1,5 +1,5 @@
 // src/views/dictionary.js - 지식DB(엔티티) 검색 사전 뷰 로직 및 그리드 스페이서 가상 스크롤 구현
-// @spec DI-01~08,DI-10,PF-09,FO-40
+// @spec DI-01~08,DI-10,DI-11,PF-09,FO-40
 // 스키마 드리븐 — manifest.knowledge → registry.knowledge가 엔티티 필드·필터·CSV를 선언한다.
 // registry.knowledge 미선언 시험은 사전 뷰가 "데이터셋 미설정" 안내로 처리된다 (화장품 폴백 없음).
 // 자가 등록: schema.customKey(STORAGE_KEYS 멤버명) 선언 시 로컬 등록 항목을 병합한다 —
@@ -14,6 +14,7 @@ import { DataLoader } from '../data-loader.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
 import { getJSON } from '../storage.js';
 import { switchView } from './navigation.js';
+import { dictNoticeDocs } from '../notice-check.js';
 
 /**
  * 지식DB 엔티티 스키마 기본값 — 화장품 원료 사전과 동일한 동작.
@@ -187,6 +188,24 @@ function renderCustomAddButton(schema) {
     }
 }
 
+/** 성분 고시 확인 버튼 — references.json.noticeIngredientDocs 선언 시험에만 노출 (DI-11) */
+function renderDictNoticeButton() {
+    const row = document.querySelector('#dictionary-view .dict-search-row');
+    if (!row) return;
+    let btn = document.getElementById('dict-notice-btn');
+    if (!dictNoticeDocs().length) { if (btn) btn.remove(); return; }
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'dict-notice-btn';
+        /** @type {HTMLButtonElement} */ (btn).type = 'button';
+        btn.className = 'btn btn-secondary flex-center gap-2';
+        btn.setAttribute('data-click', 'checkDictNoticeNow');
+        btn.setAttribute('title', '성분 관련 식약처 고시의 최신본을 law.go.kr에서 확인 — 개정 감지 시 원문 링크 제공');
+        btn.innerHTML = '<i class="fa-solid fa-file-shield" aria-hidden="true"></i> 고시 확인';
+        row.appendChild(btn);
+    }
+}
+
 /** 헤더 텍스트·검색 placeholder를 스키마에서 적용 (없으면 HTML 기본값 유지) */
 function applyDictHeader(schema) {
     const h = schema.header;
@@ -225,6 +244,7 @@ export function renderDictionary() {
     applyDictHeader(schema);
     renderFilterButtons(schema);
     renderCustomAddButton(schema);
+    renderDictNoticeButton();
 
     const reg = /** @type {any} */ (DataLoader.registry) || {};
     const meta = reg[(schema.registryKey)] || reg.ingredients || null;

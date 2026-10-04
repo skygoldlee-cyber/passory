@@ -84,6 +84,7 @@ import {
     dictExportCsv,
     dictOpenByName
 } from './views/dictionary.js';
+import { checkDictNoticeNow } from './notice-check.js';
 import {
     renderStudyCalendar,
     prevCalendarMonth,
@@ -548,7 +549,7 @@ const DELEGATED_HANDLERS = {
     startDailyChallenge, closeDailyModal, nextDailyStep,
     submitDailyCardAnswer, submitDailyShortAnswer,
     // 사전/시험 전환
-    clearDictSearch, setDictFilter, dictExportCsv, dictOpenByName, showExamSelect, selectExamAction,
+    clearDictSearch, setDictFilter, dictExportCsv, dictOpenByName, checkDictNoticeNow, showExamSelect, selectExamAction,
     // Formula OS (배합 계산·My 포뮬러) — 모듈·핸들러는 practice-registry 지연 로딩 (LAZY_MODULE_HANDLERS)
     showIngredientsChangelog,
     // 학습/실무 UI 모드

@@ -57,6 +57,11 @@ function examTablesJs(refs, contentRoot) {
     `        { name: ${JSON.stringify(item.name)}, file: ${JSON.stringify(item.file)}, type: ${JSON.stringify(item.type)}, dir: ${JSON.stringify(item.dir)} }`
   ).join(',\n');
 
+  // NOTICE_INGREDIENT_DOCS — 성분사전 '고시 확인' 조회 대상 (referenceLaw 문서명 subset)
+  const noticeIngJs = arr(refs.noticeIngredientDocs).map(n =>
+    `        ${JSON.stringify(n)}`
+  ).join(',\n');
+
   // REF_DIRS
   const refDirsJs = Object.entries(obj(refs.refDirs)).map(([dir, files]) => {
     const filesJs = files.length > 0
@@ -109,6 +114,9 @@ ${ingJs}
         ],
         REFERENCE_LAW: [
 ${lawJs}
+        ],
+        NOTICE_INGREDIENT_DOCS: [
+${noticeIngJs}
         ]`;
 }
 
@@ -212,6 +220,11 @@ function checkNamedRefs(refs, examId) {
   for (const [k, v] of Object.entries((refs && refs.subjectDefaultRefdoc) || {})) {
     if (v && !basenames.has(v)) {
       console.warn(`[${examId}] subjectDefaultRefdoc["${k}"]="${v}"이(가) referenceLaw 파일에 없습니다 — 파일명 변경 시 함께 갱신 필요`);
+    }
+  }
+  for (const n of (refs && refs.noticeIngredientDocs) || []) {
+    if (n && !docNames.has(n)) {
+      console.warn(`[${examId}] noticeIngredientDocs "${n}"이(가) referenceLaw 문서명과 일치하지 않습니다 — 사전 고시 확인 대상 확인`);
     }
   }
 }
@@ -373,6 +386,7 @@ for (const [eid, t] of Object.entries(_EXAM_TABLES)) {
  * @returns {{contentRoot?: string, SUBJECT_DIR_MAP?: Object, REF_DIRS?: Object,
  *   SOURCE_REF_MAP?: Array, KEYWORD_REF_MAP?: Array, REFERENCE_FILES?: Object,
  *   REFERENCE_COMMON?: Array, REFERENCE_INGREDIENTS?: Array, REFERENCE_LAW?: Array,
+ *   NOTICE_INGREDIENT_DOCS?: Array,
  *   REF_FILE_TO_PATH?: Object, REF_REGISTRY?: Object, REF_MD_SUBJECTS?: Object}}
  */
 export function getRefTables() {

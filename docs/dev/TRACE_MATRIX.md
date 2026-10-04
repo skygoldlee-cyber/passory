@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: e0aa6846c51136b4
-> 생성: 2026-10-04 · 원천: SPEC.md(430개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: c69cd0bab6d9f960
+> 생성: 2026-10-04 · 원천: SPEC.md(431개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 430개 — 문서 연결 276 · 소스 연결 398 · 테스트 연결 418 · 보고서 연결 109
+**커버리지 요약**: 요구사항 431개 — 문서 연결 276 · 소스 연결 399 · 테스트 연결 419 · 보고서 연결 109
 
 ---
 
@@ -204,6 +204,7 @@
 | DI-08 | ✅ | 테스트 | — | src/exams/cosmetic/custom-ingredient-store.js<br>src/exams/cosmetic/views/formula.js<br>src/views/dictionary.js | tests/dom/dictionary-custom.dom.test.js<br>tests/unit/exams/cosmetic/custom-ingredient-store.test.js | — | — |
 | DI-09 | ✅ | 테스트 | — | src/exams/cosmetic/custom-ingredient-store.js<br>src/exams/cosmetic/views/formula.js | tests/dom/exams/cosmetic/formula-calc.dom.test.js | — | — |
 | DI-10 | ✅ | 테스트 | — | src/views/dictionary.js | tests/dom/study-dictionary.dom.test.js | — | — |
+| DI-11 | ✅ | 테스트 | — | src/notice-check.js<br>src/views/dictionary.js | tests/dom/study-dictionary.dom.test.js<br>tests/unit/notice-check.test.js | — | — |
 
 ## 3.11 훈련소
 

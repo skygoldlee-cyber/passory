@@ -1,5 +1,5 @@
 // tests/dom/study-dictionary.dom.test.js — 성분 사전 시나리오
-// @spec DI-01~03,DI-10
+// @spec DI-01~03,DI-10~11
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 원료 카드 렌더·배지(H) · 검색(이름/영문/초성)·필터(H) · 빈 DB(E)
 //       · 결과 없음(B) · 카드 펼침(H) · 검색 초기화(H)
@@ -21,6 +21,7 @@ import {
     renderDictionary, filterDictionary, setDictFilter, clearDictSearch, dictState,
     dictExportCsv,
 } from '../../src/views/dictionary.js';
+import { checkDictNoticeNow } from '../../src/notice-check.js';
 import { showToast } from '../../src/ui-utils.js';
 
 // cosmetic/manifest.json의 knowledge 스키마를 반영한 축소본
@@ -211,5 +212,56 @@ describe('성분 사전 — 검색·필터·카드', () => {
 
         expect(dl.clicks.length).toBe(0);
         expect(vi.mocked(showToast).mock.calls.at(-1)[1]).toBe('warning');
+    });
+
+    it('고시 확인 — 선언 시험에만 버튼 노출 + 결과 패널 존재 (DI-11)', () => {
+        render();
+        const btn = document.getElementById('dict-notice-btn');
+        expect(btn).toBeTruthy();
+        expect(btn.getAttribute('data-click')).toBe('checkDictNoticeNow');
+        expect(el('dict-notice-result').classList.contains('is-hidden')).toBe(true);
+    });
+
+    it('고시 확인 — law.go.kr 조회 후 문서별 기준↔최신 행 표시 (DI-11)', async () => {
+        render();
+        // 문서별 번들 기준 시행일과 동일한 최신본을 반환 — '기준과 일치' 경로 검증
+        const BASELINE_DATES = {
+            '화장품 안전기준 등에 관한 규정': '20260318',
+            '기능성화장품 기준 및 시험방법': '20251216',
+            '화장품 사용할 때의 주의사항 및 알레르기 유발성분 표시에 관한 규정': '20260805',
+            '화장품의 색소 종류 및 기준': '20230921',
+        };
+        vi.stubGlobal('fetch', vi.fn(async (url) => {
+            const u = String(url);
+            if (u.includes('lawService.do')) {
+                return { ok: true, json: async () => ({ AdmRulService: { 발령고시: { 공포번호: '제2026-19호' } } }) };
+            }
+            const q = new URL(u).searchParams.get('query') || '';
+            return {
+                ok: true,
+                json: async () => ({
+                    AdmRulSearch: { admrul: [{ '행정규칙명': q, '시행일자': BASELINE_DATES[q] || '20260318', '행정규칙일련번호': '999' }] },
+                }),
+            };
+        }));
+        try {
+            await checkDictNoticeNow();
+            const panel = el('dict-notice-result');
+            expect(panel.classList.contains('is-hidden')).toBe(false);
+            expect(panel.textContent).toContain('모두 기준과 일치');
+            expect(panel.querySelectorAll('.dict-notice-row').length).toBeGreaterThan(1);
+            expect(panel.textContent).toContain('화장품 안전기준');
+            expect(panel.querySelector('a[href*="admRulInfoP"]')).toBeTruthy();
+        } finally {
+            vi.unstubAllGlobals();
+        }
+    });
+
+    it('고시 확인 — 패널 표시 중 재클릭 시 숨김 토글 (DI-11)', async () => {
+        render();
+        const panel = el('dict-notice-result');
+        panel.classList.remove('is-hidden');
+        await checkDictNoticeNow();
+        expect(panel.classList.contains('is-hidden')).toBe(true);
     });
 });

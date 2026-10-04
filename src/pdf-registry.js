@@ -230,6 +230,12 @@ const _EXAM_TABLES = {
         { name: "기능성화장품 심사에 관한 규정", file: "기능성화장품 심사에 관한 규정(식품의약품안전처고시)(제2025-88호)(20251216).pdf", type: "pdf", dir: "법령고시" },
         { name: "화장품 사용 시 주의사항 및 알레르기", file: "화장품 사용할 때의 주의사항 및 알레르기 유발성분 표시에 관한 규정(식품의약품안전처고시)(제2026-56호)(20260805).pdf", type: "pdf", dir: "법령고시" },
         { name: "화장품의 색소 종류 및 기준", file: "화장품의 색소 종류 및 기준(식품의약품안전처고시)(제2023-61호)(20230921).pdf", type: "pdf", dir: "법령고시" }
+        ],
+        NOTICE_INGREDIENT_DOCS: [
+        "화장품 안전기준 등에 관한 규정",
+        "기능성화장품 기준 및 시험방법",
+        "화장품 사용할 때의 주의사항 및 알레르기 유발성분 표시에 관한 규정",
+        "화장품의 색소 종류 및 기준"
         ]
     },
     "food": {
@@ -270,6 +276,9 @@ const _EXAM_TABLES = {
         { name: "식품위생법", file: "식품위생법(법률)(제21065호)(20251001).pdf", type: "pdf", dir: "법령고시" },
         { name: "식품의 기준 및 규격 (식품공전)", file: "식품의 기준 및 규격(식품의약품안전처고시)(제2026-55호)(20260731).pdf", type: "pdf", dir: "법령고시" },
         { name: "식품등의 표시기준", file: "식품등의 표시기준(식품의약품안전처고시)(제2026-37호)(20260512).pdf", type: "pdf", dir: "법령고시" }
+        ],
+        NOTICE_INGREDIENT_DOCS: [
+
         ]
     }
 };
@@ -305,6 +314,7 @@ for (const [eid, t] of Object.entries(_EXAM_TABLES)) {
  * @returns {{contentRoot?: string, SUBJECT_DIR_MAP?: Object, REF_DIRS?: Object,
  *   SOURCE_REF_MAP?: Array, KEYWORD_REF_MAP?: Array, REFERENCE_FILES?: Object,
  *   REFERENCE_COMMON?: Array, REFERENCE_INGREDIENTS?: Array, REFERENCE_LAW?: Array,
+ *   NOTICE_INGREDIENT_DOCS?: Array,
  *   REF_FILE_TO_PATH?: Object, REF_REGISTRY?: Object, REF_MD_SUBJECTS?: Object}}
  */
 export function getRefTables() {

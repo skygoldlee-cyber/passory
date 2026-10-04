@@ -1,8 +1,9 @@
 // tests/unit/notice-check.test.js — 식약처 고시 감지 배너 판정 로직
-// @spec FO-24,RR-19
+// @spec FO-24,RR-19,DI-11
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { isNewerNotice, normalizeNotice, findNoticeNumber, statusRows, parseRefDoc } from '../../src/notice-check.js';
+import { isNewerNotice, normalizeNotice, findNoticeNumber, statusRows, parseRefDoc,
+         filterIngredientDocs, dictNoticeDocs, dictNoticeRow } from '../../src/notice-check.js';
 
 const base = { notice: '제2026-19호', effectiveDate: '2026-03-18' };
 const status = (latest, baseline = base) => ({ baseline, latest });
@@ -124,5 +125,62 @@ describe('statusRows', () => {
         });
         const docRow = rows.find(r => r[0].includes('화장품법'));
         assert.match(docRow[1], /시행 예정 개정본/);
+    });
+});
+
+describe('filterIngredientDocs (DI-11)', () => {
+    const docs = [
+        parseRefDoc('화장품법(법률)(제20901호)(20260402).pdf'),
+        parseRefDoc('화장품 안전기준 등에 관한 규정(식품의약품안전처고시)(제2026-19호)(20260318).pdf'),
+        parseRefDoc('화장품의 색소 종류 및 기준(식품의약품안전처고시)(제2023-61호)(20230921).pdf'),
+    ];
+    it('선언된 문서명만 subset으로 필터', () => {
+        const sub = filterIngredientDocs(docs, ['화장품 안전기준 등에 관한 규정', '화장품의 색소 종류 및 기준']);
+        assert.deepEqual(sub.map(d => d.name), ['화장품 안전기준 등에 관한 규정', '화장품의 색소 종류 및 기준']);
+    });
+    it('목록 미선언·빈 배열이면 빈 subset', () => {
+        assert.deepEqual(filterIngredientDocs(docs, undefined), []);
+        assert.deepEqual(filterIngredientDocs(docs, []), []);
+    });
+});
+
+describe('dictNoticeDocs (DI-11)', () => {
+    it('기본 시험(cosmetic)의 성분 관련 고시 subset 반환 — 법령·CGMP 제외', () => {
+        const docs = dictNoticeDocs();
+        const names = docs.map(d => d.name);
+        assert.ok(names.includes('화장품 안전기준 등에 관한 규정'));
+        assert.ok(names.includes('기능성화장품 기준 및 시험방법'));
+        assert.ok(names.includes('화장품의 색소 종류 및 기준'));
+        assert.ok(!names.includes('화장품법'));
+        assert.ok(!names.includes('우수화장품 제조 및 품질관리기준'));
+        assert.ok(docs.every(d => d.target === 'admrul'));
+    });
+});
+
+describe('dictNoticeRow (DI-11)', () => {
+    const doc = parseRefDoc('화장품 안전기준 등에 관한 규정(식품의약품안전처고시)(제2026-19호)(20260318).pdf');
+    const live = (notice, effectiveDate) => ({ notice, effectiveDate, serial: '2100000276068' });
+    it('기준과 동일하면 ok — 원문은 일련번호 시리얼 링크', () => {
+        const r = dictNoticeRow(doc, live('제2026-19호', '2026-03-18'), '2026-10-19');
+        assert.equal(r.level, 'ok');
+        assert.equal(r.mark, '✅');
+        assert.match(r.text, /제2026-19호\(2026-03-18\) → 제2026-19호\(2026-03-18\)/);
+        assert.match(r.url, /admRulInfoP\.do\?admRulSeq=2100000276068/);
+    });
+    it('최신 시행일이 더 크면 newer — 개정 감지', () => {
+        const r = dictNoticeRow(doc, live('제2026-30호', '2026-09-01'), '2026-10-19');
+        assert.equal(r.level, 'newer');
+        assert.equal(r.mark, '⚠ 개정 감지');
+    });
+    it('미래 시행일이면 pending — 시행 예정', () => {
+        const r = dictNoticeRow(doc, live('제2027-1호', '2027-01-01'), '2026-10-19');
+        assert.equal(r.level, 'pending');
+        assert.match(r.mark, /시행 예정/);
+    });
+    it('live 조회 실패면 error — 한글주소 폴백 링크', () => {
+        const r = dictNoticeRow(doc, null, '2026-10-19');
+        assert.equal(r.level, 'error');
+        assert.match(r.text, /조회 실패/);
+        assert.ok(r.url.includes('law.go.kr'));
     });
 });

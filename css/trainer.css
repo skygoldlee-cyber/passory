@@ -564,6 +564,42 @@
 
 /* 오답노트 액션 행 — .btn-row(공용 규약)로 줄바꿈 적용 */
 
+/* 성분 고시 확인 결과 패널 (DI-11) — formula.css 미로딩 컨텍스트용 자체 스타일 */
+.dict-notice-panel {
+    margin: 0 0 var(--space-4);
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    font-size: 0.82rem;
+}
+.dict-notice-row {
+    display: flex;
+    gap: 10px;
+    padding: 3px 0;
+    line-height: 1.5;
+    flex-wrap: wrap;
+}
+.dict-notice-head {
+    font-weight: 600;
+}
+.dict-notice-name {
+    flex: 0 0 16em;
+    color: var(--color-text-muted);
+}
+.dict-notice-panel a {
+    color: var(--color-primary);
+    font-size: 0.78rem;
+}
+.dict-notice-loading {
+    color: var(--color-text-muted);
+}
+@media (max-width: 600px) {
+    .dict-notice-name {
+        flex-basis: 100%;
+    }
+}
+
 .dictionary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

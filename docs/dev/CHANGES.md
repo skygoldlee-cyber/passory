@@ -6,6 +6,13 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 성분사전 성분 고시 확인 (DI-11)
+
+- `references.json.noticeIngredientDocs` — 성분 관련 고시 subset 선언 (안전기준·기능성 기준 및 시험방법·알레르기 유발성분 표시·색소 종류 및 기준 4종) → `NOTICE_INGREDIENT_DOCS` 테이블로 pdf-registry 방출, `checkNamedRefs`가 문서명 일치를 빌드 시 검증
+- `notice-check.js` — `dictNoticeDocs()`(subset 게이트)·`dictNoticeRow()`(기준↔최신 비교 행, 시행 예정·개정 감지·조회 실패 판정)·`checkDictNoticeNow()`(law.go.kr 병렬 조회 → `#dict-notice-result` 패널 렌더 + 문서별 원문 링크)
+- `dictionary.js`/`dictionary.html`/`trainer.css` — 검색 행에 '고시 확인' 버튼 동적 생성(목록 선언 시험만), 결과 패널 `dict-notice-*` 자체 스타일 (formula.css 지연 로딩과 무관)
+- `app.js` — `checkDictNoticeNow` 위임 등록 (유닛 +3 describe·DOM +3)
+
 ## 2026-10-19 성분사전 CSV 버튼 레이블 명확화
 
 - `html/views/dictionary.html` — 검색 행의 'CSV' 버튼 레이블을 '필터 CSV'로 변경 — 전체 CSV 버튼과 나란히 놓일 때 '현재 필터 결과만 저장' 의미가 드러나도록 개선 (기능 변경 없음, title·동작 동일)
