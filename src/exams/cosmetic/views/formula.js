@@ -117,7 +117,7 @@ const SUBNAV_ITEMS = [
   { id: 'customer', label: '고객 관리', click: 'openCustomerPanel' },
   { id: 'calc', label: '배합 계산기', click: 'formulaNew' },
   { id: 'list', label: 'My 포뮬러', click: 'openFormulaList' },
-  { id: 'batch', label: '조제 기록', click: 'openBatchPanel' },
+  { id: 'batch', label: '조제 기록', labels: { mfg: '제조 기록' }, click: 'openBatchPanel' },
   { id: 'material', label: '원료 장부', click: 'openMaterialPanel' },
   { id: 'label', label: '표시사항', click: 'openLabelPanel' },
   { id: 'adlint', label: '광고 점검', click: 'openAdLintPanel' },
@@ -135,7 +135,7 @@ export function formulaSubNav(active) {
   const items = SUBNAV_ITEMS.filter(item => bizVisible(item.id, biz));
   return `<div class="formula-subnav" role="navigation" aria-label="Formula OS 섹션 이동">${items.map(item => {
     const cls = item.id === active ? 'formula-subnav-chip is-active' : 'formula-subnav-chip';
-    return `<button type="button" class="${cls}" data-click="${item.click}">${esc(item.label)}</button>`;
+    return `<button type="button" class="${cls}" data-click="${item.click}">${esc((item.labels && item.labels[biz]) || item.label)}</button>`;
   }).join('')}</div>`;
 }
 
@@ -161,7 +161,7 @@ function applyBizProfile() {
     card.classList.toggle('is-hidden', !allow.includes(biz));
   });
   // 유형별 배지·설명·그룹 제목 오버라이드 — data-badge-<biz>는 비순번 배지,
-  // data-desc-<biz>는 카드 설명, 그룹 제목은 data-title-<biz>·data-icon-<biz>.
+  // data-desc-<biz>·data-cardtitle-<biz>는 카드 설명·제목, 그룹 제목은 data-title-<biz>·data-icon-<biz>.
   // 원본은 첫 적용 시 dataset에 백업해 유형 왕복 시 복원한다.
   document.querySelectorAll('#formula-menu-panel .trainer-menu-card').forEach(card => {
     const badge = /** @type {HTMLElement|null} */(card.querySelector('.trainer-step-badge'));
@@ -178,6 +178,11 @@ function applyBizProfile() {
     if (desc) {
       if (desc.dataset.origHtml === undefined) desc.dataset.origHtml = desc.innerHTML;
       desc.innerHTML = card.getAttribute(`data-desc-${biz}`) || desc.dataset.origHtml;
+    }
+    const title = /** @type {HTMLElement|null} */(card.querySelector('h4'));
+    if (title) {
+      if (title.dataset.origText === undefined) title.dataset.origText = title.textContent || '';
+      title.textContent = card.getAttribute(`data-cardtitle-${biz}`) || title.dataset.origText;
     }
   });
   document.querySelectorAll('#formula-menu-panel [data-title-text]').forEach(el => {

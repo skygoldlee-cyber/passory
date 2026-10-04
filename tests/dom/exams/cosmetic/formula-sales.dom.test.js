@@ -118,6 +118,24 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         expect(groupTitle.textContent).toBe('업무 흐름');
     });
 
+    it('제조 유형 오버라이드 — 조제 기록 카드·서브내비가 "제조 기록"으로 교체 (FO-33)', () => {
+        initFormulaView();
+        const batchCard = document.querySelector('[data-click="openBatchPanel"]');
+        expect(batchCard.querySelector('h4').textContent).toBe('조제 기록');
+        expect(formulaSubNav('batch')).toContain('조제 기록');
+
+        formulaSetBizType('mfg');
+        expect(batchCard.querySelector('h4').textContent).toBe('제조 기록');
+        expect(batchCard.querySelector('p').textContent).toContain('제조 회차');
+        expect(formulaSubNav('batch')).toContain('제조 기록');
+        expect(formulaSubNav('batch')).not.toContain('조제 기록');
+
+        formulaSetBizType('custom'); // 복귀 시 원본 복원
+        expect(batchCard.querySelector('h4').textContent).toBe('조제 기록');
+        expect(batchCard.querySelector('p').textContent).toContain('조제 회차');
+        expect(formulaSubNav('batch')).toContain('조제 기록');
+    });
+
     it('법규 준수 카드는 전 유형에서 항상 마지막 배치 (FO-33)', () => {
         for (const biz of ['custom', 'mfg', 'sales']) {
             formulaSetBizType(biz);
