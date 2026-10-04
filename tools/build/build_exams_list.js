@@ -6,7 +6,7 @@
  * 사용: node tools/build/build_exams_list.js  (build:data 체인에 포함)
  */
 
-// @spec BP-01
+// @spec BP-01,UX-PWA-06
 const fs = require('fs');
 const path = require('path');
 
@@ -55,6 +55,25 @@ function syncYearToDerivedFiles(exams) {
     if (touched.length) console.log(`✅ 연도 전파 (exams.json.year → ${defaultExam ? defaultExam.year : '?'}): ${touched.join(', ')}`);
 }
 
+/**
+ * 시험별 PWA 매니페스트 객체 조립 (순수 함수 — 단위 테스트용 export).
+ * 플랫폼 공통 manifest.webmanifest를 베이스로 시험 필드를 덮어쓴다.
+ * UX-PWA-06: 시험 도메인 shortcut은 exams.json `pwaShortcuts`로 선언하면
+ * 여기서 `shortcuts`로 패스스루된다 — 플랫폼 공통 템플릿에는 두지 않는다.
+ */
+function buildExamManifest(base, e) {
+    const manifest = Object.assign({}, base, {
+        id: e.id + '-pass',
+        name: e.title || e.name,
+        short_name: e.shortName || e.name,
+        description: e.desc || base.description || ''
+    });
+    if (Array.isArray(e.pwaShortcuts) && e.pwaShortcuts.length) {
+        manifest.shortcuts = e.pwaShortcuts;
+    }
+    return manifest;
+}
+
 function main() {
     const exams = JSON.parse(fs.readFileSync(SRC, 'utf-8'));
     if (!exams || !Array.isArray(exams.exams) || exams.exams.length === 0) {
@@ -88,12 +107,7 @@ function main() {
     const base = JSON.parse(fs.readFileSync(MANIFEST_TEMPLATE, 'utf-8'));
     const emitted = new Set();
     exams.exams.forEach(e => {
-        const manifest = Object.assign({}, base, {
-            id: e.id + '-pass',
-            name: e.title || e.name,
-            short_name: e.shortName || e.name,
-            description: e.desc || base.description || ''
-        });
+        const manifest = buildExamManifest(base, e);
         const fname = `manifest.${e.id}.webmanifest`;
         fs.writeFileSync(path.join(ROOT, fname), JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
         emitted.add(fname);
@@ -108,4 +122,9 @@ function main() {
     console.log(`✅ 시험별 매니페스트 생성 — ${emitted.size}개 (${[...emitted].join(', ')})`);
 }
 
-main();
+const isDirectRun = process.argv[1] && process.argv[1].replace(/\\/g, '/').endsWith('build_exams_list.js');
+if (isDirectRun) {
+    main();
+}
+
+module.exports = { buildExamManifest };

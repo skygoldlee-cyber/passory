@@ -13,7 +13,7 @@ import { showToast, showConfirm } from '../../../ui-utils.js';
 import { DataLoader } from '../../../data-loader.js';
 import { todayKey } from '../../../utils.js';
 import { showStoreError } from '../../../pro-upgrade.js';
-import { switchView } from '../../../views/navigation.js';
+import { switchView, resetMainScroll } from '../../../views/navigation.js';
 import { getActiveExamId } from '../../../exam-context.js';
 import {
   CHECK, buildIngredientIndex, checkFormulaItems,
@@ -104,6 +104,9 @@ export function showPanel(id) {
     const el = getEl(p);
     if (el) el.classList.toggle('is-hidden', p !== id);
   });
+  // 서브패널은 별개 화면 — 이전 패널의 스크롤이 유지되면 모바일에서
+  // 폼 상단(헤더·사진 인입 버튼 등)이 뷰포트 위로 잘려 보이지 않는다
+  resetMainScroll();
 }
 
 /* =======================================================
@@ -596,6 +599,11 @@ function weighItems() {
 function renderWeigh() {
   const it = _weighList[_weighIdx];
   if (!it) { formulaWeighClose(); return; }
+  // 항목 전환 — 오버레이/카드가 자체 스크롤 컨테이너라 이전 스크롤이 잔류하면 상단이 잘림
+  const ov = getEl('formula-weigh-overlay');
+  if (ov) ov.scrollTop = 0;
+  const card = ov && ov.querySelector('.f-weigh-card');
+  if (card) card.scrollTop = 0;
   const posEl = getEl('formula-weigh-pos');
   const phaseEl = getEl('formula-weigh-phase');
   const nameEl = getEl('formula-weigh-name');
@@ -738,6 +746,9 @@ export function customIngAdd(name) {
   getEl('cing-delete').classList.add('is-hidden');
   cingFill({ name: typeof name === 'string' ? name : '' });
   ov.classList.remove('is-hidden');
+  ov.scrollTop = 0; // 오버레이 재사용 시 이전 스크롤 잔류로 상단이 잘리는 것 방지
+  const addCard = ov.querySelector('.f-weigh-card');
+  if (addCard) addCard.scrollTop = 0;
   getEl('cing-name').focus();
 }
 
@@ -752,6 +763,9 @@ export function customIngEdit(id) {
   getEl('cing-delete').classList.remove('is-hidden');
   cingFill(item);
   ov.classList.remove('is-hidden');
+  ov.scrollTop = 0;
+  const editCard = ov.querySelector('.f-weigh-card');
+  if (editCard) editCard.scrollTop = 0;
   getEl('cing-name').focus();
 }
 

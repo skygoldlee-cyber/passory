@@ -188,6 +188,36 @@ describe('모의고사 시뮬레이터 — 세션·답안·제출·이어하기'
             vi.useRealTimers();
         }
     });
+
+    // UX-NAV-07 — 인트라뷰 패널/문항 전이 시 .main-content 스크롤 리셋
+    it('스크롤 잔류 상태에서 list→arena→문항이동→result→review 전이 리셋', () => {
+        const mc = document.querySelector('.main-content');
+
+        mc.scrollTop = 400;
+        startSimSession(EXAM);
+        expect(mc.scrollTop).toBe(0);
+
+        // 문항 이동 (renderSimQuestion)
+        mc.scrollTop = 300;
+        jumpToSimQuestion(1);
+        expect(mc.scrollTop).toBe(0);
+
+        // arena → result
+        mc.scrollTop = 300;
+        submitExam();
+        expect(isVisible('sim-result-panel')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
+
+        // result → review
+        mc.scrollTop = 300;
+        showSimAnswerReview();
+        expect(mc.scrollTop).toBe(0);
+
+        // → list
+        mc.scrollTop = 300;
+        exitSimArena();
+        expect(mc.scrollTop).toBe(0);
+    });
 });
 
 /* =======================================================

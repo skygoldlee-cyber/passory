@@ -4,7 +4,7 @@ export { tagWrongCause, tagWrongCauseAt, wrongActionCard, wrongActionTextbook, w
 
 import { state, saveProgress } from '../state.js';
 import { safeTextWithBreaks, esc } from '../sanitize.js';
-import { switchView } from './navigation.js';
+import { switchView, resetMainScroll } from './navigation.js';
 import { DataLoader } from '../data-loader.js';
 import { computeWrongCauseSummary, getWrongCauseLabels } from '../recommendations.js';
 import { examIdToSubjectId } from '../exam-context.js';
@@ -60,10 +60,10 @@ export function startQuiz() {
         showToast("이 과목에는 출제 가능한 퀴즈가 없습니다.", "warning");
         return;
     }
-    
+
     // 퀴즈 문제 목록 섞기 (Fisher-Yates Shuffle)
     const shuffled = shuffle(subjData.quizzes);
-    
+
     // 최대 10문제만 출제
     state.quiz.data = shuffled.slice(0, 10);
     state.quiz.diagnostic = false;
@@ -118,6 +118,7 @@ export function _beginQuizRun() {
     if (resultPanelEl) resultPanelEl.classList.add('is-hidden');
     if (arenaPanelEl) arenaPanelEl.classList.remove('is-hidden');
     if (progressHeaderEl) progressHeaderEl.classList.remove('is-hidden');
+    resetMainScroll();
 
     renderQuizQuestion();
 }
@@ -126,10 +127,11 @@ export function _beginQuizRun() {
  * 현재 퀴즈 문제 렌더링 (단답형 / 객관식 / OX 지원)
  */
 export function renderQuizQuestion() {
+    resetMainScroll(); // 문항 교체 — 이전 피드백 읽으며 스크롤한 위치가 잔류하면 신규 문항 상단이 잘림
     const quizState = state.quiz;
     const currentQuiz = quizState.data[quizState.currentIndex];
     if (!currentQuiz) return;
-    
+
     // 진도 바
     const progressPercent = Math.round((quizState.currentIndex / quizState.data.length) * 100);
     const runProgressEl = document.getElementById('quiz-run-progress');
@@ -151,19 +153,19 @@ export function renderQuizQuestion() {
     if (currIdxEl) currIdxEl.textContent = String(quizState.currentIndex + 1);
     if (totalIdxEl) totalIdxEl.textContent = String(quizState.data.length);
     if (correctCountEl) correctCountEl.textContent = String(quizState.correctCount);
-    
+
     // 카드 정보 바인딩
     if (categoryEl) categoryEl.textContent = currentQuiz.category || '';
     if (contextTitleEl) contextTitleEl.textContent = currentQuiz.context || '';
-    
+
     // 질문 빈칸 파싱
     let qText = currentQuiz.question;
     qText = safeTextWithBreaks(qText).replace(/\[\s*빈칸\s*\]/g, '<strong>[ 빈칸 ]</strong>');
     if (questionEl) questionEl.innerHTML = qText;
-    
+
     // 타입별 UI 분기
     const quizType = currentQuiz.type || 'short';
-    
+
     // 모든 입력 영역 초기화
     if (optionsContainer) { optionsContainer.innerHTML = ''; optionsContainer.classList.add('is-hidden'); }
     if (oxContainer) { oxContainer.classList.add('is-hidden'); }
@@ -230,20 +232,20 @@ export function submitQuizAnswer() {
     const input = /** @type {HTMLInputElement|null} */ (document.getElementById('quiz-answer-input'));
     if (!input) return;
     const userAnswer = input.value.trim();
-    
+
     if (!userAnswer) {
         showToast("답변을 입력해 주세요!", "warning");
         return;
     }
-    
+
     input.disabled = true;
     const submitBtn = document.getElementById('submit-quiz-btn');
     if (submitBtn) submitBtn.classList.add('is-hidden');
-    
+
     // 정답 체크 (주관식 유사어 매칭 엔진 적용)
     const isCorrect = checkShortAnswer(userAnswer, currentQuiz.answer);
     vibrate(isCorrect ? HAPTIC.correct : HAPTIC.wrong);
-    
+
     // 점수 및 상태 누적
     if (isCorrect) {
         quizState.correctCount++;
@@ -252,7 +254,7 @@ export function submitQuizAnswer() {
     } else {
         markQuizWrong(currentQuiz);
     }
-    
+
     // solvedList에 기록
     quizState.solvedList.push({
         quizId: currentQuiz.id,
@@ -261,18 +263,18 @@ export function submitQuizAnswer() {
         correctAnswer: currentQuiz.answer,
         correct: isCorrect
     });
-    
+
     // 퀴즈 결과 글로벌 상태에 저장
     state.quizResults[currentQuiz.id] = {
         solved: true,
         correct: isCorrect
     };
-    
+
     // UI 피드백 렌더링
     const feedbackPanel = document.getElementById('quiz-feedback-panel');
     const feedbackTitle = document.getElementById('feedback-result-title');
     const feedbackAnswer = document.getElementById('feedback-correct-answer');
-    
+
     if (feedbackPanel) feedbackPanel.classList.remove('is-hidden');
     if (feedbackAnswer) feedbackAnswer.textContent = String(currentQuiz.answer);
 
@@ -283,10 +285,10 @@ export function submitQuizAnswer() {
         if (feedbackPanel) feedbackPanel.classList.add('incorrect');
         if (feedbackTitle) feedbackTitle.textContent = `틀렸습니다! (내가 쓴 답: ${userAnswer})`;
     }
-    
+
     // 진행 완료 시 저장
     saveProgress();
-    
+
     // 다음 버튼 활성화
     const nextBtn = document.getElementById('next-quiz-btn');
     if (nextBtn) nextBtn.classList.remove('is-hidden');
@@ -301,7 +303,7 @@ function submitQuizChoiceAnswer(selectedBtn, selectedValue, correctValue) {
     if (!currentQuiz) return;
     const isCorrect = (selectedValue === correctValue);
     vibrate(isCorrect ? HAPTIC.correct : HAPTIC.wrong);
-    
+
     // 모든 옵션 버튼 비활성화
     const optionsContainer = document.getElementById('quiz-options-container');
     const oxContainer = document.getElementById('quiz-ox-container');
@@ -328,7 +330,7 @@ function submitQuizChoiceAnswer(selectedBtn, selectedValue, correctValue) {
         quizState.correctCount++;
         clearQuizWeakness(currentQuiz);
     }
-    
+
     // solvedList에 기록
     quizState.solvedList.push({
         quizId: currentQuiz.id,
@@ -337,21 +339,21 @@ function submitQuizChoiceAnswer(selectedBtn, selectedValue, correctValue) {
         correctAnswer: correctValue,
         correct: isCorrect
     });
-    
+
     // 퀴즈 결과 글로벌 상태에 저장
     state.quizResults[currentQuiz.id] = {
         solved: true,
         correct: isCorrect
     };
-    
+
     // UI 피드백 렌더링
     const feedbackPanel = document.getElementById('quiz-feedback-panel');
     const feedbackTitle = document.getElementById('feedback-result-title');
     const feedbackAnswer = document.getElementById('feedback-correct-answer');
-    
+
     if (feedbackPanel) feedbackPanel.classList.remove('is-hidden');
     if (feedbackAnswer) feedbackAnswer.textContent = correctValue;
-    
+
     if (isCorrect) {
         if (feedbackPanel) feedbackPanel.classList.remove('incorrect');
         if (feedbackTitle) feedbackTitle.textContent = "정답입니다!";
@@ -359,9 +361,9 @@ function submitQuizChoiceAnswer(selectedBtn, selectedValue, correctValue) {
         if (feedbackPanel) feedbackPanel.classList.add('incorrect');
         if (feedbackTitle) feedbackTitle.textContent = `틀렸습니다! (선택: ${selectedValue})`;
     }
-    
+
     saveProgress();
-    
+
     const nextBtn = document.getElementById('next-quiz-btn');
     if (nextBtn) nextBtn.classList.remove('is-hidden');
 }
@@ -372,7 +374,7 @@ function submitQuizChoiceAnswer(selectedBtn, selectedValue, correctValue) {
 export function nextQuizQuestion() {
     const quizState = state.quiz;
     quizState.currentIndex++;
-    
+
     if (quizState.currentIndex >= quizState.data.length) {
         // 퀴즈 완전히 종료됨
         renderQuizResult();
@@ -408,7 +410,7 @@ function _citationForQuiz(quizId) {
 
 export function renderQuizResult() {
     const quizState = state.quiz;
-    
+
     // UI 전환
     const arenaPanelEl = document.getElementById('quiz-arena-panel');
     const progressHeaderEl = document.querySelector('.quiz-progress-header');
@@ -417,7 +419,8 @@ export function renderQuizResult() {
     if (arenaPanelEl) arenaPanelEl.classList.add('is-hidden');
     if (progressHeaderEl) progressHeaderEl.classList.add('is-hidden');
     if (resultPanelEl) resultPanelEl.classList.remove('is-hidden');
-    
+    resetMainScroll();
+
     // 점수 채우기
     const correctNumEl = document.getElementById('result-correct-num');
     const totalNumEl = document.getElementById('result-total-num');
@@ -425,7 +428,7 @@ export function renderQuizResult() {
 
     if (correctNumEl) correctNumEl.textContent = String(quizState.correctCount);
     if (totalNumEl) totalNumEl.textContent = String(quizState.data.length);
-    
+
     const rate = Math.round((quizState.correctCount / quizState.data.length) * 100);
     if (percentEl) percentEl.textContent = `${rate}%`;
 
@@ -522,7 +525,7 @@ function _renderDiagnosticProfile(reviewListEl) {
  */
 function getWeakCardsList() {
     const list = [];
-    
+
     // 1. 일반 카드 복구 (인덱스 캐시 — weak-items.js)
     if (window.STUDY_DATA) {
         state.weakCards.forEach(cardId => {
@@ -532,7 +535,7 @@ function getWeakCardsList() {
             }
         });
     }
-    
+
     // 2. 모의고사·기출 퀴즈 오답 카드 복구
     state.weakCards.forEach(cardId => {
         if (cardId.startsWith(WEAK_QUIZ_PREFIX)) {
@@ -575,7 +578,7 @@ function getWeakCardsList() {
             }
         }
     });
-    
+
     return list;
 }
 
@@ -586,12 +589,12 @@ export function renderReviewList() {
     const container = document.getElementById('review-cards-list-container');
     if (!container) return;
     container.innerHTML = '';
-    
+
     const printBtn = document.getElementById('print-review-btn');
     const examBtn = document.getElementById('start-weak-exam-btn');
     const emptyStateEl = document.getElementById('review-empty-state');
     const focusQuizBtn = document.getElementById('start-weak-quiz-btn');
-    
+
     if (state.weakCards.size === 0) {
         if (emptyStateEl) emptyStateEl.classList.remove('is-hidden');
         if (focusQuizBtn) focusQuizBtn.classList.add('is-hidden');
@@ -599,14 +602,14 @@ export function renderReviewList() {
         if (printBtn) printBtn.classList.add('is-hidden');
         return;
     }
-    
+
     let allCards = getWeakCardsList();
-    
+
     // 필터링 적용
     if (state.reviewFilter && state.reviewFilter !== 'all') {
         allCards = allCards.filter(c => c.subjectId === state.reviewFilter);
     }
-    
+
     if (allCards.length === 0) {
         if (emptyStateEl) {
             emptyStateEl.classList.remove('is-hidden');
@@ -620,7 +623,7 @@ export function renderReviewList() {
         if (printBtn) printBtn.classList.add('is-hidden');
         return;
     }
-    
+
     if (emptyStateEl) {
         emptyStateEl.classList.add('is-hidden');
         const h3 = emptyStateEl.querySelector('h3');
@@ -628,7 +631,7 @@ export function renderReviewList() {
         if (h3) h3.textContent = '복습할 카드가 없습니다!';
         if (p) p.textContent = '플래시카드 학습 중에 "아직 헷갈림"으로 분류한 카드가 여기에 수집됩니다.';
     }
-    
+
     if (focusQuizBtn) focusQuizBtn.classList.remove('is-hidden');
     if (examBtn) examBtn.classList.remove('is-hidden');
     if (printBtn) printBtn.classList.remove('is-hidden');
@@ -667,12 +670,12 @@ export function renderReviewList() {
 
 /**
  * 복습 카드 제외
- * @param {string} cardId 
+ * @param {string} cardId
  */
 export function removeWeakCard(cardId) {
     state.weakCards.delete(cardId);
     saveProgress();
-    
+
     const cardEl = document.getElementById(`rev-${cardId}`);
     if (cardEl) {
         cardEl.style.transform = 'scale(0.9)';
@@ -686,11 +689,11 @@ export function removeWeakCard(cardId) {
 
 /**
  * 복습 카드 과목 필터 선택
- * @param {string} filterType 
+ * @param {string} filterType
  */
 export function setReviewFilter(filterType) {
     state.reviewFilter = filterType;
-    
+
     const buttons = document.querySelectorAll('#review-filter-group .filter-btn');
     buttons.forEach(node => {
         const btn = /** @type {HTMLElement} */ (node);
@@ -706,7 +709,7 @@ export function setReviewFilter(filterType) {
             btn.style.color = '';
         }
     });
-    
+
     renderReviewList();
 }
 
@@ -716,13 +719,13 @@ export function setReviewFilter(filterType) {
 export function startWeakFocusQuiz() {
     let weakCards = getWeakCardsList();
     if (weakCards.length === 0) return;
-    
+
     if (state.reviewFilter && state.reviewFilter !== 'all') {
         weakCards = weakCards.filter(c => c.subjectId === state.reviewFilter);
     }
-    
+
     if (weakCards.length === 0) return;
-    
+
     const weakList = weakCards.map(card => {
         if (card.id.startsWith(WEAK_QUIZ_PREFIX)) {
             const resolved = resolveWrongQuiz(card.id);
@@ -747,7 +750,7 @@ export function startWeakFocusQuiz() {
             const exam = window.EXAM_DATA[examId];
             const q = exam.questions.find(quest => quest.num === qNum);
             if (!q) return null;
-            
+
             return {
                 id: card.id,
                 category: card.category,
@@ -768,7 +771,7 @@ export function startWeakFocusQuiz() {
             };
         }
     });
-    
+
     state.quiz.data = shuffle(weakList.filter(Boolean)).slice(0, 10);
     state.quiz.diagnostic = false;
     switchView('quiz-view', { scrollTop: true });

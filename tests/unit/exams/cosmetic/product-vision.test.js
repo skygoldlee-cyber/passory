@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-vision.test.js
-// @spec FO-41,FO-42,FO-43
+// @spec FO-41,FO-42,FO-43,FO-46
 // product-vision.js — 기성품 사진 인식 (BYOK Gemini).
 // 검증: API 키 저장 계약(디바이스 로컬·백업 제외·마스킹),
 //       요청 형상(프롬프트·inlineData·JSON 스키마·x-goog-api-key 헤더),
@@ -9,6 +9,7 @@ import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   getVisionKey, saveVisionKey, clearVisionKey, maskVisionKey,
+  getVisionModel, saveVisionModel, validateVisionKey,
   buildExtractionPrompt, buildRequestBody, parseExtractionResponse,
   extractProductFromImages, fileToBase64Jpeg,
 } from '../../../../src/exams/cosmetic/product-vision.js';
@@ -174,4 +175,57 @@ test('호출 — AbortError는 aborted 코드', async () => {
 
 test('이미지 전처리 — 입력 없음·canvas 미지원 환경에서 안전 실패', async () => {
   assert.equal((await fileToBase64Jpeg(null)).ok, false);
+});
+
+/* =======================================================
+   모델 설정·키 검증·제형·dedupe (FO-46)
+   ======================================================= */
+
+test('모델 설정 — 기본값, 저장·정제·리셋', () => {
+  assert.equal(getVisionModel(), 'gemini-2.0-flash');
+  assert.equal(saveVisionModel('gemini-1.5-flash'), 'gemini-1.5-flash');
+  assert.equal(getVisionModel(), 'gemini-1.5-flash');
+  // 허용 문자 외는 제거 — 경로 조작 불가
+  assert.equal(saveVisionModel('gemini/../x'), 'gemini..x');
+  // 비우면 기본값 복귀
+  assert.equal(saveVisionModel(''), 'gemini-2.0-flash');
+  assert.equal(getVisionModel(), 'gemini-2.0-flash');
+});
+
+test('모델명은 백업 대상 — 크리덴셜 아닌 환경설정 계약', () => {
+  assert.equal(BACKUP_KEYS.includes(STORAGE_KEYS.FORMULA_GEMINI_MODEL), true);
+});
+
+test('호출 URL — 설정 모델명이 엔드포인트에 반영', async () => {
+  saveVisionKey('k');
+  saveVisionModel('gemini-custom-9');
+  let url = '';
+  const r = await extractProductFromImages([IMG], {
+    fetchImpl: async u => { url = u; return { ok: true, status: 200, json: async () => geminiResponse({ ingredients: ['정제수'] }) }; },
+  });
+  assert.equal(r.ok, true);
+  assert.match(url, /models\/gemini-custom-9:generateContent/);
+});
+
+test('응답 파싱 — 중복 성분은 정규화 기준 제거, 제형 반환 (FO-46)', () => {
+  const r = parseExtractionResponse(geminiResponse({
+    name: '크림', category: '크림',
+    ingredients: ['정제수', '글리세린', ' 정제수 ', '글리 세린', '판테놀'],
+  }));
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.ingredients, ['정제수', '글리세린', '판테놀']);
+  assert.equal(r.category, '크림');
+});
+
+test('키 검증 — nokey/성공/키오류/모델404/네트워크 분기 (FO-46)', async () => {
+  assert.equal((await validateVisionKey()).code, 'nokey');
+  saveVisionKey('k');
+  const okRes = { ok: true, status: 200, json: async () => ({}) };
+  assert.equal((await validateVisionKey({ fetchImpl: async () => okRes })).ok, true);
+  const mk = status => async () => ({ ok: false, status, json: async () => ({}) });
+  assert.equal((await validateVisionKey({ fetchImpl: mk(403) })).code, 'key');
+  assert.equal((await validateVisionKey({ fetchImpl: mk(404) })).code, 'model');
+  assert.equal((await validateVisionKey({ fetchImpl: mk(500) })).code, 'http');
+  const boom = async () => { throw new Error('down'); };
+  assert.equal((await validateVisionKey({ fetchImpl: boom })).code, 'network');
 });

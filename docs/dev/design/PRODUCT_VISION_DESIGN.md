@@ -2,8 +2,8 @@
 
 > 상위 문서: [`PRODUCT_DB_DESIGN.md`](PRODUCT_DB_DESIGN.md) (기성품 전성분 DB — FO-37~40)
 > 범위: 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내 전성분을 추출, 기존 등록 폼에 프리필
-> 상태: 📋 설계 확정 — 구현 착수 전 (BYOK + Gemini Flash + 멀티샷 범위 승인됨)
-> **관련 SPEC ID**: `FO-41,FO-42,FO-43` (SPEC §3.18) · 선행 `FO-37~40`(기성품 DB) · `FO-32`(미등록 원료 즉시 등록)
+> 상태: ✅ 구현 완료 — BYOK + Gemini Flash + 멀티샷 (FO-41~43) + 보완 (FO-46)
+> **관련 SPEC ID**: `FO-41,FO-42,FO-43,FO-46` (SPEC §3.18) · 선행 `FO-37~40`(기성품 DB) · `FO-32`(미등록 원료 즉시 등록)
 > **문서 ID**: DOC-DSN-13
 
 ---
@@ -172,6 +172,13 @@
 `@spec FO-41~43` 태그 부여 — specrefs 기준선 유지.
 
 ---
+
+## 8.1 구현 보완 (FO-46 — 2026-10-04)
+
+- **제형(category) 추출** — 응답 스키마에 `category` 추가, 라디오 칩 '·' 별칭 **정확 일치** 프리필. 부분일치는 '크림'→'선크림' 오매칭을 유발해 폐기. 미매칭 시 '미선택' 유지
+- **성분 dedupe** — 추출 배열을 `normalizeEntityName` 기준으로 중복 제거(원문·순서 보존)
+- **모델 설정** — `FORMULA_GEMINI_MODEL` 키(기본 `gemini-2.0-flash`). 모델명은 크리덴셜이 아니므로 백업·동기 대상(BACKUP_KEYS 포함) — API 키(`FORMULA_GEMINI_KEY`)는 기존대로 백업·동기·URL에서 제외
+- **키 유효성 확인** — `validateVisionKey()`가 `models/<모델>` GET으로 nokey/성공/키오류(400·403)/모델없음(404)/네트워크를 분기 — 추출 전에 키·모델 유효성 확인 가능
 
 ## 9. 후속 범위 (미승인 — 착수 시 신규 ID)
 

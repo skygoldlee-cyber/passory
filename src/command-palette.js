@@ -213,6 +213,7 @@ function _renderResults(query) {
     const box = document.getElementById('cmdk-results');
     if (!box) return;
     _activeIdx = 0;
+    box.scrollTop = 0; // 결과 재구성 시 이전 스크롤 잔류로 목록 상단이 잘리는 것 방지
 
     if (!(query || '').trim()) {
         _results = [];

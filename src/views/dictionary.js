@@ -13,6 +13,7 @@ import { showToast } from '../ui-utils.js';
 import { DataLoader } from '../data-loader.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
 import { getJSON } from '../storage.js';
+import { switchView } from './navigation.js';
 
 /**
  * 지식DB 엔티티 스키마 기본값 — 화장품 원료 사전과 동일한 동작.
@@ -443,6 +444,19 @@ export function setDictFilter(filterType) {
     });
 
     renderDictionary();
+}
+
+/**
+ * 성분명으로 사전 뷰를 연다 — 기성품 분석 등 외부에서 성분 상세로 이동하는 경로 (FO-45).
+ * 검색창에 이름을 넣고 목록을 필터링해 해당 카드로 안내한다.
+ * @param {string} name - 조회할 엔티티 이름
+ */
+export function dictOpenByName(name) {
+    if (typeof name !== 'string' || !name.trim()) return;
+    switchView('dictionary-view', { scrollTop: true });
+    const input = /** @type {HTMLInputElement|null} */ (document.getElementById('dict-search-input'));
+    if (input) input.value = name.trim();
+    filterDictionary();
 }
 
 /**

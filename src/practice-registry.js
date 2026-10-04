@@ -105,11 +105,14 @@ const formula = {
         ]],
         ['products', [
             'openProductPanel', 'productNew', 'productEdit', 'productSave', 'productOpen',
-            'productDelete', 'productChipRemove', 'productIngRegister', 'productClearFilter',
-            'productCardExport', 'productImportJson', 'productOpenByIngredient',
+            'productDelete', 'productChipRemove', 'productIngRegister', 'productIngRegisterAll',
+            'productClearFilter',
+            'productCardExport', 'productAnalysisExport', 'productImportJson', 'productOpenByIngredient',
+            'productRankPick',
             'productVisionToggle', 'productPhotoPick', 'productPhotoRemove',
             'productVisionRead', 'productVisionCancel',
             'productVisionKeySave', 'productVisionKeyClear',
+            'productVisionKeyTest', 'productVisionModelSave',
         ]],
         ['notice', [
             'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus',

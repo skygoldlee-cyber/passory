@@ -1,5 +1,5 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
 //       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
@@ -35,13 +35,16 @@ import { invalidateIngredientIndex } from '../../../../src/exams/cosmetic/views/
 import {
     openProductPanel, productNew, productEdit, productSave,
     productDelete, productClearFilter, productOpenByIngredient,
-    productCardExport, productImportJson,
+    productCardExport, productAnalysisExport, productImportJson,
+    productIngRegisterAll, productRankPick,
     productVisionToggle, productPhotoPick, productPhotoRemove,
     productVisionRead, productVisionKeySave, productVisionKeyClear,
+    productVisionModelSave,
 } from '../../../../src/exams/cosmetic/views/formula-products.js';
 import { listProducts } from '../../../../src/exams/cosmetic/product-store.js';
+import { listCustomIngredients } from '../../../../src/exams/cosmetic/custom-ingredient-store.js';
 import {
-    getVisionKey, extractProductFromImages,
+    getVisionKey, getVisionModel, extractProductFromImages,
 } from '../../../../src/exams/cosmetic/product-vision.js';
 import { createFormula } from '../../../../src/exams/cosmetic/formula-store.js';
 import { createCustomer } from '../../../../src/exams/cosmetic/customer-store.js';
@@ -125,6 +128,19 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(detail).toContain('사용 제한 1');
         expect(detail).toContain('DB 미등록 2');
         expect(detail).toContain('조회 시점 원료 DB 기준');
+    });
+
+    it('폼 오픈 — 스크롤 맨 위 리셋 (모바일에서 폼 상단·사진 인입 잘림 방지)', () => {
+        // 목록을 스크롤한 상태에서 폼을 열면 이전 scrollTop이 유지돼
+        // .prod-photo-section·헤더가 뷰포트 위로 밀려 보이지 않던 결함 (showPanel 공통 처리)
+        const mc = document.querySelector('.main-content');
+        expect(mc).toBeTruthy();
+        openProductPanel();
+        mc.scrollTop = 400;
+        productNew();
+        expect(isVisible('formula-product-form-panel')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
+        expect(document.querySelector('[data-click="productVisionToggle"]')).toBeTruthy();
     });
 
     it('미등록 칩 — 사전 등록 단축 버튼 노출 (FO-32 재사용)', () => {
@@ -277,6 +293,125 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(listProducts()[0].name).toBe('가져온크림');
         expect(lastToast()[1]).toBe('success');
     });
+
+    it('신규 폼 — 직전 수정 건의 제형 라디오가 잔류하지 않고 미선택으로 리셋', () => {
+        productNew();
+        el('prod-name').value = 'A크림';
+        el('prod-category').querySelector('input[value="크림·밤"]').checked = true;
+        setInciInput('정제수');
+        productSave();
+
+        // 수정 화면에서 체크된 라디오가 신규 폼으로 새어 나오던 결함
+        productEdit(listProducts()[0].id);
+        expect(el('prod-category').querySelector('input[value="크림·밤"]').checked).toBe(true);
+        productNew();
+        const radios = el('prod-category').querySelectorAll('input[name="prod-cat"]');
+        expect([...radios].find(r => r.checked).value).toBe(''); // '미선택' 복귀
+        el('prod-name').value = 'B로션';
+        setInciInput('정제수');
+        productSave();
+        expect(listProducts().find(p => p.name === 'B로션').category).toBe(''); // 잔류 제형이 저장에 새지 않음
+    });
+
+    it('분석 행 — 비공식 배지는 판정 근거를 인라인 표시 + 사전 링크 (FO-45)', () => {
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수, 살리실산');
+        productSave();
+
+        const detail = el('product-detail');
+        // 한도 정보가 title 툴팁에만 있으면 모바일에서 확인 불가 — 인라인 노트 필수
+        const note = detail.querySelector('.prod-ing-note');
+        expect(note).toBeTruthy();
+        expect(note.textContent).toContain('한도');
+        // 성분 → 사전 상세 이동 링크
+        const dictBtn = detail.querySelector('[data-click="dictOpenByName"]');
+        expect(dictBtn).toBeTruthy();
+        expect(dictBtn.dataset.arg).toBe('살리실산');
+    });
+
+    it('순서 힌트 — 색소 뒤에 비색소가 표기되면 검토 안내 노출 (FO-44)', () => {
+        productNew();
+        el('prod-name').value = '색소크림';
+        setInciInput('정제수, 황색4호, 글리세린');
+        productSave();
+        expect(el('product-detail').textContent).toContain('표시 순서 검토');
+        expect(el('product-detail').textContent).toContain('황색4호');
+
+        // 색소 최하단은 정상 — 힌트 없음
+        productNew();
+        el('prod-name').value = '정상크림';
+        setInciInput('정제수, 글리세린, 황색4호');
+        productSave();
+        expect(el('product-detail').querySelector('.prod-order-hint')).toBeNull();
+    });
+
+    it('제품 간 비교 — 다른 기성품 셀렉트 + 3분할 결과 (FO-45)', () => {
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수, 글리세린');
+        productSave();
+        productNew();
+        el('prod-name').value = 'B로션';
+        setInciInput('정제수, 스쿠알란');
+        productSave();
+
+        const sel = el('prod-p2p-select');
+        expect(sel).toBeTruthy();
+        sel.value = sel.options[1].value;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        const cmp = el('prod-p2p-result').innerHTML;
+        expect(cmp).toContain('공통 성분');
+        expect(cmp).toContain('정제수');
+        expect(cmp).toContain('스쿠알란');
+    });
+
+    it('유사 포뮬러 랭킹 — 중첩 상위 칩 노출, 클릭 시 셀렉트 적용 (FO-45)', () => {
+        createFormula({
+            name: '유사 세럼', targetVolume: 100, unit: 'ml',
+            ingredients: [{ name: '정제수', concentration: 95 }, { name: '글리세린', concentration: 5 }],
+            stability: { result: '양호' },
+        });
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수, 글리세린, 판테놀');
+        productSave();
+
+        const chip = document.querySelector('[data-click="productRankPick"]');
+        expect(chip).toBeTruthy();
+        expect(chip.textContent).toContain('유사 세럼');
+        productRankPick(chip.dataset.arg);
+        expect(el('prod-compare-select').value).toBe(chip.dataset.arg);
+        expect(el('prod-compare-result').innerHTML).toContain('공통 성분');
+    });
+
+    it('분석 내보내기 — 라이브 판정 스냅샷 JSON 다운로드 (FO-45)', () => {
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수, 살리실산');
+        productSave();
+        const id = listProducts()[0].id;
+
+        const dl = spyAnchorDownload();
+        productAnalysisExport(id);
+        dl.restore();
+        expect(dl.clicks.length).toBe(1);
+        expect(dl.clicks[0].download).toMatch(/^product-analysis_.*\.json$/);
+    });
+
+    it('미등록 일괄 사전 등록 — 버튼 노출·등록 후 칩 갱신 (FO-47)', () => {
+        productNew();
+        setInciInput('정제수, 미등록원료A, 미등록원료B');
+        const bulkBtn = el('prod-inci-chips').querySelector('[data-click="productIngRegisterAll"]');
+        expect(bulkBtn).toBeTruthy();
+        expect(bulkBtn.textContent).toContain('미등록 2종');
+
+        productIngRegisterAll();
+        expect(listCustomIngredients().length).toBe(2);
+        // 인덱스 재구축 → 칩이 custom으로 재분류되어 미등록 표시가 사라짐
+        expect(el('prod-inci-count').textContent).not.toContain('미등록');
+        expect(el('prod-inci-chips').querySelector('[data-click="productIngRegisterAll"]')).toBeNull();
+    });
 });
 
 describe('기성품 사진 인식 — BYOK 키·슬롯·프리필 (FO-41~43)', () => {
@@ -389,5 +524,40 @@ describe('기성품 사진 인식 — BYOK 키·슬롯·프리필 (FO-41~43)', (
         expect(vi.mocked(extractProductFromImages)).not.toHaveBeenCalled();
         expect(el('prod-key-block').open).toBe(true);
         expect(el('prod-vision-status').textContent).toContain('API 키');
+    });
+
+    it('키 확인·모델 설정 UI 존재 + 모델명 저장 (FO-46)', () => {
+        productNew();
+        productVisionToggle();
+        expect(document.querySelector('[data-click="productVisionKeyTest"]')).toBeTruthy();
+        const modelInput = el('prod-gemini-model');
+        expect(modelInput).toBeTruthy();
+        expect(modelInput.value).toBe('gemini-2.0-flash'); // 현재 모델 프리필
+
+        modelInput.value = 'gemini-9x-test';
+        productVisionModelSave();
+        expect(getVisionModel()).toBe('gemini-9x-test');
+        modelInput.value = '';
+        productVisionModelSave();
+        expect(getVisionModel()).toBe('gemini-2.0-flash'); // 비우면 기본 복귀
+    });
+
+    it('AI 읽기 — 추출 제형이 라디오 칩으로 프리필 (FO-46)', async () => {
+        vi.mocked(extractProductFromImages).mockResolvedValueOnce({
+            ok: true, name: '인식크림', brand: 'AI랩', category: '크림',
+            ingredients: ['정제수'],
+        });
+        productNew();
+        el('prod-gemini-key').value = 'test-key';
+        productVisionKeySave();
+        productPhotoPick('back');
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        await productVisionRead();
+
+        // '크림'이 '선크림'으로 오매칭되지 않고 '크림·밤' 별칭에 정확히 선택
+        const checked = [...el('prod-category').querySelectorAll('input[name="prod-cat"]')].find(r => r.checked);
+        expect(checked.value).toBe('크림·밤');
     });
 });

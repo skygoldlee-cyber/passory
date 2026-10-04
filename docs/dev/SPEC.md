@@ -380,6 +380,10 @@
 | FO-41 | **기성품 사진 인식 인입(BYOK)** — 사용자 자기 Gemini API 키 등록·디바이스 로컬 저장(백업·동기 제외), `capture="environment"` 카메라/갤러리 입력, 정면(제품명·브랜드)+후면(전성분) 멀티샷, 캔버스 리사이즈·JPEG 압축 전처리 | 구현 |
 | FO-42 | **Gemini Flash 비전 추출** — generateContent + `responseMimeType: application/json` 스키마 계약(`{name,brand,ingredients[]}`), 네트워크·키·파싱 오류 분기, CSP `connect-src`에 `generativelanguage.googleapis.com` 추가 | 구현 |
 | FO-43 | **인식 검토 단계** — 추출 결과를 기성품 폼 칩으로 프리필(직접 저장 금지), 원본 사진 썸네일 대조 표시, 미등록 칩 경고로 할루시네이션 시각화, 사용자 수정 후 기존 `productSave` 경로 저장 | 구현 |
+| FO-44 | **전성분 순서 유효성 힌트** — 색소 계열 성분(`COLORANT_RE`) 뒤에 비색소 성분이 표기되면 법정 표시 규칙(색소는 함량 무관 최하단)과 어긋나므로 라벨 원문·입력 오류 검토를 안내 (판정 아닌 힌트) | 구현 |
+| FO-45 | **기성품 교차 분석 확장** — 기성품↔기성품 3분할 비교, 공통 성분 기준 유사 포뮬러 자동 랭킹(선택지 즉시 적용), 분석 결과 JSON 내보내기, 성분 행→사전 상세 링크(`dictOpenByName`) | 구현 |
+| FO-46 | **사진 인식 보완** — 제형(category) 추출·라디오 칩 프리필, 중복 성분 정규화 dedupe, API 키 유효성 확인(모델 조회 호출), 모델명 설정(`FORMULA_GEMINI_MODEL` — 기본 `gemini-2.0-flash`, 크리덴셜 아니므로 백업 대상) | 구현 |
+| FO-47 | **미등록 성분 일괄 사전 등록** — 폼 칩의 미등록 성분을 한 번에 자가 사전(DI-06) 이름-only 스텁으로 등록, 건수·건너뜀 보고 후 인덱스 즉시 재구축 | 구현 |
 
 ### 3.19 계정·클라우드 동기화 (Supabase Auth, 선택적)
 
@@ -572,7 +576,7 @@
 | UX-NAV-04 | **`100vw` 대신 `100%`**: 뷰포트 기준 너비는 수직 스크롤바 폭을 포함해 가로 오버플로를 유발할 수 있음 | `.app-container { width: 100% }`. 특히 클래식 스크롤바가 상시 표시되는 데스크톱에서 차이 발생 |
 | UX-NAV-05 | **하단 `position:fixed` 요소는 탭 바 위로**: 모바일에서 `bottom` 고정 요소는 `calc(70px + safe-area)` 이상으로 배치 | back-to-top(`bottom:1.25rem`)이 탭 바(z 1400)에 완전히 가려진 실제 사례. 배너·토스트·플로팅 버튼 신규 추가 시에도 동일 규칙 적용. `.main-content`는 `padding-bottom: calc(80px + safe)` + `scroll-padding-bottom`으로 콘텐츠·포커스 요소 보호 |
 | UX-NAV-06 | **통합 검색 팔레트 (Ctrl/Cmd+K)**: `src/command-palette.js` — 뷰/교재 섹션/카드/퀴즈/성분/문제집을 한 검색창에서 찾아 실행. `↑↓` 이동·`Enter` 실행·`ESC`/배경 클릭 닫기, 헤더 돋보기 버튼(모바일 진입점) | `searchAll()`은 소스 주입 가능한 순수 함수로 분리해 테스트 가능. 실행은 기존 경로 재사용(nav 클릭 시뮬레이션, `startSubjectStudy/Quiz`, `openSubjectChapter`, `ExamViewer.openExam`) — 네비게이션 분기 신설 금지. 뷰 목록은 nav-item DOM 스캔이라 feature 게이팅(`is-hidden`)을 자동 반영. z-index 2500 (탭 바·모달 위). 전 소스 로컬 데이터로 오프라인 동작 |
-| UX-NAV-07 | **뷰 전환 스크롤 규칙**: 내비/복귀는 `scrollTop` 복원, **액션 딥링크는 맨 위 오픈** — `switchView(target, { scrollTop: true })` | 내비게이션(사이드바·탭 바·뒤로가기)은 사용자의 이전 위치를 보존하는 게 기대 동작이지만, "맞춤 리포트 보기"·"퀴즈 풀기" 같은 액션 버튼이 이전 스크롤을 복원하면 중간에서 열려 맥락을 잃는다. `restoreScrollPosition`의 `pendingTop` 플래그가 복원 시점에 소비되어 `saveScrollPosition` 덮어쓰기와 무관하게 동작. 새 액션 딥링크 추가 시 `scrollTop: true` 필수 — `data-args='["view-id", {"scrollTop": true}]'` 또는 직접 호출 모두 지원 |
+| UX-NAV-07 | **뷰 전환 스크롤 규칙**: 내비/복귀는 `scrollTop` 복원, **액션 딥링크는 맨 위 오픈** — `switchView(target, { scrollTop: true })`. **인트라뷰 전환**(같은 뷰 안에서 `is-hidden` 토글로 화면 교체 — 서브패널·문항 진행·innerHTML 교체)은 `resetMainScroll()`로 맨 위 리셋 | 내비게이션(사이드바·탭 바·뒤로가기)은 사용자의 이전 위치를 보존하는 게 기대 동작이지만, "맞춤 리포트 보기"·"퀴즈 풀기" 같은 액션 버튼이 이전 스크롤을 복원하면 중간에서 열려 맥락을 잃는다. `restoreScrollPosition`의 `pendingTop` 플래그가 복원 시점에 소비되어 `saveScrollPosition` 덮어쓰기와 무관하게 동작. 새 액션 딥링크 추가 시 `scrollTop: true` 필수 — `data-args='["view-id", {"scrollTop": true}]'` 또는 직접 호출 모두 지원. `.main-content`는 전 뷰 공유 스크롤 컨테이너라 인트라뷰 패널 전환 시 scrollTop이 잔류해 새 화면 상단이 잘림 — `navigation.js`의 `resetMainScroll()`을 각 전환 지점(훈련소 서브패널·드릴/퀴즈/모의고사 문항·결과 전이, Formula OS showPanel, 자체 스크롤 오버레이는 해당 컨테이너 scrollTop)에 호출 |
 | UX-NAV-08 | **뷰 해시 라우팅**: 뷰 전환 시 `#/슬러그`를 `pushState`, `initViewHashRouting()`이 초기 해시 딥링크 해석 + `hashchange` 구독. 훈련소 서브패널은 `#/trainer/<slug>` 깊이 해시(`src/views/trainer.js` — 열림 시 push, `#/trainer` 복귀 시 메뉴 복귀). 모달 뒤로가기는 `src/modal-back.js`가 `is-hidden` 토글을 감시해 동일 URL 마커(`{modalBack}`)를 쌓고 `popstate`로 최상위 모달을 닫음 — 매뉴얼·문제집 뷰어의 자체 마커(`manualOverlay`/`examOverlay`)와는 `history.state`로 구분해 공존 | SPA에서 뒤로가기가 없으면 Android/PWA 뒤로가기 시 앱이 종료됨. 해시는 공유 가능한 딥링크도 제공. `navigateToView` 재진입은 `_hashNavigating` 플래그로 pushState를 생략해 무한 루프 방지. nav-item 없는 뷰(exam-select)는 `registerViewNavigator`로 등록된 라우터 경로가 `switchView` 폴백을 대신해 제목·해시·렌더를 동일하게 동기화 |
 | UX-NAV-11 | **상호작용 요소는 다른 요소에 가려져 클릭 불가하면 안 됨**: 버튼·링크·`data-click`·입력 요소가 스크롤로 화면 안에 들어온 위치에서 `elementFromPoint`가 그 요소(또는 자식)를 반환해야 함 — 탭 바·고정 오버레이·이웃 카드에 덮인 "보이는데 못 누르는" 상태 금지 | UX-NAV-05의 실측 확장 — 탭 바 위치 계약을 요소 단위로 검증. 스크롤 컨테이너 가장자리 클립은 스크롤로 도달 가능하므로 예외, 일시 오버레이(토스트·오프라인 배너)는 소멸성이라 예외. E2E(`mobile-overflow.spec.js`)가 전 뷰의 상호작용 요소를 `scrollIntoView`+히트 테스트로 순회 |
 | UX-NAV-10 | **페이지 수평 오버플로 금지**: 모든 뷰에서 `documentElement.scrollWidth ≤ 뷰포트 너비`. 버튼이 나열된 행은 `flex-wrap`, flex 자식은 `min-width:0`, 깨지지 않는 긴 문자열은 `overflow-wrap:anywhere`로 처리. 스크롤 경로 없는 내부 클립(`overflow-x:hidden` + `scrollWidth>clientWidth`)도 동일하게 금지 | 성분사전 검색 행이 버튼 4개(초기화·CSV·전체 CSV·성분 추가)를 nowrap으로 나열해 모바일에서 '성분 추가'가 잘린 실사례. `text-overflow:ellipsis` 말줄임과 가로 스크롤 컨테이너(표 wrapper 등)는 의도된 클립이라 예외. E2E 스윕(`mobile-overflow.spec.js`)이 전 뷰를 프로젝트 뷰포트별로 실측 |
@@ -616,7 +620,7 @@
 | UX-PWA-03 | **SW Cache First는 CSS/JS 즉시 반영 안 됨**: 배포 후 최소 1~2회 재실행 필요 (구 SW 서빙 → 새 SW 설치 → 재실행 시 반영) | "배포했는데 안 바뀐다" 보고의 대부분이 이 패턴. 사용자 안내 문구와 업데이트 토스트 필수 |
 | UX-PWA-04 | **설치 버튼은 `beforeinstallprompt` 캡처 후에만 표시** | 미설치 상태에서만 노출, 설치 후 자동 숨김 — 헤더 공간 절약 |
 | UX-PWA-05 | **앱 셸 높이는 JS 실측 `--app-height` 사용**: `.app-container { height: var(--app-height, 100dvh) }` + `visualViewport.height`/`innerHeight` 측정, resize 계열 이벤트에 자동 갱신 | PWA 콜드 스타트에서 `dvh`가 실제 화면보다 크게 측정되면 `.main-content` 끝이 화면 밖으로 밀려 스크롤 끝 콘텐츠가 탭 바에 가려짐(대시보드 '내 학습 분석·도구' 실제 장애). JS 미실행 시 `100dvh` 폴백 |
-| UX-PWA-06 | **manifest `shortcuts`로 작업 직행 제공**: cosmetic 매니페스트에 '배합 계산기' 딥링크(`./index.html#/formula`) 등록 — 설치형 PWA의 앱 아이콘 길게 눌러 바로 진입 | 현장(실습·조제실)에서 대시보드 경유 탭을 생략. 시험 도메인 기능이라 플랫폼 공통 `manifest.webmanifest`가 아닌 시험별 매니페스트에만 선언 |
+| UX-PWA-06 | **manifest `shortcuts`로 작업 직행 제공**: cosmetic 매니페스트에 '배합 계산기' 딥링크(`./index.html#/formula`) 등록 — 설치형 PWA의 앱 아이콘 길게 눌러 바로 진입 | 현장(실습·조제실)에서 대시보드 경유 탭을 생략. 시험 도메인 기능이라 플랫폼 공통 `manifest.webmanifest`가 아닌 시험별 매니페스트에만 선언 — exams.json `pwaShortcuts` → `build_exams_list.js` 패스스루 |
 
 #### 4.8.6 폼·입력
 
@@ -794,7 +798,7 @@ UI/UX 요구사양은 기능 요구사양과 달리 단위 테스트만으로는
 | 읽기·뷰어 크롬은 오버레이 + 스크롤 방향 자동 숨김 | UX-NAV-09, TR-16a |
 | 앱 셸 높이는 JS 실측 `--app-height` (태블릿 페이지 플로 대역은 의도적 예외) | UX-PWA-05 |
 | 태블릿 대역은 문서(document)가 스크롤 소유자 — `.app-container{height:auto}` 페이지 플로라 sticky는 문서 스크롤 기준으로 동작 (리더 뷰만 자체 컨테이너 예외) | UX-PWA-05, UX-NAV-02 |
-| 뷰 복귀는 스크롤 복원 · 액션 딥링크는 맨 위 오픈 | R-04, UX-NAV-07 |
+| 뷰 복귀는 스크롤 복원 · 액션 딥링크는 맨 위 오픈 · 인트라뷰 패널/문항 전환은 `resetMainScroll()` | R-04, UX-NAV-07 |
 
 #### 4.10.4 미구현 제안 (백로그 — 승격 시 SPEC ID 부여 후 구현)
 

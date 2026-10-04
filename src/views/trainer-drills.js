@@ -18,7 +18,7 @@ import { DataLoader } from '../data-loader.js';
 import { gradeAnswer } from '../questions.js';
 import { recordStatementJudgments, getWeakStatements, getDueStatementSids, getAllStatementStats, getAnomalousStatements, WEAK_GRADUATE_STREAK } from '../statement-tracker.js';
 import { recordStudyActivity } from '../study-tracker.js';
-import { switchView } from './navigation.js';
+import { switchView, resetMainScroll } from './navigation.js';
 
 const DRILL_COUNT = 10;
 export const OPTION_INDICATORS = ['①', '②', '③', '④', '⑤'];
@@ -168,6 +168,7 @@ export function openDrillSetup(type) {
     if (setup) setup.classList.remove('is-hidden');
     if (arena) arena.classList.add('is-hidden');
     if (result) result.classList.add('is-hidden');
+    resetMainScroll();
     updateDueBadges();
 }
 
@@ -217,6 +218,7 @@ export function startDrill(type, subjectNum) {
         if (setup) setup.classList.add('is-hidden');
         if (result) result.classList.add('is-hidden');
         if (arena) arena.classList.remove('is-hidden');
+        resetMainScroll();
         cfg.renderQuestion();
     }).catch(err => {
         console.error(err);
@@ -248,6 +250,7 @@ export function renderDrillResult(type, statLine, reviewInnerHTML, hasReviewItem
     if (arena) arena.classList.add('is-hidden');
     if (!result) return;
     result.classList.remove('is-hidden');
+    resetMainScroll();
 
     result.innerHTML = trainerResultHtml({
         header: '', doneTitle: `${cfg.title} 완료!`,
@@ -283,6 +286,7 @@ export function openOxDrillSetup() { openDrillSetup('ox'); }
 export function startOxDrill(subjectNum) { startDrill('ox', subjectNum); }
 
 function renderOxDrillQuestion() {
+    resetMainScroll(); // 문항 교체 — 이전 피드백 읽으며 스크롤한 위치가 잔류하면 신규 문항 상단이 잘림
     const st = state.trainer.oxdrill;
     const q = st.data[st.currentIndex];
     if (!q) return;
@@ -409,6 +413,7 @@ export function openWeakReview() {
     const panel = document.getElementById('trainer-weak-panel');
     if (menu) menu.classList.add('is-hidden');
     if (panel) panel.classList.remove('is-hidden');
+    resetMainScroll();
     renderWeakReview();
 }
 

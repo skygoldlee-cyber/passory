@@ -201,6 +201,18 @@ describe('데일리 챌린지 — 생성·진행·완료·스트릭', () => {
         expect(el('daily-modal-progress').textContent).toBe('진행: 2 / 8');
     });
 
+    // UX-NAV-07 — dialog-card는 자체 스크롤 컨테이너. 단계 전환 시 리셋.
+    it('다음 단계 전환 시 카드 내부 스크롤 리셋', async () => {
+        setupDailyData();
+        startDailyChallenge();
+        await flushAsync();
+
+        const card = document.querySelector('#daily-challenge-modal .dialog-card');
+        card.scrollTop = 300;
+        nextDailyStep();
+        expect(card.scrollTop).toBe(0);
+    });
+
     it('단답형 문항 제출 → 채점 피드백', async () => {
         setupDailyData();
         startDailyChallenge();

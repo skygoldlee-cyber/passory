@@ -15,6 +15,21 @@ var EXAMS_LIST = {
       "desc": "화장품법·제조·품질관리·안전관리·맞춤형화장품 4과목 · 문제은행 1,000문",
       "icon": "fa-solid fa-wand-magic-sparkles",
       "year": "2027",
+      "pwaShortcuts": [
+        {
+          "name": "배합 계산기",
+          "short_name": "배합 계산",
+          "description": "Formula OS 배합 계산기로 바로 이동",
+          "url": "./index.html#/formula",
+          "icons": [
+            {
+              "src": "icons/icon-192.png",
+              "sizes": "192x192",
+              "type": "image/png"
+            }
+          ]
+        }
+      ],
       "default": true,
       "contentRoot": "content/exams/cosmetic",
       "dataRoot": "data/exams/cosmetic",

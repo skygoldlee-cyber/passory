@@ -55,6 +55,8 @@ content/exams/<id>/
 
 동시에 `content/exams.json`에 엔트리가 자동 등록된다 (`contentRoot`/`dataRoot`/`registryBundle`/`registryGlobal`).
 
+`exams.json` 엔트리의 선택 필드 `pwaShortcuts`: 설치형 PWA의 앱 아이콘 롱프레스 shortcut 배열 — `build_exams_list.js`가 `manifest.<id>.webmanifest`의 `shortcuts`로 패스스루한다 (SPEC UX-PWA-06 — 시험 도메인 기능이라 시험별 매니페스트에만 선언, cosmetic의 '배합 계산기' `#/formula`가 유일 사례).
+
 ## 2단계 — 콘텐츠와 선언
 
 ### 필수 콘텐츠 교체

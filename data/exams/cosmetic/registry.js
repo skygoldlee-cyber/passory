@@ -2,7 +2,7 @@
 var DATA_REGISTRY = {
   "schemaVersion": 1,
   "contentYear": "2027",
-  "generatedAt": "2026-10-03T13:33:06.860Z",
+  "generatedAt": "2026-10-04T07:54:36.803Z",
   "subjects": [
     {
       "key": "law",
@@ -257,6 +257,7 @@ var DATA_REGISTRY = {
     "registryKey": "ingredients",
     "global": "INGREDIENTS_DATA",
     "customKey": "CUSTOM_INGREDIENTS",
+    "productKey": "PRODUCT_ITEMS",
     "customLabel": "성분 추가",
     "source": {
       "type": "json",

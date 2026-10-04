@@ -1,8 +1,8 @@
 // tests/unit/pwa-sw.test.js — PWA·Service Worker 불변식 (정적 검증)
-// @spec P-01,P-02,P-03,P-04,P-04a,P-05,P-06,P-07,P-08,P-09,P-10,P-11,P-12
+// @spec P-01,P-02,P-03,P-04,P-04a,P-05,P-06,P-07,P-08,P-09,P-10,P-11,P-12,UX-PWA-06
 // sw.js 캐시 전략 분기, 프리캐시 관용성, 스큐 방지, 업데이트 경로,
 // 캐시 버전·프루닝, 설치 프롬프트 캡처·진단·인앱 감지,
-// 매니페스트 Content-Type, 자가 복구, 자산 검증을 고정한다.
+// 매니페스트 Content-Type·시험별 shortcuts, 자가 복구, 자산 검증을 고정한다.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -130,6 +130,26 @@ test('P-10: manifest.webmanifest에 application/manifest+json Content-Type이 �
   assert.ok(rule, 'manifest.webmanifest 헤더 규칙');
   const ct = rule.headers.find(h => h.key === 'Content-Type');
   assert.ok(ct && ct.value.includes('application/manifest+json'), `Content-Type: ${ct && ct.value}`);
+});
+
+// ---------- UX-PWA-06: 시험별 manifest shortcuts ----------
+
+test('UX-PWA-06: buildExamManifest가 exams.json pwaShortcuts를 shortcuts로 패스스루한다', async () => {
+    const { buildExamManifest } = await import('../../tools/build/build_exams_list.js');
+    const base = { id: 'base', name: 'Base', short_name: 'Base', description: 'base desc' };
+    const shortcuts = [{ name: '배합 계산기', url: './index.html#/formula' }];
+    const withSc = buildExamManifest(base, { id: 'cosmetic', title: 'T', pwaShortcuts: shortcuts });
+    assert.deepEqual(withSc.shortcuts, shortcuts, 'pwaShortcuts → shortcuts 패스스루');
+    const without = buildExamManifest(base, { id: 'food', name: 'F' });
+    assert.ok(!('shortcuts' in without), '미선언 시 shortcuts 없음');
+});
+
+test('UX-PWA-06: 생성된 manifest.cosmetic.webmanifest가 배합 계산기 shortcut을 보존한다', () => {
+    const m = JSON.parse(readFileSync(join(ROOT, 'manifest.cosmetic.webmanifest'), 'utf-8'));
+    const exams = JSON.parse(readFileSync(join(ROOT, 'content', 'exams.json'), 'utf-8'));
+    const cosmetic = exams.exams.find(e => e.id === 'cosmetic');
+    assert.deepEqual(m.shortcuts, cosmetic.pwaShortcuts, 'exams.json 선언 ↔ 생성물 일치');
+    assert.ok(m.shortcuts.some(s => s.url === './index.html#/formula'), '#/formula 딥링크');
 });
 
 // ---------- P-11: 자가 복구 (app-fallback.js) ----------

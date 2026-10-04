@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -14,7 +14,8 @@ import {
   createProduct, updateProduct, deleteProduct,
   classifyIngredient, classifyProductIngredients,
   findProductsByIngredient, findAllergyHits, compareWithFormula,
-  serializeProduct, importProduct,
+  compareWithProduct, rankFormulasByOverlap, detectOrderHint,
+  serializeProduct, serializeProductAnalysis, importProduct,
 } from '../../../../src/exams/cosmetic/product-store.js';
 import { buildIngredientIndex } from '../../../../src/exams/cosmetic/formula-check.js';
 
@@ -188,6 +189,14 @@ test('분류 — 인덱스 없음·빈 제품도 안전하게 처리', () => {
   assert.equal(summary.official, 0);
 });
 
+test('분류 — 공백·대소문자 오차는 정규화 폴백으로 매칭 (미등록 오분류 방지)', () => {
+  assert.equal(classifyIngredient('살리 실산', INDEX).cls, PRODUCT_ING_CLASS.RESTRICTED);
+  assert.equal(classifyIngredient('정제 수', INDEX).cls, PRODUCT_ING_CLASS.OFFICIAL);
+  assert.equal(classifyIngredient('타르 색소', INDEX).cls, PRODUCT_ING_CLASS.BANNED);
+  // 정규화해도 없는 성분은 여전히 UNKNOWN
+  assert.equal(classifyIngredient('그냥없는원료', INDEX).cls, PRODUCT_ING_CLASS.UNKNOWN);
+});
+
 /* =======================================================
    교차 분석 (FO-40)
    ======================================================= */
@@ -223,6 +232,50 @@ test('포뮬러 비교 — 공통/제품만/포뮬러만 3분할 (정규화 기�
   assert.equal(compareWithFormula(product, { fullIngredients: [] }), null);
 });
 
+test('제품 비교 — 기성품↔기성품 3분할 (FO-45)', () => {
+  const a = { ingredients: ['정제수', '글리세린', '판테놀'] };
+  const b = { ingredients: ['정제수', '스쿠알란', '판테놀'] };
+  const cmp = compareWithProduct(a, b);
+  assert.deepEqual(cmp.common, ['정제수', '판테놀']);
+  assert.deepEqual(cmp.aOnly, ['글리세린']);
+  assert.deepEqual(cmp.bOnly, ['스쿠알란']);
+  assert.equal(compareWithProduct(a, { ingredients: [] }), null);
+});
+
+test('포뮬러 랭킹 — 유사도 내림차순·공통 없는 후보 제외·limit (FO-45)', () => {
+  const product = { ingredients: ['정제수', '글리세린', '판테놀', '시카추출물'] };
+  const formulas = [
+    { id: 'f1', name: '저유사', fullIngredients: ['정제수', '미네랄오일'] },
+    { id: 'f2', name: '고유사', fullIngredients: ['정제수', '글리세린', '판테놀', '시카추출물'] },
+    { id: 'f3', name: '중유사', fullIngredients: ['정제수', '글리세린', '판테놀'] },
+    { id: 'f4', name: '무공통', fullIngredients: ['스쿠알란'] },
+    { id: 'f5', name: '전성분없음' },
+  ];
+  const ranked = rankFormulasByOverlap(product, formulas, 2);
+  assert.equal(ranked.length, 2);
+  assert.equal(ranked[0].formula.id, 'f2');
+  assert.equal(ranked[1].formula.id, 'f3');
+  assert.ok(!ranked.some(r => r.formula.id === 'f4' || r.formula.id === 'f5'));
+  assert.equal(rankFormulasByOverlap({ ingredients: [] }, formulas).length, 0);
+});
+
+/* =======================================================
+   전성분 순서 힌트 (FO-44)
+   ======================================================= */
+
+test('순서 힌트 — 색소 뒤에 비색소가 오면 misplaced 보고', () => {
+  const hint = detectOrderHint({ ingredients: ['정제수', '황색4호', '글리세린'] });
+  assert.deepEqual(hint.misplaced, ['황색4호']);
+});
+
+test('순서 힌트 — 색소가 최하단이면 정상(null), 비색소만·색소만도 null', () => {
+  assert.equal(detectOrderHint({ ingredients: ['정제수', '글리세린', '황색4호'] }), null);
+  assert.equal(detectOrderHint({ ingredients: ['정제수', '글리세린'] }), null);
+  assert.equal(detectOrderHint({ ingredients: ['황색4호', '적색201호'] }), null);
+  assert.equal(detectOrderHint(null), null);
+  assert.equal(detectOrderHint({ ingredients: [] }), null);
+});
+
 /* =======================================================
    JSON 직렬화·가져오기 (FO-40)
    ======================================================= */
@@ -246,6 +299,21 @@ test('가져오기 — 래퍼·날것 모두 수용, 불량 JSON·객체 아님 
   assert.equal(importProduct('{bad json').ok, false);
   assert.equal(importProduct('123').ok, false);
   assert.equal(importProduct(JSON.stringify([1, 2])).ok, false);
+});
+
+test('분석 직렬화 — 라이브 판정 스냅샷 (FO-45): 순서·배지·요약·힌트 포함', () => {
+  const product = { name: '크림', brand: 'B', ingredients: ['정제수', '황색4호', '살리실산', '미등록원료'] };
+  const parsed = JSON.parse(serializeProductAnalysis(product, INDEX));
+  assert.equal(parsed.type, 'formula-os-product-analysis');
+  assert.equal(parsed.version, 1);
+  assert.equal(parsed.product.name, '크림');
+  assert.equal(parsed.ingredients.length, 4);
+  assert.equal(parsed.ingredients[0].order, 1);
+  assert.equal(parsed.ingredients[2].cls, 'restricted');
+  assert.equal(parsed.ingredients[3].cls, 'unknown');
+  assert.equal(parsed.summary.official, 1);
+  assert.deepEqual(parsed.orderHint, ['황색4호']);
+  assert.ok(parsed.generatedAt);
 });
 
 test('가져오기 — 중복·한도 규칙 동일 적용', () => {

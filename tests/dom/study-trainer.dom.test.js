@@ -226,4 +226,43 @@ describe('스마트 훈련소 — 수치·계산·원료·취약 리뷰', () => 
         expect(isVisible('trainer-menu-panel')).toBe(true);
         expect(el('trainer-weak-panel').classList.contains('is-hidden')).toBe(true);
     });
+
+    // UX-NAV-07 — 인트라뷰 서브패널 전환 시 .main-content 스크롤 리셋
+    // (공유 컨테이너라 이전 화면의 scrollTop이 잔류하면 새 화면 상단이 잘림)
+    it('스크롤 잔류 상태에서 서브패널 전환 → 맨 위로 리셋', async () => {
+        const mc = document.querySelector('.main-content');
+
+        mc.scrollTop = 400;
+        await startLimitsTrainer();
+        expect(mc.scrollTop).toBe(0);
+
+        mc.scrollTop = 400;
+        startCalcPractice();
+        expect(mc.scrollTop).toBe(0);
+
+        mc.scrollTop = 400;
+        openWeakReview();
+        expect(mc.scrollTop).toBe(0);
+
+        // 서브패널 → 메뉴 복귀도 리셋
+        mc.scrollTop = 400;
+        initTrainer();
+        expect(mc.scrollTop).toBe(0);
+    });
+
+    it('limits 문항 진행 중 스크롤 잔류 → 다음 문항/결과 진입 시 리셋', async () => {
+        const mc = document.querySelector('.main-content');
+        await startLimitsTrainer();
+
+        mc.scrollTop = 300;
+        nextLimitsQuestion();
+        expect(mc.scrollTop).toBe(0);
+
+        // 완주 → 결과 화면(innerHTML 교체)도 리셋
+        mc.scrollTop = 300;
+        const total = state.trainer.limits.shuffledData.length;
+        for (let i = state.trainer.limits.currentIndex; i < total; i++) nextLimitsQuestion();
+        expect(el('trainer-limits-panel').textContent).toContain('훈련 완료');
+        expect(mc.scrollTop).toBe(0);
+    });
 });

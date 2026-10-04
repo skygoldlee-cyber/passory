@@ -6,6 +6,46 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-04 기성품 전성분 분석 보완 — 매칭 정규화·분석 확장·비전 설정화 (FO-37~40 수정 + FO-44~47 신규)
+
+- A군 결함 수정
+  - 제형 라디오 잔류: `productNew()`가 `catEl.value=''`를 대입했으나 `#prod-category`는 라디오 칩 그룹(div)이라 무동작 — 수정 후 이전 제형이 신규 폼에 유지돼 그대로 저장되던 결함. 전 라디오 `checked` 리셋 + '미선택' 기본값 복귀로 수정 (FO-37)
+  - 성분 매칭 비정규화: 인덱스·`classifyIngredient`는 원문 키 조회, `findAllergyHits`·`compareWithFormula`·`findProductsByIngredient`는 `normalizeEntityName` 사용으로 경로 불일치 — 공백만 다른 성분명이 '미등록'으로 오분류되던 결함. `formula-check.js`에 `findIngredient()` 정규화 폴백(정확→공백·대소문자 제거)을 신설하고 `classifyIngredient`·`renderInciChips`·`checkFormulaItems` 경로에 통일 적용. 원문 표기는 그대로 보존, 공식>자가 우선순위·미등록 판정 경계 유지 (FO-39)
+  - 제한 원료 한도 모바일 접근: `한도:` 정보가 배지 `title` 툴팁에만 있어 터치 불가 — 성분 행에 `prod-ing-note` 인라인 노트로 상시 표시 ('한도: …(함량 미표기라 초과 여부는 원문 확인)' 안전 문구 유지) (FO-39)
+- B군 기능 확장 (SPEC FO-44~47 선행 선언)
+  - FO-44 전성분 순서 힌트: `detectOrderHint()` — 색소(황색4호·적색○○호 등 `COLORANT_RE`)가 마지막 성분이 아니면 '중간 위치 색소' 경고 힌트를 상세 패널에 표시. 표기 순서 관행에 대한 힌트이며 법적 판정 아님
+  - FO-45 교차 분석 확장: `compareWithProduct()`(제품↔제품 3분할 비교 셀렉트)·`rankFormulasByOverlap()`(보유 포뮬러 중첩 랭킹 칩, 클릭 시 기존 제품↔포뮬러 비교에 연결)·`serializeProductAnalysis()`(분석 리포트 JSON 내보내기 — 라이브 판정 스냅샷, 원문/정규화/안전 문구 포함)
+  - FO-46 비전 보완: 추출 스키마에 `category` 추가 → 라디오 칩 '·' 별칭 정확일치 프리필('크림'→'선크림' 오매칭 방지), 추출 성분 정규화 dedupe, `FORMULA_GEMINI_MODEL` 로컬 키로 모델명 설정(기본 gemini-2.0-flash, 공백 정제·대문자 제거는 미적용), `validateVisionKey()` 키 확인 버튼(GET 모델 조회 — nokey/성공/키오류/404/네트워크 분기), 모델 입력란 추천 datalist(비전·구조화 출력 지원 계열 5종 — 비용·정확도 트레이드오프 안내 문구 포함)
+  - FO-47 미등록 일괄 사전등록: 칩 영역 '미등록 N종 일괄 사전등록' 버튼 — `createCustomIngredient` 순회, 공식명 충돌·중복·한도(50종) 실패는 건너뛰고 성공 수만 토스트, 칩 즉시 재판정
+  - 성분 행 → 사전 링크: 공식/비공식 행에 `dictOpenByName` 사전 버튼 — 사전 뷰 상세로 직행(역방향 '함유 기성품' 링크와 대칭)
+- 안전 경계 유지: 미등록≠위험·등재≠안전 문구 유지, 금지명 매칭은 경고일 뿐 법적 판정 아님, 함량 미표기라 한도 초과 판정 불가 문구 유지, 키는 로컬 전용·백업/동기화 제외 계약 유지(모델명은 크리덴셜 아닌 환경설정)
+- 테스트: 유닛 product-store +14·product-vision +5, DOM formula-products +7 (신규 전부 회귀 단언 포함)
+
+## 2026-10-04 인트라뷰 전환 스크롤 잔류 전수조사 — resetMainScroll 공유 헬퍼로 일괄 정규화 (UX-NAV-07)
+
+- 결함 클래스: `.main-content`는 전 뷰 공유 스크롤 컨테이너라 `is-hidden` 토글만으로 화면을 바꾸는 인트라뷰 전환(서브패널·문항 교체·innerHTML 교체)은 이전 화면의 scrollTop을 그대로 물려받아 새 화면 상단이 뷰포트 위로 잘림 — 2026-10-04 Formula OS `showPanel` 수정(바로 아래 항목)과 동형 결함의 전수조사
+- 수정: `navigation.js`에 `resetMainScroll()` 공유 헬퍼 신설 후 전환 지점에 일괄 적용
+  - 훈련소: `startLimitsTrainer`·`openDrillSetup`·`startDrill`·`renderDrillResult`·`openWeakReview`·`startCalcPractice`·`startIngredientsChallenge`·`initTrainer`/`exitTrainerSubView` + 문항 교체(`renderLimitsQuestion`·`renderOxDrillQuestion`·`renderComboQuestion`·`renderIngQuestion`·`generateCalcQuestion`·`renderLimitsResult` innerHTML 교체)
+  - 모의고사: `startSimSession`·`resumeSimDraft`·`exitSimArena`·`showSimAnswerReview`·`showSimResultsSummary`·`renderSimResultBreakdown`·`renderSimQuestion`(문항 이동)
+  - 퀴즈: `_beginQuizRun`·`renderQuizResult`·`renderQuizQuestion`
+  - 자체 스크롤 오버레이: 데일리 챌린지 `renderDailyStep`(.dialog-card)·계량 모드 `renderWeigh`(.f-weigh-overlay/.f-weigh-card)·자가 성분 모달 `customIngAdd/Edit`(.cing-overlay 재사용)·커맨드 팔레트 `_renderResults`(#cmdk-results)
+  - `formula.js` `showPanel`의 인라인 리셋도 헬퍼로 통일
+- 안전 분류(수정 불필요): `switchView` 뷰 전환(기존 UX-NAV-07 저장/복원·pendingTop 계약), 자체 스크롤 뷰어(exam/manual/html/mermaid/image-zoom — 자체 scrollTop=0 존재), 교재리더(자체 컨테이너), 인라인 토글(피드백 패널·배지·카드 상세·피커 행·필터), 설정 패널·더보기 시트(고정 오버레이)
+- DOM 회귀 단언: trainer·trainer-drills·simulator·quiz·challenge 각 테스트에 '스크롤 잔류 상태 전이 → scrollTop=0' 단언 추가
+
+## 2026-10-04 Formula OS 서브패널 전환 시 스크롤 리셋 — 모바일 폼 상단 잘림 수정
+
+- 결함: `showPanel`이 패널 표시만 토글하고 `.main-content` 스크롤을 유지 → 허브·목록을 스크롤한 상태로 폼/상세를 열면 상단(헤더·기성품 폼 '사진으로 채우기' 버튼)이 뷰포트 위로 잘려 보이지 않음. 실측 재현: scrollTop 432 상태에서 폼 오픈 시 `.prod-photo-section`이 top −227로 완전 이탈
+- 수정: `showPanel`에서 `.main-content` scrollTop=0 — 15개 서브패널 전환 공통 처리 (고객·배합·장부·기성품·준수 등 폼 전부가 동일 결함 잠재 보유). switchView의 뷰 단위 스크롤 복원(UX-NAV-07)과 무관한 인트라뷰 전환 계약
+- DOM 회귀: `formula-products.dom.test.js`에 '폼 오픈 시 scrollTop 리셋' 단언 추가
+
+## 2026-10-04 생성물 드리프트 수정 — 시험별 webmanifest shortcuts 생성기 패스스루 (UX-PWA-06)
+
+- `build_exams_list.js`가 `manifest.<id>.webmanifest` 재생성 시 `shortcuts`를 소실시키던 결함 수정 — 8a155e92에서 SPEC 선행으로 수동 편집된 '배합 계산기' shortcut이 `build:data`마다 사라져 `check:datafresh`가 드리프트로 검출
+- exams.json에 시험별 선택 필드 `pwaShortcuts` 신설 (cosmetic에 '배합 계산기' `#/formula` 딥링크 선언) → `buildExamManifest()`(순수 함수로 추출·export)가 `shortcuts`로 패스스루 — 플랫폼 공통 `manifest.webmanifest`는 여전히 shortcuts 없음 (SPEC "시험별 매니페스트에만 선언" 유지)
+- 생성물 동기화: `registry.js`·`study_md/manifest.js`에 `knowledge.productKey`(FO-37 기성품 연동) 반영 — upstream이 manifest.json 갱신 후 번들 재생성을 누락한 드리프트 커밋
+- 테스트: `pwa-sw.test.js`에 UX-PWA-06 단언 2건 (패스스루 계약 + 생성물↔exams.json 일치)
+
 ## 2026-10-19 기성품 폼 모바일 행 분리 — 제품명·브랜드·제형 세로 스택
 
 - `prod-meta-row` 클래스 추가 + ≤700px에서 자식 필드를 `flex: 0 0 100%`로 전환 — 모바일에서 제품명·브랜드가 한 행에 나란히 눌려 입력폭이 잘리던 문제 해소
