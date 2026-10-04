@@ -1,5 +1,13 @@
 [
   {
+    "version": "v20261004-6aab460",
+    "date": "2026-10-04",
+    "notes": [
+      "[수정·formula] 서브패널 전환 시 스크롤 리셋 — 모바일에서 폼 상단이 잘려 보이지 않던 결함",
+      "[수정·build] manifest.<id>.webmanifest 재생성 시 shortcuts 소실 수정 — exams.json pwaShortcuts 패스스루 (UX-PWA-06)"
+    ]
+  },
+  {
     "version": "v20261004-307ee41",
     "date": "2026-10-04",
     "notes": [
@@ -136,13 +144,6 @@
       "TESTING.md DOM 수치 정정 — 546 (study-dictionary 14·dictionary-custom 8)",
       "TESTING.md 수치 — dictionary-custom 8·DOM 546",
       "'성분 추가' 버튼 툴팁 보강 — DI-06"
-    ]
-  },
-  {
-    "version": "v20261003-e1e572e",
-    "date": "2026-10-03",
-    "notes": [
-      "사전 DB 전체 CSV 내보내기 — DI-10"
     ]
   }
 ]
