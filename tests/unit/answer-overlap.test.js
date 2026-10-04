@@ -49,3 +49,46 @@ test('선다형 부정형 — 정답 미지지가 정상, 해설이면 통과', 
 test('근거 구절이 비어 있으면 미지지', () => {
     assert.ok(!isSupported(choiceQ(['A', 'B', 'C', 'D', 'E']), ans('①'), '   ').ok);
 });
+
+// ── fix_answer_quotes: 인용문 보강기 판정 ──────────────────
+import fixer from '../../tools/sync/fix_answer_quotes.js';
+const { strongShare, expandForward, quoteWindow } = fixer;
+
+test('strongShare — 우연한 짧은 n-gram은 지지로 인정하지 않는다', () => {
+    // 4자 일반 n-gram("화장품에")은 약한 일치 → 강한 지지 아님
+    assert.ok(!strongShare('화장품에 사용된 모든 성분', '소비자에게 판매하는 화장품에 한함'));
+    // 숫자 포함 4-gram은 강한 지지
+    assert.ok(strongShare('만 3세 이하', '영유아는 만 3세 이하로 정의한다'));
+    // 6-gram 이상 공유도 강한 지지
+    assert.ok(strongShare('책임판매관리자 자격', '책임판매관리자를 두어야 한다'));
+    // 5자 이하 단답은 완전 포함 필요
+    assert.ok(strongShare('피부', '피부 자극을 유발한다'));
+    assert.ok(!strongShare('피부', '화장품의 표시 기준'));
+});
+
+test('expandForward — 인용 라인 이후에서 지지를 찾을 때까지 누적한다', () => {
+    const src = [
+        '① 법 제4조의2제1항에 따른 영유아의 연령 기준은 다음 각 호의',
+        '1. 영유아: 만 3세 이하',
+        '2. 어린이: 만 13세 미만',
+    ];
+    const q = choiceQ(['만 1세', '만 2세', '만 7세', '만 6세', '만 3세 이하']);
+    const a = ans('⑤');
+    const picked = expandForward(src, 0, q, a);
+    assert.ok(picked && picked.length === 2); // 인트로 + '만 3세 이하' 라인
+});
+
+test('quoteWindow — 래핑된 조문은 문단 경계까지 포함한다', () => {
+    const src = [
+        '제13조(부당한 표시ㆍ광고 금지) ① 영업자는 다음 각 호에 해당하는 표시',
+        '를 하여서는 아니 된다.',
+        '2. 기능성화장품이 아닌 화장품을 기능성화장품으로 잘못 인식할 우려가 있',
+        '는 표시 또는 광고',
+        '',
+        '3. 삭제<2025.1.31.>',
+    ];
+    // 지지 라인이 래핑 중간(인덱스 3)이면 문단 시작(인덱스 2, '2.' 마커)까지 포함
+    const win = quoteWindow(src, 3);
+    assert.equal(win[0], src[2]);
+    assert.equal(win[win.length - 1], src[3]);
+});

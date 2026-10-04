@@ -87,8 +87,8 @@ function parseQuestionBank(filePath) {
     const flushQ = () => { if (cur) questions.set(cur.num, cur); cur = null; };
     const flushA = () => { if (curAns) answers.set(curAns.num, curAns); curAns = null; inPassage = false; };
 
-    for (const raw of lines) {
-        const line = raw.trimEnd();
+    for (let li = 0; li < lines.length; li++) {
+        const line = lines[li].trimEnd();
 
         if (/^##\s+🔑/.test(line)) { inAnswers = true; flushQ(); continue; }
 
@@ -129,6 +129,8 @@ function parseQuestionBank(filePath) {
         if (inPassage && line.startsWith('>')) {
             // 중첩 인용(> > **해설**:)도 구절로 포함 — 해설 자체가 정답 지지 근거
             curAns.passage += ' ' + block.replace(/^>\s?/, '').trim();
+            if (curAns.passageStart === undefined) curAns.passageStart = li;
+            curAns.passageEnd = li;
         }
     }
     flushQ();
