@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52,FO-53
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).

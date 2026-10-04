@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52,FO-53
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -385,6 +385,21 @@ test('순서 힌트 — 색소가 최하단이면 정상(null), 비색소만·�
   assert.equal(detectOrderHint({ ingredients: ['황색4호', '적색201호'] }), null);
   assert.equal(detectOrderHint(null), null);
   assert.equal(detectOrderHint({ ingredients: [] }), null);
+});
+
+test('순서 힌트 — 무기안료·광택소재·레이크·금속가루도 색소로 검출 (FO-53)', () => {
+  for (const colorant of ['황색4호레이크', '마이카티타늄', '비스무트옥시클로라이드', '알루미늄가루', '카본블랙', '틴옥사이드']) {
+    const hint = detectOrderHint({ ingredients: ['정제수', colorant, '글리세린'] });
+    assert.deepEqual(hint && hint.misplaced, [colorant], colorant);
+  }
+  // 색소끼리는 최하단 그룹 — 서로의 순서는 힌트 대상 아님
+  assert.equal(detectOrderHint({ ingredients: ['정제수', '마이카티타늄', '황색4호'] }), null);
+});
+
+test('순서 힌트 — 탈크·마이카 단독은 색소 아님 — 기재 성분 오판 방지 (FO-53)', () => {
+  assert.equal(detectOrderHint({ ingredients: ['탈크', '글리세린', '정제수'] }), null);
+  assert.equal(detectOrderHint({ ingredients: ['마이카', '글리세린', '정제수'] }), null);
+  assert.equal(detectOrderHint({ ingredients: ['합성플루오르플로고파이트', '글리세린'] }), null);
 });
 
 /* =======================================================

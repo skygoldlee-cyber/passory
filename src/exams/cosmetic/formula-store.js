@@ -1,5 +1,5 @@
 // src/exams/cosmetic/formula-store.js — Formula OS My Formula 영속성 계층 (Phase 5-A)
-// @spec FO-08,FO-23
+// @spec FO-08,FO-23,FO-53
 //
 // 포뮬러 CRUD + Free 한도 + 백업 통합. localStorage `formula_items`
 // (safeGetItem/safeSetItem 경유 → 시험별 네임스페이스 자동 적용).
@@ -143,9 +143,12 @@ function sanitizeStability(stab) {
   return (s.method || s.result || s.note) ? s : null;
 }
 
-// 색소 탐지 — 타르색소 호수 표기(황색4호·적색201호 등), CI 번호, 무기 색소·광택소재
+// 색소 탐지 — 타르색소 호수 표기(황색4호·적색201호·○색N호레이크), CI 번호,
+// 무기 색소·광택소재·금속가루 (안전기준 별표2 색소 범주).
+// 탈크·마이카 단독·합성플루오르플로고파이트는 색소가 아닌 기재라 의도적 제외 —
+// 스킨케어 등에서 색소 그룹으로 밀리는 오판 방지 (FO-53).
 // (export — 기성품 전성분 순서 힌트(product-store.js detectOrderHint)가 같은 규칙을 재사용)
-export const COLORANT_RE = /색\s*\d+호|(?:C\.?I\.?)\s*\d{4,6}|카민|산화철|울트라마린|망가니스바이올렛|페릭페로시아나이드|크롬옥사이드|수산화크롬|구아닌/i;
+export const COLORANT_RE = /색\s*\d+호|레이크|(?:C\.?I\.?)\s*\d{4,6}|카민|산화철|울트라마린|망가니스바이올렛|페릭페로시아나이드|크롬옥사이드|수산화크롬|구아닌|마이카티타늄|운모티타늄|티타늄코팅운모|비스무트옥시클로라이드|알루미늄가루|동가루|청동가루|카본블랙|틴옥사이드/i;
 
 /**
  * 전성분 표시 순서 생성 — 화장품법 전성분 표시 규칙.
