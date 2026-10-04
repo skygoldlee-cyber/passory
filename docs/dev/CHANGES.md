@@ -6,6 +6,23 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 기성품 전성분 DB 구현 — FO-37~40 (Phase A+B)
+
+- `product-store.js` 신규 — `product_items` 스토어(BACKUP_KEYS 편입): 순서보존 전성분 파서·brand+name 정규화 중복·Free 30종·라이브 분류(공식/제한/금지매칭/자가/미등록)·성분 역조회·알레르기 부분일치·포뮬러 3분할 비교·JSON I/O
+- `views/formula-products.js` 신규 — 허브 카드(전 유형 노출)·목록(검색·성분 필터 칩)·등록/수정 폼(붙여넣기→칩 미리보기·미등록 칩 '사전 등록' 단축=FO-32 재사용)·상세(전성분 라이브 분석+고객 알레르기 교차+포뮬러 비교 셀렉트)·JSON 가져오기/보내기
+- 연동: `formula.js` PANELS·서브내비 'products' 칩 + `invalidateIngredientIndex`가 `formula:ingredients-changed` 발화(자가 성분 등록 즉시 기성품 분석 갱신), `practice-registry` lazy 등록 12핸들러, `dictionary.js` 사전 상세 '함유 기성품 N개 제품' 버튼 → `productOpenByIngredient` 필터 목록, `formula-customer.js` 고객 상세 '알레르기 주의 기성품' 섹션, manifest `knowledge.productKey` 스키마 계약
+- **버그 수정 포함**: 전성분 파서의 쉼표 보호 문자가 빈 문자열로 작성되어 자릿수 쉼표(`1,2-헥산디올`)는 삭제되고 모든 토큰이 문자마다 쉼표로 오염되던 결함 → NUL 센티널(`\u0000`)로 교체 (유닛 테스트가 적발)
+- CSS: `.f-check-custom` 자가 배지 + 기성품 칩/필터/알레르기/비교 그리드 스타일
+- 테스트: `product-store.test.js` 유닛 24건(파서·CRUD·한도·분류·교차·JSON) + `formula-products.dom.test.js` 11건(허브 카드 전 유형·등록→분석·역조회 필터·알레르기 교차·비교·JSON) — nav 테스트 칩 수 6→7 갱신
+- SPEC FO-37~40 상태 미구현→구현 갱신
+
+## 2026-10-19 기성품 전성분 DB 설계안 — FO-37~40 SPEC 선행 선언
+
+- Formula OS에 시판 제품의 전성분을 등록해 개인 기성품 DB를 구축하는 설계 확정 — `docs/dev/design/PRODUCT_DB_DESIGN.md` (DOC-DSN-12)
+- 핵심 결정: 성분명 문자열만 저장(농도 없음)·전성분 순서 보존·조회 시점 라이브 매칭(스냅샷 아님 — 원료 DB 갱신 자동 반영)·독립 스토어 `product_items`·전 유형 노출·미등록 성분은 칩 보존+FO-32 단축 경로
+- SPEC §3.18에 FO-37(스토어)·FO-38(전성분 파싱 — `1,2-헥산디올` 자릿수 쉼표 보호)·FO-39(라이브 분석)·FO-40(교차 분석)을 `미구현` 상태로 선행 선언
+- Phase A(스토어+파싱+목록+상세 분석+역조회)·B(알레르기 교차+포뮬러 비교+JSON I/O) 범위 승인됨 — 구현 시 상태 ✅ 갱신
+
 ## 2026-10-19 모바일 가림·잘림 유사 결함 전수조사 — 9곳 일괄 정규화
 
 - 배경: 자가 등록 모달 탭 바 가림(직전 항목)과 동일 계열을 전수 조사 — CSS fixed/sticky 37곳 + JS 동적 생성 오버레이 7곳 인벤토리

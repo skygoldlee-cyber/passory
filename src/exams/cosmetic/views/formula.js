@@ -62,6 +62,7 @@ const PANELS = [
   'formula-material-panel', 'formula-material-form-panel',
   'formula-compliance-panel',
   'formula-label-panel', 'formula-adlint-panel',
+  'formula-product-panel', 'formula-product-form-panel', 'formula-product-detail-panel',
 ];
 
 // 계산기 드래프트 상태 (저장 전 작업 데이터)
@@ -92,6 +93,10 @@ export function getIndex() {
 /** 자가 등록 성분 변경 시 인덱스 재구축 (DI-09) — 배지·검증 즉시 반영 */
 export function invalidateIngredientIndex() {
   ingredientIndex = null;
+  // 기성품 DB 등 인덱스 소비자가 갱신하도록 알림 — 직접 import 없이 DOM 이벤트로 결합도 제거
+  if (typeof document !== 'undefined') {
+    document.dispatchEvent(new CustomEvent('formula:ingredients-changed'));
+  }
 }
 
 export function showPanel(id) {
@@ -113,6 +118,7 @@ const SUBNAV_ITEMS = [
   { id: 'material', label: '원료 장부', click: 'openMaterialPanel' },
   { id: 'label', label: '표시사항', click: 'openLabelPanel' },
   { id: 'adlint', label: '광고 점검', click: 'openAdLintPanel' },
+  { id: 'products', label: '기성품 DB', click: 'openProductPanel' },
   { id: 'compliance', label: '법규 준수', click: 'openCompliancePanel' },
 ];
 

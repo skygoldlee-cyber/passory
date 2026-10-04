@@ -1,4 +1,4 @@
-            <!-- @spec FO-15,FO-24,FO-25,FO-26~31 -->
+            <!-- @spec FO-15,FO-24,FO-25,FO-26~31,FO-37~40 -->
             <section id="formula-view" class="view-section" data-feature="formula">
                 <!-- 1. 허브 메뉴 -->
                 <div id="formula-menu-panel">
@@ -91,6 +91,15 @@
                             <h4>광고 문구 점검</h4>
                             <p>제품 설명·광고 문구를 의약품 오인·과대광고 금지 표현과 대조해 위험 표현을 하이라이트합니다.</p>
                             <span class="trainer-card-btn">문구 점검 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="trainer-menu-card" data-click="openProductPanel">
+                            <span class="trainer-step-badge is-continuous" aria-hidden="true">분석</span>
+                            <div class="trainer-card-icon icon-green">
+                                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                            </div>
+                            <h4>기성품 DB</h4>
+                            <p>시판 제품의 전성분을 붙여넣어 등록하면 성분별 규제 배지·고객 알레르기 교차·내 포뮬러와의 비교가 활성화됩니다.</p>
+                            <span class="trainer-card-btn">제품 목록 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
                         </div>
                         <div class="trainer-menu-card" data-click="openCompliancePanel">
                             <span class="trainer-step-badge is-continuous" aria-hidden="true">상시</span>
@@ -759,5 +768,81 @@
                         </div>
                         <div id="adlint-result" aria-live="polite"></div>
                     </div>
+                </div>
+
+                <!-- 15. 기성품 DB 목록 (FO-37~40) — 시판 제품 전성분 등록·분석 -->
+                <div id="formula-product-panel" class="is-hidden">
+                    <div class="sim-arena-header mb-6">
+                        <button class="btn btn-secondary" data-click="exitFormulaSubView" title="Formula OS 메뉴로 돌아가기"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> 나가기</button>
+                        <div class="sim-title-group">
+                            <h4>기성품 DB</h4>
+                            <span class="badge badge-quiz-cat" id="product-list-usage">0/30 등록</span>
+                            <button class="btn btn-secondary btn-sm" data-click="productNew"><i class="fa-solid fa-plus" aria-hidden="true"></i> 제품 등록</button>
+                            <button class="btn btn-secondary btn-sm" data-click="productImportJson" title="JSON 제품 파일 가져오기"><i class="fa-solid fa-upload" aria-hidden="true"></i> JSON 가져오기</button>
+                            <input type="file" id="product-file-input" class="is-hidden" accept=".json,application/json" aria-label="제품 JSON 파일">
+                        </div>
+                    </div>
+                    <div id="formula-product-subnav"></div>
+                    <p class="formula-data-notice"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>전성분은 사용자 기록이며, 성분 판정은 <strong>현재 원료 DB 기준</strong>으로 조회 시점에 매칭됩니다 — 금지·제한 배지는 함유 단정이 아니라 원문 확인 안내입니다.</p>
+                    <div class="formula-field-row prod-search-row">
+                        <label class="formula-field">
+                            <input type="search" id="product-search" class="form-input" maxlength="60" placeholder="제품명·브랜드·성분 검색" aria-label="기성품 검색">
+                        </label>
+                    </div>
+                    <div id="product-filter-chip"></div>
+                    <div id="product-list" class="formula-list"></div>
+                </div>
+
+                <!-- 16. 기성품 폼 (등록 · 수정) — 전성분 붙여넣기 + 칩 미리보기 -->
+                <div id="formula-product-form-panel" class="is-hidden">
+                    <div class="sim-arena-header mb-6">
+                        <button class="btn btn-secondary" data-click="openProductPanel"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> 목록으로</button>
+                        <div class="sim-title-group">
+                            <h4 id="product-form-title">기성품 등록</h4>
+                        </div>
+                    </div>
+                    <div class="formula-calc-form glass-card">
+                        <div class="formula-field-row">
+                            <label class="formula-field">
+                                <span class="formula-field-label">제품명 *</span>
+                                <input type="text" id="prod-name" class="form-input" maxlength="120" placeholder="예: 인텐시브 수분 크림" aria-label="제품명">
+                            </label>
+                            <label class="formula-field">
+                                <span class="formula-field-label">브랜드</span>
+                                <input type="text" id="prod-brand" class="form-input" maxlength="60" placeholder="예: OO랩" aria-label="브랜드">
+                            </label>
+                            <label class="formula-field formula-field-unit">
+                                <span class="formula-field-label">제형</span>
+                                <select id="prod-category" class="form-select" aria-label="제형"></select>
+                            </label>
+                        </div>
+                        <div class="formula-field">
+                            <span class="formula-field-label">전성분 * <span class="fold-hint" id="prod-inci-count"></span></span>
+                            <textarea id="prod-inci-input" class="form-input" rows="5" maxlength="20000"
+                                      placeholder="제품 라벨·판매 페이지의 전성분을 그대로 붙여넣으세요 — 쉼표·개행·중점(·) 구분 자동 인식 (예: 정제수, 글리세린, 부틸렌글라이콜, 1,2-헥산디올)"
+                                      aria-label="전성분 붙여넣기"></textarea>
+                            <div id="prod-inci-chips" class="prod-inci-chips" aria-live="polite"></div>
+                        </div>
+                        <label class="formula-field">
+                            <span class="formula-field-label">메모</span>
+                            <textarea id="prod-note" class="form-input" rows="2" maxlength="300" placeholder="가격·구매처·용도 등" aria-label="제품 메모"></textarea>
+                        </label>
+                    </div>
+                    <div class="formula-calc-bar fcb-bottom">
+                        <button class="btn btn-primary" data-click="productSave"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> 저장</button>
+                    </div>
+                    <p class="formula-save-hint">미등록 성분 칩의 '사전 등록'으로 자가 사전에 바로 추가하면 분석 배지가 즉시 갱신됩니다.</p>
+                </div>
+
+                <!-- 17. 기성품 상세 — 전성분 분석·알레르기 교차·포뮬러 비교 -->
+                <div id="formula-product-detail-panel" class="is-hidden">
+                    <div class="sim-arena-header mb-6">
+                        <button class="btn btn-secondary" data-click="openProductPanel"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> 목록으로</button>
+                        <div class="sim-title-group">
+                            <h4>기성품 상세</h4>
+                        </div>
+                    </div>
+                    <div id="product-detail-subnav"></div>
+                    <div id="product-detail"></div>
                 </div>
             </section>

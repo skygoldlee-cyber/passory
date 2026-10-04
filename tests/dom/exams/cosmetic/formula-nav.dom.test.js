@@ -1,7 +1,7 @@
 // tests/dom/formula-nav.dom.test.js — Formula OS 패널 전환·서브내비 시나리오
-// @spec FO-15,FO-24,FO-25
+// @spec FO-15,FO-24,FO-25,FO-38
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4
-// 검증: 허브→서브패널 전환(is-hidden), 서브내비 칩 6개·활성 상태, 나가기 복귀
+// 검증: 허브→서브패널 전환(is-hidden), 서브내비 칩·활성 상태, 나가기 복귀
 
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
@@ -15,12 +15,14 @@ import { initFormulaView, exitFormulaSubView, openFormulaCalc } from '../../../.
 import { openCustomerPanel } from '../../../../src/exams/cosmetic/views/formula-customer.js';
 import { openMaterialPanel } from '../../../../src/exams/cosmetic/views/formula-material.js';
 import { openCompliancePanel } from '../../../../src/exams/cosmetic/views/formula-compliance.js';
+import { openProductPanel } from '../../../../src/exams/cosmetic/views/formula-products.js';
 
 const ALL_PANELS = [
     'formula-menu-panel', 'formula-list-panel', 'formula-calc-panel',
     'formula-batch-panel', 'formula-batch-form-panel', 'formula-batch-detail-panel',
     'formula-customer-panel', 'formula-customer-form-panel', 'formula-customer-detail-panel',
     'formula-material-panel', 'formula-material-form-panel',
+    'formula-product-panel', 'formula-product-form-panel', 'formula-product-detail-panel',
     'formula-compliance-panel',
 ];
 
@@ -46,7 +48,7 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         openCustomerPanel();
         onlyVisible('formula-customer-panel');
         const chips = el('formula-customer-subnav').querySelectorAll('.formula-subnav-chip');
-        expect(chips.length).toBe(6);
+        expect(chips.length).toBe(7);
         const active = el('formula-customer-subnav').querySelector('.is-active');
         expect(active.textContent).toBe('고객 관리');
         // 모든 칩이 실제 핸들러명을 data-click으로 가짐
@@ -67,12 +69,19 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         expect(active.textContent).toBe('법규 준수');
     });
 
-    it('openFormulaCalc — 배합 계산기 패널 + 서브내비 6칩·계산기 활성', () => {
+    it('openFormulaCalc — 배합 계산기 패널 + 서브내비 7칩·계산기 활성', () => {
         openFormulaCalc();
         onlyVisible('formula-calc-panel');
         const subnav = el('formula-calc-subnav');
-        expect(subnav.querySelectorAll('.formula-subnav-chip').length).toBe(6);
+        expect(subnav.querySelectorAll('.formula-subnav-chip').length).toBe(7);
         expect(subnav.querySelector('.is-active').textContent).toBe('배합 계산기');
+    });
+
+    it('openProductPanel — 기성품 DB 패널 + 활성 칩 (FO-38)', () => {
+        openProductPanel();
+        onlyVisible('formula-product-panel');
+        const active = el('formula-product-subnav').querySelector('.is-active');
+        expect(active.textContent).toBe('기성품 DB');
     });
 
     it('exitFormulaSubView — 허브로 복귀', () => {

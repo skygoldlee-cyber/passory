@@ -18,8 +18,8 @@ export const CHECK = Object.freeze({
 const PCT_RE = /(\d+(?:\.\d+)?)\s*%/g;
 // "N% 초과 시 표시" — 사용 한도가 아니라 라벨 표시 기준
 const LABELING_RE = /초과\s*시\s*표시/;
-// 명시적 금지 표현
-const BAN_TEXT_RE = /사용\s*불가|사용\s*금지/;
+// 명시적 금지 표현 — 기성품 분석(product-store.js)도 같은 규칙으로 금지 성분명을 매칭한다
+export const BAN_TEXT_RE = /사용\s*불가|사용\s*금지/;
 
 /**
  * 한도 문자열을 파싱한다.

@@ -138,6 +138,7 @@
     "registryKey": "ingredients",
     "global": "INGREDIENTS_DATA",
     "customKey": "CUSTOM_INGREDIENTS",
+    "productKey": "PRODUCT_ITEMS",
     "customLabel": "성분 추가",
     "source": {
       "type": "json",

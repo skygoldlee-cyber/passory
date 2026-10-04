@@ -1,0 +1,457 @@
+// src/exams/cosmetic/views/formula-products.js — 기성품 DB 뷰 컨트롤러 (FO-37~40)
+// @spec FO-37,FO-38,FO-39,FO-40
+//
+// 기성품 전성분 DB — 목록(formula-product-panel) · 등록/수정 폼
+// (formula-product-form-panel) · 상세+교차 분석(formula-product-detail-panel).
+// formula.js의 showPanel/subNav 재사용 — 고객 관리(formula-customer.js)와
+// 동일한 3패널 패턴. 설계: docs/dev/design/PRODUCT_DB_DESIGN.md
+//
+// 핵심 원칙: 전성분은 사용자 기록, 판정은 공식+자가 병합 인덱스의
+// 조회 시점 라이브 매칭 — 원료 DB 갱신이 등록 제품 전체에 자동 반영된다.
+
+import { esc } from '../../../sanitize.js';
+import { showToast, showConfirm } from '../../../ui-utils.js';
+import { showStoreError } from '../../../pro-upgrade.js';
+import { switchView } from '../../../views/navigation.js';
+import { todayKey } from '../../../utils.js';
+import {
+  showPanel, formulaSubNav, getEl, getIndex, customIngAdd,
+} from './formula.js';
+import {
+  listProducts, getProduct, getProductUsage,
+  createProduct, updateProduct, deleteProduct,
+  parseFullIngredients, classifyProductIngredients, PRODUCT_ING_CLASS,
+  findAllergyHits, compareWithFormula,
+  serializeProduct, importProduct,
+} from '../product-store.js';
+import { listCustomers } from '../customer-store.js';
+import { listFormulas } from '../formula-store.js';
+import { downloadJson } from './formula-recommend.js';
+import { CUSTOMER_OPTIONS } from '../formula-store.js';
+
+/* =======================================================
+   배지 — 성분 유형 분류 → 시각 계약
+   ======================================================= */
+
+const CLASS_BADGE = {
+  [PRODUCT_ING_CLASS.OFFICIAL]: { cls: 'f-check-ok', label: '공식 등록' },
+  [PRODUCT_ING_CLASS.RESTRICTED]: { cls: 'f-check-warn', label: '사용 제한' },
+  [PRODUCT_ING_CLASS.BANNED]: { cls: 'f-check-banned', label: '금지 성분명 매칭' },
+  [PRODUCT_ING_CLASS.CUSTOM]: { cls: 'f-check-custom', label: '자가 등록' },
+  [PRODUCT_ING_CLASS.UNKNOWN]: { cls: 'f-check-unknown', label: 'DB 미등록' },
+};
+
+function classBadgeHtml(cls, note) {
+  const b = CLASS_BADGE[cls] || CLASS_BADGE[PRODUCT_ING_CLASS.UNKNOWN];
+  return `<span class="f-check ${b.cls}" title="${esc(note || '')}">${b.label}</span>`;
+}
+
+/* =======================================================
+   목록 패널
+   ======================================================= */
+
+// 목록 필터 — ingredient는 사전 '함유 기성품' 진입 시 성분 필터
+const prodFilter = { query: '', ingredient: '' };
+
+export function openProductPanel() {
+  showPanel('formula-product-panel');
+  const subnav = getEl('formula-product-subnav');
+  if (subnav) subnav.innerHTML = formulaSubNav('products');
+  const search = getEl('product-search');
+  if (search) {
+    search.value = prodFilter.query;
+    if (!search.dataset.bound) {
+      search.dataset.bound = '1';
+      search.addEventListener('input', () => {
+        prodFilter.query = search.value.trim();
+        renderProductList();
+      });
+    }
+  }
+  renderProductList();
+}
+
+function renderProductList() {
+  const list = getEl('product-list');
+  if (!list) return;
+  const usage = getProductUsage();
+  const usageEl = getEl('product-list-usage');
+  if (usageEl) usageEl.textContent = `${usage.count}/${usage.limit} 등록`;
+
+  // 활성 성분 필터 칩 — 사전 '함유 기성품'에서 진입한 맥락 표시
+  const filterChip = getEl('product-filter-chip');
+  if (filterChip) {
+    filterChip.innerHTML = prodFilter.ingredient
+      ? `<span class="prod-filter-active">성분 필터: <strong>${esc(prodFilter.ingredient)}</strong>
+          <button type="button" class="prod-filter-clear" data-click="productClearFilter" aria-label="성분 필터 해제"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></span>`
+      : '';
+  }
+
+  const index = getIndex();
+  const q = prodFilter.query.toLowerCase();
+  const ingNorm = prodFilter.ingredient.replace(/\s+/g, '').toLowerCase();
+  const products = listProducts().filter(p => {
+    if (ingNorm && !(p.ingredients || [])
+      .some(n => n.replace(/\s+/g, '').toLowerCase() === ingNorm)) return false;
+    if (!q) return true;
+    return (p.name || '').toLowerCase().includes(q)
+      || (p.brand || '').toLowerCase().includes(q)
+      || (p.ingredients || []).some(n => n.toLowerCase().includes(q));
+  });
+
+  if (!listProducts().length) {
+    list.innerHTML = `
+      <div class="formula-empty">
+        <i class="fa-solid fa-store" aria-hidden="true"></i>
+        <h4>등록된 기성품이 없습니다</h4>
+        <p>시판 제품의 전성분을 붙여넣어 등록하면 성분별 규제 배지·고객 알레르기 교차·내 포뮬러 비교가 활성화됩니다.</p>
+        <button class="btn btn-primary" data-click="productNew"><i class="fa-solid fa-plus" aria-hidden="true"></i> 첫 제품 등록</button>
+      </div>`;
+    return;
+  }
+  if (!products.length) {
+    list.innerHTML = `<div class="formula-empty"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><h4>조건에 맞는 제품이 없습니다</h4><p>검색어 또는 성분 필터를 바꿔 보세요.</p></div>`;
+    return;
+  }
+
+  list.innerHTML = products.map(p => {
+    const { summary } = classifyProductIngredients(p, index);
+    const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('ko-KR') : '';
+    const parts = [];
+    if (summary.banned) parts.push(`<span class="f-check f-check-banned" title="금지 성분명과 일치하는 성분 — 원문 확인 권장">금지매칭 ${summary.banned}</span>`);
+    if (summary.restricted) parts.push(`<span class="f-check f-check-warn">제한 ${summary.restricted}</span>`);
+    if (summary.unknown) parts.push(`<span class="f-check f-check-unknown">미등록 ${summary.unknown}</span>`);
+    if (summary.custom) parts.push(`<span class="f-check f-check-custom">자가 ${summary.custom}</span>`);
+    if (!parts.length) parts.push(`<span class="f-check f-check-ok">전성분 공식 매칭</span>`);
+    const title = p.brand ? `${p.brand} ${p.name}` : p.name;
+    return `
+      <div class="formula-card">
+        <div class="formula-card-head">
+          <h4 class="formula-card-name">${esc(title)}</h4>
+          <span class="formula-card-meta">${esc(p.category || '제형 미지정')} · 성분 ${(p.ingredients || []).length}종 · ${date}</span>
+        </div>
+        <div class="formula-card-checks">${parts.join('')}</div>
+        <div class="formula-card-actions">
+          <button class="btn btn-primary btn-sm" data-click="productOpen" data-arg="${esc(p.id)}" title="전성분 분석·교차 비교"><i class="fa-solid fa-microscope" aria-hidden="true"></i> 분석</button>
+          <button class="btn btn-secondary btn-sm" data-click="productEdit" data-arg="${esc(p.id)}" title="제품 정보·전성분 수정"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>
+          <button class="btn btn-secondary btn-sm" data-click="productCardExport" data-arg="${esc(p.id)}" title="JSON 파일로 보내기"><i class="fa-solid fa-file-export" aria-hidden="true"></i> 보내기</button>
+          <button class="btn btn-secondary btn-sm f-danger" data-click="productDelete" data-arg="${esc(p.id)}" title="제품 삭제 (복구 불가)"><i class="fa-solid fa-trash" aria-hidden="true"></i> 삭제</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/** 사전 '함유 기성품' 진입 — 해당 성분을 함유한 제품만 필터링해 목록 표시 */
+export function productOpenByIngredient(name) {
+  if (typeof name !== 'string' || !name.trim()) return;
+  prodFilter.ingredient = name.trim();
+  prodFilter.query = '';
+  // 사전 등 다른 뷰에서 호출될 수 있으므로 formula-view로 전환 후 패널 표시
+  switchView('formula-view', { scrollTop: true });
+  openProductPanel();
+}
+
+export function productClearFilter() {
+  prodFilter.ingredient = '';
+  renderProductList();
+}
+
+/* =======================================================
+   등록·수정 폼 — 전성분 붙여넣기 + 칩 미리보기 (FO-38)
+   ======================================================= */
+
+/** @type {{editingId: string|null, ingredients: string[]}} */
+const prodForm = { editingId: null, ingredients: [] };
+
+export function productNew() {
+  prodForm.editingId = null;
+  prodForm.ingredients = [];
+  openProductForm('기성품 등록');
+}
+
+export function productEdit(id) {
+  const p = getProduct(id);
+  if (!p) { showToast('등록된 제품을 찾을 수 없습니다.', 'error'); return; }
+  prodForm.editingId = id;
+  prodForm.ingredients = (p.ingredients || []).slice();
+  openProductForm('기성품 수정');
+  getEl('prod-name').value = p.name || '';
+  getEl('prod-brand').value = p.brand || '';
+  getEl('prod-category').value = p.category || '';
+  getEl('prod-note').value = p.note || '';
+  getEl('prod-inci-input').value = (p.ingredients || []).join(', ');
+  renderInciChips();
+}
+
+function openProductForm(title) {
+  showPanel('formula-product-form-panel');
+  const titleEl = getEl('product-form-title');
+  if (titleEl) titleEl.textContent = title;
+  // 제형 선택지 — CUSTOMER_OPTIONS.formulation 공유 (스토어 계약과 동일 enum)
+  const catEl = /** @type {HTMLSelectElement|null} */ (document.getElementById('prod-category'));
+  if (catEl && !catEl.options.length) {
+    catEl.innerHTML = '<option value="">미선택</option>'
+      + CUSTOMER_OPTIONS.formulation.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+  }
+  const ta = getEl('prod-inci-input');
+  if (ta && !ta.dataset.bound) {
+    ta.dataset.bound = '1';
+    ta.addEventListener('input', () => {
+      prodForm.ingredients = parseFullIngredients(ta.value);
+      renderInciChips();
+    });
+  }
+  if (!prodForm.editingId) {
+    getEl('prod-name').value = '';
+    getEl('prod-brand').value = '';
+    if (catEl) catEl.value = '';
+    getEl('prod-note').value = '';
+    ta.value = '';
+  }
+  renderInciChips();
+}
+
+/** 칩 미리보기 — 순서 보존 + 미등록 칩 강조 + 개별 삭제·사전 등록 단축 */
+function renderInciChips() {
+  const box = getEl('prod-inci-chips');
+  if (!box) return;
+  const index = getIndex();
+  const countEl = getEl('prod-inci-count');
+  if (countEl) {
+    const unknown = prodForm.ingredients.filter(n => !index.get(n)).length;
+    countEl.textContent = prodForm.ingredients.length
+      ? `성분 ${prodForm.ingredients.length}종${unknown ? ` · 미등록 ${unknown}종` : ''}`
+      : '';
+  }
+  if (!prodForm.ingredients.length) {
+    box.innerHTML = '<span class="formula-rec-note">전성분을 붙여넣으면 성분 칩이 순서대로 표시됩니다.</span>';
+    return;
+  }
+  box.innerHTML = prodForm.ingredients.map((n, i) => {
+    const known = !!index.get(n);
+    const badge = known ? '' : ' <span class="prod-chip-miss">미등록</span>';
+    const reg = known ? '' : `<button type="button" class="prod-chip-reg" data-click="productIngRegister" data-arg="${esc(n)}" title="자가 성분 사전에 등록 — 등록 즉시 분석에 반영">사전 등록</button>`;
+    return `<span class="prod-ing-chip${known ? '' : ' is-unknown'}"><span class="prod-chip-no">${i + 1}</span>${esc(n)}${badge}
+      ${reg}<button type="button" class="prod-chip-x" data-click="productChipRemove" data-arg="${i}" aria-label="${esc(n)} 제거"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></span>`;
+  }).join('');
+}
+
+export function productChipRemove(arg) {
+  const i = parseInt(arg, 10);
+  if (Number.isNaN(i) || i < 0 || i >= prodForm.ingredients.length) return;
+  prodForm.ingredients.splice(i, 1);
+  getEl('prod-inci-input').value = prodForm.ingredients.join(', ');
+  renderInciChips();
+}
+
+/** 미등록 성분 칩 → 자가 사전 등록 단축 경로 (FO-32 재사용) */
+export function productIngRegister(name) {
+  customIngAdd(typeof name === 'string' ? name : '');
+}
+
+export function productSave() {
+  const data = {
+    name: getEl('prod-name').value,
+    brand: getEl('prod-brand').value,
+    category: getEl('prod-category').value,
+    ingredients: prodForm.ingredients,
+    note: getEl('prod-note').value,
+  };
+  const r = prodForm.editingId
+    ? updateProduct(prodForm.editingId, data)
+    : createProduct(data);
+  if (!r.ok) { showStoreError(r, '기성품 DB', showToast, '등록에 실패했습니다.'); return; }
+  const wasEdit = !!prodForm.editingId;
+  showToast(`"${r.item.name}"을(를) ${wasEdit ? '수정' : '등록'}했습니다.`, 'success');
+  productOpen(r.item.id);
+}
+
+export async function productDelete(id) {
+  const p = getProduct(id);
+  if (!p) return;
+  const ok = await showConfirm(`"${p.brand ? `${p.brand} ${p.name}` : p.name}" 제품을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`, '기성품 삭제');
+  if (!ok) return;
+  const r = deleteProduct(id);
+  if (!r.ok) { showToast(r.error || '삭제에 실패했습니다.', 'error'); return; }
+  showToast('제품이 삭제되었습니다.', 'success');
+  openProductPanel();
+}
+
+/* =======================================================
+   상세 — 전성분 분석 + 교차 (FO-39·FO-40)
+   ======================================================= */
+
+export function productOpen(id) {
+  const p = getProduct(id);
+  if (!p) { showToast('등록된 제품을 찾을 수 없습니다.', 'error'); return; }
+  showPanel('formula-product-detail-panel');
+  const panel = getEl('formula-product-detail-panel');
+  if (panel) panel.dataset.currentProductId = p.id;
+  const subnav = getEl('product-detail-subnav');
+  if (subnav) subnav.innerHTML = formulaSubNav('products');
+  const box = getEl('product-detail');
+  if (!box) return;
+
+  const index = getIndex();
+  const { results, summary } = classifyProductIngredients(p, index);
+  const title = p.brand ? `${p.brand} ${p.name}` : p.name;
+
+  const summaryHtml = [
+    summary.banned ? `<span class="f-check f-check-banned">금지 성분명 매칭 ${summary.banned}</span>` : '',
+    summary.restricted ? `<span class="f-check f-check-warn">사용 제한 ${summary.restricted}</span>` : '',
+    summary.custom ? `<span class="f-check f-check-custom">자가 등록 ${summary.custom}</span>` : '',
+    summary.unknown ? `<span class="f-check f-check-unknown">DB 미등록 ${summary.unknown}</span>` : '',
+    summary.official ? `<span class="f-check f-check-ok">공식 등록 ${summary.official}</span>` : '',
+  ].filter(Boolean).join('');
+
+  const rowsHtml = results.map((r, i) => `
+    <div class="prod-ing-row">
+      <span class="prod-ing-no">${i + 1}</span>
+      <span class="prod-ing-name">${esc(r.name)}</span>
+      ${classBadgeHtml(r.cls, r.note)}
+    </div>`).join('');
+
+  // 고객 알레르기 교차 — 알레르기 보유 고객이 있을 때만 섹션 표시
+  const customers = listCustomers().filter(c => c.allergies && c.allergies.length);
+  const allergyHits = customers
+    .map(c => ({ customer: c, hits: findAllergyHits(p, c.allergies) }))
+    .filter(x => x.hits.length);
+  const allergyHtml = allergyHits.length
+    ? allergyHits.map(x =>
+        `<div class="prod-allergy-hit"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          <strong>${esc(x.customer.name)}</strong> — 알레르기 성분 매칭: ${esc(x.hits.join(', '))}
+          <button class="formula-rec-chip" data-click="custOpen" data-arg="${esc(x.customer.id)}" title="고객 카드 보기">고객 카드</button></div>`).join('')
+    : (customers.length
+        ? '<div class="formula-rec-note">알레르기 매칭 없음 — 등록 고객의 알레르기 성분과 겹치지 않습니다.</div>'
+        : '<div class="formula-rec-note">알레르기 이력이 등록된 고객이 없습니다 — 고객 카드에 알레르기를 기록하면 교차 확인됩니다.</div>');
+
+  // 포뮬러 비교 셀렉트 — 전성분 보유(안정성 양호) 포뮬러만
+  const formulas = listFormulas().filter(f => f.fullIngredients && f.fullIngredients.length);
+  const compareHtml = formulas.length
+    ? `<select id="prod-compare-select" class="form-select" aria-label="비교할 내 포뮬러">
+        <option value="">비교할 포뮬러 선택</option>
+        ${formulas.map(f => `<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('')}
+      </select>
+      <div id="prod-compare-result"></div>`
+    : '<div class="formula-rec-note">전성분이 생성된 포뮬러가 없습니다 — 안정성 "양호" 확인된 배합을 저장하면 비교할 수 있습니다.</div>';
+
+  box.innerHTML = `
+    <div class="formula-card">
+      <div class="formula-card-head">
+        <h4 class="formula-card-name">${esc(title)}</h4>
+        <span class="formula-card-meta">${esc(p.category || '제형 미지정')} · 성분 ${results.length}종 · ${p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('ko-KR') : ''}</span>
+      </div>
+      ${p.note ? `<div class="formula-card-meta">메모: ${esc(p.note)}</div>` : ''}
+      <div class="formula-card-checks">${summaryHtml}</div>
+
+      <div class="cust-section">
+        <div class="cust-section-head">전성분 분석 <span class="fold-hint">표시 순서 — 조회 시점 원료 DB 기준 라이브 매칭</span></div>
+        <div class="prod-ing-list">${rowsHtml}</div>
+        <p class="cing-note">판정은 등록 시점이 아닌 <strong>현재 원료 DB 기준</strong>으로 표시됩니다 — 고시 개정으로 DB가 갱신되면 분석도 자동으로 최신화됩니다. 함량 정보가 없으므로 '사용 제한'은 한도 초과 여부가 아닌 존재 표시입니다.</p>
+      </div>
+
+      <div class="cust-section">
+        <div class="cust-section-head">고객 알레르기 교차</div>
+        ${allergyHtml}
+      </div>
+
+      <div class="cust-section">
+        <div class="cust-section-head">내 포뮬러와 비교</div>
+        ${compareHtml}
+      </div>
+
+      <div class="formula-card-actions">
+        <button class="btn btn-secondary btn-sm" data-click="productEdit" data-arg="${esc(p.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>
+        <button class="btn btn-secondary btn-sm" data-click="productCardExport" data-arg="${esc(p.id)}" title="JSON 파일로 보내기"><i class="fa-solid fa-file-export" aria-hidden="true"></i> 보내기</button>
+        <button class="btn btn-secondary btn-sm f-danger" data-click="productDelete" data-arg="${esc(p.id)}" title="제품 삭제 (복구 불가)"><i class="fa-solid fa-trash" aria-hidden="true"></i> 삭제</button>
+      </div>
+    </div>`;
+
+  const sel = getEl('prod-compare-select');
+  if (sel) {
+    sel.addEventListener('change', () => renderCompareResult(p, sel.value));
+  }
+}
+
+/** 포뮬러 비교 결과 렌더 — 공통/제품에만/내 포뮬러에만 3분할 */
+function renderCompareResult(product, formulaId) {
+  const box = getEl('prod-compare-result');
+  if (!box) return;
+  if (!formulaId) { box.innerHTML = ''; return; }
+  const f = getFormulaForCompare(formulaId);
+  const cmp = f && compareWithFormula(product, f);
+  if (!cmp) { box.innerHTML = '<div class="formula-rec-note">비교할 수 없습니다.</div>'; return; }
+  const col = (label, items, cls) => `
+    <div class="prod-compare-col">
+      <div class="prod-compare-label">${label} <span class="fold-hint">${items.length}종</span></div>
+      ${items.length ? items.map(n => `<span class="prod-ing-chip ${cls}">${esc(n)}</span>`).join('') : '<span class="formula-rec-note">없음</span>'}
+    </div>`;
+  box.innerHTML = `<div class="prod-compare-grid">
+    ${col('공통 성분', cmp.common, '')}
+    ${col('이 제품에만', cmp.productOnly, 'is-unknown')}
+    ${col('내 포뮬러에만', cmp.formulaOnly, 'is-formula')}
+  </div>`;
+}
+
+function getFormulaForCompare(id) {
+  return listFormulas().find(f => f.id === id) || null;
+}
+
+/* =======================================================
+   JSON보내기·가져오기 (FO-40)
+   ======================================================= */
+
+export function productCardExport(id) {
+  const p = getProduct(id);
+  if (!p) { showToast('등록된 제품을 찾을 수 없습니다.', 'error'); return; }
+  const safeName = ((p.brand ? `${p.brand} ${p.name}` : p.name) || 'product').replace(/[\\/:*?"<>|]/g, '_').slice(0, 40);
+  downloadJson(serializeProduct(p), `product_${safeName}_${todayKey()}.json`);
+  showToast(`"${p.name}" 제품을 다운로드했습니다.`, 'success');
+}
+
+export function productImportJson() {
+  const input = getEl('product-file-input');
+  if (!input) return;
+  if (!input.dataset.bound) {
+    input.dataset.bound = '1';
+    input.addEventListener('change', productImportFile);
+  }
+  input.click();
+}
+
+function productImportFile(event) {
+  const input = event.target;
+  const file = input && input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const r = importProduct(e.target && e.target.result);
+    if (!r.ok) {
+      showStoreError(r, '기성품 DB', showToast, '가져오기에 실패했습니다.');
+    } else {
+      showToast(`"${r.item.name}" 제품을 가져왔습니다.`, 'success');
+      openProductPanel();
+    }
+    input.value = '';
+  };
+  reader.onerror = () => { showToast('파일을 읽지 못했습니다.', 'error'); input.value = ''; };
+  reader.readAsText(file);
+}
+
+/* =======================================================
+   자가 사전 변경 반영 — 미등록 칩 배지 즉시 갱신
+   formula.js가 성분 변경 시 'formula:ingredients-changed'를 발화한다.
+   ======================================================= */
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('formula:ingredients-changed', () => {
+    const formPanel = document.getElementById('formula-product-form-panel');
+    if (formPanel && !formPanel.classList.contains('is-hidden')) renderInciChips();
+    const detailPanel = document.getElementById('formula-product-detail-panel');
+    if (detailPanel && !detailPanel.classList.contains('is-hidden')) {
+      // 상세는 스토어 id 재조회로 재렌더 — 칩 분류가 인덱스 기준이라 갱신 필요
+      const id = detailPanel.dataset.currentProductId;
+      if (id) productOpen(id);
+    }
+  });
+}

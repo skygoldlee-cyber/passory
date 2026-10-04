@@ -216,6 +216,7 @@ src/                    # ES Modules
       store-utils.js        # Formula OS — 스토어 공통 헬퍼 (loadItems/newId/clamp…)
       batch-store.js        # Formula OS — 조제 기록(배치) 채번·QC·위생·스냅샷 (50건)
       customer-store.js     # Formula OS — 고객 카드·상담 이력(append-only) (20명)
+      product-store.js      # Formula OS — 기성품 전성분 DB (순서보존·라이브분석·역조회·JSON) (30종)
       material-ledger.js    # Formula OS — 원료 입고·사용기한·재고, 기한 경고 (30종)
       custom-ingredient-store.js # Formula OS — 자가 등록 성분 CRUD·공식 동명 차단·superseded (50종)
       biz-profile.js        # Formula OS — 사업 유형 프로파일 (맞춤형·제조업·책임판매업, 패널 게이트)
@@ -226,7 +227,8 @@ src/                    # ES Modules
         formula-recommend.js # 추천 베이스·원료 패널 + 맞춤 규칙 UI
         formula-fields.js   # 처방 작업대 고객·안정성 필드 블록
         formula-batch.js    # 조제 기록(배치) 목록·폼·상세 패널
-        formula-customer.js # 고객 관리 패널 (카드·상담 이력·역참조)
+        formula-customer.js # 고객 관리 패널 (카드·상담 이력·역참조·기성품 알레르기 교차)
+        formula-products.js # 기성품 DB 패널 (목록·폼·상세 분석·전성분 비교)
         formula-material.js # 원료 장부 패널 (기한 배지·경고)
         formula-compliance.js # 법규 준수 체크리스트 + 법령 MD 링크 (유형별 세트)
         formula-sales.js    # 표시사항 검토 + 광고 문구 점검 패널 (mfg·sales 유형)

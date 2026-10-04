@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula-customer.js — Formula OS 고객 관리 뷰 (Phase B)
-// @spec FO-17
+// @spec FO-17,FO-40
 //
 // 목록(formula-customer-panel) + 폼(formula-customer-form-panel) +
 // 상세(formula-customer-detail-panel) — formula.js의 showPanel/subNav 재사용.
@@ -23,6 +23,7 @@ import {
   SCALP_OPTIONS,
 } from '../customer-store.js';
 import { CUSTOMER_OPTIONS } from '../formula-store.js';
+import { listProducts, findAllergyHits } from '../product-store.js';
 
 import {
   parseCsv, csvToObjects, readCsvFile, toCsv, downloadCsv,
@@ -262,6 +263,24 @@ export function custOpen(id) {
     ? batches.map(b => `<button class="formula-rec-chip" data-click="batchOpen" data-arg="${esc(b.id)}">${esc(b.batchNo)}</button>`).join('')
     : '<span class="formula-rec-note">조제 기록이 없습니다.</span>';
 
+  // 기성품 알레르기 교차 (FO-40) — 알레르기 이력 ↔ 등록 제품 전성분 부분일치
+  const allergyProducts = (c.allergies && c.allergies.length)
+    ? listProducts()
+        .map(p => ({ product: p, hits: findAllergyHits(p, c.allergies) }))
+        .filter(x => x.hits.length)
+    : [];
+  const prodHtml = !allergyProducts.length
+    ? ''
+    : `<div class="cust-section">
+        <div class="cust-section-head"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 알레르기 주의 기성품</div>
+        ${allergyProducts.map(x => {
+          const label = x.product.brand ? `${x.product.brand} ${x.product.name}` : x.product.name;
+          return `<div class="prod-allergy-hit">
+            <button class="formula-rec-chip" data-click="productOpen" data-arg="${esc(x.product.id)}" title="기성품 상세 보기">${esc(label)}</button>
+            <span class="formula-rec-note">매칭: ${esc(x.hits.join(', '))}</span></div>`;
+        }).join('')}
+      </div>`;
+
   box.innerHTML = `
     <div class="formula-card">
       <div class="formula-card-head">
@@ -288,6 +307,7 @@ export function custOpen(id) {
         <div class="cust-section-head">이 고객의 조제</div>
         <div class="formula-rec-cands">${bHtml}</div>
       </div>
+      ${prodHtml}
 
       <div class="formula-card-actions">
         <button class="btn btn-secondary btn-sm" data-click="custEdit" data-arg="${esc(c.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>

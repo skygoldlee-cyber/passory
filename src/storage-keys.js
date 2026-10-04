@@ -86,6 +86,9 @@ export const STORAGE_KEYS = {
 
   // Formula OS — 표시사항 검토 폼 드래프트 (FO-35)
   FORMULA_LABEL_DRAFT: 'formula_label_draft',
+
+  // Formula OS — 기성품 전성분 DB (product-store.js, FO-37)
+  PRODUCT_ITEMS: 'product_items',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)
@@ -158,6 +161,7 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.COMPLIANCE_CHECKS_SALES, // 유형별 체크리스트 세트 — 책임판매업 (FO-34)
   STORAGE_KEYS.CUSTOM_INGREDIENTS,  // 자가 등록 성분 — 백업·동기 대상 (DI-06)
   STORAGE_KEYS.FORMULA_LABEL_DRAFT, // 표시사항 검토 폼 — 작업 데이터 (FO-35)
+  STORAGE_KEYS.PRODUCT_ITEMS,     // 기성품 전성분 DB — 백업·동기 대상 (FO-37)
 ];
 
 // 전체 초기화(Reset Progress) 시 제거할 키 목록

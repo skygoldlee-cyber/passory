@@ -1,5 +1,5 @@
 // src/views/dictionary.js - 지식DB(엔티티) 검색 사전 뷰 로직 및 그리드 스페이서 가상 스크롤 구현
-// @spec DI-01~08,DI-10,PF-09
+// @spec DI-01~08,DI-10,PF-09,FO-40
 // 스키마 드리븐 — manifest.knowledge → registry.knowledge가 엔티티 필드·필터·CSV를 선언한다.
 // registry.knowledge 미선언 시험은 사전 뷰가 "데이터셋 미설정" 안내로 처리된다 (화장품 폴백 없음).
 // 자가 등록: schema.customKey(STORAGE_KEYS 멤버명) 선언 시 로컬 등록 항목을 병합한다 —
@@ -59,7 +59,8 @@ const DEFAULT_KNOWLEDGE = {
         filename: 'ingredients',
         headers: ['원료명', '영문명', '유형', '유형코드', '카테고리', '배합한도', '설명', 'TIP'],
         fields: ['name', 'engName', { badgeLabel: 'type' }, 'type', 'category', 'limit', 'description', 'tip']
-    }
+    },
+    productKey: ''   // 기성품 역조회 — STORAGE_KEYS 멤버명 (customKey와 동일 계약)
 };
 
 /**
@@ -111,6 +112,32 @@ export const dictState = {
 // 가상 스크롤 관련 상태
 let isScrollBound = false;
 let currentFilteredList = [];
+
+// 기성품 함유 역조회 인덱스 (FO-40) — schema.productKey(STORAGE_KEYS 멤버명)
+// 선언 시험만 구축한다. platform → domain import 없이 저장소 계약 키로 읽어
+// 격리를 유지한다 (DI-06 customKey와 동일 패턴). 렌더 패스당 1회 재구축.
+/** @type {Map<string, object[]>|null} */
+let _productIngIndex = null;
+
+/** 성분 정규화명 → 해당 성분을 함유한 제품 배열 */
+function buildProductIndex(schema) {
+    _productIngIndex = null;
+    if (!schema || !schema.productKey) return;
+    const key = STORAGE_KEYS[schema.productKey];
+    const items = key ? getJSON(key) : [];
+    if (!Array.isArray(items) || !items.length) return;
+    _productIngIndex = new Map();
+    for (const p of items) {
+        if (!p || !Array.isArray(p.ingredients)) continue;
+        for (const raw of p.ingredients) {
+            const n = normalizeEntityName(raw);
+            if (!n) continue;
+            const bucket = _productIngIndex.get(n) || [];
+            if (!bucket.length) _productIngIndex.set(n, bucket);
+            bucket.push(p);
+        }
+    }
+}
 
 /** 검색어·필터를 적용한 엔티티 목록 — 렌더와 CSV보내기가 공유 */
 function filterItems(db, query, filter, schema) {
@@ -240,6 +267,9 @@ function renderDictionaryVirtual() {
     const schema = dictSchema();
     if (!schema) return;
 
+    // 기성품 역조회 인덱스 — 렌더 패스당 1회 (FO-40)
+    buildProductIndex(schema);
+
     // 결과 수가 100개 미만이면 일반 렌더링
     if (currentFilteredList.length < 100) {
         container.innerHTML = '';
@@ -325,6 +355,13 @@ function createEntityCard(item, schema) {
     const customBtn = item.custom
         ? `<button class="btn btn-secondary btn-sm" data-click="customIngEdit" data-arg="${esc(item.id)}" title="자가 등록 항목 수정"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>`
         : '';
+    // 함유 기성품 역조회 (FO-40) — 등록 제품이 이 성분을 함유할 때만 표시
+    const prodHits = _productIngIndex
+        ? (_productIngIndex.get(normalizeEntityName(item[f.title] || '')) || [])
+        : [];
+    const productRow = prodHits.length
+        ? `<div class="dict-detail-item dict-detail-item--col"><span class="dict-detail-label">함유 기성품</span><span class="dict-detail-value"><button class="btn btn-secondary btn-sm" data-click="productOpenByIngredient" data-arg="${esc(String(item[f.title] || ''))}" title="이 성분을 함유한 등록 기성품 목록으로 이동"><i class="fa-solid fa-store" aria-hidden="true"></i> ${prodHits.length}개 제품</button></span></div>`
+        : '';
 
     card.innerHTML = `
         <div class="dict-card-header">
@@ -334,6 +371,7 @@ function createEntityCard(item, schema) {
         <div class="dict-card-subtitle">${esc(item[f.subtitle] || f.subtitleEmpty || '')}</div>
         <div class="dict-card-details is-hidden">
             ${detailRows}
+            ${productRow}
             ${actionBtn}
             ${customBtn}
         </div>

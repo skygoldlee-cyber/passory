@@ -61,6 +61,7 @@ const formula = {
         material: _domainImport('views/formula-material.js'),
         compliance: _domainImport('views/formula-compliance.js'),
         sales: _domainImport('views/formula-sales.js'),
+        products: _domainImport('views/formula-products.js'),
         notice: _lazyImport(() => import('./notice-check.js')),
     },
     // [loaderKey, data-click 핸들러명 목록] — app.js 위임 디스패치에 브리지된다
@@ -101,6 +102,11 @@ const formula = {
         ['sales', [
             'openLabelPanel', 'labelFormulaImport', 'labelPrintSheet',
             'openAdLintPanel', 'adlintRun', 'adlintClear',
+        ]],
+        ['products', [
+            'openProductPanel', 'productNew', 'productEdit', 'productSave', 'productOpen',
+            'productDelete', 'productChipRemove', 'productIngRegister', 'productClearFilter',
+            'productCardExport', 'productImportJson', 'productOpenByIngredient',
         ]],
         ['notice', [
             'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus',
