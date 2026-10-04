@@ -97,6 +97,8 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
 
         productNew();
         expect(isVisible('formula-product-form-panel')).toBe(true);
+        // 제형 콤보는 소수치용 unit 축소 클래스가 아닌 일반 폭이어야 텍스트가 안 잘림
+        expect(el('prod-category').closest('.formula-field').classList.contains('formula-field-unit')).toBe(false);
         el('prod-name').value = '수분 크림';
         el('prod-brand').value = 'OO랩';
         setInciInput('정제수, 살리실산, 1,2-헥산디올·우리집비법원료');
