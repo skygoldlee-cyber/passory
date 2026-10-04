@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 UI/UX E2E 갭 기준선 15→1 — 14개 요구사항 실브라우저 커버리지 추가 (UX-VFY-03)
+
+- `tests/e2e/app-chrome.spec.js` 신설 (9 tests) — 설정 버전 표시(UX-SET-04)·메뉴 닫힘 규약 외부클릭/Escape/항목선택(UX-SET-05)·커스텀 확인 오버레이+네이티브 alert/confirm 0회(UX-FB-02)·SW controllerchange → 업데이트 토스트+자동 리로드(UX-PWA-03)·beforeinstallprompt 캡처/standalone 숨김(UX-PWA-04)·safe-area env() 규칙 존재(R-03)·스크롤바 규약 뷰포트 분기(UX-SCR-02)·테마별 스크롤바 색상(UX-SCR-03)
+- `tests/e2e/reader-markers.spec.js` 신설 (6 tests) — 기출·중요 숫자 하이라이트 섹션(TR-05)·Mermaid 유형별 클래스+svg 렌더(TR-07)·mermaid 내부 링크 0건 보호(TR-08)·마크다운 링크 앵커 변환(TR-09)·과목 전환 즉시 저장+진도 초기화로 위치 키 제거(TR-13)·첫 방문 엣지 힌트 펄스+재방문 해제(UX-FB-03)
+- `check_spec_refs.js` — `UIUX_E2E_GAP_BASELINE` 15→1 (잔여 1개 = UX-VFY-06 정적 체커 규약형 — e2e 실측 대상 아님으로 의도 유지). TR-05는 🔖기출/📌중요 소스 마커가 현 교재에 부재해 기출 핵심 카드는 미렌더 — 동일 계약의 number-drills `is-key` 하이라이트 섹션으로 커버
+
 ## 2026-10-19 템플릿 이스케이프 자동화 인프라 — html`` + check:escape (ROAD-Q5 진행중)
 
 - `sanitize.js` — `html` 태그드 템플릿·`raw()` 신설. 보간값을 자동 escapeHTML하며 중첩 `html`` 결과·`raw()` 래핑값·배열은 안전 마크업으로 통과 — 수작업 esc() 누락이 곧 XSS였던 방향을 "기본이 안전"으로 전환. 반환은 SafeHtml 표식 객체(JSDoc string — innerHTML 대입 타입 유지, toString 평탄화)
