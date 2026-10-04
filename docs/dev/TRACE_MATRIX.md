@@ -3,7 +3,7 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 99e52b4d47c2b0cf
+> 입력 해시: 34e65736a685afee
 > 생성: 2026-10-04 · 원천: SPEC.md(422개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -317,13 +317,13 @@
 | FO-34 | ✅ | 테스트 | DOC-BIZ-02 | src/exams/cosmetic/biz-profile.js<br>src/exams/cosmetic/views/formula-compliance.js | tests/dom/exams/cosmetic/formula-sales.dom.test.js<br>tests/unit/exams/cosmetic/formula-sales.test.js | — | — |
 | FO-35 | ✅ | 테스트 | DOC-BIZ-02 | src/exams/cosmetic/views/formula-sales.js | tests/dom/exams/cosmetic/formula-sales.dom.test.js | — | — |
 | FO-36 | ✅ | 테스트 | DOC-BIZ-02 | src/exams/cosmetic/ad-lint.js<br>src/exams/cosmetic/views/formula-sales.js | tests/dom/exams/cosmetic/formula-sales.dom.test.js<br>tests/unit/exams/cosmetic/formula-sales.test.js | — | — |
-| FO-37 | 구현 | 테스트 | DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
-| FO-38 | 구현 | 테스트 | DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-nav.dom.test.js<br>tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
-| FO-39 | 구현 | 테스트 | DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
-| FO-40 | 구현 | 테스트 | DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-customer.js<br>src/exams/cosmetic/views/formula-products.js<br>…외 1개 | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
-| FO-41 | 구현 | 테스트 | DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
-| FO-42 | 구현 | 테스트 | DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
-| FO-43 | 구현 | 테스트 | DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
+| FO-37 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
+| FO-38 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-nav.dom.test.js<br>tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
+| FO-39 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-products.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
+| FO-40 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-12 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-store.js<br>src/exams/cosmetic/views/formula-customer.js<br>src/exams/cosmetic/views/formula-products.js<br>…외 1개 | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
+| FO-41 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
+| FO-42 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
+| FO-43 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-13 | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
 | FO-44 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/product-store.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
 | FO-45 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/product-store.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
 | FO-46 | 구현 | 테스트 | DOC-DSN-13 | src/exams/cosmetic/product-vision.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-vision.test.js | — | — |
@@ -664,7 +664,7 @@
 | DOC-ARC-10 | docs/report_archive/출제비중기반학습방법.md | D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, E-01, E-02, E-03, E-04, E-05, E-06, E-07 |
 | DOC-ARC-11 | docs/report_archive/출제비중분포조사결과.md | E-01, E-02, E-03, E-04, E-05, E-06, E-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
 | DOC-BIZ-01 | docs/business/FORMULA_OS_경쟁전략.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-BIZ-02 | docs/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md | FO-33, FO-34, FO-35, FO-36, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-BIZ-02 | docs/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md | FO-33, FO-34, FO-35, FO-36, FO-37, FO-38, FO-39, FO-40, FO-41, FO-42, FO-43, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
 | DOC-BIZ-03 | docs/business/맞춤형화장품판매업소_조사_2026-09.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
 | DOC-BIZ-04 | docs/business/유튜브_홍보동영상_제작의뢰서.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
 | DOC-BIZ-05 | docs/business/판매업소_인터뷰_스크립트.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
