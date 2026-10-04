@@ -1145,17 +1145,24 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .f-weigh-overlay {
     position: fixed;
     inset: 0;
+    bottom: auto;
+    /* JS 실측 뷰포트 — 키보드·PWA 콜드스타트(dvh 과대측정)에서 하단 잘림 방지 (UX-PWA-05) */
+    height: var(--app-height, 100dvh);
     z-index: 1000;
     background: rgba(5, 8, 14, 0.92);
     display: flex;
-    align-items: center;
     justify-content: center;
     padding: 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    /* 카드가 오버레이를 넘는 극단적 경우까지 스크롤 허용 */
+    overflow-y: auto;
 }
 .f-weigh-overlay.is-hidden { display: none; }
 .f-weigh-card {
     width: 100%;
     max-width: 560px;
+    /* auto 마진 중앙정렬 — 넘칠 때 align-items:center는 상단을 잘라내지만 auto는 상단 기준으로 둠 */
+    margin: auto 0;
     background: var(--color-surface, #161b26);
     border: 2px solid var(--color-border, var(--primary-tint-25));
     border-radius: 1rem;
@@ -1163,7 +1170,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 90dvh;
+    max-height: calc(var(--app-height, 100dvh) * 0.9);
     /* 가로 모드 등 극단적 높이 부족 시 카드 자체가 스크롤 — 내용 잘림 방지 */
     overflow-y: auto;
 }
