@@ -3,7 +3,7 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 6e25f0317791c93c
+> 입력 해시: daa8006c975c7286
 > 생성: 2026-10-04 · 원천: SPEC.md(432개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -277,7 +277,7 @@
 | CQ-03 | ✅ | 테스트 | — | tools/check/audit_card_quality.js | tests/unit/audit-quality.test.js | — | — |
 | CQ-04 | ✅ | 테스트 | — | tools/check/audit_card_quality.js | tests/unit/audit-quality.test.js | — | — |
 | CQ-05 | ✅ | 테스트 | — | tools/check/audit_combo.js<br>tools/check/check_combo_pilot.js | tests/unit/audit-quality.test.js | — | — |
-| CQ-06 | ✅ | 테스트 | — | tools/check/check_answer_overlap.js | tests/unit/answer-overlap.test.js | — | — |
+| CQ-06 | ✅ | 테스트 | — | tools/check/check_answer_overlap.js<br>tools/sync/fix_answer_quotes.js<br>tools/sync/fix_citation_targets.js | tests/unit/answer-overlap.test.js | — | — |
 
 ## 3.18 Formula OS — 실전 배합 작업실
 
