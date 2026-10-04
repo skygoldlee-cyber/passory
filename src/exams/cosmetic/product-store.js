@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
@@ -135,34 +135,38 @@ export function getProductUsage() {
 }
 
 /**
- * 동명 충돌 검사 — 브랜드+제품명 정규화 비교.
+ * 동명 충돌 조회 — 브랜드+제품명 정규화 비교.
  * 같은 이름 다른 제품은 브랜드로 구분한다.
  * @param {string} brand
  * @param {string} name
  * @param {string|null} [excludeId] - 수정 시 자기 자신 제외
- * @returns {string|null} 충돌 사유 또는 null
+ * @returns {object|null} 충돌 항목 또는 null
  */
-function collisionReason(brand, name, excludeId) {
-  if (!normalizeEntityName(name)) return '제품명을 입력하세요.';
+function collision(brand, name, excludeId) {
   const key = `${normalizeEntityName(brand)}|${normalizeEntityName(name)}`;
-  const dup = loadAll().find(p =>
+  return loadAll().find(p =>
     p.id !== excludeId
-    && `${normalizeEntityName(p.brand)}|${normalizeEntityName(p.name)}` === key);
-  if (dup) {
-    const label = dup.brand ? `${dup.brand} ${dup.name}` : dup.name;
-    return `"${label}"은(는) 이미 등록된 제품입니다 — 기존 항목을 수정하세요.`;
-  }
-  return null;
+    && `${normalizeEntityName(p.brand)}|${normalizeEntityName(p.name)}` === key) || null;
+}
+
+/** 충돌 항목의 표시 라벨 — '브랜드 제품명' 또는 제품명 */
+function dupLabel(p) {
+  return p.brand ? `${p.brand} ${p.name}` : p.name;
 }
 
 /**
  * @param {object} data - {name, brand, category, ingredients, note}
- * @returns {{ok:boolean, item?:object, error?:string}}
+ * @param {object} [opts] - {allowVariant: 동명 제품을 리뉴얼·개정 별도 항목으로 허용 (FO-52)}
+ * @returns {{ok:boolean, item?:object, error?:string, code?:string, existingId?:string}}
  */
-export function createProduct(data) {
+export function createProduct(data, opts = {}) {
   const clean = sanitize(data || {});
-  const err = collisionReason(clean.brand, clean.name, null);
-  if (err) return { ok: false, error: err };
+  if (!normalizeEntityName(clean.name)) return { ok: false, error: '제품명을 입력하세요.' };
+  const dup = collision(clean.brand, clean.name, null);
+  if (dup && !opts.allowVariant) {
+    // code:'duplicate' — 뷰가 리뉴얼(개정) 별도 등록 여부를 확인한다 (FO-52)
+    return { ok: false, code: 'duplicate', existingId: dup.id, error: `"${dupLabel(dup)}"은(는) 이미 등록된 제품입니다 — 기존 항목을 수정하세요.` };
+  }
   if (!clean.ingredients.length) return { ok: false, error: '전성분을 1종 이상 입력하세요.' };
   const usage = getProductUsage();
   if (!usage.canCreate) {
@@ -181,8 +185,10 @@ export function updateProduct(id, data) {
   const idx = items.findIndex(p => p.id === id);
   if (idx < 0) return { ok: false, error: '등록된 제품을 찾을 수 없습니다.' };
   const clean = sanitize({ ...items[idx], ...(data || {}) });
-  const err = collisionReason(clean.brand, clean.name, id);
-  if (err) return { ok: false, error: err };
+  if (!normalizeEntityName(clean.name)) return { ok: false, error: '제품명을 입력하세요.' };
+  // 수정 경로는 리뉴얼 허용 없음 — 다른 제품의 이름으로 바꾸는 건 진짜 충돌이다
+  const dup = collision(clean.brand, clean.name, id);
+  if (dup) return { ok: false, code: 'duplicate', existingId: dup.id, error: `"${dupLabel(dup)}"은(는) 이미 등록된 제품입니다.` };
   if (!clean.ingredients.length) return { ok: false, error: '전성분을 1종 이상 입력하세요.' };
   items[idx] = { ...items[idx], ...clean, updatedAt: Date.now() };
   if (!saveAll(items)) return { ok: false, error: '저장에 실패했습니다.' };

@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51,FO-52
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -152,6 +152,32 @@ test('필수값 — 이름 없음·성분 0종은 거부', () => {
   assert.equal(createProduct({ name: '크림', ingredients: [] }).ok, false);
 });
 
+test('중복 — 동명 충돌은 code:duplicate + existingId 반환 (FO-52)', () => {
+  const a = createProduct({ name: '세럼', brand: 'X', ingredients: ['정제수'] });
+  assert.equal(a.ok, true);
+  const r = createProduct({ name: '세럼', brand: 'x ', ingredients: ['정제수', '글리세린'] });
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'duplicate');
+  assert.equal(r.existingId, a.item.id);
+});
+
+test('중복 — allowVariant로 리뉴얼 별도 등록 허용 (FO-52)', () => {
+  createProduct({ name: '세럼', brand: 'X', ingredients: ['정제수'] });
+  const r = createProduct(
+    { name: '세럼', brand: 'X', ingredients: ['정제수', '나이아신아마이드'] },
+    { allowVariant: true });
+  assert.equal(r.ok, true);
+  assert.equal(listProducts().length, 2);
+});
+
+test('중복 — 수정 경로는 리뉴얼 허용 없이 차단 (FO-52)', () => {
+  const a = createProduct({ name: '세럼', brand: 'X', ingredients: ['정제수'] });
+  createProduct({ name: '로션', brand: 'X', ingredients: ['정제수'] });
+  const r = updateProduct(a.item.id, { name: '로션' });
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'duplicate');
+});
+
 test('중복 — 브랜드+제품명 정규화 비교, 브랜드 다르면 허용', () => {
   assert.equal(createProduct({ brand: 'A사', name: '크림', ingredients: ['정제수'] }).ok, true);
   assert.equal(createProduct({ brand: 'A사', name: ' 크림 ', ingredients: ['정제수'] }).ok, false);
@@ -277,9 +303,12 @@ test('역조회 — 동의어 양방향 확장 (FO-50)', () => {
 
 test('역조회 — 부분일치로 개별 성분 검색 (FO-51)', () => {
   // '파라벤' 검색은 동의어 없이도 '메칠파라벤'·'파라벤류' 함유 제품을 함유 관계로 포착
+  createProduct({ name: 'A제품', brand: '', ingredients: ['파라벤류', '정제수'] });
+  createProduct({ name: 'B제품', brand: '', ingredients: ['메칠파라벤'] });
+  createProduct({ name: 'C제품', brand: '', ingredients: ['정제수'] });
   assert.equal(findProductsByIngredient('파라벤').length, 2);
   // 하이픈 변형도 matchKey로 해석
-  createProduct({ name: 'C제품', brand: '', ingredients: ['1,2-헥산디올'] });
+  createProduct({ name: 'D제품', brand: '', ingredients: ['1,2-헥산디올'] });
   assert.equal(findProductsByIngredient('1,2 헥산디올').length, 1);
 });
 

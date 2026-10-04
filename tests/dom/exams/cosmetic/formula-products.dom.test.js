@@ -1,5 +1,5 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
 //       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
@@ -244,6 +244,23 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(el('product-list').innerHTML).not.toContain('B로션');
 
         productClearFilter();
+    });
+
+    it('동명 리뉴얼 — 중복 확인 후 별도 항목 등록, 목록에 동명 표시 (FO-52)', async () => {
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수');
+        await productSave();
+        productNew();
+        el('prod-name').value = 'A크림';
+        setInciInput('정제수, 나이아신아마이드');
+        await productSave();
+        await flushAsync();
+        expect(showConfirm).toHaveBeenCalled();
+        expect(listProducts().length).toBe(2);
+
+        openProductPanel();
+        expect(el('product-list').innerHTML).toContain('동명 2종');
     });
 
     it('고객 알레르기 교차 — 상세에 매칭 경고 + 고객 카드에 주의 제품', () => {

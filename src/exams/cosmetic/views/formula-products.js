@@ -13,7 +13,7 @@ import { esc } from '../../../sanitize.js';
 import { showToast, showConfirm } from '../../../ui-utils.js';
 import { showStoreError } from '../../../pro-upgrade.js';
 import { switchView } from '../../../views/navigation.js';
-import { todayKey } from '../../../utils.js';
+import { todayKey, normalizeEntityName } from '../../../utils.js';
 import {
   showPanel, formulaSubNav, getEl, getIndex, customIngAdd,
   invalidateIngredientIndex,
@@ -125,9 +125,17 @@ function renderProductList() {
     return;
   }
 
+  // 동명(리뉴얼) 제품 표시 — 브랜드+제품명 정규화가 같은 항목 수 (FO-52)
+  const nameCount = new Map();
+  for (const p of products) {
+    const k = normalizeEntityName(`${p.brand}|${p.name}`);
+    nameCount.set(k, (nameCount.get(k) || 0) + 1);
+  }
   list.innerHTML = products.map(p => {
     const { summary } = classifyProductIngredients(p, index);
     const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('ko-KR') : '';
+    const dupN = nameCount.get(normalizeEntityName(`${p.brand}|${p.name}`)) || 0;
+    const dupMark = dupN > 1 ? ` · 동명 ${dupN}종` : '';
     const parts = [];
     if (summary.banned) parts.push(`<span class="f-check f-check-banned" title="금지 성분명과 일치하는 성분 — 원문 확인 권장">금지매칭 ${summary.banned}</span>`);
     if (summary.restricted) parts.push(`<span class="f-check f-check-warn">제한 ${summary.restricted}</span>`);
@@ -139,7 +147,7 @@ function renderProductList() {
       <div class="formula-card">
         <div class="formula-card-head">
           <h4 class="formula-card-name">${esc(title)}</h4>
-          <span class="formula-card-meta">${esc(p.category || '제형 미지정')} · 성분 ${(p.ingredients || []).length}종 · ${date}</span>
+          <span class="formula-card-meta">${esc(p.category || '제형 미지정')} · 성분 ${(p.ingredients || []).length}종 · ${date}${dupMark}</span>
         </div>
         <div class="formula-card-checks">${parts.join('')}</div>
         <div class="formula-card-actions">
@@ -498,7 +506,7 @@ export function productIngRegisterAll() {
   );
 }
 
-export function productSave() {
+export async function productSave() {
   const catGroup = getEl('prod-category');
   const catChecked = /** @type {HTMLInputElement|null} */ (catGroup && catGroup.querySelector('input[name="prod-cat"]:checked'));
   const data = {
@@ -508,9 +516,17 @@ export function productSave() {
     ingredients: prodForm.ingredients,
     note: getEl('prod-note').value,
   };
-  const r = prodForm.editingId
+  let r = prodForm.editingId
     ? updateProduct(prodForm.editingId, data)
     : createProduct(data);
+  if (!r.ok && r.code === 'duplicate' && !prodForm.editingId) {
+    // 동명 리뉴얼·개정 — 전성분이 바뀐 같은 이름의 제품은 별도 항목으로 등록 (FO-52)
+    const yes = await showConfirm(
+      '동명 제품이 이미 등록되어 있습니다. 전성분이 바뀐 리뉴얼·개정 제품이면 별도 항목으로 등록할 수 있습니다. 리뉴얼 제품으로 등록할까요?',
+      '동명 제품');
+    if (!yes) { showStoreError(r, '기성품 DB', showToast, '등록에 실패했습니다.'); return; }
+    r = createProduct(data, { allowVariant: true });
+  }
   if (!r.ok) { showStoreError(r, '기성품 DB', showToast, '등록에 실패했습니다.'); return; }
   const wasEdit = !!prodForm.editingId;
   showToast(`"${r.item.name}"을(를) ${wasEdit ? '수정' : '등록'}했습니다.`, 'success');

@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 6299a240054b22fd
-> 생성: 2026-10-04 · 원천: SPEC.md(426개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: ffa7887a2c882fbd
+> 생성: 2026-10-04 · 원천: SPEC.md(427개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 426개 — 문서 연결 272 · 소스 연결 394 · 테스트 연결 414 · 보고서 연결 109
+**커버리지 요약**: 요구사항 427개 — 문서 연결 273 · 소스 연결 395 · 테스트 연결 415 · 보고서 연결 109
 
 ---
 
@@ -332,6 +332,7 @@
 | FO-49 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/product-store.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
 | FO-50 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/formula-check.js<br>src/exams/cosmetic/product-store.js | tests/unit/exams/cosmetic/product-store.test.js | — | — |
 | FO-51 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/product-store.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
+| FO-52 | 구현 | 테스트 | DOC-DSN-12 | src/exams/cosmetic/product-store.js | tests/dom/exams/cosmetic/formula-products.dom.test.js<br>tests/unit/exams/cosmetic/product-store.test.js | — | — |
 
 ## 3.19 계정·클라우드 동기화
 
@@ -690,7 +691,7 @@
 | DOC-DSN-09 | docs/dev/design/USER_FEEDBACK_DESIGN.md | AU-01, AU-02, AU-03, AU-04, AU-05, AU-06, AU-07, AU-08, FB-01, FB-02, FB-03, FB-04, FB-05, FB-06, FB-07, FB-08, S-01 |
 | DOC-DSN-10 | docs/dev/design/MULTI_EXAM_DB_DESIGN.md | DA-06, DA-07, DA-08, ES-01, ES-02, ES-03, ES-04, ES-05, FO-24, RR-13, RR-17, RR-19 |
 | DOC-DSN-11 | docs/dev/design/USER_FLOW.md | AU-01, AU-02, AU-03, AU-04, AU-05, AU-06, AU-07, AU-08, FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, TR-01, TR-02, TR-03, TR-04, TR-05, TR-06, TR-07, TR-08, TR-09, TR-10, TR-11, TR-12, TR-13, TR-14, TR-15, TR-16, TR-17, TR-18, TR-19, TR-20, TR-21, TR-22, TR-23, UM-01, UM-02, UM-03, UM-04, UM-05, UX-FB-05, UX-NAV-06, UX-NAV-07, UX-NAV-08 |
-| DOC-DSN-12 | docs/dev/design/PRODUCT_DB_DESIGN.md | FO-14, FO-32, FO-37, FO-38, FO-39, FO-40, FO-44, FO-45, FO-47, FO-48, FO-49, FO-50, FO-51 |
+| DOC-DSN-12 | docs/dev/design/PRODUCT_DB_DESIGN.md | FO-14, FO-32, FO-37, FO-38, FO-39, FO-40, FO-44, FO-45, FO-47, FO-48, FO-49, FO-50, FO-51, FO-52 |
 | DOC-DSN-13 | docs/dev/design/PRODUCT_VISION_DESIGN.md | FO-32, FO-41, FO-42, FO-43, FO-46 |
 | DOC-IDX-01 | docs/README.md | — |
 | DOC-PPL-01 | ref-pipeline/README.md | AO-01, AO-02, AO-03, AO-04, AO-05, BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10 |
