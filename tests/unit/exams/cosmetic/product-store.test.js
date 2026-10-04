@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -273,6 +273,14 @@ test('역조회 — 동의어 양방향 확장 (FO-50)', () => {
   assert.equal(findProductsByIngredient('파라벤류').length, 1);
   createProduct({ name: 'B제품', brand: '', ingredients: ['메칠파라벤'] });
   assert.equal(findProductsByIngredient('파라벤류').length, 2); // 클래스 → 속칭 양방향
+});
+
+test('역조회 — 부분일치로 개별 성분 검색 (FO-51)', () => {
+  // '파라벤' 검색은 동의어 없이도 '메칠파라벤'·'파라벤류' 함유 제품을 함유 관계로 포착
+  assert.equal(findProductsByIngredient('파라벤').length, 2);
+  // 하이픈 변형도 matchKey로 해석
+  createProduct({ name: 'C제품', brand: '', ingredients: ['1,2-헥산디올'] });
+  assert.equal(findProductsByIngredient('1,2 헥산디올').length, 1);
 });
 
 test('역조회 — 성분 정규화(공백·대소문자)로 함유 제품 검색', () => {

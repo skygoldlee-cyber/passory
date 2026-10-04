@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49,FO-50,FO-51
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
@@ -266,19 +266,47 @@ export function classifyProductIngredients(product, index) {
  * @param {string} name
  * @returns {object[]} 해당 성분을 함유한 제품 목록
  */
-export function findProductsByIngredient(name) {
+/**
+ * 성분 조회 키 집합 — matchKey + 명시 동의어 양방향 확장 (FO-50, FO-51).
+ * '메칠파라벤' 검색은 '파라벤류' 함유 제품까지, '파라벤류' 검색은 개별 파라벤
+ * 속칭 함유 제품까지 커버한다.
+ * @param {string} name
+ * @returns {Set<string>}
+ */
+export function ingredientMatchKeys(name) {
   const target = ingredientMatchKey(name);
-  if (!target) return [];
-  const keys = new Set([target]);
-  // 동의어 양방향 확장 — '메칠파라벤' 검색은 '파라벤류' 함유 제품까지,
-  // '파라벤류' 검색은 개별 파라벤 속칭 함유 제품까지 커버 (FO-50)
+  const keys = new Set(target ? [target] : []);
   for (const [k, v] of Object.entries(INGREDIENT_ALIASES)) {
     const kv = ingredientMatchKey(v);
     if (kv === target) keys.add(k);
     if (k === target) keys.add(kv);
   }
+  return keys;
+}
+
+/**
+ * 키 집합 대비 단일 성분명 매칭 — 정확 키 또는 양방향 부분일치 (FO-51).
+ * '파라벤' 검색은 '메칠파라벤' 함유 제품을, '파라벤류' 검색은 '파라벤' 함유
+ * 제품을 함유 관계로 포착한다 (알레르기 교차와 같은 포함 규칙).
+ * @param {string} name - 제품 전성분의 성분명
+ * @param {Set<string>} keys - ingredientMatchKeys() 결과
+ * @returns {boolean}
+ */
+export function ingredientKeyHit(name, keys) {
+  const k = ingredientMatchKey(name);
+  if (!k || !keys || !keys.size) return false;
+  if (keys.has(k)) return true;
+  for (const t of keys) {
+    if (k.includes(t) || t.includes(k)) return true;
+  }
+  return false;
+}
+
+export function findProductsByIngredient(name) {
+  const keys = ingredientMatchKeys(name);
+  if (!keys.size) return [];
   return listProducts().filter(p =>
-    (p.ingredients || []).some(n => keys.has(ingredientMatchKey(n))));
+    (p.ingredients || []).some(n => ingredientKeyHit(n, keys)));
 }
 
 /**

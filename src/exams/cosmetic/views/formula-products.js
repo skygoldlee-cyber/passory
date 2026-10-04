@@ -22,7 +22,7 @@ import {
   listProducts, getProduct, getProductUsage,
   createProduct, updateProduct, deleteProduct,
   parseFullIngredientsDetailed, classifyProductIngredients, PRODUCT_ING_CLASS,
-  findAllergyHits, compareWithFormula, compareWithProduct,
+  findAllergyHits, ingredientMatchKeys, ingredientKeyHit, compareWithFormula, compareWithProduct,
   rankFormulasByOverlap, detectOrderHint,
   serializeProduct, serializeProductAnalysis, importProduct,
 } from '../product-store.js';
@@ -98,10 +98,12 @@ function renderProductList() {
 
   const index = getIndex();
   const q = prodFilter.query.toLowerCase();
-  const ingNorm = prodFilter.ingredient.replace(/\s+/g, '').toLowerCase();
+  // 성분 필터 — matchKey+동의어+부분일치 확장 (FO-51) — '파라벤류' 필터가
+  // '메칠파라벤' 함유 제품까지 포착
+  const ingKeys = prodFilter.ingredient ? ingredientMatchKeys(prodFilter.ingredient) : null;
   const products = listProducts().filter(p => {
-    if (ingNorm && !(p.ingredients || [])
-      .some(n => n.replace(/\s+/g, '').toLowerCase() === ingNorm)) return false;
+    if (ingKeys && ingKeys.size && !(p.ingredients || [])
+      .some(n => ingredientKeyHit(n, ingKeys))) return false;
     if (!q) return true;
     return (p.name || '').toLowerCase().includes(q)
       || (p.brand || '').toLowerCase().includes(q)
