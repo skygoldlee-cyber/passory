@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261004-ea60363",
+    "date": "2026-10-04",
+    "notes": [
+      "[수정·ux] 인트라뷰 전환 스크롤 잔류 전수조사 — resetMainScroll 공유 헬퍼로 일괄 정규화 (UX-NAV-07)"
+    ]
+  },
+  {
     "version": "v20261004-6aab460",
     "date": "2026-10-04",
     "notes": [
@@ -135,15 +142,6 @@
     "notes": [
       "TRACE_MATRIX 재생성 — DI-07 명칭 갱신 반영",
       "자가 등록 배지·필터 명칭 — '사용자 등록 원료' (DI-07)"
-    ]
-  },
-  {
-    "version": "v20261003-f5ed597",
-    "date": "2026-10-03",
-    "notes": [
-      "TESTING.md DOM 수치 정정 — 546 (study-dictionary 14·dictionary-custom 8)",
-      "TESTING.md 수치 — dictionary-custom 8·DOM 546",
-      "'성분 추가' 버튼 툴팁 보강 — DI-06"
     ]
   }
 ]
