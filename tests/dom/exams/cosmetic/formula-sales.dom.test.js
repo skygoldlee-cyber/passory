@@ -88,12 +88,34 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         expect(numericBadges()).toEqual(['1', '2', '3', '4']);
         expect(el('formula-biz-guide').textContent).toContain('제조·기록');
 
-        formulaSetBizType('sales'); // 계산기·조제 숨김 → 고객·포뮬러만 순번
-        expect(numericBadges()).toEqual(['1', '2']);
+        formulaSetBizType('sales'); // 계산기·조제 숨김 → 고객·포뮬러는 순번 대신 비순번 배지
+        expect(numericBadges()).toEqual([]);
         expect(el('formula-biz-guide').textContent).toContain('표시·광고');
 
         formulaSetBizType('custom'); // 복귀 시 원래 순번
         expect(numericBadges()).toEqual(['1', '2', '3', '4', '5']);
+    });
+
+    it('판매 유형 오버라이드 — 비순번 배지·설명·그룹 제목 교체, 복귀 시 복원 (FO-33)', () => {
+        initFormulaView();
+        const custCard = document.querySelector('[data-click="openCustomerPanel"]');
+        const listCard = document.querySelector('[data-click="openFormulaList"]');
+        const groupTitle = document.querySelector('[data-title-text]');
+
+        formulaSetBizType('sales');
+        expect(custCard.querySelector('.trainer-step-badge').textContent).toBe('기록');
+        expect(listCard.querySelector('.trainer-step-badge').textContent).toBe('제품');
+        expect(listCard.querySelector('.trainer-step-badge').classList.contains('is-continuous')).toBe(true);
+        expect(custCard.querySelector('p').textContent).not.toContain('조제 기록');
+        expect(listCard.querySelector('p').textContent).toContain('제품 카탈로그');
+        expect(groupTitle.textContent).toBe('기록·제품 관리');
+
+        formulaSetBizType('custom'); // 복귀 시 원본 복원
+        expect(custCard.querySelector('.trainer-step-badge').textContent).toBe('1');
+        expect(custCard.querySelector('.trainer-step-badge').classList.contains('is-continuous')).toBe(false);
+        expect(custCard.querySelector('p').textContent).toContain('조제 기록과 연결');
+        expect(listCard.querySelector('p').textContent).toContain('처방전 보관함');
+        expect(groupTitle.textContent).toBe('업무 흐름');
     });
 
     it('법규 준수 카드는 전 유형에서 항상 마지막 배치 (FO-33)', () => {

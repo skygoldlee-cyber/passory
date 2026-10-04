@@ -160,6 +160,37 @@ function applyBizProfile() {
     const allow = (/** @type {HTMLElement} */(card).dataset.biz || '').split(/\s+/);
     card.classList.toggle('is-hidden', !allow.includes(biz));
   });
+  // 유형별 배지·설명·그룹 제목 오버라이드 — data-badge-<biz>는 비순번 배지,
+  // data-desc-<biz>는 카드 설명, 그룹 제목은 data-title-<biz>·data-icon-<biz>.
+  // 원본은 첫 적용 시 dataset에 백업해 유형 왕복 시 복원한다.
+  document.querySelectorAll('#formula-menu-panel .trainer-menu-card').forEach(card => {
+    const badge = /** @type {HTMLElement|null} */(card.querySelector('.trainer-step-badge'));
+    if (badge) {
+      if (badge.dataset.origText === undefined) {
+        badge.dataset.origText = badge.textContent || '';
+        badge.dataset.origCont = badge.classList.contains('is-continuous') ? '1' : '';
+      }
+      const badgeOverride = card.getAttribute(`data-badge-${biz}`);
+      badge.classList.toggle('is-continuous', !!badgeOverride || badge.dataset.origCont === '1');
+      if (badgeOverride || badge.dataset.origCont === '1') badge.textContent = badgeOverride || badge.dataset.origText;
+    }
+    const desc = /** @type {HTMLElement|null} */(card.querySelector('p'));
+    if (desc) {
+      if (desc.dataset.origHtml === undefined) desc.dataset.origHtml = desc.innerHTML;
+      desc.innerHTML = card.getAttribute(`data-desc-${biz}`) || desc.dataset.origHtml;
+    }
+  });
+  document.querySelectorAll('#formula-menu-panel [data-title-text]').forEach(el => {
+    const span = /** @type {HTMLElement} */(el);
+    const host = /** @type {HTMLElement} */(span.parentElement);
+    if (span.dataset.origText === undefined) span.dataset.origText = span.textContent || '';
+    span.textContent = host.getAttribute(`data-title-${biz}`) || span.dataset.origText;
+    const icon = host.querySelector('i');
+    if (icon) {
+      if (icon.dataset.origClass === undefined) icon.dataset.origClass = icon.className;
+      icon.className = host.getAttribute(`data-icon-${biz}`) || icon.dataset.origClass;
+    }
+  });
   // 단계 배지 재번호 — 숨겨진 카드로 번호가 건너뛰지 않게, 노출 카드 기준 1부터.
   // '상시'·'제10조' 등 is-continuous 배지는 순번이 아니므로 유지한다.
   let step = 1;
