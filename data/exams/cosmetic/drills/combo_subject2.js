@@ -1,46 +1,46 @@
 // 자동 생성된 복수정답형 드릴 데이터입니다. 수정하지 마십시오. (tools/build/build_combo_drills.js)
-// 원본: data/exams/cosmetic/exams/subject2.8f7fb7b2.js — mode: fact(명제 조합) 19문 / answer(정답 조합) 138문
+// 원본: data/exams/cosmetic/exams/subject2.b55e6bbc.js — mode: fact(명제 조합) 19문 / answer(정답 조합) 138문
 var COMBO_DRILLS_subject2 = [
  {
   "id": "manufacturing_combo_f62cd4",
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1515 (출처: 과목2 문제은행 Q1)",
+  "citation": "📖 교재: L1516 (출처: 과목2 문제은행 Q1)",
   "stem": "다음 중 계면활성제의 HLB(친수성-친유성 밸런스)에 관한 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_dcb7d6",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "HLB 값이 낮을수록 친유성이 강하고, 높을수록 친수성이 강하다.",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_54852c",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "HLB 값이 3 ~ 6 범위인 계면활성제는 주로 W/O(유중수형) 에멀션의 유화제로 사용된다.",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_f0fc52",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "HLB 값이 1 ~ 3 범위인 계면활성제는 주로 세정제(디터전트)로 사용된다.",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_d6d974",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "가용화제(Solubilizer)는 보통 HLB 값이 15 ~ 18 이상의 높은 친수성 성질을 가진다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_7d8481",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "HLB 값이 8 ~ 18 범위인 계면활성제는 주로 O/W(수중유형) 에멀션의 유화제로 사용된다.",
     "truth": true
    }
@@ -89,7 +89,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q1",
-  "explain": "📖 교재 근거 (교재: L1515):\n> 해설: HLB 값이 높을수록 친수성이 강하다. HLB 8~18은 O/W 유화제, 세정제, 가용화제로 사용되며, HLB 3~6은 W/O 유화제, 1~3은 소포제이다.",
+  "explain": "📖 교재 근거 (교재: L1516):\n> 해설: HLB 값이 높을수록 친수성이 강하다. HLB 8~18은 O/W 유화제, 세정제, 가용화제로 사용되며, HLB 3~6은 W/O 유화제, 1~3은 소포제이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -190,41 +190,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L620 (출처: 과목2 문제은행 Q3)",
+  "citation": "📖 교재: L653 (출처: 과목2 문제은행 Q3)",
   "stem": "다음 중 천연 오일(유성 원료)에 속하는 '호호바씨오일'의 특징으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_93f743",
-    "conceptId": "L620",
+    "conceptId": "L653",
     "text": "광물에서 추출한 오일로 산화 안정성이 매우 낮다.",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_498d03",
-    "conceptId": "L620",
+    "conceptId": "L653",
     "text": "극성이 매우 높은 수성 용제 성질을 가진다.",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_235767",
-    "conceptId": "L620",
+    "conceptId": "L653",
     "text": "모공을 쉽게 막아 여드름성 피부에는 절대 사용해서는 안 된다.",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_dea3b4",
-    "conceptId": "L620",
+    "conceptId": "L653",
     "text": "화학 구조상 일반적인 트리글리세라이드가 아닌 액상 왁스 에스테르 성질을 띤다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_caa9d3",
-    "conceptId": "L620",
+    "conceptId": "L653",
     "text": "공기 중의 산소와 쉽게 반응하여 부패하기 쉬운 불포화도가 매우 높은 오일이다.",
     "truth": false
    }
@@ -275,7 +275,7 @@ var COMBO_DRILLS_subject2 = [
    "명제판정"
   ],
   "derivedFrom": "subject2_q3",
-  "explain": "📖 교재 근거 (교재: L620):\n| 호호바 오일 | 호호바의 씨에서 추출하며 상온에서는 액체, 저온에서는 고체 형태를 유지하는 식물성 왁스 – 녹는 점 10℃, 피지 성분과 비슷한 구조를 가지고 있어 피부 퍼짐성, 친화성, 침투성이 우수함, 상처 치료 및 진정 효과가 있으며 부드러운 감촉 부여, 모든 피부 사용 가능 |",
+  "explain": "📖 교재 근거 (교재: L653):\n| 카프릴릭/카프릭트리글리세라이드 | 카프릴릭과 카프릭애씨드 및 글리세린의 혼합물 – 착향제, 피부 컨디셔닝제로 사용 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -284,41 +284,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1845 (출처: 과목2 문제은행 Q4)",
+  "citation": "📖 교재: L2000 (출처: 과목2 문제은행 Q4)",
   "stem": "다음 중 우수화장품 제조 및 품질관리 기준(CGMP)에서 규정하는 '4대 기준서'에 해당하지 않는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_3d7173",
-    "conceptId": "L1845",
+    "conceptId": "L2000",
     "text": "제품표준서",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_92acdf",
-    "conceptId": "L1845",
+    "conceptId": "L2000",
     "text": "제조관리기준서",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_f36bbc",
-    "conceptId": "L1845",
+    "conceptId": "L2000",
     "text": "제조위생관리기준서",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_82da0b",
-    "conceptId": "L1845",
+    "conceptId": "L2000",
     "text": "원료성적서",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_af9832",
-    "conceptId": "L1845",
+    "conceptId": "L2000",
     "text": "품질관리기준서",
     "truth": false
    }
@@ -369,7 +369,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q4",
-  "explain": "📖 교재 근거 (교재: L1845):\n> 해설: CGMP 4대 기준서는 제품표준서, 제조관리기준서, 품질관리기준서, 제조위생관리기준서이다. 원료관리기준서는 존재하지 않는다.",
+  "explain": "📖 교재 근거 (교재: L2000):\n> 한 줄 요약: CGMP 4대 기준서(제품표준서·제조관리·품질관리·제조위생관리) + 원료품질성적서 구비.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -566,41 +566,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3048 (출처: 과목2 문제은행 Q7)",
+  "citation": "📖 교재: L3049 (출처: 과목2 문제은행 Q7)",
   "stem": "다음 중 화장품 성분 중 '알부틴'을 2% 이상 함유한 제품의 포장에 의무적으로 기재해야 하는 안전 정보 문구로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_13e76d",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "알부틴은 구진과 경미한 가려움이 보고된 예가 있음",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_6b3e60",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "신장 질환이 있는 사람은 사용 전에 의사 등과 상의할 것",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_2dc04c",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "3세 이하 영유아에게는 사용하지 말 것",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_c1fae8",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "햇빛에 대한 피부의 감수성을 증가시킬 수 있으므로 자외선 차단제를 함께 사용할 것",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_fda834",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "알레르기 반응을 보였던 적이 있는 분은 사용 전에 상의할 것",
     "truth": false
    }
@@ -652,7 +652,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q7",
-  "explain": "📖 교재 근거 (교재: L3048):\n> 해설: 카민 함유 제품은 '카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것'이라는 표시 문구가 필요하다. 과산화수소는 '눈에 접촉을 피하고 눈에 들어갔을 때는 즉시 씻어낼 것', 알루미늄염은 '신장 질환이 있는 사람은 사용 전에 의사·약사·한의사와 상의할 것', AHA는 '자외선 차단제 함께 사용·시험 사용·고농도 시 상담' 문구가 필요하다.",
+  "explain": "📖 교재 근거 (교재: L3049):\n> 해설: 카민 함유 제품은 '카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것'이라는 표시 문구가 필요하다. 과산화수소는 '눈에 접촉을 피하고 눈에 들어갔을 때는 즉시 씻어낼 것', 알루미늄염은 '신장 질환이 있는 사람은 사용 전에 의사·약사·한의사와 상의할 것', AHA는 '자외선 차단제 함께 사용·시험 사용·고농도 시 상담' 문구가 필요하다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -838,41 +838,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3355 (출처: 과목2 문제은행 Q10)",
+  "citation": "📖 교재: L3358 (출처: 과목2 문제은행 Q10)",
   "stem": "다음 중 CGMP 기준상 제조업자가 보유해야 하는 원료의 '보관 상태 표시 라벨'의 색상 매칭이 올바르지 않은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_05ceb6",
-    "conceptId": "L3355",
+    "conceptId": "L3358",
     "text": "시험 중 (대기): 황색 (또는 주황색)",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_44a44c",
-    "conceptId": "L3355",
+    "conceptId": "L3358",
     "text": "출고 가능: 청색",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_00ceeb",
-    "conceptId": "L3355",
+    "conceptId": "L3358",
     "text": "부적합 (반려): 적색",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_03f855",
-    "conceptId": "L3355",
+    "conceptId": "L3358",
     "text": "적합 (승인): 녹색",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_bcf6ea",
-    "conceptId": "L3355",
+    "conceptId": "L3358",
     "text": "반품 대기: 적색",
     "truth": false
    }
@@ -925,7 +925,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q10",
-  "explain": "📖 법령 근거 (교재: L3355):\n③ 원자재, 시험 중인 제품 및 부적합품은 각각 구획된 장소에서 보관해야 한다. 다만, 서로 혼동을 일으킬 우려가 없는 시스템에 의해 보관되는 경우는 제외한다.",
+  "explain": "📖 법령 근거 (교재: L3358):\n③ 원자재, 시험 중인 제품 및 부적합품은 각각 구획된 장소에서 보관해야 한다. 다만, 서로 혼동을 일으킬 우려가 없는 시스템에 의해 보관되는 경우는 제외한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -940,35 +940,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_02270e",
-    "conceptId": "L203",
+    "conceptId": "L257",
     "text": "음이온 > 양이온 > 양쪽성 > 비이온",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_9e0f17",
-    "conceptId": "L203",
+    "conceptId": "L257",
     "text": "양쪽성 > 양이온 > 음이온 > 비이온",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_48fdc3",
-    "conceptId": "L203",
+    "conceptId": "L257",
     "text": "비이온 > 양쪽성 > 음이온 > 양이온",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_480def",
-    "conceptId": "L203",
+    "conceptId": "L257",
     "text": "양이온 > 음이온 > 양쪽성 > 비이온",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_a0c93b",
-    "conceptId": "L203",
+    "conceptId": "L257",
     "text": "음이온 > 양쪽성 > 양이온 > 비이온",
     "truth": false
    }
@@ -1015,7 +1015,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q11",
-  "explain": "📖 교재 근거 (1.ingredients: L203):\n물질은 물리적 성질 및 분자간 상호작용에 따라 대표적으로 '기체', '고체', '액체'의 3가지 상태로 구분되며, 물질의 상(相, phase)이란 일정한 물리적 특성 또는 화학적 특성을 갖는 균일한 물질계를 지칭함",
+  "explain": "📖 교재 근거 (1.ingredients: L257):\n- 자극성: 양이온성 > 음이온성 > 양쪽성 > 비이온성 (높은 순서대로 표기)",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -1296,41 +1296,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 화장품법 제18조 (출처: 과목2 문제은행 Q15)",
+  "citation": "📖 출처: 과목2 문제은행 Q15",
   "stem": "다음 중 위해화장품의 '회수 계획서 제출' 기한으로 옳은 것을 모두 고른 것은? (단, 위해화장품임을 알게 된 날을 기준으로 함)",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_b8dc91",
-    "conceptId": "L3309",
+    "conceptId": "L3608",
     "text": "24시간 이내",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_53807e",
-    "conceptId": "L3309",
+    "conceptId": "L3608",
     "text": "3일 이내",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_804601",
-    "conceptId": "L3309",
+    "conceptId": "L3608",
     "text": "7일 이내",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_4dabe1",
-    "conceptId": "L3309",
+    "conceptId": "L3608",
     "text": "5일 이내",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_ee021b",
-    "conceptId": "L3309",
+    "conceptId": "L3608",
     "text": "14일 이내",
     "truth": false
    }
@@ -1381,7 +1381,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q15",
-  "explain": "📖 교재 근거 (L3309):\n> 📌 출처: 화장품법 제18조 + 위해사례 보고체계 | 시행일: 2026. 4. 2. | 최종 확인: 2026. 8. 29.",
+  "explain": "📖 교재 근거 (L3608):\n- 회수계획서 제출 🔖기출: 회수 대상 화장품이라는 사실을 안 날부터 5일 이내 지방식약청장에게 제출",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -1664,7 +1664,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q18",
-  "explain": "📖 교재 근거 (교재: L1505):\n| 자외선 차단 | 징크옥사이드, 티타늄디옥사이드(물리적) / 벤조페논-3, 에칠헥실메톡시신나메이트(화학적) | 최대 25% / 7.5% 등 | 로션, 크림, 오일 등 |",
+  "explain": "📖 교재 근거 (교재: L1505):\n| 자외선 차단 | 징크옥사이드, 티타늄디옥사이드(물리적) / 벤조페논-3, 에칠헥실메톡시신나메이트(화학적) | 최대 25% / 7.5% 등 | 로션, 크림, 오일 등 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -1673,41 +1673,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3478 (출처: 과목2 문제은행 Q19)",
+  "citation": "📖 교재: L3479 (출처: 과목2 문제은행 Q19)",
   "stem": "다음 중 화장품 원료의 위해평가(Risk Assessment) 4단계 순서가 바르게 나열된 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_12a8d3",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "위해도 결정 -> 노출 평가 -> 용량-반응 평가 -> 위험성 확인",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_338a09",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "용량-반응 평가 -> 위험성 확인 -> 노출 평가 -> 위해도 결정",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_9cdf5e",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "노출 평가 -> 위험성 확인 -> 용량-반응 평가 -> 위해도 결정",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_2fb626",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "위험성 확인 -> 노출 평가 -> 용량-반응 평가 -> 위해도 결정",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_1ea8ed",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "위험성 확인 -> 용량-반응 평가 -> 노출 평가 -> 위해도 결정",
     "truth": true
    }
@@ -1759,7 +1759,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q19",
-  "explain": "📖 교재 근거 (교재: L3478):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
+  "explain": "📖 교재 근거 (교재: L3479):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -1768,41 +1768,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L2009 (출처: 과목2 문제은행 Q20)",
+  "citation": "📖 교재: L454 (출처: 과목2 문제은행 Q20)",
   "stem": "다음 중 CGMP 기준상 제조 설비의 '세척 및 소독' 주기를 설정할 때 고려해야 할 사항으로 가장 적합하지 않은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_a2f876",
-    "conceptId": "L2009",
+    "conceptId": "L454",
     "text": "설비의 사용 빈도",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_e8a2cc",
-    "conceptId": "L2009",
+    "conceptId": "L454",
     "text": "제조되는 화장품의 제형 (액상, 분말 등)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_04c520",
-    "conceptId": "L2009",
+    "conceptId": "L454",
     "text": "세척제 및 소독제의 가격",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_b8d0fd",
-    "conceptId": "L2009",
+    "conceptId": "L454",
     "text": "연속 제조 시간",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_f1168a",
-    "conceptId": "L2009",
+    "conceptId": "L454",
     "text": "이전 배치 제조 완료 후 경과 시간",
     "truth": false
    }
@@ -1849,7 +1849,7 @@ var COMBO_DRILLS_subject2 = [
    "기한"
   ],
   "derivedFrom": "subject2_q20",
-  "explain": "📖 교재 근거 (교재: L2009):\n| ④ 제조위생관리기준서 🎯 기출 | 작업 환경 위생 관리 | 작업원 건강관리·상태 파악·조치, 수세·소독 방법, 작업복장 규격·세탁·착용, 작업실 청소·소독·주기, 청소 상태 평가, 제조시설 세척·평가, 기타 필요 사항 |",
+  "explain": "📖 교재 근거 (교재: L454):\n⑦ 제조 구역별 청소 및 위생관리 절차에 따라 효능이 입증된 세척제 및 소독제를 사용해야 한다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -2137,41 +2137,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3048 (출처: 과목2 문제은행 Q24)",
+  "citation": "📖 교재: L3049 (출처: 과목2 문제은행 Q24)",
   "stem": "다음 중 화장품 포장에 '카민(Carmine)' 또는 '코치닐 추출물'을 함유한 경우 기재해야 하는 경고 문구에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_0c1101",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "임신 중인 여성은 사용하지 말 것",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_ceef46",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "신장 질환이 있는 사람은 신중히 사용할 것",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_c4bb6b",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_171489",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "흡입되지 않도록 주의할 것",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_9429e8",
-    "conceptId": "L3048",
+    "conceptId": "L3049",
     "text": "사용 후 즉시 물로 씻어내지 않으면 탈모의 원인이 됨",
     "truth": false
    }
@@ -2220,7 +2220,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q24",
-  "explain": "📖 교재 근거 (교재: L3048):\n> 해설: 카민 함유 제품은 '카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것'이라는 표시 문구가 필요하다. 과산화수소는 '눈에 접촉을 피하고 눈에 들어갔을 때는 즉시 씻어낼 것', 알루미늄염은 '신장 질환이 있는 사람은 사용 전에 의사·약사·한의사와 상의할 것', AHA는 '자외선 차단제 함께 사용·시험 사용·고농도 시 상담' 문구가 필요하다.",
+  "explain": "📖 교재 근거 (교재: L3049):\n> 해설: 카민 함유 제품은 '카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것'이라는 표시 문구가 필요하다. 과산화수소는 '눈에 접촉을 피하고 눈에 들어갔을 때는 즉시 씻어낼 것', 알루미늄염은 '신장 질환이 있는 사람은 사용 전에 의사·약사·한의사와 상의할 것', AHA는 '자외선 차단제 함께 사용·시험 사용·고농도 시 상담' 문구가 필요하다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -2686,7 +2686,7 @@ var COMBO_DRILLS_subject2 = [
    "명제판정"
   ],
   "derivedFrom": "subject2_q29",
-  "explain": "📖 교재 근거 (교재: L1797):\n> 원료 검사 → 계량 → 원료 투입(예비 혼합기) → 필터(매쉬, mesh) → 유화 → 냉각 → 숙성조 → 검사 → 충전 → 포장",
+  "explain": "📖 교재 근거 (교재: L1797):\n> 원료 검사 → 계량 → 원료 투입(예비 혼합기) → 필터(매쉬, mesh) → 유화 → 냉각 → 숙성조 → 검사 → 충전 → 포장\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -2789,41 +2789,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3328 (출처: 과목2 문제은행 Q31)",
+  "citation": "📖 교재: L3243 (출처: 과목2 문제은행 Q31)",
   "stem": "다음 중 화장품의 위해평가(Risk Assessment) 과정에서 '노출 평가(Exposure Assessment)' 시 고려하는 요인으로 가장 적합하지 않은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_a31d72",
-    "conceptId": "L3328",
+    "conceptId": "L3243",
     "text": "화장품의 1회 사용량 및 하루 사용 빈도",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_48150c",
-    "conceptId": "L3328",
+    "conceptId": "L3243",
     "text": "인체 접촉 부위 및 접촉 면적",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_384408",
-    "conceptId": "L3328",
+    "conceptId": "L3243",
     "text": "사용 대상 연령층 (영유아, 성인 등)",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_42dff7",
-    "conceptId": "L3328",
+    "conceptId": "L3243",
     "text": "원료의 유해성(Hazard) 자체의 세기 및 독성 메커니즘",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6789b7",
-    "conceptId": "L3328",
+    "conceptId": "L3243",
     "text": "제품의 사용 형태 (씻어내는지 여부)",
     "truth": false
    }
@@ -2871,7 +2871,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q31",
-  "explain": "📖 교재 근거 (교재: L3328):\n| 노출 평가 | 화장품의 사용 등을 통해 노출된 위해요소의 정량적 또는 정성적 분석 자료를 근거로 인체노출 수준을 산출하는 과정 |",
+  "explain": "📖 교재 근거 (교재: L3243):\n> 📚 참조자료: 5.hazard.md",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -2886,35 +2886,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_51858a",
-    "conceptId": "L184",
+    "conceptId": "L1716",
     "text": "굴절계",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_2f4c39",
-    "conceptId": "L184",
+    "conceptId": "L1716",
     "text": "점도계 (Viscometer)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_159ca2",
-    "conceptId": "L184",
+    "conceptId": "L1716",
     "text": "수분측정기",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_2a8f7a",
-    "conceptId": "L184",
+    "conceptId": "L1716",
     "text": "pH 미터",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6b2afd",
-    "conceptId": "L184",
+    "conceptId": "L1716",
     "text": "고성능 액체 크로마토그래피 (HPLC)",
     "truth": true
    }
@@ -2964,7 +2964,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q32",
-  "explain": "📖 법령 근거 (L184(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L184>)):\n③ 제조시설이나 설비의 세척에 사용되는 세제 또는 소독제는 효능이 입증된 것을 사용하고 잔류하거나 적용하는 표면에 이상을 초래하지 아니하여야 한다.",
+  "explain": "📖 법령 근거 (L1716):\n> - HPLC (고성능 액체 크로마토그래피): 용매 중의 유기화합물을 성분별로 분석하여 함유량을 측정함",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -2973,41 +2973,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1104 (출처: 과목2 문제은행 Q33)",
+  "citation": "📖 교재: L1109 (출처: 과목2 문제은행 Q33)",
   "stem": "다음 중 자외선 차단 지수인 SPF(Sun Protection Factor)의 정의로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_2b402a",
-    "conceptId": "L1104",
+    "conceptId": "L1109",
     "text": "자외선 A(UVA)를 차단하는 지수",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_1e982e",
-    "conceptId": "L1104",
+    "conceptId": "L1109",
     "text": "자외선 B(UVB)에 의한 피부의 최소홍반량을 몇 배로 지연시키는지 나타내는 지수",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_692d46",
-    "conceptId": "L1104",
+    "conceptId": "L1109",
     "text": "자외선에 의한 피부 색소 침착(흑화)을 방지하는 지수",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_61b3e9",
-    "conceptId": "L1104",
+    "conceptId": "L1109",
     "text": "피부의 수분 증발을 억제하는 지수",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_a79a9f",
-    "conceptId": "L1104",
+    "conceptId": "L1109",
     "text": "모발의 멜라닌 탈색 속도를 나타내는 지수",
     "truth": false
    }
@@ -3057,7 +3057,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q33",
-  "explain": "📖 교재 근거 (교재: L1104):\nUVB를 차단하는 자외선 차단지수(SPF: Sun Protection Factor)",
+  "explain": "📖 교재 근거 (교재: L1109):\nSPF = (제품을 바른 피부의 최소 홍반량(MED) / 제품을 바르지 않은 피부의 최소 홍반량(MED))",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -3161,41 +3161,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3355 (출처: 과목2 문제은행 Q35)",
+  "citation": "📖 교재: L3717 (출처: 과목2 문제은행 Q35)",
   "stem": "다음 중 CGMP 기준상 원자재의 '수입 검사' 절차으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_8b09e1",
-    "conceptId": "L3355",
+    "conceptId": "L3717",
     "text": "원자재가 입고되면 외관 상태 및 제조번호를 확인한다.",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_b9765c",
-    "conceptId": "L3355",
+    "conceptId": "L3717",
     "text": "시험 결과가 나오기 전까지는 '시험 중(대기)' 구역에 보관한다.",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_4322ee",
-    "conceptId": "L3355",
+    "conceptId": "L3717",
     "text": "시험 검사 결과 적합 판정이 내려지면 '적합' 라벨을 부착하고 적합 구역으로 이동한다.",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_cd822c",
-    "conceptId": "L3355",
+    "conceptId": "L3717",
     "text": "시험 결과 부적합 판정이 나면 '부적합' 라벨을 부착하고 격리 보관한다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_2a259e",
-    "conceptId": "L3355",
+    "conceptId": "L3717",
     "text": "급한 생산 일정을 위해 시험 결과 확인 전에 출고 승인을 진행할 수 있다.",
     "truth": false
    }
@@ -3247,7 +3247,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q35",
-  "explain": "📖 법령 근거 (교재: L3355):\n③ 원자재, 시험 중인 제품 및 부적합품은 각각 구획된 장소에서 보관해야 한다. 다만, 서로 혼동을 일으킬 우려가 없는 시스템에 의해 보관되는 경우는 제외한다.",
+  "explain": "📖 법령 근거 (교재: L3717):\n> 해설: 완제품은 시험 결과 적합 판정과 품질부서 책임자가 출고 승인한 것만을 출고해야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -3338,7 +3338,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q36",
-  "explain": "📖 교재 근거 (교재: L85):\n| 이미다졸리디닐우레아(3,3'-비스(1-히드록시메칠-2,5-디옥소이미다졸리딘-4-일)-1,1'메칠렌디우레아) | Imidazolidinyl Urea | 방부제 | - | 이미다졸리디닐우레아는 화장품의 변질을 막는 방부제로, 0.6%까지 사용이 제한된 성분입니다. | - | 0.6% | 방부·보존 | 중빈도 | 기타 제품에는 사용금지 | - |",
+  "explain": "📖 교재 근거 (교재: L85):\n| 이미다졸리디닐우레아(3,3'-비스(1-히드록시메칠-2,5-디옥소이미다졸리딘-4-일)-1,1'메칠렌디우레아) | Imidazolidinyl Urea | 방부제 | - | 이미다졸리디닐우레아는 화장품의 변질을 막는 방부제로, 0.6%까지 사용이 제한된 성분입니다. | - | 0.6% | 방부·보존 | 중빈도 | 기타 제품에는 사용금지 | - |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -3347,41 +3347,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1903 (출처: 과목2 문제은행 Q37)",
+  "citation": "📖 교재: L275 (출처: 과목2 문제은행 Q37)",
   "stem": "다음 중 피부의 표피 5대 층 중 멜라닌 세포(Melanocyte)가 존재하는 층에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_1f99ea",
-    "conceptId": "L1903",
+    "conceptId": "L275",
     "text": "각질층",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_fca7f5",
-    "conceptId": "L1903",
+    "conceptId": "L275",
     "text": "투명층",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_a3be53",
-    "conceptId": "L1903",
+    "conceptId": "L275",
     "text": "과립층",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_9a77f4",
-    "conceptId": "L1903",
+    "conceptId": "L275",
     "text": "가시층",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_09ffd0",
-    "conceptId": "L1903",
+    "conceptId": "L275",
     "text": "기저층",
     "truth": true
    }
@@ -3426,7 +3426,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q37",
-  "explain": "📖 교재 근거 (교재: L1903):\n| 기능성 화장품 | • 피부에 멜라닌색소가 침착하는 것을 방지하여 기미·주근깨 등의 생성을 억제함으로써 피부의 미백에 도움을 줌<br>• 피부에 침착된 멜라닌색소의 색을 옅게 하여 피부의 미백에 도움을 줌<br>• 피부에 탄력을 주어 피부의 주름을 완화 또는 개선함<br>• 강한 햇볕을 방지하여 피부를 곱게 태워줌<br>• 자외선을 차단 또는 산란시켜 자외선으로부터 피부를 보호함<br>• 모발의 색상을 변화(탈염·탈색 포함)시킴 (단, 일시적으로 모발의 색상을 변화시키는 제품은 제외함)<br>• 체모를 제거하는 기능을 함 (단, 물리적으로 체모를 제거하는 제품은 제외함)<br>• 탈모 증상의 완화에 도움을 줌 (단, 코팅 등 물리적으로 모발을 굵어 보이게 하는 제품은 제외함)<br>• 여드름성 피부...",
+  "explain": "📖 교재 근거 (교재: L275):\n손바닥·발바닥만\n과립층\n케라토히알린 과립\n유극층\n랑게르한스세포\n기저층\n멜라닌 형성 티로신→도파→도파퀴논\n표피 4대 세포\n각질형성세포\n멜라닌세포\n랑게르한스세포",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -3534,35 +3534,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_9d117a",
-    "conceptId": "L165",
+    "conceptId": "L336",
     "text": "1년",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_a8ba08",
-    "conceptId": "L165",
+    "conceptId": "L336",
     "text": "2년",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_bcc966",
-    "conceptId": "L165",
+    "conceptId": "L336",
     "text": "3년",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_35ecac",
-    "conceptId": "L165",
+    "conceptId": "L336",
     "text": "5년",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_526507",
-    "conceptId": "L165",
+    "conceptId": "L336",
     "text": "10년",
     "truth": false
    }
@@ -3611,7 +3611,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q39",
-  "explain": "📖 법령 근거 (L165(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L165>)):\n9. 각 제조구역별 청소 및 위생관리 절차에 따라 효능이 입증된 세척제 및 소독제를 사용할 것",
+  "explain": "📖 법령 근거 (L336(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L336>)):\n③ 완제품의 보관용 검체는 적절한 보관조건 하에 지정된 구역 내에서 제조단위별로 사용기한까지 보관하여야\n한다. 다만, 개봉 후 사용기간을 기재하는 경우에는 제조일로부터 3년간 보관하여야 한다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -3794,7 +3794,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q41",
-  "explain": "📖 교재 근거 (교재: L1743):\n| 합일(coalescence) | 분산된 입자가 서로 결합하여 보다 큰 입자 상태로 되는 것으로 유화 파괴의 전단계로 판단될 수 있음. 합일 현상이 계속되면 수상과 유상이 완전이 분리되는 상분리(phase separation)이 발생 |",
+  "explain": "📖 교재 근거 (교재: L1743):\n| 합일(coalescence) | 분산된 입자가 서로 결합하여 보다 큰 입자 상태로 되는 것으로 유화 파괴의 전단계로 판단될 수 있음. 합일 현상이 계속되면 수상과 유상이 완전이 분리되는 상분리(phase separation)이 발생 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -3887,7 +3887,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q42",
-  "explain": "📖 교재 근거 (L41):\n② 계면활성제 → HLB 값에 따른 용도 구분 (3~6 W/O, 8~18 O/W)",
+  "explain": "📖 교재 근거 (L41):\n② 계면활성제 → HLB 값에 따른 용도 구분 (3~6 W/O, 8~18 O/W)\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -3896,41 +3896,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L625 (출처: 과목2 문제은행 Q43)",
+  "citation": "📖 출처: 과목2 문제은행 Q43",
   "stem": "다음 중 유지(기름)의 화학적 특성을 평가하는 지표 중 '1g의 유지를 검화(비누화)하는 데 필요한 수산화칼륨(KOH)의 밀리그램(mg) 수'를 뜻하는 용어에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_07fed5",
-    "conceptId": "L625",
+    "conceptId": "L440",
     "text": "산가 (Acid Value)",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_40d683",
-    "conceptId": "L625",
+    "conceptId": "L440",
     "text": "요오드가 (Iodine Value)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_6f3f02",
-    "conceptId": "L625",
+    "conceptId": "L440",
     "text": "비누화가 (Saponification Value)",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_ccf708",
-    "conceptId": "L625",
+    "conceptId": "L440",
     "text": "하이드록실가 (Hydroxyl Value)",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_7668f8",
-    "conceptId": "L625",
+    "conceptId": "L440",
     "text": "에스테르가 (Ester Value)",
     "truth": false
    }
@@ -3978,7 +3978,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q43",
-  "explain": "📖 교재 근거 (교재: L625):\n특징: R-COOH로 표시되는 화합물 / 지방을 가수분해하여 얻어지며, 탄소수가 12개 이상 / 천연의 유지와 밀랍 등에 에스테르류로 함유함 / 세정용 계면활성제, 유화제, 분산제, 경도·점도 조절용, 연화제 목적으로 사용함 / 알칼리인 소듐하이드록사이드(NaOH), 포타슘하이드록사이드(KOH), 트라이에탄올아민과 병용하면 비누를 형성",
+  "explain": "📖 교재 근거 (기능성화장품 심사에 관한 규정: L440(제2025-88호)(20251216)/기능성화장품 심사에 관한 규정(식품의약품안전처고시)(제2025-88호)(20251216).md#L440>)):\n(나) Draize 법 (Jordan modification)",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -4068,7 +4068,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q44",
-  "explain": "📖 교재 근거 (교재: L582):\n[참고] 식물성 오일의 경우 지방산 내 불포화 결합이 많아 쉽게 산화되며, 산화되는 것을 방치하면 산패됨",
+  "explain": "📖 교재 근거 (교재: L582):\n[참고] 식물성 오일의 경우 지방산 내 불포화 결합이 많아 쉽게 산화되며, 산화되는 것을 방치하면 산패됨\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -4347,7 +4347,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q47",
-  "explain": "📖 법령 근거 (교재: L1584):\n3. 설비 등은 제품의 오염을 방지하고 배수가 용이하도록 설계, 설치하며, 제품 및 청소 소독제와 화학반응을 일으키지 않을 것",
+  "explain": "📖 법령 근거 (교재: L1584):\n3. 설비 등은 제품의 오염을 방지하고 배수가 용이하도록 설계, 설치하며, 제품 및 청소 소독제와 화학반응을 일으키지 않을 것\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -4356,41 +4356,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3355 (출처: 과목2 문제은행 Q48)",
+  "citation": "📖 교재: L2602 (출처: 과목2 문제은행 Q48)",
   "stem": "다음 중 CGMP 기준상 원료의 품질시험 결과 부적합 판정이 났을 때 처리 절차으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_ca8410",
-    "conceptId": "L3355",
+    "conceptId": "L2602",
     "text": "즉시 '부적합' 라벨을 부착한다.",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_87287d",
-    "conceptId": "L3355",
+    "conceptId": "L2602",
     "text": "다른 적합 원료와 혼동하여 사용하지 않도록 물리적으로 격리된 장소에 보관한다.",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_1fe172",
-    "conceptId": "L3355",
+    "conceptId": "L2602",
     "text": "부적합 원료는 생산부서장의 임의 승인 하에 재작업용 원료로 바로 투입한다.",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_22a7ea",
-    "conceptId": "L3355",
+    "conceptId": "L2602",
     "text": "원인 규명을 위한 일탈(Deviation) 조사를 실시한다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_2e7752",
-    "conceptId": "L3355",
+    "conceptId": "L2602",
     "text": "공급업체에 반품 처리하거나 적법한 절차에 따라 폐기 처분한다.",
     "truth": true
    }
@@ -4440,7 +4440,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q48",
-  "explain": "📖 법령 근거 (교재: L3355):\n③ 원자재, 시험 중인 제품 및 부적합품은 각각 구획된 장소에서 보관해야 한다. 다만, 서로 혼동을 일으킬 우려가 없는 시스템에 의해 보관되는 경우는 제외한다.",
+  "explain": "📖 법령 근거 (교재: L2602):\n> 해설: 판정 대기소 보관 시 백색 라벨, 시험 중 황색 라벨, 적합 판정 시 청색 라벨, 부적합 판정 시 적색 라벨을 부착한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -4455,35 +4455,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_ffef3b",
-    "conceptId": "L2248",
+    "conceptId": "L2251",
     "text": "세정, 각질 제거 등의 제품에 남아 있는 10mm 이하의 고체플라스틱",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_603b51",
-    "conceptId": "L2248",
+    "conceptId": "L2251",
     "text": "화장품 용기에 사용된 모든 플라스틱 재질",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_84a3ff",
-    "conceptId": "L2248",
+    "conceptId": "L2251",
     "text": "세정, 각질 제거 등의 제품에 남아 있는 5mm 이하의 고체플라스틱",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_13b256",
-    "conceptId": "L2248",
+    "conceptId": "L2251",
     "text": "1차 용기 내벽에 코팅된 실리콘 막",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_cff2a7",
-    "conceptId": "L2248",
+    "conceptId": "L2251",
     "text": "화장품 제형의 투명도를 높이기 위해 첨가하는 액상 고분자",
     "truth": false
    }
@@ -4533,7 +4533,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q49",
-  "explain": "📖 교재 근거 (L2248):\n| 미세플라스틱 | 세정, 각질 제거 등의 제품에 남아 있는 5mm 이하의 고체플라스틱으로, 유통화장품 안전성 기준상 배합 금지 성분 |",
+  "explain": "📖 교재 근거 (L2251):\n| 미세플라스틱 | 세정, 각질 제거 등의 제품에 남아 있는 5mm 이하의 고체플라스틱으로, 유통화장품 안전성 기준상 배합 금지 성분 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -4810,41 +4810,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 출처: 과목2 문제은행 Q53",
+  "citation": "📖 교재: L2231 (출처: 과목2 문제은행 Q53)",
   "stem": "다음 중 무기 자외선 차단제 성분인 '징크옥사이드'의 최종 제품 내 사용 한도로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_e70882",
-    "conceptId": "L118",
+    "conceptId": "L2231",
     "text": "5.0% 이하",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_221a4e",
-    "conceptId": "L118",
+    "conceptId": "L2231",
     "text": "10.0% 이하",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_1e972f",
-    "conceptId": "L118",
+    "conceptId": "L2231",
     "text": "25.0% 이하",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_f83e05",
-    "conceptId": "L118",
+    "conceptId": "L2231",
     "text": "20.0% 이하",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6fb2b1",
-    "conceptId": "L118",
+    "conceptId": "L2231",
     "text": "15.0% 이하",
     "truth": false
    }
@@ -4891,7 +4891,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q53",
-  "explain": "📖 교재 근거 (restricted_ingredients: L118):\n| 징크옥사이드 | Zinc Oxide | 자외선 차단제 | - | 자외선 차단제로 유상층에 용해되어 활용되며, 최대 25%까지 사용 가능한 사용 제한 원료입니다. | - | 25% | 홍조, 색소침착 | 고빈도 | 무기 자외선 차단제, 최대 함량 25% | - |",
+  "explain": "📖 교재 근거 (교재: L2231):\n```mermaid\nflowchart LR\nP[\"페녹시에탄올<br/>보존제\"] -->|\"1.0% 이하\"| L1[\"최종 제품\"]\nB[\"벤조익애씨드<br/>보존제\"] -->|\"0.5% 이하\"| L2[\"씻어내지 않는 제품\"]\nS[\"살리실산\"] -->|\"0.5% 이하\"| L3[\"영유아용 사용금지<br/>(씻어내는 제품 제외)\"]\nT[\"티타늄디옥사이드<br/>자외선차단제\"] -->|\"25.0% 이하\"| L4[\"최종 제품\"]\n```",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -4987,7 +4987,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q54",
-  "explain": "📖 교재 근거 (교재: L3332):\n| 안전역 | 화장품에 존재하는 위해요소의 최대 무독성 용량을 일일 인체노출량으로 나눈 값 |",
+  "explain": "📖 교재 근거 (교재: L3332):\n| 안전역 | 화장품에 존재하는 위해요소의 최대 무독성 용량을 일일 인체노출량으로 나눈 값 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -4996,41 +4996,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3405 (출처: 과목2 문제은행 Q55)",
+  "citation": "📖 교재: L3408 (출처: 과목2 문제은행 Q55)",
   "stem": "다음 중 위해화장품의 위해성 등급 중 '다등급'에 해당하는 위해 원인에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_5c9e80",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "사용 금지 원료가 의도적으로 다량 배합된 경우",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_3d558a",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "화장품의 사용으로 인해 완치되기 어려운 부작용이 발생한 경우",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_98c51e",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "표시 기재 사항 중 단순 오기로 성분 순서가 바뀐 경우",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_02696e",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "미생물 허용 한도를 10배 초과한 경우",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_2fea15",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "납 허용 한도를 10배 초과한 경우",
     "truth": false
    }
@@ -5081,7 +5081,7 @@ var COMBO_DRILLS_subject2 = [
    "한도"
   ],
   "derivedFrom": "subject2_q55",
-  "explain": "📖 교재 근거 (교재: L3405):\n| 다등급 (위해 기준) | • 전부 또는 일부가 변패된 경우<br>• 병원미생물에 오염된 경우<br>• 이물이 혼입되었거나 부착되어 보건위생상 위해를 발생할 우려가 있는 경우<br>• 화장품에 사용할 수 없는 원료를 사용하였거나 유통화장품 안전관리 기준에 적합하지 않은 경우(기능성화장품의 주원료 함량이 부적합한 경우)<br>• 화장품의 사용기한 또는 개봉 후 사용기간(병행표시된 경우 제조연월일을 포함함)을 위조, 변조한 경우<br>• 그 밖에 화장품제조업자 및 책임판매업자 스스로 국민보건에 위해를 끼칠 우려가 있어 회수가 필요하다고 판단되는 경우<br>• 화장품제조업 또는 화장품책임판매업 등록을 하지 아니한 자가 제조한 화장품 또는 제조·수입하여 유통·판매한 화장품<br>• 화장품제조업 또는...",
+  "explain": "📖 교재 근거 (교재: L3408):\n| 다등급 (위해 기준) | • 전부 또는 일부가 변패된 경우<br>• 병원미생물에 오염된 경우<br>• 이물이 혼입되었거나 부착되어 보건위생상 위해를 발생할 우려가 있는 경우<br>• 화장품에 사용할 수 없는 원료를 사용하였거나 유통화장품 안전관리 기준에 적합하지 않은 경우(기능성화장품의 주원료 함량이 부적합한 경우)<br>• 화장품의 사용기한 또는 개봉 후 사용기간(병행표시된 경우 제조연월일을 포함함)을 위조, 변조한 경우<br>• 그 밖에 화장품제조업자 및 책임판매업자 스스로 국민보건에 위해를 끼칠 우려가 있어 회수가 필요하다고 판단되는 경우<br>• 화장품제조업 또는 화장품책임판매업 등록을 하지 아니한 자가 제조한 화장품 또는 제조·수입하여 유통·판매한 화장품<br>• 화장품제조업 또는...",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -5177,7 +5177,7 @@ var COMBO_DRILLS_subject2 = [
    "구성비"
   ],
   "derivedFrom": "subject2_q56",
-  "explain": "📖 교재 근거 (교재: L2015):\n> - 제조위생관리기준서: 작업장 청결, 해충 방제, 종사자 위생 관리",
+  "explain": "📖 교재 근거 (교재: L2015):\n> - 제조위생관리기준서: 작업장 청결, 해충 방제, 종사자 위생 관리\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -5360,7 +5360,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q58",
-  "explain": "📖 교재 근거 (교재: L596):\n| 스쿠알렌 | 상어의 간유에서 추출하며, 탄소와 수소로 되어 있는 불포화 탄화수소계 – 인체 피지와 유사한 구성으로 피부 친화성이 좋음, 보습제, 유연제로 사용함, 비릿한 냄새와 쉽게 산패되는 단점이 있음 |",
+  "explain": "📖 교재 근거 (교재: L596):\n| 스쿠알렌 | 상어의 간유에서 추출하며, 탄소와 수소로 되어 있는 불포화 탄화수소계 – 인체 피지와 유사한 구성으로 피부 친화성이 좋음, 보습제, 유연제로 사용함, 비릿한 냄새와 쉽게 산패되는 단점이 있음 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -5457,41 +5457,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1584 (출처: 과목2 문제은행 Q60)",
+  "citation": "📖 교재: L3130 (출처: 과목2 문제은행 Q60)",
   "stem": "다음 중 CGMP 기준상 제조 장비의 재질로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_c79b83",
-    "conceptId": "L1584",
+    "conceptId": "L3130",
     "text": "철 (Iron)",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_94acdc",
-    "conceptId": "L1584",
+    "conceptId": "L3130",
     "text": "알루미늄",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_af3918",
-    "conceptId": "L1584",
+    "conceptId": "L3130",
     "text": "구리 (Copper)",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_d188d7",
-    "conceptId": "L1584",
+    "conceptId": "L3130",
     "text": "스테인리스 스틸 (SUS 316L 등)",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_e3ddac",
-    "conceptId": "L1584",
+    "conceptId": "L3130",
     "text": "일반 플라스틱 (PP)",
     "truth": false
    }
@@ -5541,7 +5541,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q60",
-  "explain": "📖 법령 근거 (교재: L1584):\n3. 설비 등은 제품의 오염을 방지하고 배수가 용이하도록 설계, 설치하며, 제품 및 청소 소독제와 화학반응을 일으키지 않을 것",
+  "explain": "📖 법령 근거 (교재: L3130):\n> 해설: 카민 함유 제품은 '카민 성분에 과민하거나 알레르기가 있는 사람은 신중히 사용할 것'이라는 표시 문구가 필요하다. 과산화수소는 '눈에 접촉을 피하고 눈에 들어갔을 때는 즉시 씻어낼 것', 알루미늄염은 '신장 질환이 있는 사람은 사용 전에 의사·약사·한의사와 상의할 것', AHA는 '자외선 차단제 함께 사용·시험 사용·고농도 시 상담' 문구가 필요하다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -5556,35 +5556,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_bb7e99",
-    "conceptId": "L150",
+    "conceptId": "L3598",
     "text": "회수계획서",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_af9088",
-    "conceptId": "L150",
+    "conceptId": "L3598",
     "text": "회수종합보고서",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_b18cd2",
-    "conceptId": "L150",
+    "conceptId": "L3598",
     "text": "생산원가 손실 보고서",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_18d465",
-    "conceptId": "L150",
+    "conceptId": "L3598",
     "text": "회수이행성적서",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_1ab980",
-    "conceptId": "L150",
+    "conceptId": "L3598",
     "text": "회수사실 공표문",
     "truth": false
    }
@@ -5631,7 +5631,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q61",
-  "explain": "📖 법령 근거 (L150(제2025-88호)(20251216)/기능성화장품 심사에 관한 규정(식품의약품안전처고시)(제2025-88호)(20251216).md#L150>)):\n⑥ 자외선을 차단 또는 산란시켜 자외선으로부터 피부를 보호하는 기능을 가진 제품의 경우 이미 심사를 받은 기능성화장품[화장품책임판매업자가 같거나 화장품제조업자(화장품제조업자가 제품을 설계ㆍ개발ㆍ생산하는 방식으로 제조한 경우만 해당한다)가 같은 기능성화장품만 해당한다]과 그 효능ㆍ효과를 나타내게 하는 원료의 종류, 규격 및 분량(액상의 경우 농도), 용법ㆍ용량 및 제형이 동일한 경우에는 제4조제1호의 자료 제출을 면제한다.",
+  "explain": "📖 법령 근거 (L3598):\n> 해설: 회수 의무자는 회수 대상 화장품이라는 사실을 안 날부터 5일 이내에 회수계획서를 지방식품의약품안전청장에게 제출해야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -5646,35 +5646,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_8d0195",
-    "conceptId": "L1872",
+    "conceptId": "L2000",
     "text": "제품표준서",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_4ca4a7",
-    "conceptId": "L1872",
+    "conceptId": "L2000",
     "text": "제조관리기준서",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_2c857e",
-    "conceptId": "L1872",
+    "conceptId": "L2000",
     "text": "품질관리기준서",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_9f11a3",
-    "conceptId": "L1872",
+    "conceptId": "L2000",
     "text": "제조위생관리기준서",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_a6f619",
-    "conceptId": "L1872",
+    "conceptId": "L2000",
     "text": "유통관리기준서",
     "truth": true
    }
@@ -5719,7 +5719,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q62",
-  "explain": "📖 교재 근거 (L1872):\n| (1) CGMP의 4대 기준서 🎯 기출 | ① 제품표준서 ② 제조관리기준서 ③ 품질관리기준서 ④ 제조위생관리기준서 |\n> 해설: 유통관리기준서는 CGMP 4대 기준서에 포함되지 않는다.",
+  "explain": "📖 교재 근거 (L2000):\n> 한 줄 요약: CGMP 4대 기준서(제품표준서·제조관리·품질관리·제조위생관리) + 원료품질성적서 구비.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -5825,35 +5825,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_7af333",
-    "conceptId": "L286",
+    "conceptId": "L4066",
     "text": "계량 구역은 다른 구역과 분리되어 있어야 한다.",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_efdd54",
-    "conceptId": "L286",
+    "conceptId": "L4066",
     "text": "원료별로 독립된 스푼이나 전용 용기를 사용한다.",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_52c459",
-    "conceptId": "L286",
+    "conceptId": "L4066",
     "text": "분진이 많이 발생하는 분말 계량 시 국소배기장치를 가동한다.",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_0a5c1d",
-    "conceptId": "L286",
+    "conceptId": "L4066",
     "text": "계량이 완료된 원료 용기는 라벨을 부착하고 즉시 밀폐한다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_a26b3c",
-    "conceptId": "L286",
+    "conceptId": "L4066",
     "text": "계량이 완료된 서로 다른 원료들을 하나의 용기에 미리 다 쏟아서 섞어둔다.",
     "truth": false
    }
@@ -5904,7 +5904,7 @@ var COMBO_DRILLS_subject2 = [
    "명제판정"
   ],
   "derivedFrom": "subject2_q64",
-  "explain": "📖 법령 근거 (L286(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L286>)):\n② 원료가 칭량되는 도중 교차오염을 피하기 위한 조치가 있어야 한다.",
+  "explain": "📖 법령 근거 (L4066):\n> 해설: 튜브 충진기는 폼 클렌징, 자외선 차단제 등 튜브 제품을 충진할 때 사용한다. 대용량 액상은 피스톤 방식, 샘플은 파우치 방식, 파우더는 파우더 충진기를 사용한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -5995,7 +5995,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q65",
-  "explain": "📖 교재 근거 (restricted_ingredients: L89):\n| 클로로부탄올 | Chlorobutanol | 방부제 | - | 화장품의 변질을 막아 보존성을 높이는 방부제로, 사용이 제한된 원료인 클로로부탄올 성분입니다. | - | 0.5% | 방부·보존 | 저빈도 | 에어로졸(스프레이에 한함) 제품에는 사용금지 | - |",
+  "explain": "📖 교재 근거 (restricted_ingredients: L82):\n| 알킬이소퀴놀리늄브로마이드 | Alkyl Isoquinolinium Bromide | 방부제 | - | 화장품의 변질을 방지하는 방부제로, 0.05% 이하로 사용이 제한되는 성분입니다. | - | 사용 후 씻어내지 않는 제품에 0.05% | 방부·보존 | 저빈도 | 알킬화합물 | - |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -6004,41 +6004,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L425 (출처: 과목2 문제은행 Q67)",
+  "citation": "📖 교재: L1692 (출처: 과목2 문제은행 Q67)",
   "stem": "다음 중 피부의 각질층 세포간지질 성분 중 하나로 세라마이드의 합성을 유도하고 피부 장벽 회복에 관여하는 유리지방산의 특징으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_024bdc",
-    "conceptId": "L425",
+    "conceptId": "L1692",
     "text": "염기성 영역에서만 활성을 띤다.",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_9dd994",
-    "conceptId": "L425",
+    "conceptId": "L1692",
     "text": "탄소 체인이 짧을수록 피부 장벽 기능이 더 강화된다.",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_17b976",
-    "conceptId": "L425",
+    "conceptId": "L1692",
     "text": "화장품에 배합할 수 없는 원료이다.",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_cadbab",
-    "conceptId": "L425",
+    "conceptId": "L1692",
     "text": "물에 아주 잘 녹는 친수성 수용성 원료이다.",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_7ca816",
-    "conceptId": "L425",
+    "conceptId": "L1692",
     "text": "피부의 약산성(pH 5.5 내외) 장벽을 유지하는 데 기여한다.",
     "truth": true
    }
@@ -6090,7 +6090,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q67",
-  "explain": "📖 교재 근거 (교재: L425):\n| 장벽대체제 | 각질층 내 세포간지질(세라마이드, 지방산, 콜레스테롤) 성분으로 보습제 성분으로 처방하여 피부장벽 기능의 유지와 회복에 관여함으로써 피부 보습력 유지를 증가시킴 |",
+  "explain": "📖 교재 근거 (교재: L1692):\n> 해설: TEWL(Transepidermal Water Loss)은 피부 표면에서 증발되는 수분량으로, 건성 피부와 손상 피부에서 값이 높으며 피부 장벽기능 이상과 관련 있다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -6099,41 +6099,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1008 (출처: 과목2 문제은행 Q68)",
+  "citation": "📖 교재: L541 (출처: 과목2 문제은행 Q68)",
   "stem": "다음 중 화장품 완제품 시험 항목 중 '미생물 한도 시험'을 진행할 때 배양하는 배지의 종류와 타깃 미생물의 매칭이 올바르지 않은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_44ea54",
-    "conceptId": "L1008",
+    "conceptId": "L541",
     "text": "대두카제인소화한천배지 (TSA) - 세균",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_2f9fa3",
-    "conceptId": "L1008",
+    "conceptId": "L541",
     "text": "만니톨소금한천배지 (MSA) - 유산균",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_f0641f",
-    "conceptId": "L1008",
+    "conceptId": "L541",
     "text": "맥콘키한천배지 (MacConkey) - 대장균",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_84bb4c",
-    "conceptId": "L1008",
+    "conceptId": "L541",
     "text": "세트리마이드한천배지 (Cetrimide) - 녹농균",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_ec6c17",
-    "conceptId": "L1008",
+    "conceptId": "L541",
     "text": "사부로포도당한천배지 (SDA) - 진균 (효모 및 곰팡이)",
     "truth": false
    }
@@ -6183,7 +6183,7 @@ var COMBO_DRILLS_subject2 = [
    "한도"
   ],
   "derivedFrom": "subject2_q68",
-  "explain": "📖 교재 근거 (교재: L1008):\n| 대표적인 오염균 | 황색포도상구균, 대장균, 녹농균 | 빵 효모, 칸디다균 | 푸른곰팡이, 맥아곰팡이 |",
+  "explain": "📖 교재 근거 (교재: L541):\n| 배지 | • 세균용: 대두카제인 소화한천배지<br>• 진균용: 사부로포도당 한천배지 또는 포테이토덱스트로즈한천배지에 배지 100mL당 클로람페니콜 50mg을 넣음 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -6198,35 +6198,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_e945c7",
-    "conceptId": "L183",
+    "conceptId": "L1061",
     "text": "초음파 세척법",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_35cd87",
-    "conceptId": "L183",
+    "conceptId": "L1061",
     "text": "린스법 (Rinsing Method, 헹굼액 분석법)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_41c831",
-    "conceptId": "L183",
+    "conceptId": "L1061",
     "text": "침적법",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_1a73d2",
-    "conceptId": "L183",
+    "conceptId": "L1061",
     "text": "여과법",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_abeea8",
-    "conceptId": "L183",
+    "conceptId": "L1061",
     "text": "스왑법 (Swabbing Method, 표면 닦기법)",
     "truth": true
    }
@@ -6274,7 +6274,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q69",
-  "explain": "📖 법령 근거 (L183(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L183>)):\n③ 제조시설이나 설비의 세척에 사용되는 세제 또는 소독제는 효능이 입증된 것을 사용하고 잔류하거나 적용하는 표면에 이상을 초래하지 아니하여야 한다.",
+  "explain": "📖 법령 근거 (L1061):\n| 낙하균 측정 (Koch법) | 부유 미생물 평판배지 자연 낙하(Koch's sedimentation method). 세균 30~35℃ 48시간, 진균 20~25℃ 5일. |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -6460,7 +6460,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q71",
-  "explain": "📖 교재 근거 (교재: L3332):\n| 안전역 | 화장품에 존재하는 위해요소의 최대 무독성 용량을 일일 인체노출량으로 나눈 값 |",
+  "explain": "📖 교재 근거 (교재: L3332):\n| 안전역 | 화장품에 존재하는 위해요소의 최대 무독성 용량을 일일 인체노출량으로 나눈 값 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -6563,41 +6563,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L266 (출처: 과목2 문제은행 Q73)",
+  "citation": "📖 출처: 과목2 문제은행 Q73",
   "stem": "다음 중 화장품의 사용 제한 보존제 성분 중 '트리클로산'의 사용 한도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_fe7146",
-    "conceptId": "L266",
+    "conceptId": "L432",
     "text": "0.1% 이하",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_723b14",
-    "conceptId": "L266",
+    "conceptId": "L432",
     "text": "0.5% 이하",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_d23ff0",
-    "conceptId": "L266",
+    "conceptId": "L432",
     "text": "0.3% 이하",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_98ce38",
-    "conceptId": "L266",
+    "conceptId": "L432",
     "text": "1.0% 이하",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6e6fc1",
-    "conceptId": "L266",
+    "conceptId": "L432",
     "text": "배합 금지",
     "truth": false
    }
@@ -6648,7 +6648,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q73",
-  "explain": "📖 교재 근거 (교재: L266):\n| 트리클로산 | Triclosan | 방부제 | - | 화장품의 변질을 방지하는 방부제이며, 0.3%의 최대 함량 제한이 있는 사용 제한 성분입니다. | - | 사용 후 씻어내는 제품류에 0.3% | 특수 제한 | 고빈도 | 기능성화장품 유효성분으로 사용 시 | - |",
+  "explain": "📖 교재 근거 (2과목_Ch03_사용제한원료_핵심암기: L432):\n| 트리클로산 | 씻어내는 인체세정용·데오도런트 0.3% 이하 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -6657,41 +6657,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3405 (출처: 과목2 문제은행 Q74)",
+  "citation": "📖 교재: L3408 (출처: 과목2 문제은행 Q74)",
   "stem": "다음 중 화장품법상 유통 화장품 안전관리 기준 중 '메탄올'의 허용 한도는 일반 화장품의 경우 최종 제품 부피의 몇 % 이하인가? — 해당하는 것을 모두 고르시오.",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_3c8504",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "0.002% 이하",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_e33d1e",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "0.2% 이하",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_ea5fa3",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "0.02% 이하",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_12936f",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "0.5% 이하",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_0f850d",
-    "conceptId": "L3405",
+    "conceptId": "L3408",
     "text": "1.0% 이하",
     "truth": false
    }
@@ -6741,7 +6741,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q74",
-  "explain": "📖 교재 근거 (교재: L3405):\n| 다등급 (위해 기준) | • 전부 또는 일부가 변패된 경우<br>• 병원미생물에 오염된 경우<br>• 이물이 혼입되었거나 부착되어 보건위생상 위해를 발생할 우려가 있는 경우<br>• 화장품에 사용할 수 없는 원료를 사용하였거나 유통화장품 안전관리 기준에 적합하지 않은 경우(기능성화장품의 주원료 함량이 부적합한 경우)<br>• 화장품의 사용기한 또는 개봉 후 사용기간(병행표시된 경우 제조연월일을 포함함)을 위조, 변조한 경우<br>• 그 밖에 화장품제조업자 및 책임판매업자 스스로 국민보건에 위해를 끼칠 우려가 있어 회수가 필요하다고 판단되는 경우<br>• 화장품제조업 또는 화장품책임판매업 등록을 하지 아니한 자가 제조한 화장품 또는 제조·수입하여 유통·판매한 화장품<br>• 화장품제조업 또는...",
+  "explain": "📖 교재 근거 (교재: L3408):\n| 다등급 (위해 기준) | • 전부 또는 일부가 변패된 경우<br>• 병원미생물에 오염된 경우<br>• 이물이 혼입되었거나 부착되어 보건위생상 위해를 발생할 우려가 있는 경우<br>• 화장품에 사용할 수 없는 원료를 사용하였거나 유통화장품 안전관리 기준에 적합하지 않은 경우(기능성화장품의 주원료 함량이 부적합한 경우)<br>• 화장품의 사용기한 또는 개봉 후 사용기간(병행표시된 경우 제조연월일을 포함함)을 위조, 변조한 경우<br>• 그 밖에 화장품제조업자 및 책임판매업자 스스로 국민보건에 위해를 끼칠 우려가 있어 회수가 필요하다고 판단되는 경우<br>• 화장품제조업 또는 화장품책임판매업 등록을 하지 아니한 자가 제조한 화장품 또는 제조·수입하여 유통·판매한 화장품<br>• 화장품제조업 또는...\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -6750,41 +6750,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3523 (출처: 과목2 문제은행 Q75)",
+  "citation": "📖 교재: L835 (출처: 과목2 문제은행 Q75)",
   "stem": "다음 중 위해화장품 자진 회수를 성실히 이행한 영업자에 대해 부과되는 행정처분의 감면 기준에 대한 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_e12f33",
-    "conceptId": "L3523",
+    "conceptId": "L835",
     "text": "어떠한 경우에도 처분을 감면할 수 없다.",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_7961d4",
-    "conceptId": "L3523",
+    "conceptId": "L835",
     "text": "처분의 10%만 감경된다.",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_001cee",
-    "conceptId": "L3523",
+    "conceptId": "L835",
     "text": "징역형만 면제되고 벌금형은 그대로 부과된다.",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_e7853e",
-    "conceptId": "L3523",
+    "conceptId": "L835",
     "text": "처분을 감경하거나 면제할 수 있다.",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6e3dda",
-    "conceptId": "L3523",
+    "conceptId": "L835",
     "text": "자진 회수 시 과태료만 면제된다.",
     "truth": false
    }
@@ -6833,7 +6833,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q75",
-  "explain": "📖 교재 근거 (교재: L3523):\n| 위해화장품의 공표 | • 식품의약품안전처장은 다음 각 호의 어느 하나에 해당하는 경우에는 해당 영업자에 대하여 그 사실의 공표를 명할 수 있음<br>  - 위해화장품 회수에 따른 회수계획을 보고받은 때<br>  - 위해화장품의 공표에 따른 회수계획을 보고받은 때<br>• 식품의약품안전처장은 국민 건강에 대한 위해를 방지하기 위하여 위해가 발생하였거나 발생할 우려가 있는 직접구매 해외화장품에 관한 정보를 공표할 수 있음<br>• 공표의 방법·절차 등에 필요한 사항은 총리령으로 정함<br>• 공표명령을 받은 영업자는 지체 없이 발생 사실 또는 아래 사항을 전국을 보급지역으로 하는 1개 이상의 일반일간신문 및 해당 영업자의 인터넷 홈페이지에 게재해야 함<br>• 식품의약품안전처의 인터넷 홈페이지에 게재...",
+  "explain": "📖 교재 근거 (교재: L835):\n⑧ 다음의 경우는 처분을 2분의 1까지 감경하거나 면제할 수 있다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -6930,7 +6930,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q76",
-  "explain": "📖 교재 근거 (교재: L425):\n| 장벽대체제 | 각질층 내 세포간지질(세라마이드, 지방산, 콜레스테롤) 성분으로 보습제 성분으로 처방하여 피부장벽 기능의 유지와 회복에 관여함으로써 피부 보습력 유지를 증가시킴 |",
+  "explain": "📖 교재 근거 (교재: L425):\n| 장벽대체제 | 각질층 내 세포간지질(세라마이드, 지방산, 콜레스테롤) 성분으로 보습제 성분으로 처방하여 피부장벽 기능의 유지와 회복에 관여함으로써 피부 보습력 유지를 증가시킴 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -7126,41 +7126,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3359 (출처: 과목2 문제은행 Q79)",
+  "citation": "📖 교재: L3362 (출처: 과목2 문제은행 Q79)",
   "stem": "다음 중 CGMP 기준상 제조 장비의 세척 상태를 최종 승인하고 적합 라벨을 부착할 수 있는 권한을 가진 부서에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_8a0d1a",
-    "conceptId": "L3359",
+    "conceptId": "L3362",
     "text": "생산부서",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_a7a50a",
-    "conceptId": "L3359",
+    "conceptId": "L3362",
     "text": "대표이사 직속 비서실",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_344e4d",
-    "conceptId": "L3359",
+    "conceptId": "L3362",
     "text": "영업부서",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_4a490e",
-    "conceptId": "L3359",
+    "conceptId": "L3362",
     "text": "구매부서",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_8a1040",
-    "conceptId": "L3359",
+    "conceptId": "L3362",
     "text": "품질부서 (QA/QC)",
     "truth": true
    }
@@ -7210,7 +7210,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q79",
-  "explain": "📖 교재 근거 (교재: L3359):\n⑤ 완제품은 시험 결과 적합 판정과 품질부서 책임자가 출고 승인한 것만을 출고한다.",
+  "explain": "📖 교재 근거 (교재: L3362):\n⑤ 완제품은 시험 결과 적합 판정과 품질부서 책임자가 출고 승인한 것만을 출고한다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -7400,41 +7400,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3505 (출처: 과목2 문제은행 Q82)",
+  "citation": "📖 교재: L1179 (출처: 과목2 문제은행 Q82)",
   "stem": "다음 중 화장품 안전성 보고 시 '중대한 유해사례(Serious Adverse Event)'의 판단 범주에 해당하지 않는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_64b3ba",
-    "conceptId": "L3505",
+    "conceptId": "L1179",
     "text": "일시적인 경미한 피부 붉어짐이나 단순 가려움증",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_2f3d81",
-    "conceptId": "L3505",
+    "conceptId": "L1179",
     "text": "입원 또는 입원 기간의 연장이 필요한 경우",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_471bfa",
-    "conceptId": "L3505",
+    "conceptId": "L1179",
     "text": "영구적이거나 중대한 불구나 기능 저하를 초래하는 경우",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_d193f4",
-    "conceptId": "L3505",
+    "conceptId": "L1179",
     "text": "사망을 초래하거나 생명의 위협을 가하는 경우",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_4227a6",
-    "conceptId": "L3505",
+    "conceptId": "L1179",
     "text": "선천적 기형아 출산을 유발하는 경우",
     "truth": false
    }
@@ -7479,7 +7479,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q82",
-  "explain": "📖 교재 근거 (교재: L3505):\n| 신속보고 | 화장품책임판매업자 | • 중대한 유해사례, 판매중지나 회수에 준하는 외국정부의 조치 또는 이와 관련하여 식품의약품안전처장이 보고를 지시한 경우<br>• 안전성 정보를 알게 된 날로부터 15일 이내 식품의약품안전처장에게 보고 |",
+  "explain": "📖 교재 근거 (교재: L1179):\n| 중대한 유해사례 (Serious AE) | 유해사례 중 다음 어느 하나에 해당하는 경우: 사망을 초래하거나 생명을 위협하는 경우 / 입원 또는 입원기간의 연장이 필요한 경우 / 지속적 또는 중대한 불구나 기능 저하를 초래하는 경우 / 선천적 기형 또는 이상을 초래하는 경우 / 기타 의학적으로 중요한 상황 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -7574,7 +7574,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q83",
-  "explain": "📖 교재 근거 (교재: L3505):\n| 신속보고 | 화장품책임판매업자 | • 중대한 유해사례, 판매중지나 회수에 준하는 외국정부의 조치 또는 이와 관련하여 식품의약품안전처장이 보고를 지시한 경우<br>• 안전성 정보를 알게 된 날로부터 15일 이내 식품의약품안전처장에게 보고 |",
+  "explain": "📖 교재 근거 (교재: L3505):\n| 신속보고 | 화장품책임판매업자 | • 중대한 유해사례, 판매중지나 회수에 준하는 외국정부의 조치 또는 이와 관련하여 식품의약품안전처장이 보고를 지시한 경우<br>• 안전성 정보를 알게 된 날로부터 15일 이내 식품의약품안전처장에게 보고 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -7583,41 +7583,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3523 (출처: 과목2 문제은행 Q84)",
+  "citation": "📖 교재: L3526 (출처: 과목2 문제은행 Q84)",
   "stem": "다음 중 CGMP 기준상 제조 장비 세척 후 정제수를 순환시킬 때, 미생물 오염을 방지하기 위해 배관 내부에서 유체가 고여 썩기 쉬운 '데드 레그(Dead Leg)'의 배관 길이 제한(직경 D 대비 배관 길이 L)으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_acd775",
-    "conceptId": "L3523",
+    "conceptId": "L3526",
     "text": "L < 20D",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_e0a26f",
-    "conceptId": "L3523",
+    "conceptId": "L3526",
     "text": "L < 10D",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_88c2c7",
-    "conceptId": "L3523",
+    "conceptId": "L3526",
     "text": "L < 2D 이하 (또는 3D 이하 권장)",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_f9ce2d",
-    "conceptId": "L3523",
+    "conceptId": "L3526",
     "text": "제한 없음",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_c007a5",
-    "conceptId": "L3523",
+    "conceptId": "L3526",
     "text": "L > 5D",
     "truth": false
    }
@@ -7669,7 +7669,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q84",
-  "explain": "📖 교재 근거 (교재: L3523):\n| 위해화장품의 공표 | • 식품의약품안전처장은 다음 각 호의 어느 하나에 해당하는 경우에는 해당 영업자에 대하여 그 사실의 공표를 명할 수 있음<br>  - 위해화장품 회수에 따른 회수계획을 보고받은 때<br>  - 위해화장품의 공표에 따른 회수계획을 보고받은 때<br>• 식품의약품안전처장은 국민 건강에 대한 위해를 방지하기 위하여 위해가 발생하였거나 발생할 우려가 있는 직접구매 해외화장품에 관한 정보를 공표할 수 있음<br>• 공표의 방법·절차 등에 필요한 사항은 총리령으로 정함<br>• 공표명령을 받은 영업자는 지체 없이 발생 사실 또는 아래 사항을 전국을 보급지역으로 하는 1개 이상의 일반일간신문 및 해당 영업자의 인터넷 홈페이지에 게재해야 함<br>• 식품의약품안전처의 인터넷 홈페이지에 게재...",
+  "explain": "📖 교재 근거 (교재: L3526):\n| 위해화장품의 공표 | • 식품의약품안전처장은 다음 각 호의 어느 하나에 해당하는 경우에는 해당 영업자에 대하여 그 사실의 공표를 명할 수 있음<br>  - 위해화장품 회수에 따른 회수계획을 보고받은 때<br>  - 위해화장품의 공표에 따른 회수계획을 보고받은 때<br>• 식품의약품안전처장은 국민 건강에 대한 위해를 방지하기 위하여 위해가 발생하였거나 발생할 우려가 있는 직접구매 해외화장품에 관한 정보를 공표할 수 있음<br>• 공표의 방법·절차 등에 필요한 사항은 총리령으로 정함<br>• 공표명령을 받은 영업자는 지체 없이 발생 사실 또는 아래 사항을 전국을 보급지역으로 하는 1개 이상의 일반일간신문 및 해당 영업자의 인터넷 홈페이지에 게재해야 함<br>• 식품의약품안전처의 인터넷 홈페이지에 게재...\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -7765,7 +7765,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q85",
-  "explain": "📖 법령 근거 (L739(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L739>)):\n④ 식품의약품안전처장은 제출된 자료를 평가하고 별표 2에 따른 실태조사를 실시하여 우수화장품 제조 및 품질관리기준 적합판정한 경우에는 별지 제3호 서식에 따른 우수화장품 제조 및 품질관리기준 적합업소 증명서를 발급하여야 한다.",
+  "explain": "📖 법령 근거 (L739(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L739>)):\n④ 식품의약품안전처장은 제출된 자료를 평가하고 별표 2에 따른 실태조사를 실시하여 우수화장품 제조 및 품질관리기준 적합판정한 경우에는 별지 제3호 서식에 따른 우수화장품 제조 및 품질관리기준 적합업소 증명서를 발급하여야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -7967,35 +7967,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_9ee4b9",
-    "conceptId": "L3072",
+    "conceptId": "L3075",
     "text": "생리 전후, 산전, 산후, 병후의 환자",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_89a9af",
-    "conceptId": "L3072",
+    "conceptId": "L3075",
     "text": "얼굴, 상처, 부스럼, 습진, 짓무름, 기타 염증, 반점 또는 자극이 있는 피부",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_a568b2",
-    "conceptId": "L3072",
+    "conceptId": "L3075",
     "text": "유사 제품에 부작용이 나타난 적이 있는 피부",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_01f7f2",
-    "conceptId": "L3072",
+    "conceptId": "L3075",
     "text": "약한 피부 또는 남성의 수염 부위",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_3bdac6",
-    "conceptId": "L3072",
+    "conceptId": "L3075",
     "text": "건강한 팔·다리의 털이 있는 부위",
     "truth": true
    }
@@ -8042,7 +8042,7 @@ var COMBO_DRILLS_subject2 = [
    "금지원료"
   ],
   "derivedFrom": "subject2_q88",
-  "explain": "📖 교재 근거 (L3072):\n#### 제모제 🎯 기출 (치오글라이콜릭애씨드 함유 제품에만 표시함) — 사용금지: ① 생리 전후·산전·산후·병후 ② 얼굴·상처·부스럼·습진·짓무름·염증·반점·자극 피부 ③ 유사 제품 부작용 피부 ④ 약한 피부·남성 수염 부위\n해설: 건강한 팔·다리의 털이 있는 부위는 제모제 사용금지 대상이 아니다. 제모제는 해당 부위에 정상적으로 사용하는 제품이다.",
+  "explain": "📖 교재 근거 (L3075):\n#### 제모제 🎯 기출 (치오글라이콜릭애씨드 함유 제품에만 표시함) — 사용금지: ① 생리 전후·산전·산후·병후 ② 얼굴·상처·부스럼·습진·짓무름·염증·반점·자극 피부 ③ 유사 제품 부작용 피부 ④ 약한 피부·남성 수염 부위\n해설: 건강한 팔·다리의 털이 있는 부위는 제모제 사용금지 대상이 아니다. 제모제는 해당 부위에 정상적으로 사용하는 제품이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -8317,7 +8317,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q91",
-  "explain": "📖 법령 근거 (L609(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L609>)):\n④ 출고할 제품은 원자재, 부적합품 및 반품된 제품과 구획된 장소에서 보관하여야 한다. 다만 서로 혼동을 일으킬 우려가 없는 시스템에 의하여 보관되는 경우에는 그러하지 아니할 수 있다.",
+  "explain": "📖 법령 근거 (L609(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L609>)):\n④ 출고할 제품은 원자재, 부적합품 및 반품된 제품과 구획된 장소에서 보관하여야 한다. 다만 서로 혼동을 일으킬 우려가 없는 시스템에 의하여 보관되는 경우에는 그러하지 아니할 수 있다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -8326,41 +8326,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L86 (출처: 과목2 문제은행 Q92)",
+  "citation": "📖 출처: 과목2 문제은행 Q92",
   "stem": "다음 중 화장품의 사용 제한 보존제 성분 중 '이소프로필메칠페놀'의 최대 사용 한도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_50d4a4",
-    "conceptId": "q:subject2_q92",
+    "conceptId": "L1399",
     "text": "0.1% 이하",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_73177a",
-    "conceptId": "q:subject2_q92",
+    "conceptId": "L1399",
     "text": "0.3% 이하",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_d961ba",
-    "conceptId": "q:subject2_q92",
+    "conceptId": "L1399",
     "text": "0.5% 이하",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_85c31d",
-    "conceptId": "q:subject2_q92",
+    "conceptId": "L1399",
     "text": "1.0% 이하",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_d7ba65",
-    "conceptId": "q:subject2_q92",
+    "conceptId": "L1399",
     "text": "배합 금지",
     "truth": false
    }
@@ -8408,7 +8408,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q92",
-  "explain": "📖 교재 근거 (교재: L86):\n| 이소프로필메칠페놀(이소프로필크레솔, o-시멘-5-올) | o-Cymen-5-ol (Isopropyl Methylphenol) | 방부제 | - | 화장품의 변질을 막는 방부제로, 0.1%의 사용 한도가 있는 제한 성분입니다. | - | 0.1% | 방부·보존 | 저빈도 | 페놀류 | - |",
+  "explain": "📖 교재 근거 (색소종류및기준_전체: L1399):\n메 탄 올 200 ppm 이하\n헥 산 10 ppm 이하\n이소프로필 알콜 10 ppm 이하\n디클로로메탄 10 ppm 이하\n라이코펜 III :\n이소프로필알콜 0.1% 이하\n이소부틸아세테이트 1.0% 이하\n디클로로메탄 10 ppm 이하\n6) 아포-12‘-라이코펜알(라이코펜 II에만 적용) 0.15% 이하\n7) 트라이페닐포스파인옥사이드(라이코펜 II에만 적용) 0.01% 이하\n8) 그 외 카로티노이드(라이코펜 III에만 적용) 5% 이하",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -8500,7 +8500,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q93",
-  "explain": "📖 교재 근거 (approved_ingredients: L225):\n| 비소 및 그 화합물 | Arsenic and its compounds | 중금속 | - | 중금속 대표 | - | 사용 불가 (0%) | - | - | 화장품 제조/조제에 사용이 금지되는 원료입니다. | - |",
+  "explain": "📖 교재 근거 (approved_ingredients: L225):\n| 비소 및 그 화합물 | Arsenic and its compounds | 중금속 | - | 중금속 대표 | - | 사용 불가 (0%) | - | - | 화장품 제조/조제에 사용이 금지되는 원료입니다. | - |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -8698,41 +8698,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1111 (출처: 과목2 문제은행 Q96)",
+  "citation": "📖 교재: L1104 (출처: 과목2 문제은행 Q96)",
   "stem": "다음 중 자외선 차단 지수를 나타내는 'PA(Protection Grade of UVA)'에 대한 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_9b629a",
-    "conceptId": "L1111",
+    "conceptId": "L1104",
     "text": "자외선 B(UVB)를 차단하는 정도를 나타낸다.",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_de2ea5",
-    "conceptId": "L1111",
+    "conceptId": "L1104",
     "text": "수치 15, 30, 50 등 숫자로만 효과를 표시한다.",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_ec6189",
-    "conceptId": "L1111",
+    "conceptId": "L1104",
     "text": "자외선 A(UVA)를 차단하는 효과의 등급으로, PA+, PA++, PA+++, PA++++ 등으로 표시한다.",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_9305be",
-    "conceptId": "L1111",
+    "conceptId": "L1104",
     "text": "피부의 홍반 발생 지연 시간을 몇 배로 늘리는지 계산한 수치이다.",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_22c38e",
-    "conceptId": "L1111",
+    "conceptId": "L1104",
     "text": "모발의 염색 견뢰도를 나타내는 지수이다.",
     "truth": false
    }
@@ -8781,7 +8781,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q96",
-  "explain": "📖 교재 근거 (교재: L1111):\nUVA 차단 등급(PA: Protection Factor of UVA)",
+  "explain": "📖 교재 근거 (교재: L1104):\n• 내수성·지속내수성은 측정 결과에 근거하여 내수성비 신뢰구간이 50% 이상일 때, '내수성' 또는 '지속내수성'으로 표시한다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -8874,7 +8874,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q97",
-  "explain": "📖 교재 근거 (교재: L776):\n| 점증제 | 화장품의 점도를 높여주는 화합물, 수용성 고분자 물질 제품의 사용감과 안정성을 향상시키기 위해 사용 |",
+  "explain": "📖 교재 근거 (교재: L776):\n| 점증제 | 화장품의 점도를 높여주는 화합물, 수용성 고분자 물질 제품의 사용감과 안정성을 향상시키기 위해 사용 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -8978,41 +8978,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3478 (출처: 과목2 문제은행 Q99)",
+  "citation": "📖 교재: L3479 (출처: 과목2 문제은행 Q99)",
   "stem": "위해화장품 위해성 평가 중 위험성 확인(Hazard Identification) 단계의 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_20a1b4",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "물질의 노출 시나리오를 설계하는 단계",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_c587fb",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "물질의 인체 유해성(독성) 및 유해 인자가 무엇인지 화학적/생물학적으로 밝혀내는 단계",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_79ee8c",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "안전역(MOS) 수치를 계산하는 단계",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_f7b02a",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "유통 회수 대상을 공표하는 단계",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_c3cb4f",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "부적합 원료의 폐기를 승인하는 단계",
     "truth": false
    }
@@ -9062,7 +9062,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q99",
-  "explain": "📖 교재 근거 (교재: L3478):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
+  "explain": "📖 교재 근거 (교재: L3479):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -9172,35 +9172,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_3cc275",
-    "conceptId": "L2461",
+    "conceptId": "L2464",
     "text": "모든 제품에 대해 함량과 관계없이 표시해야 한다",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_51f0a4",
-    "conceptId": "L2461",
+    "conceptId": "L2464",
     "text": "사용 후 씻어내는 제품에는 0.01% 초과, 사용 후 씻어내지 않는 제품에는 0.001% 초과 함유하는 경우에 표시한다",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_0f7806",
-    "conceptId": "L2461",
+    "conceptId": "L2464",
     "text": "사용 후 씻어내는 제품에는 0.001% 초과, 사용 후 씻어내지 않는 제품에는 0.01% 초과 함유하는 경우에 표시한다",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_9c7910",
-    "conceptId": "L2461",
+    "conceptId": "L2464",
     "text": "0.1% 이상 함유하는 경우에만 표시한다",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_a139fd",
-    "conceptId": "L2461",
+    "conceptId": "L2464",
     "text": "알레르기 유발 성분은 '향료'로 표기할 수 있다",
     "truth": false
    }
@@ -9252,7 +9252,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q101",
-  "explain": "📖 교재 근거 (L2461):\n| 알레르기 유발 성분 표시 지침 🎯 기출 | 사용 후 씻어내는 제품에는 0.01% 초과, 사용 후 씻어내지 않는 제품에는 0.001% 초과 함유하는 경우에만 알레르기 유발 성분을 표시한다. |",
+  "explain": "📖 교재 근거 (L2464):\n| 알레르기 유발 성분 표시 지침 🎯 기출 | 사용 후 씻어내는 제품에는 0.01% 초과, 사용 후 씻어내지 않는 제품에는 0.001% 초과 함유하는 경우에만 알레르기 유발 성분을 표시한다. |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -9353,41 +9353,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L425 (출처: 과목2 문제은행 Q103)",
+  "citation": "📖 교재: L1117 (출처: 과목2 문제은행 Q103)",
   "stem": "다음 중 피부 장벽의 핵심 성분인 세포간지질의 친수성과 소수성 결합을 돕는 라멜라 액정 결합 구조를 나타내는 핵심 결합 형태에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_f03cd1",
-    "conceptId": "L425",
+    "conceptId": "L1117",
     "text": "펩타이드 결합",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_237393",
-    "conceptId": "L425",
+    "conceptId": "L1117",
     "text": "공유 결합",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_03744e",
-    "conceptId": "L425",
+    "conceptId": "L1117",
     "text": "이온 결합",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_f4af10",
-    "conceptId": "L425",
+    "conceptId": "L1117",
     "text": "금속 결합",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_0aa362",
-    "conceptId": "L425",
+    "conceptId": "L1117",
     "text": "수소 결합 및 반데르발스 결합 (에멀션 층상 액정 구조)",
     "truth": true
    }
@@ -9437,7 +9437,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q103",
-  "explain": "📖 교재 근거 (교재: L425):\n| 장벽대체제 | 각질층 내 세포간지질(세라마이드, 지방산, 콜레스테롤) 성분으로 보습제 성분으로 처방하여 피부장벽 기능의 유지와 회복에 관여함으로써 피부 보습력 유지를 증가시킴 |",
+  "explain": "📖 교재 근거 (교재: L1117):\n|  | 4대 화학결합 | 시스틴·이온·수소·반데르발스 결합 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -9446,41 +9446,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L130 (출처: 과목2 문제은행 Q104)",
+  "citation": "📖 교재: L2231 (출처: 과목2 문제은행 Q104)",
   "stem": "다음 중 무기 자외선 차단 성분인 '티타늄디옥사이드'의 최대 허용 한도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_3d2e41",
-    "conceptId": "L130",
+    "conceptId": "L2231",
     "text": "25.0% 이하",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_a0fcc5",
-    "conceptId": "L130",
+    "conceptId": "L2231",
     "text": "10.0% 이하",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_71dbf5",
-    "conceptId": "L130",
+    "conceptId": "L2231",
     "text": "15.0% 이하",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_3477d7",
-    "conceptId": "L130",
+    "conceptId": "L2231",
     "text": "20.0% 이하",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_c91477",
-    "conceptId": "L130",
+    "conceptId": "L2231",
     "text": "5.0% 이하",
     "truth": false
    }
@@ -9530,7 +9530,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q104",
-  "explain": "📖 교재 근거 (교재: L130):\n| 티타늄디옥사이드 | Titanium Dioxide | 자외선 차단제 | - | 유상층에 분산되며 최대 25.0%까지 사용 가능한 무기계 자외선 차단제 카테고리의 사용 제한 성분입니다. | - | 25% | 홍조, 색소침착 | 고빈도 | 무기 자외선 차단제, 최대 함량 25% | - |",
+  "explain": "📖 교재 근거 (교재: L2231):\n```mermaid\nflowchart LR\nP[\"페녹시에탄올<br/>보존제\"] -->|\"1.0% 이하\"| L1[\"최종 제품\"]\nB[\"벤조익애씨드<br/>보존제\"] -->|\"0.5% 이하\"| L2[\"씻어내지 않는 제품\"]\nS[\"살리실산\"] -->|\"0.5% 이하\"| L3[\"영유아용 사용금지<br/>(씻어내는 제품 제외)\"]\nT[\"티타늄디옥사이드<br/>자외선차단제\"] -->|\"25.0% 이하\"| L4[\"최종 제품\"]\n```",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -9619,7 +9619,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q105",
-  "explain": "📖 교재 근거 (교재: L1736):\n- 유화에 영향을 미치는 요인: 유화제(종류와 사용량), 원료의 성질, 유화 조건(성분 첨가 순서, 교반속도, 온도, 유화장치 등)",
+  "explain": "📖 교재 근거 (교재: L1736):\n- 유화에 영향을 미치는 요인: 유화제(종류와 사용량), 원료의 성질, 유화 조건(성분 첨가 순서, 교반속도, 온도, 유화장치 등)\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -9709,7 +9709,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q106",
-  "explain": "📖 법령 근거 (L184(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L184>)):\n③ 제조시설이나 설비의 세척에 사용되는 세제 또는 소독제는 효능이 입증된 것을 사용하고 잔류하거나 적용하는 표면에 이상을 초래하지 아니하여야 한다.",
+  "explain": "📖 법령 근거 (L184(제2024-46호)(20240822)/우수화장품 제조 및 품질관리기준(식품의약품안전처고시)(제2024-46호)(20240822).md#L184>)):\n③ 제조시설이나 설비의 세척에 사용되는 세제 또는 소독제는 효능이 입증된 것을 사용하고 잔류하거나 적용하는 표면에 이상을 초래하지 아니하여야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -9718,41 +9718,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3478 (출처: 과목2 문제은행 Q107)",
+  "citation": "📖 교재: L3479 (출처: 과목2 문제은행 Q107)",
   "stem": "위해화장품 위해성 평가 중 노출 평가(Exposure Assessment) 단계의 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_b3f9d7",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "안전역(MOS)을 도출하는 단계",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_d0ca68",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "물질의 고유한 독성의 세기를 구하는 단계",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_bedb4c",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "노출 대상 인구가 화장품 성분에 노출되는 경로, 빈도, 양, 기간을 정량적으로 산출하는 단계",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_13b446",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "유해 원료 리스트를 법령에 고시하는 단계",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_5ab0ca",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "완제품 적합 여부를 최종 승인하는 단계",
     "truth": false
    }
@@ -9801,7 +9801,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q107",
-  "explain": "📖 교재 근거 (교재: L3478):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
+  "explain": "📖 교재 근거 (교재: L3479):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -10183,41 +10183,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3069 (출처: 과목2 문제은행 Q112)",
+  "citation": "📖 교재: L1001 (출처: 과목2 문제은행 Q112)",
   "stem": "다음 중 CGMP 기준상 시험 검사 적합 판정을 받은 원자재에 부착하는 '적합 승인 라벨'의 표준 색상에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_78d01a",
-    "conceptId": "L3069",
+    "conceptId": "L1001",
     "text": "적색",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_dd3863",
-    "conceptId": "L3069",
+    "conceptId": "L1001",
     "text": "녹색",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_87b44e",
-    "conceptId": "L3069",
+    "conceptId": "L1001",
     "text": "황색",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_0d1041",
-    "conceptId": "L3069",
+    "conceptId": "L1001",
     "text": "청색",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_295bf5",
-    "conceptId": "L3069",
+    "conceptId": "L1001",
     "text": "흑색",
     "truth": false
    }
@@ -10262,7 +10262,7 @@ var COMBO_DRILLS_subject2 = [
    "절차"
   ],
   "derivedFrom": "subject2_q112",
-  "explain": "📖 법령 근거 (교재: L3069):\n③ 원자재, 시험 중인 제품 및 부적합품은 각각 구획된 장소에서 보관해야 한다. 다만, 서로 혼동을 일으킬 우려가 없는 시스템에 의해 보관되는 경우는 제외한다.",
+  "explain": "📖 법령 근거 (교재: L1001):\n| 사용상 제한이 없는 색소 | 청색 1호, 2호, 201호, 204호, 205호 / 녹색 3호, 201호, 202호 / 황색 4호, 5호, 201호, 202호 / 적색 40호, 201호, 202호, 220호, 226호, 227호, 228호, 230호 / 자색 201호 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -10271,41 +10271,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L3478 (출처: 과목2 문제은행 Q113)",
+  "citation": "📖 교재: L3479 (출처: 과목2 문제은행 Q113)",
   "stem": "위해화장품 위해성 평가 중 위해도 결정(Risk Characterization) 단계의 설명으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_bb8a7d",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "인체 노출 시나리오를 작성하는 단계",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_8539d8",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "물질의 독성 정보를 수집하는 단계",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_d7ba34",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "위험성 확인, 용량-반응 평가, 노출 평가의 모든 정보를 종합하여 실제 인체에 미치는 위해의 가능성과 강도를 최종 판정하는 단계",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_6cc46d",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "회수 대상 품목을 폐기하는 단계",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_22fd5d",
-    "conceptId": "L3478",
+    "conceptId": "L3479",
     "text": "공급 업체의 자격 적합성을 검토하는 단계",
     "truth": false
    }
@@ -10353,7 +10353,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q113",
-  "explain": "📖 교재 근거 (교재: L3478):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
+  "explain": "📖 교재 근거 (교재: L3479):\n> 해설: 위해성 평가 4단계는 위험성 확인→위험성 결정→노출 평가→위해도 결정 순서이다. 위험성 확인은 독성 자료로 잠재적 성질을 과학적으로 확인, 위험성 결정은 인체노출 허용량 산출, 노출 평가는 사용 노출 수준 산출, 위해도 결정은 유해 영향 발생 가능성 판단이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -10449,7 +10449,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q114",
-  "explain": "📖 교재 근거 (restricted_ingredients: L90):\n| 클로로자이레놀 | Chloroxylenol | 방부제 | - | 화장품의 변질을 방지하고 보존력을 높이는 방부제로, 사용 제한이 있는 성분입니다. | - | 0.5% | 방부·보존 | 저빈도 | 페놀류 | - |",
+  "explain": "📖 교재 근거 (restricted_ingredients: L82):\n| 알킬이소퀴놀리늄브로마이드 | Alkyl Isoquinolinium Bromide | 방부제 | - | 화장품의 변질을 방지하는 방부제로, 0.05% 이하로 사용이 제한되는 성분입니다. | - | 사용 후 씻어내지 않는 제품에 0.05% | 방부·보존 | 저빈도 | 알킬화합물 | - |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -10464,35 +10464,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_547609",
-    "conceptId": "L2588",
+    "conceptId": "L2591",
     "text": "천연 함량이 전체 제품의 50% 이상",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_360a3e",
-    "conceptId": "L2588",
+    "conceptId": "L2591",
     "text": "천연 함량이 전체 제품의 95% 이상",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_516e51",
-    "conceptId": "L2588",
+    "conceptId": "L2591",
     "text": "유기농 함량이 전체 제품의 10% 이상",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_901397",
-    "conceptId": "L2588",
+    "conceptId": "L2591",
     "text": "천연 함량이 전체 제품의 100%",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_9d16e8",
-    "conceptId": "L2588",
+    "conceptId": "L2591",
     "text": "유기농 함량이 전체 제품의 95% 이상",
     "truth": false
    }
@@ -10544,7 +10544,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q115",
-  "explain": "📖 교재 근거 (L2588):\n| (8) 원료 조성 🎯 기출 | 천연화장품: 천연 함량 95% 이상 / 유기농화장품: 유기농 함량 포함 천연 함량 95% 이상 + 유기농 함량 10% |",
+  "explain": "📖 교재 근거 (L2591):\n| (8) 원료 조성 🎯 기출 | 천연화장품: 천연 함량 95% 이상 / 유기농화장품: 유기농 함량 포함 천연 함량 95% 이상 + 유기농 함량 10% |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -10648,41 +10648,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L966 (출처: 과목2 문제은행 Q117)",
+  "citation": "📖 교재: L821 (출처: 과목2 문제은행 Q117)",
   "stem": "다음 중 화장품 내용물의 노화 및 점도 변화를 유도하는 3대 외적 환경 인자에 속하지 않는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_4c12a2",
-    "conceptId": "L966",
+    "conceptId": "L821",
     "text": "지구의 중력 가속도 (일반 보관 시 기계적 외력을 제외한 미세 중력은 변질 주원인이 아님)",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_2c71e4",
-    "conceptId": "L966",
+    "conceptId": "L821",
     "text": "자외선 (빛)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_c826cf",
-    "conceptId": "L966",
+    "conceptId": "L821",
     "text": "공기 중의 산소",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_2a3a61",
-    "conceptId": "L966",
+    "conceptId": "L821",
     "text": "온도",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_55700b",
-    "conceptId": "L966",
+    "conceptId": "L821",
     "text": "수분 (습도)",
     "truth": false
    }
@@ -10729,7 +10729,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q117",
-  "explain": "📖 교재 근거 (교재: L966):\n화장품 내 미생물의 증식으로 일어나는 부패균 발육을 억제·살균하는 작용을 한다. 화장품의 변질 방지 목적으로 사용하며, 「화장품 안전 기준 등에 관한 규정」 별표 2에 지정·고시된 보존제 성분만 사용이 가능하다.",
+  "explain": "📖 교재 근거 (교재: L821):\n> 해설: 가속시험은 장기보존시험 온도보다 15℃ 이상 높은 온도에서 단기간에 제품의 안정성을 예측하기 위한 시험이다. 3로트 이상, 6개월 이상 실시하며, 시험 개시 때를 포함하여 최소 3번 측정한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -10828,41 +10828,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1515 (출처: 과목2 문제은행 Q119)",
+  "citation": "📖 교재: L1516 (출처: 과목2 문제은행 Q119)",
   "stem": "화장품 원료 중 계면활성제의 HLB 값이 3~6 범위일 때 가장 적합한 용도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_5a9257",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "W/O형 유화",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_35d520",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "O/W형 유화",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_8422fb",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "가용화제",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_010359",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "세정제",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_eac952",
-    "conceptId": "L1515",
+    "conceptId": "L1516",
     "text": "습윤제",
     "truth": false
    }
@@ -10912,7 +10912,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q119",
-  "explain": "📖 교재 근거 (교재: L1515):\n> 해설: HLB 값이 높을수록 친수성이 강하다. HLB 8~18은 O/W 유화제, 세정제, 가용화제로 사용되며, HLB 3~6은 W/O 유화제, 1~3은 소포제이다.",
+  "explain": "📖 교재 근거 (교재: L1516):\n> 해설: HLB 값이 높을수록 친수성이 강하다. HLB 8~18은 O/W 유화제, 세정제, 가용화제로 사용되며, HLB 3~6은 W/O 유화제, 1~3은 소포제이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -10921,41 +10921,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L93 (출처: 과목2 문제은행 Q120)",
+  "citation": "📖 교재: L194 (출처: 과목2 문제은행 Q120)",
   "stem": "화장품 처방에서 글리세린의 주요 기능으로 옳은 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_9afb17",
-    "conceptId": "q:subject2_q120",
+    "conceptId": "L194",
     "text": "보습제",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_5b3030",
-    "conceptId": "q:subject2_q120",
+    "conceptId": "L194",
     "text": "방부제",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_53fb48",
-    "conceptId": "q:subject2_q120",
+    "conceptId": "L194",
     "text": "자외선차단제",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_3aee8b",
-    "conceptId": "q:subject2_q120",
+    "conceptId": "L194",
     "text": "산화방지제",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_e7fb7b",
-    "conceptId": "q:subject2_q120",
+    "conceptId": "L194",
     "text": "착색제",
     "truth": false
    }
@@ -11003,7 +11003,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q120",
-  "explain": "📖 교재 근거 (교재: L93):\n> 핵심 내용: 원료 사용기준(별표 1·2), 제조·품질관리·CGMP, 기능성화장품 심사·기준",
+  "explain": "📖 교재 근거 (교재: L194):\n```mermaid\nmindmap\nroot((Ch01<br/>화장품 원료의 종류와 특성))\n원료 분류\n수성 원료\n정제수·알코올·보습제 폴리올\n유성 원료\n유동파라핀·스쿠알란·에스터류·실리콘유\n계면활성제\n음이온성·양이온성·비이온성·양쪽성\n첨가제",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -11096,7 +11096,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q121",
-  "explain": "📖 교재 근거 (교재: L491):\n| 정제수 | • 화장품 제조에 있어 가장 중요한 원료 중 하나임<br>• 물은 극성물질로 수성 원료의 용해를 위한 용제(용매)로 사용<br>• 용해된 이온, 고체 입자, 미생물, 유기물 및 용해된 기체류 등의 모든 불순물을 이온교환수지를 통해 여과한 물을 칭함 |",
+  "explain": "📖 교재 근거 (교재: L491):\n| 정제수 | • 화장품 제조에 있어 가장 중요한 원료 중 하나임<br>• 물은 극성물질로 수성 원료의 용해를 위한 용제(용매)로 사용<br>• 용해된 이온, 고체 입자, 미생물, 유기물 및 용해된 기체류 등의 모든 불순물을 이온교환수지를 통해 여과한 물을 칭함 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -11200,41 +11200,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L2328 (출처: 과목2 문제은행 Q123)",
+  "citation": "📖 교재: L928 (출처: 과목2 문제은행 Q123)",
   "stem": "화장품 원료 중 파라벤류(메틸파라벤, 에틸파라벤 등)의 주요 용도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_50c3ac",
-    "conceptId": "L2328",
+    "conceptId": "L928",
     "text": "보습제",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_a3a9ef",
-    "conceptId": "L2328",
+    "conceptId": "L928",
     "text": "착향제",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_e0c77c",
-    "conceptId": "L2328",
+    "conceptId": "L928",
     "text": "자외선차단제",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_1daac5",
-    "conceptId": "L2328",
+    "conceptId": "L928",
     "text": "유화제",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_3ae802",
-    "conceptId": "L2328",
+    "conceptId": "L928",
     "text": "방부제",
     "truth": true
    }
@@ -11280,7 +11280,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q123",
-  "explain": "📖 교재 근거 (교재: L2328):\n> 참고 (관련 성분 — 파라벤류): 메틸파라벤 · 부틸파라벤 · 소듐메틸파라벤 · 소듐부틸파라벤 · 소듐에틸파라벤 · 소듐아이소부틸파라벤 · 소듐프로필파라벤 · 에틸파라벤 · 아이소부틸파라벤 · 아이소프로필파라벤 · 프로필파라벤 · 4-하이드록시벤조익애씨드 · 포타슘메틸파라벤 · 포타슘부틸파라벤 · 포타슘에틸파라벤 · 포타슘파라벤 · 포타슘프로필파라벤 · 소듐아이소프로필파라벤 · 소듐파라벤 · 칼슘파라벤",
+  "explain": "📖 교재 근거 (교재: L928):\n```mermaid\nmindmap\nroot((보존제))\n종류\n파라벤\n대표적 방부제\n저농도·광범위 억제\n페녹시에탄올\n유성·마취작용\n점막 자극 주의\n1,2헥산다이올",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -11379,41 +11379,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L2002 (출처: 과목2 문제은행 Q126)",
+  "citation": "📖 교재: L1878 (출처: 과목2 문제은행 Q126)",
   "stem": "CGMP 기준상 「제품표준서」에 반드시 포함되어야 할 항목이 아닌 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_777824",
-    "conceptId": "L2002",
+    "conceptId": "L1878",
     "text": "제품의 명칭 및 품목",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_c38dfb",
-    "conceptId": "L2002",
+    "conceptId": "L1878",
     "text": "원료의 종류 및 배합비",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_19f684",
-    "conceptId": "L2002",
+    "conceptId": "L1878",
     "text": "제조 방법 및 제조 조건",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_528955",
-    "conceptId": "L2002",
+    "conceptId": "L1878",
     "text": "품질관리 기준 및 시험방법",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_c9ca31",
-    "conceptId": "L2002",
+    "conceptId": "L1878",
     "text": "마케팅 전략 및 판매 목표",
     "truth": true
    }
@@ -11464,7 +11464,7 @@ var COMBO_DRILLS_subject2 = [
    "구성비"
   ],
   "derivedFrom": "subject2_q126",
-  "explain": "📖 교재 근거 (교재: L2002):\n4대 기준서에는 제품표준서, 제조관리기준서, 품질관리기준서, 제조위생관리기준서가 있으며 반드시 포함되어야 하는 사항이 정해져 있다.",
+  "explain": "📖 교재 근거 (교재: L1878):\n> 해설: CGMP 4대 기준서는 제품표준서, 제조관리기준서, 품질관리기준서, 제조위생관리기준서이다. 원료관리기준서는 존재하지 않는다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -11473,41 +11473,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L78 (출처: 과목2 문제은행 Q127)",
+  "citation": "📖 교재: L1542 (출처: 과목2 문제은행 Q127)",
   "stem": "화장품 원료 중 「카보머(Carbomer)」의 주요 용도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_720b1c",
-    "conceptId": "q:subject2_q127",
+    "conceptId": "L1542",
     "text": "방부제",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_df2fdd",
-    "conceptId": "q:subject2_q127",
+    "conceptId": "L1542",
     "text": "점증제(겔화제)",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_6e0f44",
-    "conceptId": "q:subject2_q127",
+    "conceptId": "L1542",
     "text": "유화제",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_b0e645",
-    "conceptId": "q:subject2_q127",
+    "conceptId": "L1542",
     "text": "산화방지제",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_33e925",
-    "conceptId": "q:subject2_q127",
+    "conceptId": "L1542",
     "text": "착색제",
     "truth": false
    }
@@ -11552,7 +11552,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q127",
-  "explain": "📖 교재 근거 (교재: L78):\n| 카보머 | Carbomer | 점증제 | 수상층 | 수상층에 용해되어 화장품의 점도를 높이고 제형을 안정화하는 데 도움을 주는 점증 성분입니다. | 0.1~1.0 | - | 점증·안정화 | 중빈도 | pH 조절 필요, 중화 후 젤 형성 | - |",
+  "explain": "📖 교재 근거 (교재: L1542):\n> 해설: HLB 값이 높을수록 친수성이 강하다. HLB 8~18은 O/W 유화제, 세정제, 가용화제로 사용되며, HLB 3~6은 W/O 유화제, 1~3은 소포제이다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -11654,41 +11654,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1768 (출처: 과목2 문제은행 Q129)",
+  "citation": "📖 교재: L418 (출처: 과목2 문제은행 Q129)",
   "stem": "화장품의 제조 시 「탈기(脫氣)」 공정의 목적에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_ef0f0e",
-    "conceptId": "L1768",
+    "conceptId": "L418",
     "text": "미생물 제거",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_2e7030",
-    "conceptId": "L1768",
+    "conceptId": "L418",
     "text": "기포 제거",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_b494e0",
-    "conceptId": "L1768",
+    "conceptId": "L418",
     "text": "수분 제거",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_41da1a",
-    "conceptId": "L1768",
+    "conceptId": "L418",
     "text": "불순물 여과",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_6a4e9e",
-    "conceptId": "L1768",
+    "conceptId": "L418",
     "text": "향료 첨가",
     "truth": false
    }
@@ -11738,7 +11738,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q129",
-  "explain": "📖 교재 근거 (교재: L1768):\n#### 기초화장품의 일반적인 제조 공정의 순서 및 목적",
+  "explain": "📖 교재 근거 (교재: L418):\n| 기포방지제 | 기포 제거 성질을 가진 물질로 소포제라고도 불림 |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -12016,41 +12016,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L93 (출처: 과목2 문제은행 Q133)",
+  "citation": "📖 교재: L1536 (출처: 과목2 문제은행 Q133)",
   "stem": "화장품 원료 중 「알란토인」의 주요 용도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_6704ca",
-    "conceptId": "q:subject2_q133",
+    "conceptId": "L1536",
     "text": "자외선차단제",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_8fe68f",
-    "conceptId": "q:subject2_q133",
+    "conceptId": "L1536",
     "text": "진정·피부보호제",
     "truth": true
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_ae3352",
-    "conceptId": "q:subject2_q133",
+    "conceptId": "L1536",
     "text": "표백제",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_20aa46",
-    "conceptId": "q:subject2_q133",
+    "conceptId": "L1536",
     "text": "방부제",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_36da49",
-    "conceptId": "q:subject2_q133",
+    "conceptId": "L1536",
     "text": "계면활성제",
     "truth": false
    }
@@ -12102,7 +12102,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q133",
-  "explain": "📖 교재 근거 (교재: L93):\n> 핵심 내용: 원료 사용기준(별표 1·2), 제조·품질관리·CGMP, 기능성화장품 심사·기준",
+  "explain": "📖 교재 근거 (교재: L1536):\n> 해설: 세정력 순서는 음이온성 > 양쪽성 > 양이온성 > 비이온성이다. 음이온성 계면활성제(SLS, SLES 등)는 비누·샴푸·폼클렌저에 주로 사용된다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -12194,7 +12194,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q134",
-  "explain": "📖 교재 근거 (교재: L491):\n| 정제수 | • 화장품 제조에 있어 가장 중요한 원료 중 하나임<br>• 물은 극성물질로 수성 원료의 용해를 위한 용제(용매)로 사용<br>• 용해된 이온, 고체 입자, 미생물, 유기물 및 용해된 기체류 등의 모든 불순물을 이온교환수지를 통해 여과한 물을 칭함 |",
+  "explain": "📖 교재 근거 (교재: L491):\n| 정제수 | • 화장품 제조에 있어 가장 중요한 원료 중 하나임<br>• 물은 극성물질로 수성 원료의 용해를 위한 용제(용매)로 사용<br>• 용해된 이온, 고체 입자, 미생물, 유기물 및 용해된 기체류 등의 모든 불순물을 이온교환수지를 통해 여과한 물을 칭함 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -12294,41 +12294,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L48 (출처: 과목2 문제은행 Q136)",
+  "citation": "📖 교재: L1863 (출처: 과목2 문제은행 Q136)",
   "stem": "화장품 원료 중 「히알루론산(Hyaluronic Acid)」의 주요 기능에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_1fc84a",
-    "conceptId": "q:subject2_q136",
+    "conceptId": "L1863",
     "text": "미백",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_7c334e",
-    "conceptId": "q:subject2_q136",
+    "conceptId": "L1863",
     "text": "주름개선",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_95a367",
-    "conceptId": "q:subject2_q136",
+    "conceptId": "L1863",
     "text": "방부",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_60f816",
-    "conceptId": "q:subject2_q136",
+    "conceptId": "L1863",
     "text": "자외선 차단",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_b6fbe3",
-    "conceptId": "q:subject2_q136",
+    "conceptId": "L1863",
     "text": "고도 보습",
     "truth": true
    }
@@ -12376,7 +12376,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q136",
-  "explain": "📖 교재 근거 (교재: L48):\n| 히알루론산 | Hyaluronic Acid | 보습제 | 수상층 | 피부에 수분을 공급하여 건조함을 완화하고 촉촉함을 유지하는 수상층 보습 성분입니다. | 0.1~1.0 | - | 건성, 보습, 주름 | 고빈도 | 1g이 6L의 물을 보유할 수 있는 강력한 보습제 | - |",
+  "explain": "📖 교재 근거 (교재: L1863):\n> 해설: W/O형은 오일 성분(연속상)에 물(분산상)이 분산되어 있는 상태로, 크림·클렌징 크림·자외선 차단제에 적용된다. ①은 O/W형이며, ④는 가용화의 특징이다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -12560,7 +12560,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q138",
-  "explain": "📖 교재 근거 (교재: L4):\n> - 4과목 6챕터 \"혼합 및 소분\" — 원료 분류(수성/유성/계면활성제)의 요약 재서술 및 혼합 안정성 응용",
+  "explain": "📖 교재 근거 (교재: L4):\n> - 4과목 6챕터 \"혼합 및 소분\" — 원료 분류(수성/유성/계면활성제)의 요약 재서술 및 혼합 안정성 응용\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -12756,41 +12756,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1903 (출처: 과목2 문제은행 Q141)",
+  "citation": "📖 교재: L1863 (출처: 과목2 문제은행 Q141)",
   "stem": "화장품 원료 중 「판테놀(Pro-Vitamin B5)」의 주요 용도에 해당하는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_135098",
-    "conceptId": "L1903",
+    "conceptId": "L1863",
     "text": "피부 보습 및 진정",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_04c563",
-    "conceptId": "L1903",
+    "conceptId": "L1863",
     "text": "자외선 차단",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_d3e68a",
-    "conceptId": "L1903",
+    "conceptId": "L1863",
     "text": "미백",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_ee0458",
-    "conceptId": "L1903",
+    "conceptId": "L1863",
     "text": "방부",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_f73f32",
-    "conceptId": "L1903",
+    "conceptId": "L1863",
     "text": "착색",
     "truth": false
    }
@@ -12840,7 +12840,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q141",
-  "explain": "📖 교재 근거 (교재: L1903):\n| 기능성 화장품 | • 피부에 멜라닌색소가 침착하는 것을 방지하여 기미·주근깨 등의 생성을 억제함으로써 피부의 미백에 도움을 줌<br>• 피부에 침착된 멜라닌색소의 색을 옅게 하여 피부의 미백에 도움을 줌<br>• 피부에 탄력을 주어 피부의 주름을 완화 또는 개선함<br>• 강한 햇볕을 방지하여 피부를 곱게 태워줌<br>• 자외선을 차단 또는 산란시켜 자외선으로부터 피부를 보호함<br>• 모발의 색상을 변화(탈염·탈색 포함)시킴 (단, 일시적으로 모발의 색상을 변화시키는 제품은 제외함)<br>• 체모를 제거하는 기능을 함 (단, 물리적으로 체모를 제거하는 제품은 제외함)<br>• 탈모 증상의 완화에 도움을 줌 (단, 코팅 등 물리적으로 모발을 굵어 보이게 하는 제품은 제외함)<br>• 여드름성 피부...",
+  "explain": "📖 교재 근거 (교재: L1863):\n> 해설: W/O형은 오일 성분(연속상)에 물(분산상)이 분산되어 있는 상태로, 크림·클렌징 크림·자외선 차단제에 적용된다. ①은 O/W형이며, ④는 가용화의 특징이다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -12932,7 +12932,7 @@ var COMBO_DRILLS_subject2 = [
    "정의"
   ],
   "derivedFrom": "subject2_q142",
-  "explain": "📖 교재 근거 (교재: L602):\n특징: 실록산 결합(Si-O-Si)을 가지는 유기 규소화합물의 총칭 / 무색, 투명, 냄새가 거의 없음 / 실크(Silk)처럼 가볍고 매끄러운 감촉을 부여함 / 퍼짐성 우수, 피부의 유연성과 매끄러움, 광택 부여, 기포 제거성도 높음 / 비극성인 특성을 기반으로 피부 표면에서 수분 증발 억제 목적(밀폐제)으로 사용",
+  "explain": "📖 교재 근거 (교재: L602):\n특징: 실록산 결합(Si-O-Si)을 가지는 유기 규소화합물의 총칭 / 무색, 투명, 냄새가 거의 없음 / 실크(Silk)처럼 가볍고 매끄러운 감촉을 부여함 / 퍼짐성 우수, 피부의 유연성과 매끄러움, 광택 부여, 기포 제거성도 높음 / 비극성인 특성을 기반으로 피부 표면에서 수분 증발 억제 목적(밀폐제)으로 사용\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -13304,7 +13304,7 @@ var COMBO_DRILLS_subject2 = [
    "한도"
   ],
   "derivedFrom": "subject2_q146",
-  "explain": "📖 교재 근거 (교재: L1008):\n| 대표적인 오염균 | 황색포도상구균, 대장균, 녹농균 | 빵 효모, 칸디다균 | 푸른곰팡이, 맥아곰팡이 |",
+  "explain": "📖 교재 근거 (교재: L1008):\n| 대표적인 오염균 | 황색포도상구균, 대장균, 녹농균 | 빵 효모, 칸디다균 | 푸른곰팡이, 맥아곰팡이 |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -13392,7 +13392,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q147",
-  "explain": "📖 교재 근거 (교재: L93):\n> 핵심 내용: 원료 사용기준(별표 1·2), 제조·품질관리·CGMP, 기능성화장품 심사·기준",
+  "explain": "📖 교재 근거 (교재: L93):\n> 🔍 키워드: 원료분류, 계면활성제, HLB, 보존제, 자외선차단제, 색소, 기능성화장품 심사, KFCC, CGMP",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "2"
  },
@@ -13480,7 +13480,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q148",
-  "explain": "📖 교재 근거 (restricted_ingredients: L127):\n| 드로메트리졸트리실록산 | Drometrizole Trisiloxane | 자외선 차단제 | - | 유상층에 용해되어 화장품의 자외선 흡수력을 부여하는 데 사용되는 사용 제한 원료 성분입니다. | - | 15% | 홍조, 색소침착 | 중빈도 | 자외선 차단제 | - |",
+  "explain": "📖 교재 근거 (restricted_ingredients: L127):\n| 드로메트리졸트리실록산 | Drometrizole Trisiloxane | 자외선 차단제 | - | 유상층에 용해되어 화장품의 자외선 흡수력을 부여하는 데 사용되는 사용 제한 원료 성분입니다. | - | 15% | 홍조, 색소침착 | 중빈도 | 자외선 차단제 | - |\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -13581,41 +13581,41 @@ var COMBO_DRILLS_subject2 = [
   "subject": 2,
   "type": "combo",
   "points": 4,
-  "citation": "📖 교재: L1735 (출처: 과목2 문제은행 Q150)",
+  "citation": "📖 교재: L2078 (출처: 과목2 문제은행 Q150)",
   "stem": "다음 중 화장품의 품질관리에서 「관능 시험」 항목에 해당하지 않는 것을 모두 고른 것은?",
   "statements": [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_4f30d8",
-    "conceptId": "L1735",
+    "conceptId": "L2078",
     "text": "외관(색상, 투명도)",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_47f5fe",
-    "conceptId": "L1735",
+    "conceptId": "L2078",
     "text": "향기",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_e2b619",
-    "conceptId": "L1735",
+    "conceptId": "L2078",
     "text": "유효성분의 화학적 구조 확인",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_3f3f9e",
-    "conceptId": "L1735",
+    "conceptId": "L2078",
     "text": "사용감(발림성, 끈적임)",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_45d407",
-    "conceptId": "L1735",
+    "conceptId": "L2078",
     "text": "점도",
     "truth": false
    }
@@ -13664,7 +13664,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q150",
-  "explain": "📖 교재 근거 (교재: L1735):\n- 유화액 형태의 판별: 외관·색소·희석·전기전도도를 통해 판별 가능함",
+  "explain": "📖 교재 근거 (교재: L2078):\n> 해설: 크림은 스킨/토너(탁도, 변취)와 로션/에센스(변취, 분리, 점도, 경도)의 요소에 증발과 표면 굳음이 추가된다. 메이크업 베이스/파운데이션은 분리(성상)를 제외한 요소들을 평가한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "4"
  },
@@ -14053,35 +14053,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_bd8cd5",
-    "conceptId": "L2580",
+    "conceptId": "L2583",
     "text": "유리",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_c5f199",
-    "conceptId": "L2580",
+    "conceptId": "L2583",
     "text": "폴리에틸렌(PE)",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_fb75b0",
-    "conceptId": "L2580",
+    "conceptId": "L2583",
     "text": "폴리염화비닐(PVC)과 폴리스티렌폼",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_5bcd66",
-    "conceptId": "L2580",
+    "conceptId": "L2583",
     "text": "알루미늄",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_85e19c",
-    "conceptId": "L2580",
+    "conceptId": "L2583",
     "text": "종이",
     "truth": false
    }
@@ -14129,7 +14129,7 @@ var COMBO_DRILLS_subject2 = [
    "정답판정"
   ],
   "derivedFrom": "subject2_q199",
-  "explain": "📖 교재 근거 (L2580):\n| (7) 천연화장품·유기농화장품의 용기와 포장 🎯 기출 | 천연화장품·유기농화장품의 용기와 포장에는 폴리염화비닐(PVC)과 폴리스티렌폼을 사용할 수 없다. |",
+  "explain": "📖 교재 근거 (L2583):\n| (7) 천연화장품·유기농화장품의 용기와 포장 🎯 기출 | 천연화장품·유기농화장품의 용기와 포장에는 폴리염화비닐(PVC)과 폴리스티렌폼을 사용할 수 없다. |",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "3"
  },
@@ -14144,35 +14144,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_5d1cb4",
-    "conceptId": "L3112",
+    "conceptId": "L3115",
     "text": "햇빛에 대한 피부의 감수성을 증가시킬 수 있으므로 자외선 차단제를 함께 사용할 것",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_f08894",
-    "conceptId": "L3112",
+    "conceptId": "L3115",
     "text": "일부에 시험 사용하여 피부 이상을 확인할 것",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_153426",
-    "conceptId": "L3112",
+    "conceptId": "L3115",
     "text": "고농도의 AHA는 부작용 발생 우려가 있으므로 전문의 등에게 상담할 것",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_27b111",
-    "conceptId": "L3112",
+    "conceptId": "L3115",
     "text": "3세 이하 영유아에게는 사용하지 말 것",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_ea6ba5",
-    "conceptId": "L3112",
+    "conceptId": "L3115",
     "text": "AHA 성분이 10% 초과하거나 산도가 3.5 미만인 제품만 표시함",
     "truth": false
    }
@@ -14220,7 +14220,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q209",
-  "explain": "📖 교재 근거 (L3112):\n| 알파-하이드록시애씨드(AHA) 함유 제품 🎯 기출 | • 햇빛에 대한 피부의 감수성을 증가시킬 수 있으므로 자외선 차단제를 함께 사용할 것(씻어내는 제품 및 두발용 제품은 제외) • 일부에 시험 사용하여 피부 이상을 확인할 것 • 고농도의 AHA는 부작용 발생 우려가 있으므로 전문의 등에게 상담할 것(AHA 성분이 10% 초과하여 함유되어 있거나 산도가 3.5 미만인 제품만 표시함) |\n> 해설: \"3세 이하 영유아에게는 사용하지 말 것\"은 살리실릭애씨드 및 IPBC 함유 제품의 주의사항이다.",
+  "explain": "📖 교재 근거 (L3115):\n| 알파-하이드록시애씨드(AHA) 함유 제품 🎯 기출 | • 햇빛에 대한 피부의 감수성을 증가시킬 수 있으므로 자외선 차단제를 함께 사용할 것(씻어내는 제품 및 두발용 제품은 제외) • 일부에 시험 사용하여 피부 이상을 확인할 것 • 고농도의 AHA는 부작용 발생 우려가 있으므로 전문의 등에게 상담할 것(AHA 성분이 10% 초과하여 함유되어 있거나 산도가 3.5 미만인 제품만 표시함) |\n> 해설: \"3세 이하 영유아에게는 사용하지 말 것\"은 살리실릭애씨드 및 IPBC 함유 제품의 주의사항이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "1"
  },
@@ -14235,35 +14235,35 @@ var COMBO_DRILLS_subject2 = [
    {
     "id": "ㄱ",
     "sid": "manufacturing_st_76ab7e",
-    "conceptId": "L2988",
+    "conceptId": "L2991",
     "text": "두피·얼굴·눈·목·손 등에 약액이 묻지 않도록 유의할 것",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "manufacturing_st_3f683a",
-    "conceptId": "L2988",
+    "conceptId": "L2991",
     "text": "특이체질, 생리 또는 출산 전후이거나 질환이 있는 사람 등은 사용을 피할 것",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "manufacturing_st_5534ec",
-    "conceptId": "L2988",
+    "conceptId": "L2991",
     "text": "개봉한 제품은 7일 이내에 사용할 것(에어로졸 제품이나 공기유입 차단 용기는 제외)",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "manufacturing_st_43df9a",
-    "conceptId": "L2988",
+    "conceptId": "L2991",
     "text": "섭씨 15도 이하의 어두운 장소에 보존하고, 색이 변하거나 침전된 경우에는 사용하지 말 것",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "manufacturing_st_afc86e",
-    "conceptId": "L2988",
+    "conceptId": "L2991",
     "text": "눈에 들어갔을 때 즉시 씻어낼 것",
     "truth": true
    }
@@ -14314,7 +14314,7 @@ var COMBO_DRILLS_subject2 = [
    "수치"
   ],
   "derivedFrom": "subject2_q220",
-  "explain": "📖 교재 근거 (L2988):\n| 퍼머넌트 웨이브 제품 및 헤어 스트레이트너 제품 🎯 기출 | • 두피·얼굴·눈·목·손 등에 약액이 묻지 않도록 유의 • 특이체질 등은 사용 피할 것 • 용법·용량 지키고 시험 사용 • 섭씨 15도 이하 어두운 장소 보존, 변색·침전 시 사용 금지 • 개봉 후 7일 이내 사용(에어로졸 등 제외) • 제2단계 퍼머액 중 과산화수소 주성분 제품은 머리카락 갈색 변색 유의 |\n> 해설: \"눈에 들어갔을 때 즉시 씻어낼 것\"은 두발용·두발염색용·눈화장용 제품류의 공통 주의사항이다.",
+  "explain": "📖 교재 근거 (L2991):\n| 퍼머넌트 웨이브 제품 및 헤어 스트레이트너 제품 🎯 기출 | • 두피·얼굴·눈·목·손 등에 약액이 묻지 않도록 유의 • 특이체질 등은 사용 피할 것 • 용법·용량 지키고 시험 사용 • 섭씨 15도 이하 어두운 장소 보존, 변색·침전 시 사용 금지 • 개봉 후 7일 이내 사용(에어로졸 등 제외) • 제2단계 퍼머액 중 과산화수소 주성분 제품은 머리카락 갈색 변색 유의 |\n> 해설: \"눈에 들어갔을 때 즉시 씻어낼 것\"은 두발용·두발염색용·눈화장용 제품류의 공통 주의사항이다.",
   "source": "화장품 제조 및 품질관리 (250제)",
   "answer": "5"
  },
@@ -14504,205 +14504,6 @@ var COMBO_DRILLS_subject2 = [
   "derivedFrom": "subject2_q239",
   "explain": "📖 교재 근거 (교재: L2279):\n| 벤잘코늄클로라이드, 브로마이드 및 사카리네이트 🎯 기출 | 사용 후 씻어내는 제품에 벤잘코늄클로라이드로서 0.1% / 기타 제품에 벤잘코늄클로라이드로서 0.05% | 분사형 제품에는 벤잘코늄클로라이드는 사용금지 |",
   "source": "화장품 제조 및 품질관리 (250제)",
-  "answer": "5"
- },
- {
-  "id": "manufacturing_combo-cluster_e383ed",
-  "subject": 2,
-  "type": "combo",
-  "points": 4,
-  "citation": "📖 교재: L3355 (출처: 과목2 문제은행 진술 재조합)",
-  "stem": "다음 설명 중 옳은 것을 모두 고른 것은?",
-  "statements": [
-   {
-    "id": "ㄱ",
-    "sid": "manufacturing_st_b9765c",
-    "conceptId": "L3355",
-    "text": "시험 결과가 나오기 전까지는 '시험 중(대기)' 구역에 보관한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q35 · 교재 L3355"
-   },
-   {
-    "id": "ㄴ",
-    "sid": "manufacturing_st_1fe172",
-    "conceptId": "L3355",
-    "text": "부적합 원료는 생산부서장의 임의 승인 하에 재작업용 원료로 바로 투입한다.",
-    "truth": false,
-    "explain": "원본: 과목2 문제은행 Q48 · 교재 L3355"
-   },
-   {
-    "id": "ㄷ",
-    "sid": "manufacturing_st_2e7752",
-    "conceptId": "L3355",
-    "text": "공급업체에 반품 처리하거나 적법한 절차에 따라 폐기 처분한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q48 · 교재 L3355"
-   },
-   {
-    "id": "ㄹ",
-    "sid": "manufacturing_st_22a7ea",
-    "conceptId": "L3355",
-    "text": "원인 규명을 위한 일탈(Deviation) 조사를 실시한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q48 · 교재 L3355"
-   },
-   {
-    "id": "ㅁ",
-    "sid": "manufacturing_st_2a259e",
-    "conceptId": "L3355",
-    "text": "급한 생산 일정을 위해 시험 결과 확인 전에 출고 승인을 진행할 수 있다.",
-    "truth": false,
-    "explain": "원본: 과목2 문제은행 Q35 · 교재 L3355"
-   }
-  ],
-  "options": [
-   {
-    "id": "1",
-    "members": [
-     "ㄱ"
-    ]
-   },
-   {
-    "id": "2",
-    "members": [
-     "ㄱ",
-     "ㄴ",
-     "ㅁ"
-    ]
-   },
-   {
-    "id": "3",
-    "members": [
-     "ㄷ"
-    ]
-   },
-   {
-    "id": "4",
-    "members": [
-     "ㄱ",
-     "ㄷ",
-     "ㄹ"
-    ]
-   },
-   {
-    "id": "5",
-    "members": [
-     "ㄱ",
-     "ㄴ"
-    ]
-   }
-  ],
-  "tags": [
-   "자동변환",
-   "명제판정",
-   "개념재조합",
-   "처분기준",
-   "절차"
-  ],
-  "derivedFrom": "cluster:2|L3355",
-  "explain": "ㄱ. 원본: 과목2 문제은행 Q35 · 교재 L3355\nㄴ. 원본: 과목2 문제은행 Q48 · 교재 L3355\nㄷ. 원본: 과목2 문제은행 Q48 · 교재 L3355\nㄹ. 원본: 과목2 문제은행 Q48 · 교재 L3355\nㅁ. 원본: 과목2 문제은행 Q35 · 교재 L3355",
-  "source": "과목2 개념 재조합",
-  "answer": "4"
- },
- {
-  "id": "manufacturing_combo-cluster_e63e94",
-  "subject": 2,
-  "type": "combo",
-  "points": 4,
-  "citation": "📖 교재: L425 (출처: 과목2 문제은행 진술 재조합)",
-  "stem": "다음 설명 중 옳은 것을 모두 고른 것은?",
-  "statements": [
-   {
-    "id": "ㄱ",
-    "sid": "manufacturing_st_17b976",
-    "conceptId": "L425",
-    "text": "화장품에 배합할 수 없는 원료이다.",
-    "truth": false,
-    "explain": "원본: 과목2 문제은행 Q67 · 교재 L425"
-   },
-   {
-    "id": "ㄴ",
-    "sid": "manufacturing_st_7ca816",
-    "conceptId": "L425",
-    "text": "피부의 약산성(pH 5.5 내외) 장벽을 유지하는 데 기여한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q67 · 교재 L425"
-   },
-   {
-    "id": "ㄷ",
-    "sid": "manufacturing_st_4c0454",
-    "conceptId": "L425",
-    "text": "완제품의 pH를 건강한 피부의 약산성(pH 5.0 ~ 6.5) 영역으로 유도한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q95 · 교재 L425"
-   },
-   {
-    "id": "ㄹ",
-    "sid": "manufacturing_st_c3c780",
-    "conceptId": "L425",
-    "text": "점증제를 사용하여 유화 상분리를 물리적으로 억제한다.",
-    "truth": true,
-    "explain": "원본: 과목2 문제은행 Q95 · 교재 L425"
-   },
-   {
-    "id": "ㅁ",
-    "sid": "manufacturing_st_905ea4",
-    "conceptId": "L425",
-    "text": "극성이 전혀 없는 광물성 오일만을 100% 사용하여 유화한다.",
-    "truth": false,
-    "explain": "원본: 과목2 문제은행 Q95 · 교재 L425"
-   }
-  ],
-  "options": [
-   {
-    "id": "1",
-    "members": [
-     "ㄱ",
-     "ㄴ"
-    ]
-   },
-   {
-    "id": "2",
-    "members": [
-     "ㄱ",
-     "ㄴ",
-     "ㄷ"
-    ]
-   },
-   {
-    "id": "3",
-    "members": [
-     "ㄷ"
-    ]
-   },
-   {
-    "id": "4",
-    "members": [
-     "ㄴ",
-     "ㄷ",
-     "ㄹ",
-     "ㅁ"
-    ]
-   },
-   {
-    "id": "5",
-    "members": [
-     "ㄴ",
-     "ㄷ",
-     "ㄹ"
-    ]
-   }
-  ],
-  "tags": [
-   "자동변환",
-   "명제판정",
-   "개념재조합",
-   "한도",
-   "수치"
-  ],
-  "derivedFrom": "cluster:2|L425",
-  "explain": "ㄱ. 원본: 과목2 문제은행 Q67 · 교재 L425\nㄴ. 원본: 과목2 문제은행 Q67 · 교재 L425\nㄷ. 원본: 과목2 문제은행 Q95 · 교재 L425\nㄹ. 원본: 과목2 문제은행 Q95 · 교재 L425\nㅁ. 원본: 과목2 문제은행 Q95 · 교재 L425",
-  "source": "과목2 개념 재조합",
   "answer": "5"
  },
  {

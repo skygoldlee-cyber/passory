@@ -1,5 +1,5 @@
 // 자동 생성된 복수정답형 드릴 데이터입니다. 수정하지 마십시오. (tools/build/build_combo_drills.js)
-// 원본: data/exams/food/exams/subject1.df1fe251.js — mode: fact(명제 조합) 1문 / answer(정답 조합) 7문
+// 원본: data/exams/food/exams/subject1.c117438b.js — mode: fact(명제 조합) 1문 / answer(정답 조합) 7문
 var COMBO_DRILLS_subject1 = [
  {
   "id": "sanitation_combo_7ebbb0",
@@ -360,7 +360,7 @@ var COMBO_DRILLS_subject1 = [
    "수치"
   ],
   "derivedFrom": "subject1_q4",
-  "explain": "📖 교재 근거 (교재: L88):\n| 제4호 | 불결하거나 다른 물질이 섞이거나 첨가된 것 등 위해 우려 있는 것 |",
+  "explain": "📖 교재 근거 (교재: L88):\n| 제1호 | 부패·변질·미숙한 식품으로 인체 건강 위해 우려 있는 것 |\n| 제2호 | 유독한 물질이 들어 있거나 닿은 것 등 |",
   "source": "식품위생법의 이해 (8제)",
   "answer": "2"
  },
@@ -453,7 +453,7 @@ var COMBO_DRILLS_subject1 = [
    "수치"
   ],
   "derivedFrom": "subject1_q5",
-  "explain": "📖 법령 근거 (L36(제21065호)(20251001)/식품위생법(법률)(제21065호)(20251001).md#L36>)):\n제7조(식품등의 기준 및 규격) ① 식품의약품안전처장은 영업에 사용되는 식품등의 위생상의 위해가 발생하지 아니하도록 식품등의 기준 및 규격을 정하여 고시한다.",
+  "explain": "📖 법령 근거 (L53):\n- ⭐ 식품위생법의 기준·규격은 법률에 직접 적지 않고 식약처 고시(식품의 기준 및 규격) 로 위임한다 (제7조제1항 위임).",
   "source": "식품위생법의 이해 (8제)",
   "answer": "2"
  },
