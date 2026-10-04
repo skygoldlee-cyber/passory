@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261005-c9ca8df",
+    "date": "2026-10-05",
+    "notes": [
+      "[수정·formula] 판매 유형 허브의 순번 배지·설명 문구를 실제 흐름에 맞게 정정 (FO-33 후속)"
+    ]
+  },
+  {
     "version": "v20261005-5e0abea",
     "date": "2026-10-05",
     "notes": [
@@ -143,14 +150,6 @@
     "date": "2026-10-04",
     "notes": [
       "[수정·ux] 인트라뷰 전환 스크롤 잔류 전수조사 — resetMainScroll 공유 헬퍼로 일괄 정규화 (UX-NAV-07)"
-    ]
-  },
-  {
-    "version": "v20261004-6aab460",
-    "date": "2026-10-04",
-    "notes": [
-      "[수정·formula] 서브패널 전환 시 스크롤 리셋 — 모바일에서 폼 상단이 잘려 보이지 않던 결함",
-      "[수정·build] manifest.<id>.webmanifest 재생성 시 shortcuts 소실 수정 — exams.json pwaShortcuts 패스스루 (UX-PWA-06)"
     ]
   }
 ]
