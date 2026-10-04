@@ -14,8 +14,9 @@
  *   - 코퍼스 전체에도 지지가 없는 항목은 [nowhere] 수동 저작 목록으로 보고
  *
  * 사용법:
- *   node tools/sync/fix_citation_targets.js          # 수정 실행
- *   node tools/sync/fix_citation_targets.js --check  # 변경 예정만 보고
+ *   node tools/sync/fix_citation_targets.js             # 수정 실행
+ *   node tools/sync/fix_citation_targets.js --check     # 변경 예정만 보고
+ *   node tools/sync/fix_citation_targets.js --annotate  # 미검증 인용에 ⚠️ 마커 표기·해제 (교정 없음)
  */
 
 // @spec CQ-06
@@ -28,6 +29,12 @@ const { compact } = require('../check/check_answer_overlap');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CHECK = process.argv.includes('--check');
+const ANNOTATE = process.argv.includes('--annotate');
+
+// 인용 위치 미검증 마커 — 지지 근거를 자동으로 확인할 수 없거나 인용 대상이
+// 확인문제 블록인 문항의 근거 블록 끝에 삽입하고, 지지가 회복되면 제거한다 (멱등)
+const FLAG_RE = /^>\s*⚠️/;
+const FLAG_LINE = '> ⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*';
 
 const CITE_LINK_RE = /\]\(<([^>]+\.md)#L(\d+)>\)/;
 
@@ -118,7 +125,7 @@ function findSupport(file, q, a) {
 }
 
 function run() {
-    const report = { sameFile: 0, crossFile: 0, nowhere: [], items: [] };
+    const report = { sameFile: 0, crossFile: 0, nowhere: [], items: [], flagged: [], unflagged: 0 };
 
     for (const target of getExamTargets(ROOT)) {
         if (!target.manifest) continue;
@@ -142,6 +149,31 @@ function run() {
                 const citedLines = citedFile ? linesOf(citedFile) : null;
                 // 인용 위치가 교재 내 확인문제(정답·해설) 블록이면 근거로 부적절 → 재탐색 대상
                 const inReview = !!(a.citeLine && citedLines && reviewSkipOf(citedFile).has(a.citeLine - 1));
+
+                if (ANNOTATE) {
+                    const src = sourceContext(abs, a);
+                    const supported = isSupported(q, a, a.passage).ok || (src && isSupported(q, a, src).ok);
+                    const flagged = !supported || inReview;
+                    const markers = [];
+                    const scanEnd = Math.min((a.passageEnd || a.entryStart) + 3, lines.length - 1);
+                    for (let li = a.entryStart; li <= scanEnd; li++) {
+                        if (FLAG_RE.test(lines[li])) markers.push(li);
+                    }
+                    if (flagged) {
+                        report.flagged.push(`${exam.file} Q${num} [${a.answer}]`);
+                        if (!markers.length) {
+                            edits.push({ op: 'ins', at: a.passageEnd + 1, line: FLAG_LINE, entryStart: a.entryStart });
+                        } else {
+                            // 중복 마커는 첫 번째만 남기고 제거
+                            for (const m of markers.slice(1)) edits.push({ op: 'del', at: m, entryStart: a.entryStart });
+                        }
+                    } else if (markers.length) {
+                        for (const m of markers) edits.push({ op: 'del', at: m, entryStart: a.entryStart });
+                        report.unflagged++;
+                    }
+                    continue;
+                }
+
                 if (!inReview) {
                     if (isSupported(q, a, a.passage).ok) continue;          // 내장 인용문이 지지
                     const src = sourceContext(abs, a);
@@ -187,8 +219,10 @@ function run() {
             }
 
             if (edits.length && !CHECK) {
-                edits.sort((x, y) => y.entryStart - x.entryStart); // 뒤에서부터
+                edits.sort((x, y) => (y.at ?? y.entryStart) - (x.at ?? x.entryStart)); // 뒤에서부터
                 for (const e of edits) {
+                    if (e.op === 'ins') { lines.splice(e.at, 0, e.line); continue; }
+                    if (e.op === 'del') { lines.splice(e.at, 1); continue; }
                     // 인용문 교체
                     lines.splice(e.start, e.end - e.start + 1, ...e.newLines);
                     // 링크·라벨 교체 — 항목 범위(entryStart~start) 내의 #L 링크만
@@ -210,6 +244,13 @@ function run() {
         }
     }
 
+    if (ANNOTATE) {
+        console.log(`\n[인용 위치 미검증 표기] 표기 대상 ${report.flagged.length}건 · 마커 해제 ${report.unflagged}건`);
+        for (const s of report.flagged.slice(0, 30)) console.log(`  ⚠️ ${s}`);
+        if (report.flagged.length > 30) console.log(`  … 외 ${report.flagged.length - 30}건`);
+        if (CHECK) console.log('\n(--check: 파일은 변경하지 않았습니다)');
+        return;
+    }
     console.log(`\n[인용 위치 교정] 같은 파일 ${report.sameFile} · 다른 파일 ${report.crossFile} · 지지 없음 ${report.nowhere.length}`);
     for (const it of report.items.slice(0, 25)) {
         console.log(`  ${it.file} Q${it.q} — ${it.mode === 'same' ? '라인 교정' : '파일 재지정'} → ${it.to}`);

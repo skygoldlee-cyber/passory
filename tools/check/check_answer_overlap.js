@@ -127,6 +127,8 @@ function parseQuestionBank(filePath) {
             continue;
         }
         if (inPassage && line.startsWith('>')) {
+            // ⚠️ 인용 위치 미검증 마커(--annotate)는 메타 표기이므로 근거 구절에서 제외
+            if (/^>\s*⚠️/.test(line)) continue;
             // 중첩 인용(> > **해설**:)도 구절로 포함 — 해설 자체가 정답 지지 근거
             curAns.passage += ' ' + block.replace(/^>\s?/, '').trim();
             if (curAns.passageStart === undefined) curAns.passageStart = li;
