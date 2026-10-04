@@ -89,6 +89,10 @@ export const STORAGE_KEYS = {
 
   // Formula OS — 기성품 전성분 DB (product-store.js, FO-37)
   PRODUCT_ITEMS: 'product_items',
+
+  // Formula OS — 기성품 사진 인식용 사용자 Gemini API 키 (product-vision.js, FO-41)
+  // ⚠ 크리덴셜 — BACKUP_KEYS·동기 대상에서 의도적 제외 (디바이스 로컬만)
+  FORMULA_GEMINI_KEY: 'formula_gemini_key',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)

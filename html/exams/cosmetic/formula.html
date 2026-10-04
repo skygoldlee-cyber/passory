@@ -1,4 +1,4 @@
-            <!-- @spec FO-15,FO-24,FO-25,FO-26~31,FO-37~40 -->
+            <!-- @spec FO-15,FO-24,FO-25,FO-26~31,FO-37~43 -->
             <section id="formula-view" class="view-section" data-feature="formula">
                 <!-- 1. 허브 메뉴 -->
                 <div id="formula-menu-panel">
@@ -802,6 +802,46 @@
                         </div>
                     </div>
                     <div class="formula-calc-form glass-card">
+                        <!-- 사진 인식 인입 (FO-41~43) — LLM 초안은 칩 검토 후 저장 -->
+                        <div class="prod-photo-section">
+                            <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionToggle" aria-expanded="false" aria-controls="prod-photo-panel">
+                                <i class="fa-solid fa-camera" aria-hidden="true"></i> 사진으로 채우기
+                            </button>
+                            <div id="prod-photo-panel" class="prod-photo-panel is-hidden">
+                                <p class="prod-photo-note">제품 <strong>후면 전성분</strong> 사진을 올리면 AI가 성분명을 읽어 아래 칩에 채웁니다 — 반드시 칩을 검토한 후 저장하세요.</p>
+                                <div class="prod-photo-slots">
+                                    <div class="prod-photo-slot">
+                                        <span class="prod-photo-label">정면 <span class="fold-hint">제품명·브랜드 (선택)</span></span>
+                                        <button type="button" class="btn btn-secondary btn-sm" data-click="productPhotoPick" data-arg="front"><i class="fa-solid fa-camera" aria-hidden="true"></i> 촬영/선택</button>
+                                        <span id="prod-photo-front-thumb" class="prod-photo-thumb"></span>
+                                        <button type="button" class="prod-photo-clear is-hidden" id="prod-photo-front-clear" data-click="productPhotoRemove" data-arg="front" aria-label="정면 사진 제거"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                                    </div>
+                                    <div class="prod-photo-slot">
+                                        <span class="prod-photo-label">후면 <span class="fold-hint">전성분 표기 (필수)</span></span>
+                                        <button type="button" class="btn btn-secondary btn-sm" data-click="productPhotoPick" data-arg="back"><i class="fa-solid fa-camera" aria-hidden="true"></i> 촬영/선택</button>
+                                        <span id="prod-photo-back-thumb" class="prod-photo-thumb"></span>
+                                        <button type="button" class="prod-photo-clear is-hidden" id="prod-photo-back-clear" data-click="productPhotoRemove" data-arg="back" aria-label="후면 사진 제거"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+                                <div class="prod-photo-actions">
+                                    <button type="button" class="btn btn-primary btn-sm" id="prod-vision-read" data-click="productVisionRead" disabled><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> AI로 전성분 읽기</button>
+                                    <button type="button" class="btn btn-secondary btn-sm is-hidden" id="prod-vision-cancel" data-click="productVisionCancel">취소</button>
+                                    <span id="prod-vision-status" class="prod-vision-status" aria-live="polite"></span>
+                                </div>
+                                <details class="prod-key-block" id="prod-key-block">
+                                    <summary>API 키 설정 <span id="prod-key-state" class="fold-hint"></span></summary>
+                                    <p class="prod-photo-note">사용자 본인의 Gemini API 키를 입력하세요 — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>에서 무료 발급. 키는 이 기기에만 저장되고 백업·동기되지 않습니다.</p>
+                                    <div class="prod-key-row">
+                                        <input type="password" id="prod-gemini-key" class="form-input" maxlength="200" autocomplete="off" placeholder="Gemini API 키" aria-label="Gemini API 키">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionKeySave">저장</button>
+                                        <button type="button" class="btn btn-secondary btn-sm f-danger" data-click="productVisionKeyClear">삭제</button>
+                                    </div>
+                                </details>
+                                <input type="file" id="prod-photo-front" class="is-hidden" accept="image/*" capture="environment" aria-label="제품 정면 사진">
+                                <input type="file" id="prod-photo-back" class="is-hidden" accept="image/*" capture="environment" aria-label="제품 후면 전성분 사진">
+                            </div>
+                            <div id="prod-photo-ref" class="prod-photo-ref"></div>
+                        </div>
                         <div class="formula-field-row">
                             <label class="formula-field">
                                 <span class="formula-field-label">제품명 *</span>

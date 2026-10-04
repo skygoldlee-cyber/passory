@@ -282,6 +282,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-DSN-10 | `docs/dev/design/MULTI_EXAM_DB_DESIGN.md` |
 | DOC-DSN-11 | `docs/dev/design/USER_FLOW.md` |
 | DOC-DSN-12 | `docs/dev/design/PRODUCT_DB_DESIGN.md` |
+| DOC-DSN-13 | `docs/dev/design/PRODUCT_VISION_DESIGN.md` |
 | DOC-REF-01 | `docs/dev/reference/COMBO_STUDY_STRATEGY.md` |
 | DOC-REF-02 | `docs/dev/reference/DEV_ENVIRONMENT.md` |
 | DOC-REF-03 | `docs/dev/reference/FLASHCARD_LOGIC.md` |

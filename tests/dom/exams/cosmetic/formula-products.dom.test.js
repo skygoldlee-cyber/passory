@@ -1,9 +1,11 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
+//       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
 //       미등록 칩 '사전 등록' 단축(FO-32 재사용), 성분 필터 역조회,
-//       고객 알레르기 교차, 포뮬러 전성분 비교, JSON 임포트·익스포트
+//       고객 알레르기 교차, 포뮬러 전성분 비교, JSON 임포트·익스포트,
+//       사진 인식 인입(키 관리·슬롯·프리필·오류 경로 — vision 모듈은 부분 모킹)
 
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 
@@ -11,6 +13,19 @@ vi.mock('../../../../src/ui-utils.js', () => ({
     showToast: vi.fn(),
     showConfirm: vi.fn(() => Promise.resolve(true)),
 }));
+
+// vision 모듈 — 키·마스킹 등 실구현 유지, I/O 경계 2개만 모킹 (jsdom은 canvas 없음)
+vi.mock('../../../../src/exams/cosmetic/product-vision.js', async (importActual) => {
+    const actual = await importActual();
+    return {
+        ...actual,
+        fileToBase64Jpeg: vi.fn(async () => ({ ok: true, data: 'aGVsbG8=', mimeType: 'image/jpeg', width: 100, height: 100 })),
+        extractProductFromImages: vi.fn(async () => ({
+            ok: true, name: '인식크림', brand: 'AI랩',
+            ingredients: ['정제수', '1,2-헥산디올', '미등록원료'],
+        })),
+    };
+});
 
 import { showToast, showConfirm } from '../../../../src/ui-utils.js';
 import {
@@ -21,8 +36,13 @@ import {
     openProductPanel, productNew, productEdit, productSave,
     productDelete, productClearFilter, productOpenByIngredient,
     productCardExport, productImportJson,
+    productVisionToggle, productPhotoPick, productPhotoRemove,
+    productVisionRead, productVisionKeySave, productVisionKeyClear,
 } from '../../../../src/exams/cosmetic/views/formula-products.js';
 import { listProducts } from '../../../../src/exams/cosmetic/product-store.js';
+import {
+    getVisionKey, extractProductFromImages,
+} from '../../../../src/exams/cosmetic/product-vision.js';
 import { createFormula } from '../../../../src/exams/cosmetic/formula-store.js';
 import { createCustomer } from '../../../../src/exams/cosmetic/customer-store.js';
 import { custOpen } from '../../../../src/exams/cosmetic/views/formula-customer.js';
@@ -235,5 +255,118 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(listProducts().length).toBe(1);
         expect(listProducts()[0].name).toBe('가져온크림');
         expect(lastToast()[1]).toBe('success');
+    });
+});
+
+describe('기성품 사진 인식 — BYOK 키·슬롯·프리필 (FO-41~43)', () => {
+    beforeEach(() => {
+        localStorage.clear();
+        window.INGREDIENTS_DATA = INGREDIENTS_STUB;
+        invalidateIngredientIndex();
+        loadIndexHtml();
+        vi.mocked(showToast).mockClear();
+        vi.mocked(extractProductFromImages).mockClear();
+    });
+
+    it('사진 패널 토글 — 키 미설정 시 키 블록 자동 펼침, 읽기 버튼 비활성', () => {
+        productNew();
+        const btn = document.querySelector('[data-click="productVisionToggle"]');
+        expect(btn).toBeTruthy();
+        productVisionToggle();
+        expect(isVisible('prod-photo-panel')).toBe(true);
+        expect(btn.getAttribute('aria-expanded')).toBe('true');
+        expect(el('prod-key-block').open).toBe(true);       // 키 미설정 → 자동 펼침
+        expect(el('prod-vision-read').disabled).toBe(true); // 후면 사진 없음
+        expect(el('prod-key-state').textContent).toContain('미설정');
+    });
+
+    it('API 키 저장 — 마스킹 상태 표시 + 삭제 복귀', () => {
+        productNew();
+        productVisionToggle();
+        el('prod-gemini-key').value = 'AIza1234567890abcd';
+        productVisionKeySave();
+        expect(getVisionKey()).toBe('AIza1234567890abcd');
+        expect(el('prod-gemini-key').value).toBe('');      // 입력란 비움
+        expect(el('prod-key-state').textContent).toContain('설정됨');
+        expect(el('prod-key-state').textContent).not.toContain('123456'); // 중간부 비노출
+        productVisionKeyClear();
+        expect(getVisionKey()).toBe('');
+    });
+
+    it('사진 선택 → 후면 슬롯 썸네일·읽기 활성 → 제거 복귀', async () => {
+        productNew();
+        productVisionToggle();
+        productPhotoPick('back');   // change 리스너 바인딩
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        expect(el('prod-photo-back-thumb').querySelector('img')).toBeTruthy();
+        expect(el('prod-vision-read').disabled).toBe(false);
+
+        productPhotoRemove('back');
+        expect(el('prod-photo-back-thumb').innerHTML).toBe('');
+        expect(el('prod-vision-read').disabled).toBe(true);
+    });
+
+    it('AI 읽기 — 추출 결과를 폼 칩으로 프리필 + 참조 썸네일 (직접 저장 아님)', async () => {
+        productNew();
+        el('prod-gemini-key').value = 'test-key';
+        productVisionKeySave();
+        productPhotoPick('back');
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        await productVisionRead();
+
+        expect(vi.mocked(extractProductFromImages)).toHaveBeenCalledTimes(1);
+        expect(el('prod-name').value).toBe('인식크림');
+        expect(el('prod-brand').value).toBe('AI랩');
+        const chips = el('prod-inci-chips');
+        expect(chips.textContent).toContain('1,2-헥산디올');
+        expect(chips.textContent).toContain('미등록원료');
+        expect(chips.querySelector('[data-click="productIngRegister"]')).toBeTruthy(); // 미등록 칩 단축 유지
+        expect(el('prod-photo-ref').querySelector('img')).toBeTruthy();               // 원본 대조 썸네일
+        expect(el('prod-vision-status').textContent).toContain('대조');
+        expect(listProducts().length).toBe(0);                                        // 자동 저장 없음
+
+        // 사용자 검토 후 저장 — 기존 경로 그대로
+        productSave();
+        expect(listProducts().length).toBe(1);
+        expect(listProducts()[0].name).toBe('인식크림');
+    });
+
+    it('AI 읽기 실패 — 오류 상태 표시 + 폼 오염 없음', async () => {
+        vi.mocked(extractProductFromImages).mockResolvedValueOnce({
+            ok: false, code: 'unreadable', error: '전성분을 읽지 못했습니다',
+        });
+        productNew();
+        el('prod-gemini-key').value = 'test-key';
+        productVisionKeySave();
+        el('prod-name').value = '기존입력';
+        productPhotoPick('back');
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        await productVisionRead();
+
+        expect(el('prod-vision-status').textContent).toContain('읽지 못했습니다');
+        expect(el('prod-vision-status').classList.contains('is-error')).toBe(true);
+        expect(el('prod-name').value).toBe('기존입력'); // 프리필 덮어쓰기 없음
+        expect(listProducts().length).toBe(0);
+    });
+
+    it('키 미설정 상태로 읽기 — 키 블록 펼침 안내, 호출 없음', async () => {
+        productNew();
+        productVisionToggle();
+        el('prod-key-block').open = false;
+        productPhotoPick('back');
+        selectFile('prod-photo-back', new File(['x'], 'back.jpg', { type: 'image/jpeg' }));
+        await flushAsync();
+
+        await productVisionRead();
+
+        expect(vi.mocked(extractProductFromImages)).not.toHaveBeenCalled();
+        expect(el('prod-key-block').open).toBe(true);
+        expect(el('prod-vision-status').textContent).toContain('API 키');
     });
 });

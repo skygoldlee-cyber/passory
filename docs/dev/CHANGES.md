@@ -6,6 +6,23 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 기성품 사진 인식 등록 구현 — FO-41~43 (BYOK Gemini Flash)
+
+- `product-vision.js` 신규 — BYOK 키 관리(`FORMULA_GEMINI_KEY`, 디바이스 로컬·`BACKUP_KEYS` 의도적 제외)·마스킹 표시, 이미지 전처리(캔버스 장변≤1024px·JPEG 0.85→base64), Gemini `generateContent` 호출(`x-goog-api-key` 헤더 — URL에 키 잔류 방지), `responseMimeType:application/json`+스키마 구조화 출력, 오류 분기(nokey/noimage/key/quota/http/network/aborted/unreadable)
+- `formula-products.js` — 폼 상단 '사진으로 채우기' 패널: 정면(선택)·후면(필수) 슬롯 촬영/선택(`capture="environment"`)·썸네일·제거, 'AI로 전성분 읽기'(AbortController 취소 가능), 추출 결과는 **칩 프리필 초안**(직접 저장 없음) + 원본 썸네일 대조 표시
+- 인프라: `vercel.json` CSP `connect-src`에 `generativelanguage.googleapis.com` 추가 (serve.js는 헤더 자동 미러)
+- 키 UI: 미설정 시 키 블록 자동 펼침·AI Studio 발급 링크·마스킹 표시·삭제
+- 테스트: 유닛 15건(키 계약·백업 제외·요청 형상·파싱·오류 분기) + DOM 6건(토글·키 UI·슬롯·프리필·실패 경로)
+- SPEC FO-41~43 상태 미구현→구현 갱신
+
+## 2026-10-19 기성품 사진 인식 등록 설계안 — FO-41~43 SPEC 선행 선언
+
+- 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내 전성분을 추출, 기성품 폼에 프리필하는 설계 확정 — `docs/dev/design/PRODUCT_VISION_DESIGN.md` (DOC-DSN-13)
+- 승인된 결정: **BYOK**(사용자 자기 Gemini 키 — 정적 배포라 공유 키 프록시 불가, 키는 디바이스 로컬·백업 제외) + **멀티샷**(정면·후면 1~2장) + **프리필 전용**(LLM 결과는 기존 칩 검토 단계를 거쳐야 저장 — 직접 저장 경로 없음)
+- 인프라 변경은 `vercel.json` CSP `connect-src`에 `generativelanguage.googleapis.com` 추가 1건 — 서버리스 함수·신규 의존 없음
+- 할루시네이션 방어: 추출 성분을 기존 미등록 칩 강조로 시각화 + 원본 사진 썸네일 대조 + '인식 초안' 안내
+- SPEC §3.18에 FO-41(BYOK 키·멀티샷 인입)·FO-42(Gemini 추출·CSP)·FO-43(검토 단계)를 `미구현`으로 선행 선언
+
 ## 2026-10-19 기성품 전성분 DB 구현 — FO-37~40 (Phase A+B)
 
 - `product-store.js` 신규 — `product_items` 스토어(BACKUP_KEYS 편입): 순서보존 전성분 파서·brand+name 정규화 중복·Free 30종·라이브 분류(공식/제한/금지매칭/자가/미등록)·성분 역조회·알레르기 부분일치·포뮬러 3분할 비교·JSON I/O

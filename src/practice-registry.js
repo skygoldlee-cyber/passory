@@ -107,6 +107,9 @@ const formula = {
             'openProductPanel', 'productNew', 'productEdit', 'productSave', 'productOpen',
             'productDelete', 'productChipRemove', 'productIngRegister', 'productClearFilter',
             'productCardExport', 'productImportJson', 'productOpenByIngredient',
+            'productVisionToggle', 'productPhotoPick', 'productPhotoRemove',
+            'productVisionRead', 'productVisionCancel',
+            'productVisionKeySave', 'productVisionKeyClear',
         ]],
         ['notice', [
             'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus',

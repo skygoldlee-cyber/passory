@@ -28,6 +28,10 @@ import { listCustomers } from '../customer-store.js';
 import { listFormulas } from '../formula-store.js';
 import { downloadJson } from './formula-recommend.js';
 import { CUSTOMER_OPTIONS } from '../formula-store.js';
+import {
+  getVisionKey, saveVisionKey, clearVisionKey, maskVisionKey,
+  fileToBase64Jpeg, extractProductFromImages,
+} from '../product-vision.js';
 
 /* =======================================================
    배지 — 성분 유형 분류 → 시각 계약
@@ -183,7 +187,174 @@ export function productEdit(id) {
   renderInciChips();
 }
 
+/* =======================================================
+   사진 인식 (FO-41~43) — LLM 초안 → 칩 검토 → 기존 저장 경로
+   ======================================================= */
+
+/** 사진 인입 상태 — 슬롯별 전처리 결과(base64)·썸네일 data URL */
+const vision = /** @type {{front: {data:string, mimeType:string}|null, back: {data:string, mimeType:string}|null, abort: AbortController|null}} */ ({ front: null, back: null, abort: null });
+
+/** 슬롯 썸네일·버튼 상태 갱신 */
+function renderPhotoSlot(slot) {
+  const img = vision[slot];
+  const thumb = getEl(`prod-photo-${slot}-thumb`);
+  if (thumb) {
+    thumb.innerHTML = img
+      ? `<img src="data:${img.mimeType};base64,${img.data}" alt="${slot === 'front' ? '정면' : '후면'} 사진 미리보기">`
+      : '';
+  }
+  const clearBtn = getEl(`prod-photo-${slot}-clear`);
+  if (clearBtn) clearBtn.classList.toggle('is-hidden', !img);
+  const readBtn = getEl('prod-vision-read');
+  if (readBtn) readBtn.disabled = !vision.back;
+}
+
+function visionStatus(text, isError) {
+  const s = getEl('prod-vision-status');
+  if (!s) return;
+  s.textContent = text || '';
+  s.classList.toggle('is-error', !!isError);
+}
+
+/** 키 상태 표시 — 설정됨(마스킹) / 미설정 */
+function renderVisionKeyState() {
+  const stateEl = getEl('prod-key-state');
+  const key = getVisionKey();
+  if (stateEl) stateEl.textContent = key ? `(설정됨 ${maskVisionKey(key)})` : '(미설정)';
+}
+
+export function productVisionToggle() {
+  const panel = getEl('prod-photo-panel');
+  if (!panel) return;
+  const open = panel.classList.toggle('is-hidden');
+  const btn = document.querySelector('[data-click="productVisionToggle"]');
+  if (btn) btn.setAttribute('aria-expanded', String(!open));
+  renderVisionKeyState();
+  // 키 미설정이면 키 블록 자동 펼침 — 첫 사용 안내
+  const keyBlock = /** @type {HTMLDetailsElement|null} */ (document.getElementById('prod-key-block'));
+  if (keyBlock && !getVisionKey()) keyBlock.open = true;
+}
+
+/** 슬롯별 file input 론치 — change는 1회 바인딩 */
+export function productPhotoPick(slot) {
+  if (slot !== 'front' && slot !== 'back') return;
+  const input = getEl(`prod-photo-${slot}`);
+  if (!input) return;
+  if (!input.dataset.bound) {
+    input.dataset.bound = '1';
+    input.addEventListener('change', async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      visionStatus('사진을 준비하고 있습니다…');
+      const r = await fileToBase64Jpeg(file);
+      if (!r.ok) { visionStatus(r.error, true); return; }
+      vision[slot] = r;
+      visionStatus('');
+      renderPhotoSlot(slot);
+    });
+  }
+  input.click();
+}
+
+export function productPhotoRemove(slot) {
+  if (slot !== 'front' && slot !== 'back') return;
+  vision[slot] = null;
+  const input = getEl(`prod-photo-${slot}`);
+  if (input) input.value = '';
+  renderPhotoSlot(slot);
+}
+
+/** AI로 전성분 읽기 — 추출 결과는 폼 프리필(검토 초안)일 뿐 직접 저장 아님 */
+export async function productVisionRead() {
+  if (!vision.back || !vision.back.data) {
+    visionStatus('전성분이 보이는 후면 사진을 먼저 올려주세요.', true);
+    return;
+  }
+  if (!getVisionKey()) {
+    visionStatus('Gemini API 키를 먼저 설정하세요.', true);
+    const keyBlock = /** @type {HTMLDetailsElement|null} */ (document.getElementById('prod-key-block'));
+    if (keyBlock) keyBlock.open = true;
+    return;
+  }
+  const readBtn = getEl('prod-vision-read');
+  const cancelBtn = getEl('prod-vision-cancel');
+  vision.abort = new AbortController();
+  if (readBtn) readBtn.disabled = true;
+  if (cancelBtn) cancelBtn.classList.remove('is-hidden');
+  visionStatus('사진에서 전성분을 읽는 중입니다…');
+  const images = [vision.back];
+  if (vision.front) images.push(vision.front); // 후면 우선 — 정면은 이름·브랜드 보조
+  const r = await extractProductFromImages(images, { signal: vision.abort.signal });
+  vision.abort = null;
+  if (readBtn) readBtn.disabled = false;
+  if (cancelBtn) cancelBtn.classList.add('is-hidden');
+  if (!r.ok) {
+    visionStatus(r.error, true);
+    if (r.code === 'key') {
+      const keyBlock = /** @type {HTMLDetailsElement|null} */ (document.getElementById('prod-key-block'));
+      if (keyBlock) keyBlock.open = true;
+    }
+    return;
+  }
+  // 프리필 — 사용자 검토 후 기존 productSave 경로로 저장
+  if (r.name) getEl('prod-name').value = r.name;
+  if (r.brand) getEl('prod-brand').value = r.brand;
+  const ingredients = r.ingredients || [];
+  prodForm.ingredients = ingredients;
+  const ta = getEl('prod-inci-input');
+  if (ta) ta.value = ingredients.join(', ');
+  renderInciChips();
+  // 원본 썸네일 대조용 참조 — 검토 중 라벨과 칩을 시각 비교
+  const ref = getEl('prod-photo-ref');
+  if (ref) {
+    ref.innerHTML = ['back', 'front']
+      .filter(s => vision[s])
+      .map(s => `<img src="data:${vision[s].mimeType};base64,${vision[s].data}" alt="참조용 원본 사진 — ${s === 'back' ? '후면 전성분' : '정면'}">`)
+      .join('');
+  }
+  visionStatus(`인식 초안 ${ingredients.length}종 — 원본 라벨과 대조 후 저장하세요.`);
+}
+
+export function productVisionCancel() {
+  if (vision.abort) vision.abort.abort();
+}
+
+export function productVisionKeySave() {
+  const input = getEl('prod-gemini-key');
+  const ok = saveVisionKey(input ? input.value : '');
+  if (!ok) { showToast('API 키를 입력하세요.', 'error'); return; }
+  if (input) input.value = '';
+  renderVisionKeyState();
+  const keyBlock = /** @type {HTMLDetailsElement|null} */ (document.getElementById('prod-key-block'));
+  if (keyBlock) keyBlock.open = false;
+  showToast('API 키를 이 기기에 저장했습니다.', 'success');
+}
+
+export function productVisionKeyClear() {
+  clearVisionKey();
+  renderVisionKeyState();
+  showToast('API 키를 삭제했습니다.', 'info');
+}
+
+/** 폼 진입 시 사진 인입 상태 초기화 — 편집 건 간 인식 결과 오염 방지 */
+function resetVisionState() {
+  vision.front = null;
+  vision.back = null;
+  if (vision.abort) { vision.abort.abort(); vision.abort = null; }
+  const ref = getEl('prod-photo-ref');
+  if (ref) ref.innerHTML = '';
+  ['front', 'back'].forEach(s => {
+    const input = getEl(`prod-photo-${s}`);
+    if (input) input.value = '';
+    renderPhotoSlot(s);
+  });
+  visionStatus('');
+  const panel = getEl('prod-photo-panel');
+  if (panel) panel.classList.add('is-hidden');
+}
+
 function openProductForm(title) {
+  resetVisionState();
   showPanel('formula-product-form-panel');
   const titleEl = getEl('product-form-title');
   if (titleEl) titleEl.textContent = title;

@@ -217,6 +217,7 @@ src/                    # ES Modules
       batch-store.js        # Formula OS — 조제 기록(배치) 채번·QC·위생·스냅샷 (50건)
       customer-store.js     # Formula OS — 고객 카드·상담 이력(append-only) (20명)
       product-store.js      # Formula OS — 기성품 전성분 DB (순서보존·라이브분석·역조회·JSON) (30종)
+      product-vision.js     # Formula OS — 기성품 사진 인식 (BYOK Gemini·이미지 전처리·JSON 추출)
       material-ledger.js    # Formula OS — 원료 입고·사용기한·재고, 기한 경고 (30종)
       custom-ingredient-store.js # Formula OS — 자가 등록 성분 CRUD·공식 동명 차단·superseded (50종)
       biz-profile.js        # Formula OS — 사업 유형 프로파일 (맞춤형·제조업·책임판매업, 패널 게이트)
