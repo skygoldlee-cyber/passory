@@ -221,6 +221,7 @@ const EXAM_MEDIA_ASSETS = [
   // EXAM_MEDIA:BEGIN
   './content/exams/cosmetic/교재/law/images/1과목_삽화.webp',
   './content/exams/cosmetic/교재/manufacturing/images/2과목_삽화.webp',
+  './content/exams/cosmetic/교재/manufacturing/images/계면활성제 구조와 유화.webp',
   './content/exams/cosmetic/교재/manufacturing/images/바코드의 종류 및 구성체계.webp',
   './content/exams/cosmetic/교재/safety/images/3과목_삽화.webp',
   './content/exams/cosmetic/교재/understanding/images/4과목_삽화.webp',
