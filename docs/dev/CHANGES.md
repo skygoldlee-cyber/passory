@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 리더 섹션 번호 배지(.reader-section-num) 제거 (TR-06)
+
+- `textbook-reader.js` — 섹션 카드 헤더의 순번 배지 삭제. 배지는 `idx + 1`(렌더 카드 순번)을 표시했는데 앞선 비번호 카드(개요·목차·과목 지도, 이야기형은 프롤로그·등장인물 추가)가 인덱스를 밀어 표준형 Chapter 01에 "4"·이야기형에 "8"이 표시되는 오표기였음. 십진법 전환 후 번호 헤딩은 제목에 자체 번호를 포함(`1.`·`Chapter 01.`)하므로 배지는 정보 중복 + 불일치만 유발
+- `reader-toc.js` — 배지 판정 전용이던 `hasOwnNumber`·`ownNumber` 제거 (외부 사용처 0), `reader.css`의 `.reader-section-num`·라이트 테마 오버라이드 제거
+- 배지 없는 비번호 카드는 원래 동작 동일 — 시각 변화는 번호 카드의 칩 소실뿐, TOC·북마크·스크롤 연동(`data-section-idx`) 무영향
+
 ## 2026-10-19 정답↔인용 근거 의미적 지지 체커 신설 (CQ-06)
 
 - `tools/check/check_answer_overlap.js` (`npm run check:answers`) — 문제은행 각 문항의 표기 정답이 인용 근거에 의해 실제 지지되는지 검증. `sync_citation_lines`(인용문↔소스 지문 일치)의 사각지대인 "인용은 맞는데 정답을 지지하지 않음" 계층을 커버

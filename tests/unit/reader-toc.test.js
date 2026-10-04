@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const {
     isStoryMetaSection, filterMetaSections, getTocLevel,
-    hasOwnNumber, cleanRefTitle, extractSubHeadings,
+    cleanRefTitle, extractSubHeadings,
 } = require(join(ROOT, 'src/reader-toc.js'));
 
 test('isStoryMetaSection — 메타 섹션 제목 판정', () => {
@@ -43,13 +43,6 @@ test('getTocLevel — 번호 패턴 계층', () => {
     assert.equal(getTocLevel('1.1 세부'), 2);
     assert.equal(getTocLevel('1. 세부'), 1);
     assert.equal(getTocLevel('제3조 정의'), 0);
-});
-
-test('hasOwnNumber — 자체 번호 보유 제목', () => {
-    assert.ok(hasOwnNumber('1. 개요'));
-    assert.ok(hasOwnNumber('(3) 항목'));
-    assert.ok(hasOwnNumber('Chapter 02 제조시설'));
-    assert.ok(!hasOwnNumber('세부 내용'));
 });
 
 test('cleanRefTitle — NN_ 접두사 제거', () => {

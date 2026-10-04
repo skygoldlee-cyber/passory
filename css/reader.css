@@ -699,20 +699,6 @@
 .reader-section-card.collapsed .reader-section-toggle {
     transform: rotate(-90deg);
 }
-.reader-section-num {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-    color: var(--color-on-brand);
-    font-size: var(--text-2xs);
-    font-weight: var(--font-weight-bold);
-    min-width: 26px;
-    height: 26px;
-    border-radius: var(--radius-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0 6px;
-}
 .reader-section-title {
     font-size: calc(1.15rem * var(--reader-font-scale, 1));
     color: var(--color-primary);
@@ -1232,9 +1218,6 @@
 .reader-light-theme pre.mermaid-other .task {
     fill: var(--mermaid-task-fill) !important;
     stroke: var(--mermaid-task-stroke) !important;
-}
-.reader-light-theme .reader-section-num {
-    color: var(--color-on-brand);
 }
 .reader-light-theme .reader-table-expand-btn {
     background: var(--overlay-bg);

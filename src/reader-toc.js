@@ -41,12 +41,6 @@ export function getTocLevel(title) {
     return 0;                                  // Chapter, 📖, 📊, ✅, 출처, 제N조 등
 }
 
-/** 제목이 자체 번호를 가지고 있으면 toc-num 순번을 표시하지 않음 */
-export function hasOwnNumber(title) {
-    const t = (title || '').trim();
-    return /^\d+\./.test(t) || /^\(\d+\)/.test(t) || /Chapter\s+\d+/i.test(t);
-}
-
 /** 참조문서 헤더 (01_화장품법 등) — 앞의 NN_ 접두사 제거 */
 export function cleanRefTitle(title) {
     const t = (title || '').trim();
