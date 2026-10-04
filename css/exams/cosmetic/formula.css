@@ -1654,6 +1654,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     .prod-compare-grid { grid-template-columns: 1fr; }
 }
 
+.formula-hub-group-title { margin: 1rem 0 0.7rem; }
+.formula-hub-group-title:first-of-type { margin-top: 0.3rem; }
+
 /* ── 기성품 사진 인식 (FO-41~43) ──────────────────── */
 .prod-photo-section { margin-bottom: 0.9rem; }
 .prod-photo-panel {

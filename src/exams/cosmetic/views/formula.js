@@ -118,7 +118,7 @@ const SUBNAV_ITEMS = [
   { id: 'material', label: '원료 장부', click: 'openMaterialPanel' },
   { id: 'label', label: '표시사항', click: 'openLabelPanel' },
   { id: 'adlint', label: '광고 점검', click: 'openAdLintPanel' },
-  { id: 'products', label: '기성품 DB', click: 'openProductPanel' },
+  { id: 'products', label: '기성품 분석', click: 'openProductPanel' },
   { id: 'compliance', label: '법규 준수', click: 'openCompliancePanel' },
 ];
 

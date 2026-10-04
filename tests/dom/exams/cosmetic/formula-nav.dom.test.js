@@ -77,11 +77,11 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         expect(subnav.querySelector('.is-active').textContent).toBe('배합 계산기');
     });
 
-    it('openProductPanel — 기성품 DB 패널 + 활성 칩 (FO-38)', () => {
+    it('openProductPanel — 기성품 분석 패널 + 활성 칩 (FO-38)', () => {
         openProductPanel();
         onlyVisible('formula-product-panel');
         const active = el('formula-product-subnav').querySelector('.is-active');
-        expect(active.textContent).toBe('기성품 DB');
+        expect(active.textContent).toBe('기성품 분석');
     });
 
     it('exitFormulaSubView — 허브로 복귀', () => {

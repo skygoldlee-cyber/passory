@@ -6,6 +6,13 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 Formula OS 허브 2그룹 분리 — 기성품 분석 카드 가시성 개선
+
+- 허브 그리드를 '업무 흐름'(①~⑤)과 '분석·법규 도구' 2개 섹션으로 분리, 기성품 카드를 두 번째 그룹 선두로 이동 — 기존 9개 동형 카드 중 8번째였던 위치에서 벗어나 시각 계층 확보 (`formula-hub-group-title` 신규)
+- 카드 강화: 제목 '기성품 DB'→'기성품 전성분 분석', 아이콘 icon-green→icon-orange(그리드 내 유일색), 설명에 사진 촬영 경로 명시. 패널 제목·서브내비 칩('기성품 분석')도 정합화
+- `BIZ_GUIDE` 3유형 문구에 분석·법규 도구 그룹 안내 추가 (JS가 `formula-biz-guide`를 덮어쓰므로 상수 갱신이 실효 경로)
+- DOM 테스트: 신규 1건(2그룹 구조·카드 선두 단언) + 칩 라벨 갱신
+
 ## 2026-10-19 기성품 사진 인식 등록 구현 — FO-41~43 (BYOK Gemini Flash)
 
 - `product-vision.js` 신규 — BYOK 키 관리(`FORMULA_GEMINI_KEY`, 디바이스 로컬·`BACKUP_KEYS` 의도적 제외)·마스킹 표시, 이미지 전처리(캔버스 장변≤1024px·JPEG 0.85→base64), Gemini `generateContent` 호출(`x-goog-api-key` 헤더 — URL에 키 잔류 방지), `responseMimeType:application/json`+스키마 구조화 출력, 오류 분기(nokey/noimage/key/quota/http/network/aborted/unreadable)

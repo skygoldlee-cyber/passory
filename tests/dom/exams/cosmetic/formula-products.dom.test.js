@@ -71,11 +71,24 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         vi.mocked(showConfirm).mockResolvedValue(true);
     });
 
-    it('허브 카드 — 기성품 DB 카드가 전 유형에 노출 (data-biz 미선언)', () => {
+    it('허브 카드 — 기성품 분석 카드가 전 유형에 노출 (data-biz 미선언)', () => {
         expect(document.querySelector('[data-click="openProductPanel"]')).toBeTruthy();
         const card = [...document.querySelectorAll('#formula-menu-panel .trainer-menu-card')]
             .find(c => c.dataset.click === 'openProductPanel');
         expect(card.dataset.biz).toBeUndefined(); // 미선언 = 전 유형 공용
+    });
+
+    it('허브 레이아웃 — 2그룹 분리, 기성품 카드는 분석·법규 그룹 선두', () => {
+        const groups = document.querySelectorAll('#formula-menu-panel .formula-hub-group-title');
+        expect(groups.length).toBe(2);
+        const grids = document.querySelectorAll('#formula-menu-panel .trainer-menu-grid');
+        expect(grids.length).toBe(2);
+        // 업무 흐름 그룹 = ①~⑤ 5카드
+        expect(grids[0].querySelectorAll('.trainer-menu-card').length).toBe(5);
+        // 분석·법규 그룹 첫 카드 = 기성품 분석
+        const second = grids[1].querySelectorAll('.trainer-menu-card');
+        expect(second[0].dataset.click).toBe('openProductPanel');
+        expect(second[0].querySelector('h4').textContent).toContain('기성품');
     });
 
     it('빈 상태 → 등록 폼 → 붙여넣기 칩 → 저장 → 상세 분석', () => {
