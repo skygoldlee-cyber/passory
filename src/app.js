@@ -167,7 +167,7 @@ import {
     showSimAnswerReview,
     showSimResultsSummary
 } from './views/exam-sim-review.js';
-import { switchView } from './views/navigation.js';
+import { switchView, isStaleViewGen } from './views/navigation.js';
 import { setupOfflineDetection } from './views/offline-detection.js';
 import { setupEventListeners } from './views/event-listeners.js';
 import { getViewTitles, navigateToView, initViewHashRouting } from './router.js';
@@ -303,24 +303,28 @@ function setupNavigation() {
             renderAnalysisView();
             refreshDashboardStatsInBackground();
         },
-        'flashcard-view': () => {
+        'flashcard-view': (gen) => {
             showGlobalLoading('플래시카드를 불러오는 중입니다...');
             DataLoader.loadSubject(state.flashcards.subject).then(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 loadFlashcards();
             }).catch(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 showToast('플래시카드 데이터를 불러오지 못했습니다.', 'error');
                 loadFlashcards();
             });
         },
-        'review-view': () => {
+        'review-view': (gen) => {
             showGlobalLoading('오답 및 중요 카드를 불러오는 중입니다...');
             const loaderPromises = DataLoader.getSubjectList().map(s => DataLoader.loadSubject(s.key));
             Promise.all(loaderPromises).then(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 renderReviewList();
             }).catch(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 showToast('복습 데이터를 불러오지 못했습니다.', 'error');
                 renderReviewList();
@@ -329,25 +333,29 @@ function setupNavigation() {
         'trainer-view': () => {
             initTrainer();
         },
-        'textbook-view': () => {
+        'textbook-view': (gen) => {
             showGlobalLoading('교재 검색용 데이터를 불러오는 중입니다...');
             const loaderPromises = DataLoader.getSubjectList().map(s => DataLoader.loadSubject(s.key));
             Promise.all(loaderPromises).then(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 renderTextbookSearch();
             }).catch(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 showToast('교재 검색 데이터를 불러오지 못했습니다.', 'error');
                 renderTextbookSearch();
             });
         },
-        'textbook-reader-view': () => {
+        'textbook-reader-view': (gen) => {
             if (textbookReaderState.selectedSubject) {
                 showGlobalLoading('교재 본문을 불러오는 중입니다...');
                 DataLoader.loadSubject(textbookReaderState.selectedSubject).then(() => {
+                    if (isStaleViewGen(gen)) return;
                     hideGlobalLoading();
                     renderTextbookReader();
                 }).catch(() => {
+                    if (isStaleViewGen(gen)) return;
                     hideGlobalLoading();
                     showToast('교재 본문 데이터를 불러오지 못했습니다.', 'error');
                     renderTextbookReader();
@@ -356,12 +364,14 @@ function setupNavigation() {
                 renderTextbookReader();
             }
         },
-        'dictionary-view': () => {
+        'dictionary-view': (gen) => {
             showGlobalLoading('사전 데이터를 불러오는 중입니다...');
             DataLoader.loadDictionary().then(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 renderDictionary();
             }).catch(() => {
+                if (isStaleViewGen(gen)) return;
                 hideGlobalLoading();
                 showToast('사전 데이터를 불러오지 못했습니다.', 'error');
                 renderDictionary();

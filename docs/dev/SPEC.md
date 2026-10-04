@@ -1022,7 +1022,7 @@ UI/UX 요구사양은 기능 요구사양과 달리 단위 테스트만으로는
 |----|---------|------|------|
 | ROAD-Q1 | **E2E 테스트 (Playwright)**: jsdom 경계 밖(실제 네비게이션·SW·설치 흐름) 커버 — DOM_TEST_DESIGN §9의 보류 결정 재검토 | 시나리오 매트릭스 P0 커버 후 | 보류 |
 | ROAD-Q2 | **null-가드 정적 검사**: `getElementById` 후 null 체크 누락을 감지하는 정적 스크립트 (`check:imports` 계열) | 회귀 감시 | 미구현 |
-| ROAD-Q3 | **비동기 렌더 경합 방지**: 라우터에 렌더 세대 토큰 — 빠른 뷰 전환 시 늦게 도착한 이전 렌더가 새 뷰 DOM을 덮는 것 차단 | 라우팅 전환 시점 | 미구현 |
+| ROAD-Q3 | **비동기 렌더 경합 방지**: 라우터에 렌더 세대 토큰 — 빠른 뷰 전환 시 늦게 도착한 이전 렌더가 새 뷰 DOM을 덮는 것 차단. `navigation.js`의 `bumpViewGen()`/`isStaleViewGen(gen)` — `navigateToView`가 전환마다 세대 증가·전역 로딩 오버레이 해제 후 렌더러에 `gen`을 전달하고, `.then` 재개 지점에서 스테일 세대는 렌더·토스트·로딩 해제를 전부 스킵 | 라우팅 전환 시점 | 구현 (2026-10-19) |
 | ROAD-Q4 | **대형 뷰 분할**: textbook-reader(1.6k)·formula(1.4k)·app(1.1k)·exam-simulator·quiz 분할 — weak-items 분리 패턴 재적용 | 유지보수성 | 진행중 |
 | ROAD-Q5 | **템플릿 이스케이프 자동화**: 수작업 `esc()` 의존(224곳) → tagged template 자동 이스케이프로 누락을 구조적으로 불가능하게 | 대규모 마이그레이션 | 미구현 |
 | ROAD-Q6 | **JSON.parse → `storage.getJSON` 이관**: 18개 파일의 개별 try-catch 파싱을 한 줄 헬퍼로 통일 | 파싱 정책 중앙화 | 미착수 |

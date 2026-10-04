@@ -56,6 +56,28 @@ export function restoreScrollPosition(viewId) {
     }
 }
 
+// ROAD-Q3 — 뷰 렌더 세대 토큰 (ROAD-Q*는 spec 태그 규격상 태그 불가 — 주석 표기).
+// navigateToView가 전환마다 세대를 증가시키고 렌더러에
+// gen을 전달한다. 비동기 렌더(데이터 로드 .then/await 재개 지점)는
+// isStaleViewGen(gen)으로 자기 세대가 살아있는지 판정해, 이전 뷰의 늦은
+// 완료가 새 뷰의 DOM·로딩 오버레이·토스트를 덮는 경합을 차단한다.
+let _viewRenderGen = 0;
+
+/** 뷰 렌더 세대를 1 증가시키고 새 세대 토큰을 반환한다 (router 전용). */
+export function bumpViewGen() {
+    return ++_viewRenderGen;
+}
+
+/**
+ * 전달된 세대 토큰이 현재 유효한 세대보다 오래됐는가.
+ * 비동기 렌더 재개 지점에서 `if (isStaleViewGen(gen)) return;`로 사용한다.
+ * @param {number} gen - 렌더 발화 시점에 bumpViewGen()이 반환한 세대
+ * @returns {boolean} 이후 뷰 전환이 발생해 무효화됐으면 true
+ */
+export function isStaleViewGen(gen) {
+    return gen !== _viewRenderGen;
+}
+
 /**
  * 뷰 전환. opts.scrollTop=true이면 타겟 뷰를 저장된 스크롤이 아닌 맨 위에서 연다
  * (예: 대시보드 "맞춤학습 보기"처럼 문서형 화면으로의 딥링크).

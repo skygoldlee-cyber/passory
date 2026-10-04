@@ -1,8 +1,8 @@
 // src/router.js - 뷰 라우터: 타이틀 맵 및 뷰 렌더링 디스패치 (app.js에서 분리)
 // @spec UX-NAV-01,UX-NAV-08,UM-04
 import { state } from './state.js';
-import { saveScrollPosition, restoreScrollPosition, registerViewNavigator } from './views/navigation.js';
-import { showToast } from './ui-utils.js';
+import { saveScrollPosition, restoreScrollPosition, registerViewNavigator, bumpViewGen } from './views/navigation.js';
+import { showToast, hideGlobalLoading } from './ui-utils.js';
 import { isAnyModalOpen, consumedModalPop } from './modal-back.js';
 import { getPracticeViewTitles, getPracticeHashSlugs } from './practice-registry.js';
 
@@ -113,10 +113,17 @@ export function navigateToView(target, ctx) {
 
     state.currentView = target;
 
-    // 각 뷰 진입 시 렌더링 갱신 — 핸들러 맵에서 디스패치
+    // ROAD-Q3 — 렌더 세대 토큰. 이전 뷰의 진행 중인 비동기 로딩·렌더는
+    // 이 증가 시점에 무효화되며, 스테일 콜백이 로딩 오버레이를 해제하지 못하도록
+    // 전환 시점에 전역 로딩을 먼저 내린다 (새 뷰가 필요하면 자체로 다시 표시).
+    const gen = bumpViewGen();
+    hideGlobalLoading();
+
+    // 각 뷰 진입 시 렌더링 갱신 — 핸들러 맵에서 디스패치.
+    // 비동기 렌더러는 gen을 캡처해 재개 지점에서 isStaleViewGen(gen)으로 판정한다.
     const renderFn = handlers.viewRenderers && handlers.viewRenderers[target];
     if (typeof renderFn === 'function') {
-        renderFn();
+        renderFn(gen);
     }
 
     // 새 뷰 스크롤 위치 복원

@@ -6,6 +6,14 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 라우터 렌더 세대 토큰 — 비동기 렌더 경합 차단 (ROAD-Q3)
+
+- `navigation.js` — `bumpViewGen()`/`isStaleViewGen(gen)` 신설. 모듈 카운터를 뷰 전환 세대로 사용 (router→practice-registry 양방향 import 회피 위해 하위 모듈에 배치)
+- `router.js` — `navigateToView`가 전환마다 세대 증가 → `hideGlobalLoading()`으로 이전 뷰의 잔류 로딩 해제 → `renderFn(gen)`으로 토큰 전달. 스테일 콜백이 새 뷰의 스피너를 지우는 역방향 경합까지 차단
+- `app.js` — 비동기 뷰 렌더러 4종(flashcard·review·textbook·textbook-reader·dictionary)이 `gen`을 캡처해 `.then`/`.catch` 재개 지점에서 스테일 시 렌더·토스트·로딩 해제 전부 스킵
+- `practice-registry.js` — `enter(gen)`에 세대 전달 + lazy import로 `isStaleViewGen` 해석 후 await 재개 지점·finally 로딩 해제에 게이트 (정적 import는 exam-context 단일 원칙 유지)
+- DOM 테스트 +4 — 세대 전달·증가, 스테일 콜백 스킵, 동일 세대 정상 반영, 전환 시 로딩 해제. SPEC ROAD-Q3 미구현→구현
+
 ## 2026-10-19 성분사전 성분 고시 확인 (DI-11)
 
 - `references.json.noticeIngredientDocs` — 성분 관련 고시 subset 선언 (안전기준·기능성 기준 및 시험방법·알레르기 유발성분 표시·색소 종류 및 기준 4종) → `NOTICE_INGREDIENT_DOCS` 테이블로 pdf-registry 방출, `checkNamedRefs`가 문서명 일치를 빌드 시 검증

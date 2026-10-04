@@ -121,29 +121,39 @@ const formula = {
     // 뷰 진입 — 피처가 자체 로딩·데이터 선행·초기화·도메인 훅을 소유한다.
     // renderFn은 비동기 — navigateToView가 반환값을 기다리지 않으므로
     // 내부에서 모든 실패를 삼켜야 한다 (토스트로 보고).
-    async enter() {
-        const [{ DataLoader }, { checkMfdsNotice }, { showGlobalLoading, hideGlobalLoading, showToast }] =
+    // ROAD-Q3 — gen은 라우터가 부여한 렌더 세대. await 재개 지점마다
+    // isStaleViewGen으로 판정해 다른 뷰로 전환된 뒤의 늦은 DOM·로딩·토스트
+    // 쓰기를 차단한다. 스테일이면 로딩 해제도 건너뛴다 — navigateToView가
+    // 전환 시점에 전역 로딩을 이미 내렸고 새 뷰의 스피너를 지우면 안 된다.
+    async enter(gen) {
+        const [{ DataLoader }, { checkMfdsNotice }, { showGlobalLoading, hideGlobalLoading, showToast }, { isStaleViewGen }] =
             await Promise.all([
                 import('./data-loader.js'),
                 formula.loaders.notice(),
                 import('./ui-utils.js'),
+                import('./views/navigation.js'),
             ]);
+        const stale = () => typeof gen === 'number' && isStaleViewGen(gen);
+        if (stale()) return;
         showGlobalLoading(formula.loadingText);
         try {
             // 배너·허브 버튼이 뷰 마크업에 의존하므로 주입을 선행한다
             await ensureViewMarkup(formula);
+            if (stale()) return;
             checkMfdsNotice(); // 식약처 신규 고시 감지 배너 — 도메인 훅 (비차단, 실패 무시)
             const m = await formula.loaders.main();
+            if (stale()) return;
             try {
                 await DataLoader.loadIngredients();
             } catch (e) {
-                showToast('원료 데이터를 불러오지 못했습니다.', 'error');
+                if (!stale()) showToast('원료 데이터를 불러오지 못했습니다.', 'error');
             }
+            if (stale()) return;
             m.initFormulaView();
         } catch (e) {
-            showToast(formula.loadErrorText, 'error');
+            if (!stale()) showToast(formula.loadErrorText, 'error');
         } finally {
-            hideGlobalLoading();
+            if (!stale()) hideGlobalLoading();
         }
     },
 };
@@ -266,7 +276,7 @@ export function getPracticeLazyHandlers() {
 export function getPracticeViewRenderers() {
     const out = {};
     for (const f of Object.values(PRACTICE_FEATURES)) {
-        out[f.viewId] = () => { void f.enter(); };
+        out[f.viewId] = (gen) => { void f.enter(gen); };
     }
     return out;
 }

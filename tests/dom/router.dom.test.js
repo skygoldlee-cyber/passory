@@ -1,6 +1,8 @@
 // @spec UX-NAV-01,UX-NAV-08,UM-04
 import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 import { getViewTitles, navigateToView, initViewHashRouting, resetExitGuardState } from '../../src/router.js';
+import { isStaleViewGen } from '../../src/views/navigation.js';
+import { showGlobalLoading } from '../../src/ui-utils.js';
 import { state } from '../../src/state.js';
 
 // navigation.js의 DOM 의존성 모킹
@@ -8,11 +10,17 @@ vi.mock('../../src/state.js', () => ({
     state: { currentView: 'dashboard-view', flashcards: { subject: 'law' } }
 }));
 
-vi.mock('../../src/views/navigation.js', () => ({
-    saveScrollPosition: vi.fn(),
-    restoreScrollPosition: vi.fn(),
-    registerViewNavigator: vi.fn()
-}));
+vi.mock('../../src/views/navigation.js', () => {
+    // 렌더 세대는 실제 동작하는 카운터로 대체 — ROAD-Q3 경합 판정 검증용
+    let gen = 0;
+    return {
+        saveScrollPosition: vi.fn(),
+        restoreScrollPosition: vi.fn(),
+        registerViewNavigator: vi.fn(),
+        bumpViewGen: () => ++gen,
+        isStaleViewGen: (g) => g !== gen
+    };
+});
 
 describe('router.js — DOM 테스트', () => {
     beforeEach(() => {
@@ -159,6 +167,67 @@ describe('router.js — DOM 테스트', () => {
             expect(stopAudio).not.toHaveBeenCalled();
         });
 
+    });
+
+    // ROAD-Q3 (ROAD-Q*는 spec 태그 규격 대상 아님 — 주석 표기)
+    describe('렌더 세대 토큰 — 비동기 경합 차단', () => {
+        const ctx = (renderers) => ({
+            titlesMap: getViewTitles(null),
+            handlers: { viewRenderers: renderers, stopReaderAudio: vi.fn() }
+        });
+
+        it('렌더러에 세대 토큰(number)을 전달하고 전환마다 증가', () => {
+            const gens = [];
+            const render = vi.fn((gen) => gens.push(gen));
+            navigateToView('quiz-view', ctx({ 'quiz-view': render }));
+            navigateToView('flashcard-view', ctx({ 'flashcard-view': render }));
+            expect(gens).toHaveLength(2);
+            expect(typeof gens[0]).toBe('number');
+            expect(gens[1]).toBeGreaterThan(gens[0]);
+        });
+
+        it('전환 후 도착한 이전 뷰의 비동기 렌더는 스테일로 스킵', async () => {
+            let resolveFirst;
+            const firstGenP = new Promise((res) => { resolveFirst = res; });
+            const writes = [];
+            navigateToView('quiz-view', ctx({
+                'quiz-view': (gen) => {
+                    firstGenP.then(() => {
+                        if (isStaleViewGen(gen)) return;
+                        writes.push('quiz');
+                    });
+                }
+            }));
+            navigateToView('flashcard-view', ctx({}));
+            resolveFirst();
+            await Promise.resolve();
+            expect(writes).toEqual([]);
+        });
+
+        it('같은 세대의 비동기 렌더는 정상 반영', async () => {
+            let resolveIt;
+            const p = new Promise((res) => { resolveIt = res; });
+            const writes = [];
+            navigateToView('quiz-view', ctx({
+                'quiz-view': (gen) => {
+                    p.then(() => {
+                        if (isStaleViewGen(gen)) return;
+                        writes.push('quiz');
+                    });
+                }
+            }));
+            resolveIt();
+            await Promise.resolve();
+            expect(writes).toEqual(['quiz']);
+        });
+
+        it('뷰 전환 시 잔류 전역 로딩 오버레이를 해제', () => {
+            showGlobalLoading('이전 뷰 로딩 중');
+            const overlay = document.getElementById('global-loading-overlay');
+            expect(overlay.classList.contains('is-visible')).toBe(true);
+            navigateToView('quiz-view', ctx({}));
+            expect(overlay.classList.contains('is-visible')).toBe(false);
+        });
     });
 
     describe('접근성 — aria-current + 활성 탭 가시성', () => {
