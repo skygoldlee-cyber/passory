@@ -101,7 +101,7 @@ const SECTIONS = [
       { id: 'lic-report', text: '맞춤형화장품판매업 신고 완료', note: '신고서 + 조제관리사 자격증 사본 + 시설명세서 (관할 지방식약청)', refs: ['law', 'rule'] },
       { id: 'lic-manager', text: '혼합·소분 업무에 조제관리사 배치', note: '품질·안전 관리 업무 종사자로 조제관리사를 두어야 함', refs: ['law', 'rule'] },
       { id: 'lic-edu', text: '조제관리사 매년 안전성·품질관리 교육 이수', note: '미이수 시 과태료(50만 원 이하) 대상', refs: ['law'] },
-      { id: 'lic-materials', text: '사용 원료 목록 매년 1회 식약처 보고', note: '맞춤형화장품에 사용된 모든 원료 — 원료 장부로 목록 관리 가능', refs: ['law'] },
+      { id: 'lic-materials', text: '사용 원료 목록 매년 1회 식약처 보고', note: '맞춤형화장품에 사용된 모든 원료 — 원료 장부로 목록 관리 가능. 책임판매업 등록이 신고의 전제이므로 일반 화장품 유통 시 원료 목록 사전보고(법 제5조⑤)도 적용', refs: ['law'] },
     ],
   },
   {
@@ -209,6 +209,8 @@ const MFG_SECTIONS = [
       { id: 'mfg-label', text: '제품 표시사항 기재 확인 (화장품법 제10조)', note: '제조번호·사용기한·전성분·제조업자 표시 — 표시사항 패널 활용', refs: ['law', 'labeling'], app: { label: '표시사항 탭', click: 'openLabelPanel' } },
       { id: 'mfg-recall', text: '위해 제품 회수 절차·연락체계 수립', note: '제조번호별 출고 추적이 전제', refs: ['law', 'cgmp'] },
       { id: 'mfg-side', text: '부작용 발생 시 지체 없이 식약처 보고', refs: ['law'] },
+      { id: 'mfg-functional', text: '기능성화장품 판매 시 품목별 심사 또는 보고서 제출', note: '미심사·미보고 기능성 제품 유통 불가 — 화장품법 제4조①. 변경 시에도 동일', refs: ['law', 'rule'] },
+      { id: 'mfg-sales-report', text: '자사 제품 직접 유통·판매 시 책임판매업 등록 + 원료 목록·실적 보고', note: '제조업 자격으론 보고 의무 없음 — 판매하려면 책임판매업 등록 후 법 제5조⑤·시행규칙 제13조 의무 발생', refs: ['law', 'rule'] },
     ],
   },
 ];

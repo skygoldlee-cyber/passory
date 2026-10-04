@@ -181,6 +181,13 @@ describe('Formula OS — 체크리스트 세트 (FO-34)', () => {
         expect(el('comp-list').textContent).toContain('생산·수입실적 매년 2월 말 보고');
     });
 
+    it('mfg 세트 — 기능성 심사·보고서 + 직접 판매 시 책임판매업 보고 경계 안내 포함', () => {
+        setBizType('mfg');
+        openCompliancePanel();
+        expect(el('comp-list').textContent).toContain('품목별 심사 또는 보고서');
+        expect(el('comp-list').textContent).toContain('책임판매업 등록 + 원료 목록·실적 보고');
+    });
+
     it('체크 상태는 세트별 분리 — custom 체크가 sales에 섞이지 않음', () => {
         setBizType('custom');
         openCompliancePanel();
