@@ -66,7 +66,7 @@ describe('command-palette — 통합 검색', () => {
         type('존재하지않는검색어');
         const items = document.querySelectorAll('#cmdk-results .cmdk-item');
         expect(items.length).toBe(1);
-        expect(document.getElementById('cmdk-results').textContent).toContain('본문에서');
+        expect(document.getElementById('cmdk-results').textContent).toContain('참조자료에서');
     });
 
     it('화살표 키로 활성 항목 이동, Enter로 실행', () => {

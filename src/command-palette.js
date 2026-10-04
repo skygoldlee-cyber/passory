@@ -149,7 +149,7 @@ export function searchAll(query, sources) {
     // 쿼리는 항상 이 항목으로 교재 본문검색(역색인) 뷰에 넘긴다. 결과가 있어도 항상 맨 아래 표시.
     results.push({
         type: 'fulltext', icon: 'fa-magnifying-glass',
-        title: `교재 본문에서 "${query}" 전체 검색`, sub: '본문 내용까지 전수 검색 (제목 매칭만으로는 못 찾는 내용)',
+        title: `교재·참조자료에서 "${query}" 전체 검색`, sub: '교재 본문·참조자료 전수 검색 (제목 매칭만으로는 못 찾는 내용)',
         action: { kind: 'fulltext', query: (query || '').trim() }, score: 0
     });
     return results;
