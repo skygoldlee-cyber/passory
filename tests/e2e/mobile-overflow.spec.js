@@ -127,6 +127,24 @@ test.describe('모바일 오버플로 스윕', () => {
             expect(cingRect.footBottom, `cing 푸터가 뷰포트 밖 (vp ${vp.width}×${vp.height})`)
                 .toBeLessThanOrEqual(cingRect.vh + 1);
             expect(cingRect.footTop).toBeGreaterThanOrEqual(0);
+            // 위치뿐 아니라 페인트 순서도 검증 — 모바일 탭 바(--z-drawer)가 오버레이보다
+            // 위에 그려지면 좌표는 정상이어도 버튼이 가려진다 (실기기 잘림 사례).
+            // 단, 비동기로 뜨는 공용 알림(DB 갱신 등)은 측정 방해 요소라 같은 evaluate에서 원자 제거
+            const cingHit = await page.evaluate(() => {
+                document.querySelectorAll('#app-confirm-overlay, #whats-new-overlay,'
+                    + ' #pro-upgrade-overlay, #usage-stats-overlay, #onboarding-overlay, #feedback-overlay')
+                    .forEach(el => el.remove());
+                const btn = document.querySelector('#cing-overlay [data-click="customIngSave"]');
+                const r = btn.getBoundingClientRect();
+                const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+                if (!hit) return 'none';
+                return hit.closest('#cing-overlay') ? 'modal'
+                    : hit.tagName.toLowerCase() + (hit.id ? '#' + hit.id : '')
+                        + (typeof hit.className === 'string' && hit.className.trim()
+                            ? '.' + hit.className.trim().split(/\s+/)[0] : '');
+            });
+            expect(cingHit, `cing 등록 버튼이 다른 요소에 가려짐 (vp ${vp.width}×${vp.height})`)
+                .toBe('modal');
             await page.locator('#cing-overlay [data-click="customIngClose"]').first().click();
 
             // ② 컨펌 다이얼로그 — 긴 메시지로 눌러도 액션이 보여야 함

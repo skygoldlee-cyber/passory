@@ -1148,7 +1148,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     bottom: auto;
     /* JS 실측 뷰포트 — 키보드·PWA 콜드스타트(dvh 과대측정)에서 하단 잘림 방지 (UX-PWA-05) */
     height: var(--app-height, 100dvh);
-    z-index: 1000;
+    /* 모바일 탭 바(--z-drawer)보다 위 — 카드가 커지면 하단 버튼이 탭 바에 가려졌던 문제 */
+    z-index: var(--z-modal, 2000);
     background: rgba(5, 8, 14, 0.92);
     display: flex;
     justify-content: center;
