@@ -127,6 +127,19 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(detail).toContain('조회 시점 원료 DB 기준');
     });
 
+    it('폼 오픈 — 스크롤 맨 위 리셋 (모바일에서 폼 상단·사진 인입 잘림 방지)', () => {
+        // 목록을 스크롤한 상태에서 폼을 열면 이전 scrollTop이 유지돼
+        // .prod-photo-section·헤더가 뷰포트 위로 밀려 보이지 않던 결함 (showPanel 공통 처리)
+        const mc = document.querySelector('.main-content');
+        expect(mc).toBeTruthy();
+        openProductPanel();
+        mc.scrollTop = 400;
+        productNew();
+        expect(isVisible('formula-product-form-panel')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
+        expect(document.querySelector('[data-click="productVisionToggle"]')).toBeTruthy();
+    });
+
     it('미등록 칩 — 사전 등록 단축 버튼 노출 (FO-32 재사용)', () => {
         productNew();
         setInciInput('정제수, 미등록원료A');

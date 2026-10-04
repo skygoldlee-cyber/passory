@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-04 Formula OS 서브패널 전환 시 스크롤 리셋 — 모바일 폼 상단 잘림 수정
+
+- 결함: `showPanel`이 패널 표시만 토글하고 `.main-content` 스크롤을 유지 → 허브·목록을 스크롤한 상태로 폼/상세를 열면 상단(헤더·기성품 폼 '사진으로 채우기' 버튼)이 뷰포트 위로 잘려 보이지 않음. 실측 재현: scrollTop 432 상태에서 폼 오픈 시 `.prod-photo-section`이 top −227로 완전 이탈
+- 수정: `showPanel`에서 `.main-content` scrollTop=0 — 15개 서브패널 전환 공통 처리 (고객·배합·장부·기성품·준수 등 폼 전부가 동일 결함 잠재 보유). switchView의 뷰 단위 스크롤 복원(UX-NAV-07)과 무관한 인트라뷰 전환 계약
+- DOM 회귀: `formula-products.dom.test.js`에 '폼 오픈 시 scrollTop 리셋' 단언 추가
+
 ## 2026-10-04 생성물 드리프트 수정 — 시험별 webmanifest shortcuts 생성기 패스스루 (UX-PWA-06)
 
 - `build_exams_list.js`가 `manifest.<id>.webmanifest` 재생성 시 `shortcuts`를 소실시키던 결함 수정 — 8a155e92에서 SPEC 선행으로 수동 편집된 '배합 계산기' shortcut이 `build:data`마다 사라져 `check:datafresh`가 드리프트로 검출

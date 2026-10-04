@@ -104,6 +104,10 @@ export function showPanel(id) {
     const el = getEl(p);
     if (el) el.classList.toggle('is-hidden', p !== id);
   });
+  // 서브패널은 별개 화면 — 이전 패널의 스크롤이 유지되면 모바일에서
+  // 폼 상단(헤더·사진 인입 버튼 등)이 뷰포트 위로 잘려 보이지 않는다
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) mainContent.scrollTop = 0;
 }
 
 /* =======================================================
