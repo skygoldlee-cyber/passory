@@ -1,5 +1,14 @@
 [
   {
+    "version": "v20261005-4f918dd",
+    "date": "2026-10-05",
+    "notes": [
+      "[정리] check_numbering @spec none 태그 + TRACE_MATRIX 재생성 [no-docs]",
+      "[정리·trace] TRACE_MATRIX 재생성 [no-docs]",
+      "[수정·content] 1과목 이야기형 서사 패치 헤딩 중복·번호 건너뜀 수정 + check:numbering 게이트"
+    ]
+  },
+  {
     "version": "v20261005-e197d16",
     "date": "2026-10-05",
     "notes": [
@@ -142,13 +151,6 @@
     "date": "2026-10-04",
     "notes": [
       "[수정·formula] 제형 콤보 탭 바 침범 — 네이티브 select를 라디오 칩으로 교체"
-    ]
-  },
-  {
-    "version": "v20261004-9a2b701",
-    "date": "2026-10-04",
-    "notes": [
-      "[수정·formula] 기성품 폼 제형 콤보 글자 잘림 — unit 축소 클래스 제거"
     ]
   }
 ]
