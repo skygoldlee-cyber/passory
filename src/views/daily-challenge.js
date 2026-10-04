@@ -81,7 +81,7 @@ export function updateStreakAndDailyUI() {
         weeklyEl.textContent = `이번 주 ${w.studyDays}/${w.goalDays}일`;
         weeklyEl.classList.toggle('weekly-goal-done', w.percent >= 100);
     }
-    
+
     const todayCompleted = safeGetItem(dailyCompletedKey(todayStr));
     if (todayCompleted) {
         if (challengeStatusEl) {
@@ -114,7 +114,7 @@ export function startDailyChallenge() {
         showToast('오늘의 데일리 챌린지를 이미 달성하셨습니다! 내일 다시 도전해 주세요.', 'info');
         return;
     }
-    
+
     const loaderPromises = DataLoader.getSubjectList().map(s => DataLoader.loadSubject(s.key));
     // 지식DB 분류 문항용 데이터셋도 함께 로드 (스키마 미선언 시험은 무시)
     if (hasFeature('dictionary')) {
@@ -130,7 +130,7 @@ export function startDailyChallenge() {
 
 function _startDailyChallengeImpl() {
     const qPack = [];
-    
+
     // 1. 플래시카드 복습 3개
     let allCards = [];
     if (window.STUDY_DATA) {
@@ -147,7 +147,7 @@ function _startDailyChallengeImpl() {
             correct: c.term
         });
     });
-    
+
     // 2. 퀴즈 풀이 3개
     let allQuizzes = [];
     if (window.STUDY_DATA) {
@@ -165,7 +165,7 @@ function _startDailyChallengeImpl() {
             explanation: `과목: ${q.subject}`
         });
     });
-    
+
     // 3. 농도 계산 문제 1개 — calcPractice 기능 시험만 (도메인 시나리오 문구)
     if (hasFeature('calcPractice')) {
         const w = [100, 200, 300][Math.floor(Math.random() * 3)];
@@ -178,7 +178,7 @@ function _startDailyChallengeImpl() {
             explanation: `계산 공식: 중량 = (전체 중량 * 배합 %) / 100 = (${w} * ${cVal}) / 100 = ${formulaWeight}g`
         });
     }
-    
+
     // 4. 지식DB 분류 판별 1개 — registry.knowledge 스키마로 데이터셋 해석
     const db = DataLoader.getKnowledgeItems();
     const kSchema = (DataLoader.registry && DataLoader.registry.knowledge) || {};
@@ -198,18 +198,18 @@ function _startDailyChallengeImpl() {
             explanation: `"${ing.name}" — 분류: ${correctText}${ing.limit ? ` · 기준: ${ing.limit}` : ''}`
         });
     }
-    
+
     dailyState.currentIndex = 0;
     dailyState.correctCount = 0;
     dailyState.questions = qPack;
-    
+
     showDailyModal();
 }
 
 function showDailyModal() {
     const oldModal = document.getElementById('daily-challenge-modal');
     if (oldModal) oldModal.remove();
-    
+
     const modalHTML = `
         <div id="daily-challenge-modal" role="dialog" aria-modal="true" aria-label="데일리 챌린지" style="position: fixed; top: 0; left: 0; width: 100vw; height: var(--app-height, 100dvh); background: rgba(11, 15, 25, 0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
             <div class="glass-card dialog-card" style="width: 90%; max-width: 600px; padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); position: relative; box-shadow: var(--shadow-lg);">
@@ -217,18 +217,18 @@ function showDailyModal() {
                     <h3 style="font-weight: 700; color: var(--color-primary); margin: 0; font-size: 1.4rem;"><i class="fa-solid fa-fire"></i> 데일리 챌린지</h3>
                     <span id="daily-modal-progress" style="font-size: 0.9rem; color: var(--color-text-muted);"></span>
                 </div>
-                
+
                 <div class="progress-bar-container" style="height: 6px; margin-bottom: 2rem;">
                     <div id="daily-modal-bar" class="progress-bar" style="width: 12.5%; background: var(--color-primary);"></div>
                 </div>
-                
+
                 <div id="daily-modal-q-body" style="min-height: 200px; margin-bottom: 2rem;">
                     질문 로딩 중...
                 </div>
-                
+
                 <div id="daily-modal-answer-area" style="margin-bottom: 2rem;">
                 </div>
-                
+
                 <div class="quiz-feedback is-hidden" id="daily-modal-feedback" style="margin-bottom: 2rem; padding: 1.25rem;">
                     <div class="feedback-icon" id="daily-modal-feedback-icon"><i class="fa-solid fa-check"></i></div>
                     <div class="feedback-content">
@@ -236,7 +236,7 @@ function showDailyModal() {
                         <p id="daily-modal-feedback-desc" style="font-size: 0.9rem;">설명</p>
                     </div>
                 </div>
-                
+
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <button class="btn btn-secondary" data-click="closeDailyModal" title="데일리 챌린지 닫기"><i class="fa-solid fa-xmark"></i> 나가기</button>
                     <button id="daily-modal-next-btn" class="btn btn-success is-hidden" data-click="nextDailyStep">다음 단계 <i class="fa-solid fa-arrow-right"></i></button>
@@ -244,7 +244,7 @@ function showDailyModal() {
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     renderDailyStep();
 }
@@ -264,8 +264,11 @@ export async function closeDailyModal() {
 }
 
 function renderDailyStep() {
+    // 단계 전환 — .dialog-card는 자체 스크롤 컨테이너라 이전 스크롤이 잔류하면 다음 문항 상단이 잘림
+    const card = document.querySelector('#daily-challenge-modal .dialog-card');
+    if (card) card.scrollTop = 0;
     const q = dailyState.questions[dailyState.currentIndex];
-    
+
     const progEl = document.getElementById('daily-modal-progress');
     if (progEl) progEl.textContent = `진행: ${dailyState.currentIndex + 1} / ${dailyState.questions.length}`;
     const barEl = /** @type {HTMLElement|null} */ (document.getElementById('daily-modal-bar'));
@@ -280,7 +283,7 @@ function renderDailyStep() {
     const answerArea = document.getElementById('daily-modal-answer-area');
     if (!answerArea) return;
     answerArea.innerHTML = '';
-    
+
     if (q.type === 'card') {
         qBody.innerHTML = `
             <div id="daily-card-container" style="perspective: 1000px; margin: 1rem 0; width: 100%; height: 180px; cursor: pointer;">
@@ -295,13 +298,13 @@ function renderDailyStep() {
                 </div>
             </div>
         `;
-        
+
         const cardContainer = document.getElementById('daily-card-container');
         cardContainer?.addEventListener('click', () => {
             const inner = /** @type {HTMLElement|null} */ (document.getElementById('daily-card-inner'));
             if (inner) inner.style.transform = inner.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
         });
-        
+
         answerArea.innerHTML = `
             <div style="display: flex; gap: 1rem; width: 100%;">
                 <button class="btn btn-warning" data-click="submitDailyCardAnswer" data-args="[false]" style="flex: 1; justify-content: center;"><i class="fa-solid fa-question"></i> 아직 헷갈림</button>
@@ -336,16 +339,16 @@ export function submitDailyCardAnswer(isMemorized) {
     if (isMemorized) {
         dailyState.correctCount++;
     }
-    
+
     const feedback = document.getElementById('daily-modal-feedback');
     const title = document.getElementById('daily-modal-feedback-title');
     const desc = document.getElementById('daily-modal-feedback-desc');
-    
+
     if (feedback) feedback.classList.remove('is-hidden');
     if (feedback) feedback.classList.remove('incorrect');
     if (title) title.textContent = isMemorized ? '완벽히 외운 카드로 분류했습니다.' : '헷갈린 복습 카드로 분류했습니다.';
     if (desc) desc.textContent = `용어: ${dailyState.questions[dailyState.currentIndex].correct}`;
-    
+
     const q = dailyState.questions[dailyState.currentIndex];
     if (isMemorized) {
         state.memorizedCards.add(q.cardObj.id);
@@ -354,7 +357,7 @@ export function submitDailyCardAnswer(isMemorized) {
         state.weakCards.add(q.cardObj.id);
     }
     saveProgress();
-    
+
     const nextBtn = document.getElementById('daily-modal-next-btn');
     if (nextBtn) nextBtn.classList.remove('is-hidden');
 }
@@ -365,7 +368,7 @@ function submitDailyChoiceAnswer(selectedBtn, selectedValue, correctValue) {
     if (isCorrect) {
         dailyState.correctCount++;
     }
-    
+
     showDailyFeedback(isCorrect, correctValue);
 }
 
@@ -377,18 +380,18 @@ export function submitDailyShortAnswer() {
         showToast('정답을 입력하세요!', 'warning');
         return;
     }
-    
+
     const q = dailyState.questions[dailyState.currentIndex];
     const isCorrect = checkShortAnswer(userInput, q.correct);
-    
+
     if (isCorrect) {
         dailyState.correctCount++;
     }
-    
+
     input.disabled = true;
     const btn = /** @type {HTMLButtonElement|null} */ (document.querySelector('#daily-modal-answer-area button'));
     if (btn) btn.disabled = true;
-    
+
     showDailyFeedback(isCorrect, q.correct);
 }
 
@@ -415,15 +418,15 @@ export function nextDailyStep() {
 function finishDailyChallenge() {
     const modal = document.getElementById('daily-challenge-modal');
     if (modal) modal.remove();
-    
+
     showToast(`일일 챌린지 완료 — 점수 ${dailyState.correctCount} / ${dailyState.questions.length}`, 'success');
-    
+
     const todayStr = todayKey();
     safeSetItem(dailyCompletedKey(todayStr), "true");
 
     let streak = parseInt(safeGetItem(STORAGE_KEYS.STUDY_STREAK) || '0') || 0;
     const lastDate = safeGetItem(STORAGE_KEYS.STUDY_STREAK_LAST_DATE);
-    
+
     if (lastDate !== todayStr) {
         streak++;
         safeSetItem(STORAGE_KEYS.STUDY_STREAK, streak);

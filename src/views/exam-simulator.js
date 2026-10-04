@@ -16,6 +16,7 @@ import { chapterForQuestion, renderSimResultBreakdown } from './exam-sim-review.
 import { recordStatementJudgments } from '../statement-tracker.js';
 import { examIdToSubjectId } from '../exam-context.js';
 import { proFeatureNotice } from '../pro-upgrade.js';
+import { resetMainScroll } from './navigation.js';
 import { WEAK_SIM_PREFIX } from '../weak-items.js';
 
 // --- 5. 실전 모의고사 시뮬레이터 구현 ---
@@ -40,6 +41,7 @@ export function startSimSession(examData) {
     if (simResultPanel) simResultPanel.classList.add('is-hidden');
     if (simReviewPanel) simReviewPanel.classList.add('is-hidden');
     if (simArenaPanel) simArenaPanel.classList.remove('is-hidden');
+    resetMainScroll();
 
     // 타이머 및 OMR 렌더링
     const simExamTitle = document.getElementById('sim-exam-title');
@@ -371,6 +373,7 @@ export function resumeSimDraft() {
         if (_simResultPanel) _simResultPanel.classList.add('is-hidden');
         if (_simReviewPanel) _simReviewPanel.classList.add('is-hidden');
         if (_simArenaPanel) _simArenaPanel.classList.remove('is-hidden');
+        resetMainScroll();
 
         const _simExamTitle = document.getElementById('sim-exam-title');
         if (_simExamTitle) _simExamTitle.textContent = draft.examTitle;
@@ -419,6 +422,7 @@ export function exitSimArena() {
     if (_result) _result.classList.add('is-hidden');
     if (_review) _review.classList.add('is-hidden');
     if (_list) _list.classList.remove('is-hidden');
+    resetMainScroll();
 
     // 대시보드 갱신하여 배너 확인
     checkExamDraft();
@@ -541,6 +545,7 @@ export function jumpToSimQuestion(index) {
 }
 
 export function renderSimQuestion() {
+    resetMainScroll(); // 문항 이동 — 이전 문항을 읽으며 스크롤한 위치가 잔류하면 신규 문항 상단이 잘림
     const q = simState.data.questions[simState.currentIndex];
     if (!q) return;
 

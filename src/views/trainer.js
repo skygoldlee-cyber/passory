@@ -7,6 +7,7 @@ import { vibrate, HAPTIC, showToast, markChoiceButtons, wrongReviewHtml, trainer
 import { PATHS } from '../paths.js';
 import { DataLoader } from '../data-loader.js';
 import { updateDueBadges } from './trainer-drills.js';
+import { resetMainScroll } from './navigation.js';
 
 /* =======================================================
    🧠 주관식 유사어 채점 엔진 (Smart Synonym Matcher)
@@ -30,12 +31,12 @@ const cleanForCompare = (str) => {
 
 export function checkShortAnswer(userInput, correctAnswer) {
     if (!userInput || !correctAnswer) return false;
-    
+
     const cleanUser = cleanForCompare(userInput);
     const cleanCorrect = cleanForCompare(correctAnswer);
-    
+
     if (cleanUser === cleanCorrect) return true;
-    
+
     // 한글 조사 제거 헬퍼 함수
     const removeJosa = (str) => {
         if (str.length > 2) {
@@ -46,23 +47,23 @@ export function checkShortAnswer(userInput, correctAnswer) {
         }
         return str;
     };
-    
+
     if (removeJosa(cleanUser) === removeJosa(cleanCorrect)) return true;
-    
+
     // 여러 정답 대조 (쉼표, 슬래시 분기)
     const hasMultipleParts = (
         (correctAnswer.includes('(A)') && correctAnswer.includes('(B)')) ||
         (correctAnswer.includes('[A]') && correctAnswer.includes('[B]')) ||
         (correctAnswer.includes('①') && correctAnswer.includes('②'))
     );
-    
+
     let splitCorrects = [];
     if (!hasMultipleParts) {
         splitCorrects = correctAnswer.split(/[,/]/).map(val => cleanForCompare(val));
         if (splitCorrects.some(val => val === cleanUser)) return true;
         if (splitCorrects.some(val => removeJosa(cleanUser) === removeJosa(val))) return true;
     }
-    
+
     // 유사어 사전 대조 (registry.synonyms — 시험별 manifest 선언)
     for (const [key, synonyms] of Object.entries(_getSynonyms())) {
         const cleanKey = cleanForCompare(key);
@@ -72,7 +73,7 @@ export function checkShortAnswer(userInput, correctAnswer) {
             }
         }
     }
-    
+
     return false;
 }
 
@@ -110,54 +111,55 @@ export async function startLimitsTrainer() {
     state.trainer.limits.correctCount = 0;
     state.trainer.limits.solvedList = [];
     state.trainer.limits.shuffledData = shuffle(db);
-    
+
     document.getElementById('trainer-menu-panel')?.classList.add('is-hidden');
     document.getElementById('trainer-limits-panel')?.classList.remove('is-hidden');
-    
+
     renderLimitsQuestion();
 }
 
 function renderLimitsQuestion() {
+    resetMainScroll(); // 문항 교체 — 이전 피드백 읽으며 스크롤한 위치가 잔류하면 신규 문항 상단이 잘림
     const limitsState = state.trainer.limits;
     const currentQ = limitsState.shuffledData[limitsState.currentIndex];
-    
+
     const progressEl = document.getElementById('limits-progress-indicator');
     const catEl = document.getElementById('limits-q-category');
     const questionTextEl = document.getElementById('limits-question-text');
 
     if (progressEl) progressEl.textContent = `문제 ${limitsState.currentIndex + 1} / ${limitsState.shuffledData.length}`;
     if (catEl) catEl.textContent = currentQ.category;
-    
+
     // 진행률 바
     const progressBar = document.getElementById('limits-progress-bar');
     if (progressBar) {
         const pct = Math.round(((limitsState.currentIndex) / limitsState.shuffledData.length) * 100);
         progressBar.style.width = `${pct}%`;
     }
-    
+
     const qText = `다음 중 <strong>${esc(currentQ.category)}</strong> 성분인 <strong>"${esc(currentQ.key)}"</strong>의 기준 수치(<strong>${esc(currentQ.condition)}</strong>)로 올바른 것은?`;
     if (questionTextEl) questionTextEl.innerHTML = qText;
-    
+
     const options = generateLimitsOptions(currentQ);
     const container = document.getElementById('limits-options-container');
     if (!container) return;
     container.innerHTML = '';
-    
+
     const optionIndicators = ['A', 'B', 'C', 'D'];
     options.forEach((optValue, idx) => {
         const btn = document.createElement('button');
         btn.className = 'limits-opt-btn';
-        
+
         let displayStr = `${optValue} ${currentQ.unit} 이하`;
         if (currentQ.unit === '%') {
             displayStr = `${optValue}${currentQ.unit} 이하`;
         }
-        
+
         if (currentQ.category.includes('천연 및 유기농') || currentQ.category.includes('고시 기준')) {
             const isRange = optValue.includes('~');
             displayStr = `${optValue}${currentQ.unit}${isRange ? '' : ' 이상'}`;
         }
-        
+
         btn.dataset.value = optValue;
         btn.innerHTML = `<span class="limits-opt-num">${esc(optionIndicators[idx])}</span> <span class="limits-opt-text">${esc(displayStr)}</span>`;
         btn.addEventListener('click', () => {
@@ -165,7 +167,7 @@ function renderLimitsQuestion() {
         });
         container.appendChild(btn);
     });
-    
+
     const feedbackPanel = document.getElementById('limits-feedback-panel');
     const nextBtn = document.getElementById('next-limits-btn');
     if (feedbackPanel) feedbackPanel.classList.add('is-hidden');
@@ -175,7 +177,7 @@ function renderLimitsQuestion() {
 function generateLimitsOptions(question) {
     const correctValue = question.value;
     const optionsSet = new Set([correctValue]);
-    
+
     let attempts = 0;
     while (optionsSet.size < 4 && attempts < 100) {
         attempts++;
@@ -203,7 +205,7 @@ function generateLimitsOptions(question) {
             optionsSet.add(distractor);
         }
     }
-    
+
     let _safety = 0;
     while (optionsSet.size < 4 && _safety < 100) {
         _safety++;
@@ -214,7 +216,7 @@ function generateLimitsOptions(question) {
             optionsSet.add(String((parseFloat(correctValue) || 1) * (optionsSet.size + 3)));
         }
     }
-    
+
     return shuffle([...optionsSet]);
 }
 
@@ -227,9 +229,9 @@ function submitLimitsAnswer(selectedBtn, selectedValue, correctValue) {
     if (isCorrect) {
         state.trainer.limits.correctCount++;
     }
-    
+
     const currentQ = state.trainer.limits.shuffledData[state.trainer.limits.currentIndex];
-    
+
     // solvedList에 기록
     state.trainer.limits.solvedList.push({
         question: `${currentQ.category} - ${currentQ.key} (${currentQ.condition})`,
@@ -237,7 +239,7 @@ function submitLimitsAnswer(selectedBtn, selectedValue, correctValue) {
         correctAnswer: `${correctValue} ${currentQ.unit}`,
         correct: isCorrect
     });
-    
+
     showAnswerFeedback({
         panelId: 'limits-feedback-panel', titleId: 'limits-feedback-title',
         descId: 'limits-feedback-desc', nextBtnId: 'next-limits-btn',
@@ -250,7 +252,7 @@ function submitLimitsAnswer(selectedBtn, selectedValue, correctValue) {
 export function nextLimitsQuestion() {
     const limitsState = state.trainer.limits;
     limitsState.currentIndex++;
-    
+
     if (limitsState.currentIndex >= limitsState.shuffledData.length) {
         renderLimitsResult();
     } else {
@@ -259,6 +261,7 @@ export function nextLimitsQuestion() {
 }
 
 function renderLimitsResult() {
+    resetMainScroll();
     const limitsState = state.trainer.limits;
     const panel = document.getElementById('trainer-limits-panel');
     if (!panel) return;
@@ -356,6 +359,7 @@ export function initTrainer() {
     if (oxPanel) oxPanel.classList.add('is-hidden');
     if (comboPanel) comboPanel.classList.add('is-hidden');
     if (weakPanel) weakPanel.classList.add('is-hidden');
+    resetMainScroll();
 
     // 사장된 서브패널 해시 정규화 — 나가기 버튼·딥링크 잔여 해시를 #/trainer로 복원.
     // 뒤로가기 경유(hashchange → initTrainer)는 이미 #/trainer라 이 분기를 타지 않는다.

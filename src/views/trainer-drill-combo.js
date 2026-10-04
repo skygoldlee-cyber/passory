@@ -8,6 +8,7 @@ import { recordStatementJudgments, getWeakStatements } from '../statement-tracke
 import { recordStudyActivity } from '../study-tracker.js';
 import { proFeatureNotice } from '../pro-upgrade.js';
 import { OPTION_INDICATORS, openDrillSetup, startDrill, nextDrill, renderDrillResult } from './trainer-drills.js';
+import { resetMainScroll } from './navigation.js';
 
 /* =======================================================
    ㄱㄴㄷㄹ 복수정답형(combo) 드릴
@@ -26,6 +27,7 @@ export function openComboDrillSetup() {
 export function startComboDrill(subjectNum) { startDrill('combo', subjectNum); }
 
 export function renderComboQuestion() {
+    resetMainScroll();
     const st = state.trainer.combo;
     const q = st.data[st.currentIndex];
     if (!q) return;

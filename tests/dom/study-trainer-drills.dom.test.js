@@ -290,4 +290,29 @@ describe('트레이너 드릴 — O/X·복수정답형·취약 리뷰', () => {
         expect(el('weak-summary').textContent).toContain('오판 이력이 없습니다');
         expect(el('weak-list').textContent).toContain('취약 진술이 없습니다');
     });
+
+    // UX-NAV-07 — setup→arena→result·문항 교체 전이 모두 스크롤 리셋
+    it('스크롤 잔류 상태에서 setup→arena→다음 문항→result 전이 시 리셋', async () => {
+        const mc = document.querySelector('.main-content');
+
+        mc.scrollTop = 400;
+        openOxDrillSetup();
+        expect(mc.scrollTop).toBe(0);
+
+        mc.scrollTop = 400;
+        startOxDrill(1);
+        await flushAsync();
+        expect(mc.scrollTop).toBe(0);
+
+        // 문항 교체
+        mc.scrollTop = 300;
+        nextOxDrill();
+        expect(mc.scrollTop).toBe(0);
+
+        // 마지막 문항 → 결과 패널
+        mc.scrollTop = 300;
+        nextOxDrill();
+        expect(isVisible('oxdrill-result')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
+    });
 });

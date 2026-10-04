@@ -27,6 +27,19 @@ export function saveScrollPosition(viewId) {
 }
 
 // @spec UX-NAV-07
+/**
+ * 인트라뷰 패널/문항 전환 시 공유 스크롤 컨테이너를 맨 위로 리셋한다.
+ * .main-content는 전 뷰 공유 스크롤 컨테이너라 is-hidden 토글만으로는
+ * 이전 화면의 scrollTop이 잔류해 새 화면 상단이 뷰포트 위로 밀린다.
+ * 뷰 전환(내비 복귀)은 restoreScrollPosition의 저장/복원 계약이 담당하고,
+ * 뷰 안에서 다른 화면을 여는 전환(메뉴→서브패널, 문항 진행 등)은 이 헬퍼로 리셋한다.
+ */
+export function resetMainScroll() {
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) mainContent.scrollTop = 0;
+}
+
+// @spec UX-NAV-07
 // pendingTop은 saveScrollPosition 덮어쓰기를 무시하는 1회 플래그
 export function restoreScrollPosition(viewId) {
     const mainContent = document.querySelector('.main-content');

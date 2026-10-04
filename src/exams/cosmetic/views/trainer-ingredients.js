@@ -9,6 +9,7 @@ import { shuffle } from '../../../utils.js';
 import { showToast, vibrate, HAPTIC, markChoiceButtons, wrongReviewHtml, trainerResultHtml, showAnswerFeedback } from '../../../ui-utils.js';
 import { DataLoader } from '../../../data-loader.js';
 import { checkShortAnswer } from '../../../views/trainer.js';
+import { resetMainScroll } from '../../../views/navigation.js';
 
 /* =======================================================
    🧪 지식DB 분류 안전성 챌린지 훈련 로직 (Knowledge Safety Trainer)
@@ -26,12 +27,13 @@ export async function startIngredientsChallenge() {
     state.trainer.ingredients.correctCount = 0;
     state.trainer.ingredients.solvedList = [];
     state.trainer.ingredients.shuffledQuestions = questions;
-    
+
     const menuPanel = document.getElementById('trainer-menu-panel');
     const ingPanel = document.getElementById('trainer-ingredients-panel');
     if (menuPanel) menuPanel.classList.add('is-hidden');
     if (ingPanel) ingPanel.classList.remove('is-hidden');
-    
+    resetMainScroll();
+
     renderIngQuestion();
 }
 
@@ -40,14 +42,14 @@ function generateIngredientsQuestions(db) {
     if (!Array.isArray(db) || db.length === 0) return [];
     // 분류형 문항은 엔티티의 분류 필드(type 등)를 요구한다 — 없는 데이터셋은 지원 안 함
     if (!db.some(i => i && i.type !== undefined)) return [];
-    
+
     const shuffledDb = shuffle(db);
-    
+
     for (let i = 0; i < Math.min(10, shuffledDb.length); i++) {
         const ing = shuffledDb[i];
-        
+
         let qType = 0; // 0: 안전성 구분, 1: 배합 한도 주관식, 2: 조제 적합성, 3: 알레르기 유발 물질
-        
+
         if (ing.type === 'restricted' && ing.limit && Math.random() > 0.5) {
             qType = 1;
         } else if ((ing.category && (ing.category.includes('알레르기') || ing.category.includes('향료'))) && Math.random() > 0.5) {
@@ -55,13 +57,13 @@ function generateIngredientsQuestions(db) {
         } else if (Math.random() > 0.6) {
             qType = 2;
         }
-        
+
         if (qType === 0) {
             let correctText = '';
             if (ing.type === 'approved') correctText = '🟢 사용 가능 원료';
             else if (ing.type === 'restricted') correctText = '🟡 사용상의 제한이 필요한 원료 (보존제/자외선차단제 등)';
             else correctText = '🔴 사용할 수 없는 원료 (배합 금지)';
-            
+
             list.push({
                 type: 'choice',
                 qTypeLabel: '안전성 판별',
@@ -86,7 +88,7 @@ function generateIngredientsQuestions(db) {
             let questionText = '';
             let correctText = '';
             let options = [];
-            
+
             if (ing.type === 'restricted') {
                 questionText = `맞춤형화장품 조제관리사가 매장에서 혼합/소분 조제 시, 보존제/자외선차단 원료인 <strong>"${esc(ing.name)}"</strong>을(를) 직접 저울에 계량하여 배합할 수 있습니까?`;
                 correctText = '🔴 직접 배합 불가 (벌크 내용물에 이미 포함된 형태만 허용)';
@@ -109,36 +111,36 @@ function generateIngredientsQuestions(db) {
                     '🔴 직접 배합 불가'
                 ];
             }
-            
+
             list.push({
                 type: 'choice',
                 qTypeLabel: '조제 적합성 판정',
                 question: questionText,
                 correct: correctText,
                 options: options,
-                explanation: ing.type === 'restricted' 
-                    ? `별표 2 사용상의 제한이 필요한 원료는 <strong>조제관리사가 직접 매장에서 계량하여 배합하는 것이 법적으로 전면 금지</strong>됩니다. 책임판매업자가 공급한 벌크(내용물)에 이미 배합된 형태로만 유통이 가능합니다.` 
+                explanation: ing.type === 'restricted'
+                    ? `별표 2 사용상의 제한이 필요한 원료는 <strong>조제관리사가 직접 매장에서 계량하여 배합하는 것이 법적으로 전면 금지</strong>됩니다. 책임판매업자가 공급한 벌크(내용물)에 이미 배합된 형태로만 유통이 가능합니다.`
                     : (ing.type === 'banned' ? `<strong>"${esc(ing.name)}"</strong>은(는) 사용할 수 없는 원료(별표 1)에 해당하므로 화장품 제조 및 조제에 절대 사용이 불가합니다.` : `일반 사용 가능 원료(approved)인 <strong>"${esc(ing.name)}"</strong>은(는) 조제관리사가 매장에서 직접 계량하여 혼합(조제)할 수 있는 성분입니다.`)
             });
         } else {
             const isRinseOff = Math.random() > 0.5;
             const productType = isRinseOff ? '사용 후 씻어내는 제품' : '사용 후 씻어내지 않는 제품';
-            
+
             let conc = 0;
             if (isRinseOff) {
-                conc = Math.random() > 0.5 
+                conc = Math.random() > 0.5
                     ? parseFloat((0.01 + Math.random() * 0.02).toFixed(4))
                     : parseFloat((0.001 + Math.random() * 0.008).toFixed(4));
             } else {
-                conc = Math.random() > 0.5 
+                conc = Math.random() > 0.5
                     ? parseFloat((0.001 + Math.random() * 0.005).toFixed(4))
                     : parseFloat((0.0001 + Math.random() * 0.0008).toFixed(4));
             }
-            
+
             const limitVal = isRinseOff ? 0.01 : 0.001;
             const isRequired = conc > limitVal;
             const correctText = isRequired ? '🟢 의무 고지 대상' : '🔴 고지 의무 없음';
-            
+
             list.push({
                 type: 'choice',
                 qTypeLabel: '알레르기 성분 표시 의무',
@@ -152,15 +154,16 @@ function generateIngredientsQuestions(db) {
             });
         }
     }
-    
+
     return list;
 }
 
 function renderIngQuestion() {
+    resetMainScroll(); // 문항 교체 — 스크롤 잔류 시 신규 문항 상단 잘림 방지
     const ingState = state.trainer.ingredients;
     const currentQ = ingState.shuffledQuestions[ingState.currentIndex];
     if (!currentQ) return;
-    
+
     const progressEl = document.getElementById('ing-progress-indicator');
     const labelEl = document.getElementById('ing-q-type-label');
     const textEl = document.getElementById('ing-question-text');
@@ -168,25 +171,25 @@ function renderIngQuestion() {
     if (progressEl) progressEl.textContent = `문제 ${ingState.currentIndex + 1} / ${ingState.shuffledQuestions.length}`;
     if (labelEl) labelEl.textContent = currentQ.qTypeLabel;
     if (textEl) textEl.innerHTML = currentQ.question;
-    
+
     // 진행률 바
     const ingProgressBar = document.getElementById('ing-progress-bar');
     if (ingProgressBar) {
         const pct = Math.round(((ingState.currentIndex) / ingState.shuffledQuestions.length) * 100);
         ingProgressBar.style.width = `${pct}%`;
     }
-    
+
     const optionsContainer = document.getElementById('ing-options-container');
     const inputContainer = document.getElementById('ing-input-container');
     const answerInput = /** @type {HTMLInputElement|null} */ (document.getElementById('ing-answer-input'));
-    
+
     if (optionsContainer) optionsContainer.innerHTML = '';
     if (answerInput) answerInput.value = '';
-    
+
     if (currentQ.type === 'choice') {
         if (optionsContainer) optionsContainer.classList.remove('is-hidden');
         if (inputContainer) inputContainer.classList.add('is-hidden');
-        
+
         const optionIndicators = ['A', 'B', 'C', 'D'];
         currentQ.options.forEach((optValue, idx) => {
             const btn = document.createElement('button');
@@ -202,7 +205,7 @@ function renderIngQuestion() {
         if (optionsContainer) optionsContainer.classList.add('is-hidden');
         if (inputContainer) inputContainer.classList.remove('is-hidden');
     }
-    
+
     const feedbackPanel = document.getElementById('ing-feedback-panel');
     const nextBtn = document.getElementById('next-ing-btn');
     if (feedbackPanel) feedbackPanel.classList.add('is-hidden');
@@ -217,7 +220,7 @@ function submitIngChoiceAnswer(selectedBtn, selectedValue, correctValue) {
     if (isCorrect) {
         state.trainer.ingredients.correctCount++;
     }
-    
+
     // solvedList에 기록
     const currentQ = state.trainer.ingredients.shuffledQuestions[state.trainer.ingredients.currentIndex];
     state.trainer.ingredients.solvedList.push({
@@ -226,7 +229,7 @@ function submitIngChoiceAnswer(selectedBtn, selectedValue, correctValue) {
         correctAnswer: correctValue,
         correct: isCorrect
     });
-    
+
     showIngFeedback(isCorrect, correctValue);
 }
 
@@ -236,18 +239,18 @@ export function submitIngAnswer() {
     const input = /** @type {HTMLInputElement|null} */ (document.getElementById('ing-answer-input'));
     if (!input) return;
     const userInput = input.value.trim();
-    
+
     if (!userInput) {
         showToast('정답을 입력하세요!', 'warning');
         return;
     }
-    
+
     const isCorrect = checkShortAnswer(userInput, currentQ.correct);
     vibrate(isCorrect ? HAPTIC.correct : HAPTIC.wrong);
     if (isCorrect) {
         ingState.correctCount++;
     }
-    
+
     // solvedList에 기록
     ingState.solvedList.push({
         question: stripTags(currentQ.question),
@@ -255,14 +258,14 @@ export function submitIngAnswer() {
         correctAnswer: currentQ.correct,
         correct: isCorrect
     });
-    
+
     showIngFeedback(isCorrect, currentQ.correct);
 }
 
 function showIngFeedback(isCorrect, correctValue) {
     const ingState = state.trainer.ingredients;
     const currentQ = ingState.shuffledQuestions[ingState.currentIndex];
-    
+
     showAnswerFeedback({
         panelId: 'ing-feedback-panel', titleId: 'ing-feedback-title',
         descId: 'ing-feedback-desc', nextBtnId: 'next-ing-btn',
@@ -293,7 +296,7 @@ export function nextIngQuestion() {
 
     const ingState = state.trainer.ingredients;
     ingState.currentIndex++;
-    
+
     if (ingState.currentIndex >= ingState.shuffledQuestions.length) {
         renderIngredientsResult();
     } else {

@@ -6,6 +6,7 @@ import { buildCalcQuestion } from '../trainer-calc.js';
 import { clearScratchpad } from '../scratchpad.js';
 import { showToast, vibrate, HAPTIC, showAnswerFeedback } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
+import { resetMainScroll } from './navigation.js';
 
 /* =======================================================
    🧪 원료 배합 계산 연습기 (Calculation Trainer)
@@ -14,25 +15,27 @@ export function startCalcPractice() {
     state.trainer.activeSubView = 'calc';
     state.trainer.calc.correctCount = 0;
     state.trainer.calc.totalSolved = 0;
-    
+
     const menuPanel = document.getElementById('trainer-menu-panel');
     const calcPanel = document.getElementById('trainer-calc-panel');
     if (menuPanel) menuPanel.classList.add('is-hidden');
     if (calcPanel) calcPanel.classList.remove('is-hidden');
-    
+    resetMainScroll();
+
     const scratchpadContainer = document.getElementById('calc-scratchpad-container');
     const toggleBtn = document.getElementById('calc-scratchpad-toggle');
     if (scratchpadContainer) scratchpadContainer.classList.add('is-hidden');
     if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-pencil"></i> ✏️ 계산 연습장 열기';
-    
+
     renderCalcHistory();
     generateCalcQuestion();
 }
 
 export function generateCalcQuestion() {
+    resetMainScroll(); // 문항 교체 — 스크롤 잔류 시 신규 문항 상단 잘림 방지
     const qData = buildCalcQuestion();
     state.trainer.calc.currentQuestion = qData;
-    
+
     const typeBadge = document.getElementById('calc-type-badge');
     const questionText = document.getElementById('calc-question-text');
     const unitText = document.getElementById('calc-unit-text');
@@ -45,25 +48,25 @@ export function generateCalcQuestion() {
     if (typeBadge) typeBadge.textContent = qData.type || '';
     if (questionText) questionText.innerHTML = qData.question;
     if (unitText) unitText.textContent = qData.unit || '';
-    
+
     if (input) {
         input.value = '';
         input.disabled = false;
         input.focus();
     }
-    
+
     if (submitBtn) submitBtn.disabled = false;
     if (feedbackPanel) feedbackPanel.classList.add('is-hidden');
     if (solutionPanel) solutionPanel.classList.add('is-hidden');
     if (nextBtn) nextBtn.classList.add('is-hidden');
-    
+
     const header = document.querySelector('.solution-header');
     if (header) {
         header.classList.remove('active');
         const body = document.getElementById('calc-solution-body');
         if (body) body.classList.add('is-hidden');
     }
-    
+
     if (typeof clearScratchpad === 'function') {
         clearScratchpad();
     }
@@ -76,28 +79,28 @@ export function submitCalcAnswer() {
     const input = /** @type {HTMLInputElement|null} */ (document.getElementById('calc-answer-input'));
     if (!input) return;
     const userVal = parseFloat(input.value);
-    
+
     if (isNaN(userVal)) {
         showToast("올바른 숫자를 입력해 주세요!", "warning");
         return;
     }
-    
+
     input.disabled = true;
     const submitBtn = /** @type {HTMLButtonElement|null} */ (document.getElementById('submit-calc-btn'));
     if (submitBtn) submitBtn.disabled = true;
-    
+
     calcState.totalSolved++;
-    
+
     const correctVal = parseFloat(String(currentQ.answer));
     const isCorrect = Math.abs(userVal - correctVal) <= 0.02;
     vibrate(isCorrect ? HAPTIC.correct : HAPTIC.wrong);
-    
+
     if (isCorrect) {
         calcState.correctCount++;
     }
-    
+
     addCalcHistoryItem(currentQ.question, currentQ.type, userVal, currentQ.answer, isCorrect, currentQ.unit);
-    
+
     const solutionBody = document.getElementById('calc-solution-body');
     const solutionPanel = document.getElementById('calc-solution-panel');
 
@@ -119,7 +122,7 @@ export function toggleSolutionAccordion() {
     const body = document.getElementById('calc-solution-body');
     if (!body) return;
     const isVisible = !body.classList.contains('is-hidden');
-    
+
     if (isVisible) {
         if (header) header.classList.remove('active');
         body.classList.add('is-hidden');
@@ -132,7 +135,7 @@ export function toggleSolutionAccordion() {
 function renderCalcHistory() {
     const listContainer = document.getElementById('calc-history-list');
     if (!listContainer) return;
-    
+
     const historyJSON = safeGetItem(STORAGE_KEYS.CALC_HISTORY);
     let history = [];
     if (historyJSON) {
@@ -142,18 +145,18 @@ function renderCalcHistory() {
             console.error(e);
         }
     }
-    
+
     if (history.length === 0) {
         listContainer.innerHTML = `<div style="text-align: center; color: var(--color-text-muted); font-size: 0.8rem; padding: 1rem;">이전 풀이 기록이 없습니다.</div>`;
         return;
     }
-    
+
     listContainer.innerHTML = '';
     history.forEach(item => {
         const badgeColor = item.isCorrect ? 'var(--color-success)' : 'var(--color-danger)';
         const badgeBg = item.isCorrect ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
         const dateStr = item.date ? item.date.substring(5, 16).replace('T', ' ') : '';
-        
+
         const cardHTML = `
             <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.8rem; text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -183,7 +186,7 @@ function addCalcHistoryItem(questionText, type, userVal, correctAns, isCorrect, 
             console.error(e);
         }
     }
-    
+
     const newItem = {
         date: new Date().toISOString(),
         question: stripTags(questionText).substring(0, 80) + (questionText.length > 80 ? '...' : ''),
@@ -193,13 +196,13 @@ function addCalcHistoryItem(questionText, type, userVal, correctAns, isCorrect, 
         isCorrect: isCorrect,
         unit: unit
     };
-    
+
     history.unshift(newItem);
-    
+
     if (history.length > 5) {
         history = history.slice(0, 5);
     }
-    
+
     safeSetItem(STORAGE_KEYS.CALC_HISTORY, JSON.stringify(history));
     renderCalcHistory();
 }

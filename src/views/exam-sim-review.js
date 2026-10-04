@@ -4,6 +4,7 @@ import { simState } from './exam-sim-state.js';
 import { esc, safeTextWithBreaks } from '../sanitize.js';
 import { DataLoader } from '../data-loader.js';
 import { getExamRules } from '../exam-context.js';
+import { resetMainScroll } from './navigation.js';
 
 const OPTION_INDICATORS = ['①', '②', '③', '④', '⑤'];
 
@@ -31,6 +32,7 @@ function comboTruthTableHTML(q) {
 export function showSimAnswerReview() {
     document.getElementById('sim-result-panel')?.classList.add('is-hidden');
     document.getElementById('sim-review-panel')?.classList.remove('is-hidden');
+    resetMainScroll();
 
     const container = document.getElementById('sim-review-list-container');
     if (!container) return;
@@ -75,6 +77,7 @@ export function showSimAnswerReview() {
 export function showSimResultsSummary() {
     document.getElementById('sim-review-panel')?.classList.add('is-hidden');
     document.getElementById('sim-result-panel')?.classList.remove('is-hidden');
+    resetMainScroll();
 }
 
 /**
@@ -117,6 +120,7 @@ export function renderSimResultBreakdown({ score, total, subjectScores, chapterS
     const _resultPanel = document.getElementById('sim-result-panel');
     if (_arenaPanel) _arenaPanel.classList.add('is-hidden');
     if (_resultPanel) _resultPanel.classList.remove('is-hidden');
+    resetMainScroll();
 
     const _scoreEl = document.getElementById('sim-result-score');
     if (_scoreEl) _scoreEl.textContent = `${score} / ${total} 개`;

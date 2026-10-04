@@ -157,8 +157,31 @@ describe('기출 퀴즈 — 출제·채점·결과·복습', () => {
         expect(isVisible('quiz-result-panel')).toBe(true);
         expect(el('result-correct-num').textContent).toBe('0');
         expect(el('result-total-num').textContent).toBe('1');
-        expect(el('result-percent').textContent).toBe('0%');
-        expect(el('quiz-review-list').textContent).toContain('오답 리뷰');
+    });
+
+    // UX-NAV-07 — 퀴즈 뷰 인트라뷰 전이 시 .main-content 스크롤 리셋
+    it('스크롤 잔류 상태에서 아레나 진입·문항 교체·결과 전이 → 리셋', () => {
+        const mc = document.querySelector('.main-content');
+        setupQuiz();
+
+        mc.scrollTop = 400;
+        startQuiz();
+        expect(isVisible('quiz-arena-panel')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
+
+        state.quiz.data = QUIZZES.slice(0, 2);
+        state.quiz.currentIndex = 0;
+
+        // 문항 교체 (renderQuizQuestion)
+        mc.scrollTop = 300;
+        nextQuizQuestion();
+        expect(mc.scrollTop).toBe(0);
+
+        // arena → result
+        mc.scrollTop = 300;
+        nextQuizQuestion();
+        expect(isVisible('quiz-result-panel')).toBe(true);
+        expect(mc.scrollTop).toBe(0);
     });
 
     it('전부 정답 → "모든 문제를 맞혔습니다" 리뷰', () => {

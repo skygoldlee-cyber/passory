@@ -6,6 +6,18 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-04 인트라뷰 전환 스크롤 잔류 전수조사 — resetMainScroll 공유 헬퍼로 일괄 정규화 (UX-NAV-07)
+
+- 결함 클래스: `.main-content`는 전 뷰 공유 스크롤 컨테이너라 `is-hidden` 토글만으로 화면을 바꾸는 인트라뷰 전환(서브패널·문항 교체·innerHTML 교체)은 이전 화면의 scrollTop을 그대로 물려받아 새 화면 상단이 뷰포트 위로 잘림 — 2026-10-04 Formula OS `showPanel` 수정(바로 아래 항목)과 동형 결함의 전수조사
+- 수정: `navigation.js`에 `resetMainScroll()` 공유 헬퍼 신설 후 전환 지점에 일괄 적용
+  - 훈련소: `startLimitsTrainer`·`openDrillSetup`·`startDrill`·`renderDrillResult`·`openWeakReview`·`startCalcPractice`·`startIngredientsChallenge`·`initTrainer`/`exitTrainerSubView` + 문항 교체(`renderLimitsQuestion`·`renderOxDrillQuestion`·`renderComboQuestion`·`renderIngQuestion`·`generateCalcQuestion`·`renderLimitsResult` innerHTML 교체)
+  - 모의고사: `startSimSession`·`resumeSimDraft`·`exitSimArena`·`showSimAnswerReview`·`showSimResultsSummary`·`renderSimResultBreakdown`·`renderSimQuestion`(문항 이동)
+  - 퀴즈: `_beginQuizRun`·`renderQuizResult`·`renderQuizQuestion`
+  - 자체 스크롤 오버레이: 데일리 챌린지 `renderDailyStep`(.dialog-card)·계량 모드 `renderWeigh`(.f-weigh-overlay/.f-weigh-card)·자가 성분 모달 `customIngAdd/Edit`(.cing-overlay 재사용)·커맨드 팔레트 `_renderResults`(#cmdk-results)
+  - `formula.js` `showPanel`의 인라인 리셋도 헬퍼로 통일
+- 안전 분류(수정 불필요): `switchView` 뷰 전환(기존 UX-NAV-07 저장/복원·pendingTop 계약), 자체 스크롤 뷰어(exam/manual/html/mermaid/image-zoom — 자체 scrollTop=0 존재), 교재리더(자체 컨테이너), 인라인 토글(피드백 패널·배지·카드 상세·피커 행·필터), 설정 패널·더보기 시트(고정 오버레이)
+- DOM 회귀 단언: trainer·trainer-drills·simulator·quiz·challenge 각 테스트에 '스크롤 잔류 상태 전이 → scrollTop=0' 단언 추가
+
 ## 2026-10-04 Formula OS 서브패널 전환 시 스크롤 리셋 — 모바일 폼 상단 잘림 수정
 
 - 결함: `showPanel`이 패널 표시만 토글하고 `.main-content` 스크롤을 유지 → 허브·목록을 스크롤한 상태로 폼/상세를 열면 상단(헤더·기성품 폼 '사진으로 채우기' 버튼)이 뷰포트 위로 잘려 보이지 않음. 실측 재현: scrollTop 432 상태에서 폼 오픈 시 `.prod-photo-section`이 top −227로 완전 이탈
