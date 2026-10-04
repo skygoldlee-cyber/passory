@@ -6,6 +6,13 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-19 템플릿 이스케이프 자동화 인프라 — html`` + check:escape (ROAD-Q5 진행중)
+
+- `sanitize.js` — `html` 태그드 템플릿·`raw()` 신설. 보간값을 자동 escapeHTML하며 중첩 `html`` 결과·`raw()` 래핑값·배열은 안전 마크업으로 통과 — 수작업 esc() 누락이 곧 XSS였던 방향을 "기본이 안전"으로 전환. 반환은 SafeHtml 표식 객체(JSDoc string — innerHTML 대입 타입 유지, toString 평탄화)
+- `tools/check/check_html_escape.js` (`npm run check:escape`) — src/의 innerHTML·outerHTML·insertAdjacentHTML 직접 대입 템플릿을 스캔해 보간이 안전 호출(esc/escapeHTML/safeTextWithBreaks/stripTags/raw)·html``·리터럴·숫자 산술·Html 접미 변수가 아니면 미이스케이프 후보로 보고. `esc-ok` 라인 주석으로 검토 면제. `ESCAPE_GAP_BASELINE=93→86`으로 잔여 수작업 사이트의 단조 감소를 강제 (신규 위반 유입 차단)
+- `notice-check.js` — 첫 이관 사례: law.go.kr 외부 데이터 싱크 3종을 html``로 전환 (수작업 escapeHTML 호출 9곳 제거, `r.url`의 `&` 미이스케이프 경로도 자동 해소)
+- check:ci·ci.yml 게이트 편입 + AGENTS.md 명령어 기재. 유닛 +8 (보간 이스케이프·중첩·배열·raw·평탄화)
+
 ## 2026-10-19 라우터 렌더 세대 토큰 — 비동기 렌더 경합 차단 (ROAD-Q3)
 
 - `navigation.js` — `bumpViewGen()`/`isStaleViewGen(gen)` 신설. 모듈 카운터를 뷰 전환 세대로 사용 (router→practice-registry 양방향 import 회피 위해 하위 모듈에 배치)

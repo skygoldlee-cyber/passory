@@ -60,6 +60,9 @@ jobs:
       - name: Mobile safety convention (다이얼로그·버튼 행 규약)
         run: npm run check:mobilesafe
 
+      - name: HTML escape sink check (innerHTML 보간 이스케이프 규약)
+        run: npm run check:escape
+
       - name: Doc sync gate (소스 변경 시 문서 갱신 강제)
         run: node tools/check/check_doc_sync.js --ref origin/main
 

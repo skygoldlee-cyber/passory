@@ -1,7 +1,7 @@
 // @spec S-05
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { escapeHTML, safeTextWithBreaks, esc } from '../../src/sanitize.js';
+import { escapeHTML, safeTextWithBreaks, esc, html, raw } from '../../src/sanitize.js';
 
 test('escapeHTML: 특수문자 이스케이프', () => {
     assert.equal(escapeHTML('<script>alert(1)</script>'), '&lt;script&gt;alert(1)&lt;/script&gt;');
@@ -49,4 +49,47 @@ test('esc: escapeHTML의 별칭으로 동일 동작', () => {
     assert.equal(esc('<x>'), escapeHTML('<x>'));
     assert.equal(esc(null), '');
     assert.equal(esc('normal'), 'normal');
+});
+
+// ROAD-Q5 — html`` 태그드 템플릿: 보간값 자동 이스케이프
+test('html: 보간값을 자동 이스케이프한다', () => {
+    assert.equal(
+        String(html`<li>${'<script>alert(1)</script>'}</li>`),
+        '<li>&lt;script&gt;alert(1)&lt;/script&gt;</li>'
+    );
+    assert.equal(String(html`<a href="${'a?x=1&y=2'}">${"it's"}</a>`),
+        '<a href="a?x=1&amp;y=2">it&#39;s</a>');
+});
+
+test('html: null/undefined 보간은 빈 문자열', () => {
+    assert.equal(String(html`<p>${null}${undefined}x</p>`), '<p>x</p>');
+});
+
+test('html: 숫자·불리언 보간은 문자열 변환', () => {
+    assert.equal(String(html`<b>${42}${true}</b>`), '<b>42true</b>');
+});
+
+test('html: 배열 보간은 각 요소를 이스케이프 후 join', () => {
+    const items = ['<b>a</b>', 'c'];
+    assert.equal(String(html`<ul>${items.map(i => html`<li>${i}</li>`)}</ul>`),
+        '<ul><li>&lt;b&gt;a&lt;/b&gt;</li><li>c</li></ul>');
+});
+
+test('html: 중첩 html 결과는 이중 이스케이프 없이 통과', () => {
+    const inner = html`<b>${'<i>'}</b>`;
+    assert.equal(String(html`<div>${inner}</div>`), '<div><b>&lt;i&gt;</b></div>');
+});
+
+test('html: raw() 래핑값은 마크업 그대로 통과', () => {
+    assert.equal(String(html`<div>${raw('<em>ok</em>')}</div>`), '<div><em>ok</em></div>');
+});
+
+test('html: raw() null은 빈 문자열', () => {
+    assert.equal(String(html`<p>${raw(null)}</p>`), '<p></p>');
+});
+
+test('html: innerHTML 대입 시 toString으로 평탄화된다', () => {
+    const out = html`<x>${'<y>'}</x>`;
+    assert.equal(`${out}`, '<x>&lt;y&gt;</x>');
+    assert.equal(out + '!', '<x>&lt;y&gt;</x>!');
 });

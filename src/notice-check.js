@@ -10,7 +10,7 @@
 import { getItem, setItem } from './storage.js';
 import { STORAGE_KEYS } from './storage-keys.js';
 import { getActiveExamId } from './exam-context.js';
-import { escapeHTML } from './sanitize.js';
+import { html } from './sanitize.js';
 import { lawUrlFor } from './law-links.js';
 import { getRefTables } from './pdf-registry.js';
 import { todayKey } from './utils.js';
@@ -96,17 +96,17 @@ function renderBanner(latest, extraDocs) {
   const label = latest.ruleName || '참조 법령·고시';
   const eff = latest.effectiveDate ? `(${latest.effectiveDate} 시행)` : '';
   const extra = extraDocs?.length
-    ? `<br><small>함께 갱신된 문서: ${extraDocs.map(d => escapeHTML(d)).join(', ')} — '고시 정보 보기'에서 문서별 비교를 확인하세요.</small>`
+    ? html`<br><small>함께 갱신된 문서: ${extraDocs.join(', ')} — '고시 정보 보기'에서 문서별 비교를 확인하세요.</small>`
     : '';
   const link = ruleInfoUrl(latest.serialNo, latest.target, latest.effectiveDate, latest.url);
-  el.innerHTML = `
+  el.innerHTML = html`
     <div class="notice-banner-body">
       <span class="notice-banner-icon" aria-hidden="true">⚠</span>
       <div class="notice-banner-text">
-        <strong>${escapeHTML(label)} ${escapeHTML(notice)} ${escapeHTML(eff)} 확인됨</strong><br>
+        <strong>${label} ${notice} ${eff} 확인됨</strong><br>
         앱 문서는 이전 기준의 스냅샷입니다. 배합 전 <a href="${link}" target="_blank" rel="noopener">공식 원문(law.go.kr)</a>을 확인하세요.${extra}
       </div>
-      <button type="button" class="notice-banner-close" data-click="dismissMfdsNotice" data-arg="${escapeHTML(latest.effectiveDate || '')}" aria-label="닫기">×</button>
+      <button type="button" class="notice-banner-close" data-click="dismissMfdsNotice" data-arg="${latest.effectiveDate || ''}" aria-label="닫기">×</button>
     </div>`;
   el.classList.remove('is-hidden');
 }
@@ -330,10 +330,10 @@ export async function viewMfdsNoticeStatus() {
     return;
   }
   const rows = statusRows(status).map(([k, v]) =>
-    `<div class="notice-status-row"><span class="notice-status-key">${escapeHTML(k)}</span><span>${escapeHTML(v)}</span></div>`).join('');
+    html`<div class="notice-status-row"><span class="notice-status-key">${k}</span><span>${v}</span></div>`);
   const coreDoc = (status.docs || []).find(d => d.name === status.latest?.ruleName) || {};
   const lawLink = ruleInfoUrl(status.latest?.serialNo, coreDoc.target, null, coreDoc.url);
-  panel.innerHTML = `
+  panel.innerHTML = html`
     ${rows}
     <div class="notice-status-links">
       <a href="${statusUrl(examId)}" target="_blank" rel="noopener">상태 파일 원문</a>
@@ -405,9 +405,9 @@ export async function checkDictNoticeNow() {
     const head = changed
       ? `⚠ 개정 감지 ${changed}종 — 원문을 확인하세요`
       : `✅ 성분 관련 고시 ${docs.length - failed}종 모두 기준과 일치`;
-    panel.innerHTML = `
-      <div class="dict-notice-row dict-notice-head">${escapeHTML(head)}${failed ? ` (${failed}종 조회 실패)` : ''}</div>
-      ${rows.map(r => `<div class="dict-notice-row"><span class="dict-notice-name">· ${escapeHTML(r.name)}</span><span>${escapeHTML(r.text)} ${escapeHTML(r.mark)} <a href="${escapeHTML(r.url)}" target="_blank" rel="noopener">원문</a></span></div>`).join('')}`;
+    panel.innerHTML = html`
+      <div class="dict-notice-row dict-notice-head">${head}${failed ? ` (${failed}종 조회 실패)` : ''}</div>
+      ${rows.map(r => html`<div class="dict-notice-row"><span class="dict-notice-name">· ${r.name}</span><span>${r.text} ${r.mark} <a href="${r.url}" target="_blank" rel="noopener">원문</a></span></div>`)}`;
   } catch (_) {
     panel.innerHTML = '<div class="dict-notice-loading">확인 실패 — 네트워크 또는 law.go.kr 응답 오류. 잠시 후 다시 시도하세요.</div>';
   } finally {

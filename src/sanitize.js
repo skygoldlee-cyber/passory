@@ -68,3 +68,67 @@ export function stripTags(value) {
     if (value === null || value === undefined) return '';
     return String(value).replace(/<[^>]*>/g, '');
 }
+
+/* =======================================================
+   🧩 html 태그드 템플릿 — 보간값 자동 이스케이프 (ROAD-Q5)
+   =======================================================
+   사용 예:
+     el.innerHTML = html`<li>${item.name}</li>`;              // 자동 이스케이프
+     el.innerHTML = html`<ul>${items.map(i => html`<li>${i.name}</li>`)}</ul>`; // 배열 자동 join
+     el.innerHTML = html`${raw('<b>고정</b>')}`;               // 신뢰 마크업 통과
+
+   수작업 esc()와 달리 "빠뜨리면 즉시 깨지는" 방향이 아니라
+   "기본이 안전"인 방향이라 보간 누락 XSS가 구조적으로 불가능해진다.
+   의도된 마크업은 중첩 html`` 결과 또는 raw()로만 주입한다.
+   ======================================================= */
+
+/**
+ * 신뢰 마크업 표식. html`` 템플릿 결과와 raw() 래핑값만 이 클래스를 가진다.
+ * JSDoc을 string으로 노출하지 않으면 innerHTML 대입 타입 검사가 실패하므로
+ * 호출부에는 string처럼 보이게 하고, 런타임 판정은 instanceof를 사용한다.
+ */
+class SafeHtml {
+    /** @param {string} markup - 이미 안전한 것으로 판정된 마크업 */
+    constructor(markup) { this._html = markup; }
+    toString() { return this._html; }
+}
+
+/**
+ * 신뢰할 수 있는 정적 마크업을 html`` 템플릿 안에 통과시키기 위한 래퍼.
+ * 사용자 데이터·외부 API 데이터에는 절대 사용하지 않는다 —
+ * 마크다운 파서 출력처럼 이미 안전하게 생성된 문자열 전용.
+ * @param {*} markup - 신뢰 마크업 문자열
+ * @returns {string} SafeHtml 표식이 붙은 값 (innerHTML 대입 시 toString으로 평탄화)
+ */
+export function raw(markup) {
+    return /** @type {any} */ (new SafeHtml(String(markup ?? '')));
+}
+
+/**
+ * 보간값 하나를 마크업으로 변환 — SafeHtml은 통과, 배열은 재귀 join,
+ * 그 외는 escapeHTML. html`` 내부 전용 헬퍼.
+ * @param {*} value
+ * @returns {string}
+ */
+function _interpToMarkup(value) {
+    if (value === null || value === undefined) return '';
+    if (value instanceof SafeHtml) return value.toString();
+    if (Array.isArray(value)) return value.map(_interpToMarkup).join('');
+    return escapeHTML(value);
+}
+
+/**
+ * 태그드 템플릿 — 모든 보간값을 자동 이스케이프한 마크업 문자열을 만든다.
+ * 반환값은 SafeHtml 인스턴스라 다른 html`` 템플릿에 중첩하면 이중 이스케이프
+ * 없이 통과되고, innerHTML/textContent 대입·문자열 연결에서는 toString으로 평탄화된다.
+ * @param {TemplateStringsArray} strings
+ * @param {...*} values
+ * @returns {string} 안전한 마크업 (런타임은 SafeHtml — 중첩 판정용)
+ */
+export function html(strings, ...values) {
+    let out = strings[0];
+    for (let i = 0; i < values.length; i++) {
+        out += _interpToMarkup(values[i]) + strings[i + 1];
+    }
+    return /** @type {any} */ (new SafeHtml(out));
+}
