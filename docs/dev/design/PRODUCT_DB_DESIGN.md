@@ -2,8 +2,8 @@
 
 > 상위 문서: [`FORMULA_OS_WORKFLOW_DESIGN.md`](FORMULA_OS_WORKFLOW_DESIGN.md) (조제관리사 업무 전체 커버리지)
 > 범위: 시판 화장품의 전성분을 등록해 개인 기성품 DB를 구축하고, 공식 원료 DB·고객 카드·My 포뮬러와 교차 분석
-> 상태: ✅ 구현 완료 — Phase A+B (FO-37~40) + 보완 확장 (FO-44·FO-45·FO-47·FO-48)
-> **관련 SPEC ID**: `FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-47,FO-48` (SPEC §3.18) · 선행 `DI-06~09`(자가 사전) · `FO-14`(전성분 생성) · `FO-32`(미등록 원료 즉시 등록)
+> 상태: ✅ 구현 완료 — Phase A+B (FO-37~40) + 보완 확장 (FO-44·FO-45·FO-47~49)
+> **관련 SPEC ID**: `FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-47,FO-48,FO-49` (SPEC §3.18) · 선행 `DI-06~09`(자가 사전) · `FO-14`(전성분 생성) · `FO-32`(미등록 원료 즉시 등록)
 > **문서 ID**: DOC-DSN-12
 
 ---
@@ -69,6 +69,7 @@ PRODUCT_ITEMS: 'product_items',
 |---|---|---|
 | `PRODUCT_LIMIT_FREE` | **30종** | 포뮬러 5·고객 20·자가성분 50 관행의 중간 — 제품당 ~50종 문자열만이라 쿼터 무관 |
 | 중복 정책 | `normalizeEntityName(brand+name)` 동일 시 차단 | 같은 이름 다른 제품은 브랜드로 구분 — 오류 문구에 '기존 항목 수정' 안내 |
+| 전성분 상한 | 성분명 120자·전체 150종 | 쿼터·렌더 비용 상한. 초과분은 절단하되 **무음 손실 금지** — 파서가 `dropped`로 노출하고 폼 카운터에 '상한 초과 N종 잘림' 경고 (FO-49) |
 
 ---
 
@@ -122,6 +123,7 @@ text.replace(FIELD_LABEL, '\n')   // 라벨 → 구분자로 승격 (괄호 주�
 - 토큰 앞뒤 공백·따옴표 제거, 빈 토큰·연속 구분자 흡수
 - 괄호는 보존 — `정제수(정제수)` 같은 중복 표기도 전성분 원문 그대로가 가치
 - **중복 성분 제거 안 함** — 전성분 원문의 재현이 우선 (같은 성분 중복 표기는 드물지만 원문 존중)
+- 상한 절단은 `parseFullIngredientsDetailed`의 `dropped`로 노출 — 폼 카운터가 '상한 초과 N종 잘림' 경고 (FO-49). 임포트·저장 경로의 절단은 폼 카운터 범위 밖이다
 - 매칭은 저장 후 분석 단계에서 `normalizeEntityName`으로 수행 — 저장값은 원문 유지
 
 ### 4.4 입력 UX (등록·수정 폼 패널)
@@ -266,6 +268,7 @@ text.replace(FIELD_LABEL, '\n')   // 라벨 → 구분자로 승격 (괄호 주�
 | C-2 | 제품↔제품 비교·유사 포뮬러 랭킹·분석 리포트 내보내기·성분 행→사전 링크 | FO-45 | ✅ 구현 |
 | C-3 | 미등록 성분 일괄 자가 사전 등록 | FO-47 | ✅ 구현 |
 | C-4 | 전성분 입력 정제 — 필드 라벨(전성분·성분표·INGREDIENTS) 구분자 승격 + 토큰 양끝 문장부호 제거 | FO-48 | ✅ 구현 |
+| C-5 | 전성분 상한 절단 안내 — 파서 dropped 노출 + 폼 카운터 '잘림 N종' 경고 | FO-49 | ✅ 구현 |
 | D (후보) | 제품 공유 형식·바코드 조회 등 | 후속 착수 시 신규 ID | 미착수 |
 
 구현 중 확인·수정된 결함: 제형 라디오 칩 `productNew` 잔류(`catEl.value` 무동작 — `checked` 리셋으로 수정), 성분 매칭 경로 불일치(원문 키 vs `normalizeEntityName` — `findIngredient()` 정규화 폴백으로 통일), 제한 원료 한도의 `title` 툴팁 전용 노출(모바일 불가 — `prod-ing-note` 인라인 노트로 상시 표시).
@@ -276,7 +279,7 @@ text.replace(FIELD_LABEL, '\n')   // 라벨 → 구분자로 승격 (괄호 주�
 
 | 계층 | 대상 | 핵심 단언 |
 |---|---|---|
-| 유닛 (`tests/unit/`) | `parseFullIngredients` | **`1,2-헥산디올` 등 자릿수 쉼표 보호**, 쉼표/개행/중점 혼합 구분, 빈 토큰·150종 상한·순서 보존, **필드 라벨 승격·문장부호 정제 (FO-48)** |
+| 유닛 (`tests/unit/`) | `parseFullIngredients` | **`1,2-헥산디올` 등 자릿수 쉼표 보호**, 쉼표/개행/중점 혼합 구분, 빈 토큰·150종 상한·순서 보존, **필드 라벨 승격·문장부호 정제 (FO-48)**, **상한 절단 `dropped` 노출 (FO-49)** |
 | 유닛 | 스토어 CRUD | 한도·중복(brand+name 정규화)·sanitize·import/export 라운드트립 |
 | 유닛 | `classifyProductIngredients`·`findProductsByIngredient`·`findAllergyHits`·`compareWithFormula` | 유형 분류 5분기·역조회·부분일치·3분할 |
 | DOM (`tests/dom/exams/cosmetic/`) | 패널 렌더·등록 폼·배지·서브내비 칩·허브 카드 노출 | 칩 미리보기·요약 배지·전 유형 노출(data-biz 부재) |

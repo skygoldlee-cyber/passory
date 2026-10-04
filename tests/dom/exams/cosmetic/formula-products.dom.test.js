@@ -1,5 +1,5 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
-// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47
+// @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
 //       · docs/dev/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
@@ -117,6 +117,7 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(chips.textContent).toContain('우리집비법원료');
         expect(el('prod-inci-count').textContent).toContain('성분 4종');
         expect(el('prod-inci-count').textContent).toContain('미등록 2종');
+        expect(el('prod-inci-count').textContent).not.toContain('잘림');
 
         productSave();
         expect(isVisible('formula-product-detail-panel')).toBe(true);
@@ -411,6 +412,16 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         // 인덱스 재구축 → 칩이 custom으로 재분류되어 미등록 표시가 사라짐
         expect(el('prod-inci-count').textContent).not.toContain('미등록');
         expect(el('prod-inci-chips').querySelector('[data-click="productIngRegisterAll"]')).toBeNull();
+    });
+
+    it('상한 초과 경고 — 150종 초과 붙여넣기 시 카운터에 잘림 표시 (FO-49)', () => {
+        productNew();
+        const many = Array.from({ length: 160 }, (_, i) => `성분${i}`).join(', ');
+        setInciInput(many);
+        expect(el('prod-inci-count').textContent).toContain('성분 150종');
+        expect(el('prod-inci-count').textContent).toContain('10종 잘림');
+        // 칩 개수도 상한으로 잘림
+        expect(el('prod-inci-chips').querySelectorAll('.prod-ing-chip').length).toBe(150);
     });
 });
 

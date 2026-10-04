@@ -21,7 +21,7 @@ import {
 import {
   listProducts, getProduct, getProductUsage,
   createProduct, updateProduct, deleteProduct,
-  parseFullIngredients, classifyProductIngredients, PRODUCT_ING_CLASS,
+  parseFullIngredientsDetailed, classifyProductIngredients, PRODUCT_ING_CLASS,
   findAllergyHits, compareWithFormula, compareWithProduct,
   rankFormulasByOverlap, detectOrderHint,
   serializeProduct, serializeProductAnalysis, importProduct,
@@ -169,12 +169,13 @@ export function productClearFilter() {
    등록·수정 폼 — 전성분 붙여넣기 + 칩 미리보기 (FO-38)
    ======================================================= */
 
-/** @type {{editingId: string|null, ingredients: string[]}} */
-const prodForm = { editingId: null, ingredients: [] };
+/** @type {{editingId: string|null, ingredients: string[], dropped: number}} */
+const prodForm = { editingId: null, ingredients: [], dropped: 0 };
 
 export function productNew() {
   prodForm.editingId = null;
   prodForm.ingredients = [];
+  prodForm.dropped = 0;
   openProductForm('기성품 등록');
 }
 
@@ -183,6 +184,7 @@ export function productEdit(id) {
   if (!p) { showToast('등록된 제품을 찾을 수 없습니다.', 'error'); return; }
   prodForm.editingId = id;
   prodForm.ingredients = (p.ingredients || []).slice();
+  prodForm.dropped = 0;
   openProductForm('기성품 수정');
   getEl('prod-name').value = p.name || '';
   getEl('prod-brand').value = p.brand || '';
@@ -323,6 +325,7 @@ export async function productVisionRead() {
   }
   const ingredients = r.ingredients || [];
   prodForm.ingredients = ingredients;
+  prodForm.dropped = 0;
   const ta = getEl('prod-inci-input');
   if (ta) ta.value = ingredients.join(', ');
   renderInciChips();
@@ -409,7 +412,9 @@ function openProductForm(title) {
   if (ta && !ta.dataset.bound) {
     ta.dataset.bound = '1';
     ta.addEventListener('input', () => {
-      prodForm.ingredients = parseFullIngredients(ta.value);
+      const parsed = parseFullIngredientsDetailed(ta.value);
+      prodForm.ingredients = parsed.ingredients;
+      prodForm.dropped = parsed.dropped; // 상한 절단 경고 (FO-49)
       renderInciChips();
     });
   }
@@ -435,7 +440,7 @@ function renderInciChips() {
   const countEl = getEl('prod-inci-count');
   if (countEl) {
     countEl.textContent = prodForm.ingredients.length
-      ? `성분 ${prodForm.ingredients.length}종${unknownCount ? ` · 미등록 ${unknownCount}종` : ''}`
+      ? `성분 ${prodForm.ingredients.length}종${unknownCount ? ` · 미등록 ${unknownCount}종` : ''}${prodForm.dropped ? ` · ⚠ 상한 초과 ${prodForm.dropped}종 잘림` : ''}`
       : '';
   }
   if (!prodForm.ingredients.length) {
@@ -460,6 +465,7 @@ export function productChipRemove(arg) {
   if (Number.isNaN(i) || i < 0 || i >= prodForm.ingredients.length) return;
   prodForm.ingredients.splice(i, 1);
   getEl('prod-inci-input').value = prodForm.ingredients.join(', ');
+  prodForm.dropped = 0; // textarea 재작성 — 잘린 성분은 더 이상 입력에 없음
   renderInciChips();
 }
 

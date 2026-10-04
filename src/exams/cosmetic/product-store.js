@@ -1,5 +1,5 @@
 // src/exams/cosmetic/product-store.js — 기성품 전성분 DB (FO-37~40, FO-44~45)
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
@@ -65,22 +65,36 @@ const FIELD_LABEL_RE = /(?:전\s*성\s*분\s*표?|全\s*成\s*分|성\s*분\s*�
 const TOKEN_EDGE_RE = /^["'「『(\[〈《.。…:：]+|["'」』)\]〉》。.…:：]+$/g;
 
 /**
- * 전성분 텍스트를 성분명 배열로 파싱한다 — 표시 순서 보존.
+ * 전성분 텍스트 파싱 + 절단 보고 — 표시 순서 보존 (FO-49).
  * 구분자: 쉼표·중점·개행·세미콜론·파이프 (자릿수 쉼표 제외).
  * 중복 제거·공식 매칭은 하지 않는다 — 전성분 원문 재현이 우선.
+ * dropped: MAX_ING_COUNT 초과로 잘라낸 성분 수 — 무음 손실 방지를 위해
+ * 폼 카운터 경고에 사용한다.
  * @param {string} text
- * @returns {string[]}
+ * @returns {{ingredients:string[], dropped:number}}
  */
-export function parseFullIngredients(text) {
-  if (typeof text !== 'string' || !text.trim()) return [];
-  return text
+export function parseFullIngredientsDetailed(text) {
+  if (typeof text !== 'string' || !text.trim()) return { ingredients: [], dropped: 0 };
+  const tokens = text
     .replace(FIELD_LABEL_RE, '\n')
     .replace(PROTECTED_COMMA_RE, `$1${COMMA_GUARD}$2`)
     .split(SEP_RE)
     .map(s => s.replace(new RegExp(COMMA_GUARD, 'g'), ',').trim().replace(TOKEN_EDGE_RE, '').trim())
-    .filter(Boolean)
-    .slice(0, MAX_ING_COUNT)
-    .map(s => s.slice(0, MAX_ING_NAME_LEN));
+    .filter(Boolean);
+  return {
+    ingredients: tokens.slice(0, MAX_ING_COUNT).map(s => s.slice(0, MAX_ING_NAME_LEN)),
+    dropped: Math.max(0, tokens.length - MAX_ING_COUNT),
+  };
+}
+
+/**
+ * 전성분 텍스트를 성분명 배열로 파싱한다 — 절단 보고가 필요하면
+ * parseFullIngredientsDetailed를 사용한다.
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function parseFullIngredients(text) {
+  return parseFullIngredientsDetailed(text).ingredients;
 }
 
 /* =======================================================

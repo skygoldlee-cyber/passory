@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/product-store.test.js
-// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48
+// @spec FO-37,FO-38,FO-39,FO-40,FO-44,FO-45,FO-48,FO-49
 // product-store.js — 기성품 전성분 DB 스토어.
 // 검증: 전성분 파서(자릿수 쉼표 보호·구분자·순서보존), CRUD·정제·중복·한도,
 //       라이브 분류(공식/제한/금지/자가/미등록), 역조회·알레르기 교차·비교,
@@ -9,7 +9,7 @@ import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   PRODUCT_LIMIT_FREE, PRODUCT_ING_CLASS,
-  parseFullIngredients,
+  parseFullIngredients, parseFullIngredientsDetailed,
   listProducts, getProduct, getProductUsage,
   createProduct, updateProduct, deleteProduct,
   classifyIngredient, classifyProductIngredients,
@@ -109,6 +109,16 @@ test('파서 — 다른 필드 라벨은 제거하지 않음 — 칩 삭제로 �
   // '제품명:' 같은 비전성분 필드는 원문 보존 — 라벨 승격은 성분명 불가 키워드 한정
   const r = parseFullIngredients('제품명: 어떤세럼, 전성분: 정제수, 글리세린');
   assert.deepEqual(r, ['제품명: 어떤세럼', '정제수', '글리세린']);
+});
+
+test('파서 — 150종 초과분은 dropped로 보고 (FO-49)', () => {
+  const many = Array.from({ length: 160 }, (_, i) => `성분${i}`).join(', ');
+  const r = parseFullIngredientsDetailed(many);
+  assert.equal(r.ingredients.length, 150);
+  assert.equal(r.dropped, 10);
+  // 상한 이내는 dropped 0, 빈 입력도 안전
+  assert.equal(parseFullIngredientsDetailed('정제수, 글리세린').dropped, 0);
+  assert.deepEqual(parseFullIngredientsDetailed(''), { ingredients: [], dropped: 0 });
 });
 
 /* =======================================================
