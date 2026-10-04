@@ -99,6 +99,8 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
         expect(isVisible('formula-product-form-panel')).toBe(true);
         // 제형은 팝업이 없는 라디오 칩 그룹 — 모바일 탭 바 침범 결함 방지
         const catGroup = el('prod-category');
+        // 제품명·브랜드·제형 행은 모바일에서 세로 스택 클래스를 가져야 함
+        expect(catGroup.closest('.formula-field-row').classList.contains('prod-meta-row')).toBe(true);
         expect(catGroup.getAttribute('role')).toBe('radiogroup');
         expect(catGroup.querySelectorAll('input[name="prod-cat"]').length).toBe(10); // 미선택 + 제형 9종
         el('prod-name').value = '수분 크림';

@@ -1652,6 +1652,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 @media (max-width: 700px) {
     .prod-compare-grid { grid-template-columns: 1fr; }
+    /* 제품명·브랜드·제형 — 모바일에서 각각 별도 행 (한 행에 짓눌려 입력이 잘리는 문제) */
+    .prod-meta-row > .formula-field { flex: 0 0 100%; }
 }
 
 .formula-hub-group-title { margin: 1rem 0 0.7rem; }
