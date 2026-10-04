@@ -842,9 +842,17 @@
                                         <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionKeyTest" title="저장된 키로 모델 접근이 가능한지 확인"><i class="fa-solid fa-plug-circle-check" aria-hidden="true"></i> 키 확인</button>
                                     </div>
                                     <div class="prod-key-row">
-                                        <input type="text" id="prod-gemini-model" class="form-input" maxlength="80" autocomplete="off" placeholder="모델명 (기본 gemini-2.0-flash)" aria-label="Gemini 모델명">
+                                        <input type="text" id="prod-gemini-model" class="form-input" maxlength="80" autocomplete="off" list="prod-gemini-model-list" placeholder="모델명 (기본 gemini-2.0-flash)" aria-label="Gemini 모델명">
+                                        <datalist id="prod-gemini-model-list">
+                                            <option value="gemini-2.0-flash">기본 — 무료 한도 넉넉, 빠름</option>
+                                            <option value="gemini-2.0-flash-lite">최저 비용·최고 속도 (정확도 약간 낮음)</option>
+                                            <option value="gemini-2.5-flash-lite">2.5 계열 최저 비용 — 신규 프로젝트는 접근 제한될 수 있음</option>
+                                            <option value="gemini-2.5-flash">정확도 향상 — 빡빡한 성분표에 유리 (비용·지연 증가)</option>
+                                            <option value="gemini-2.5-pro">최고 정확도 — 복잡한 라벨용 (가장 느리고 비쌈)</option>
+                                        </datalist>
                                         <button type="button" class="btn btn-secondary btn-sm" data-click="productVisionModelSave" title="모델명 저장 — 비우면 기본값">모델 저장</button>
                                     </div>
+                                    <p class="prod-photo-note">모델이 다르면 속도·비용·정확도가 달라집니다. 저장 후 '키 확인'으로 해당 모델 접근 가능 여부를 바로 확인할 수 있습니다.</p>
                                 </details>
                                 <input type="file" id="prod-photo-front" class="is-hidden" accept="image/*" capture="environment" aria-label="제품 정면 사진">
                                 <input type="file" id="prod-photo-back" class="is-hidden" accept="image/*" capture="environment" aria-label="제품 후면 전성분 사진">
