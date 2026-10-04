@@ -15,6 +15,7 @@
  *   npm.cmd run check:numbering
  */
 
+// @spec none (검증 스크립트)
 const fs = require('fs');
 const path = require('path');
 
