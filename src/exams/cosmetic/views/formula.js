@@ -29,7 +29,7 @@ import {
   renderRecommend, renderCustomRules, populateDatalist, downloadJson,
 } from './formula-recommend.js';
 import { findMaterialByName, materialStatus, daysUntilExpiry } from '../material-ledger.js';
-import { localDateTimeNow } from '../store-utils.js';
+import { localDateTimeNow, fmtLocalDateTime } from '../store-utils.js';
 import { getJSON, setJSON } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { buildWorkOrderHtml, printHtml } from './formula-print.js';
@@ -628,7 +628,7 @@ function clearCalcDraft() {
 function showDraftStatus(savedAt, prefix = '자동 저장') {
   const el = getEl('formula-draft-status');
   if (!el) return;
-  const t = typeof savedAt === 'string' && savedAt.length >= 16 ? savedAt.slice(11, 16) : '';
+  const t = typeof savedAt === 'string' && savedAt.length >= 16 ? fmtLocalDateTime(savedAt).slice(11, 16) : '';
   el.textContent = `— ${prefix} ${t}`.trimEnd();
   el.classList.add('is-saved');
 }
@@ -699,7 +699,7 @@ export function formulaWeighClose() {
 /* =======================================================
    고대비 모드 (FO-31) — 조명 반사·습한 화면 대응 (#formula-view 스코프)
    ======================================================= */
-export function applyFormulaContrast() {
+function applyFormulaContrast() {
   const view = document.getElementById('formula-view');
   const btn = getEl('formula-contrast-btn');
   const on = getJSON(STORAGE_KEYS.FORMULA_HIGH_CONTRAST) === true;

@@ -344,7 +344,7 @@ export function findAllergyHits(product, allergies) {
  * @param {string[]} bList
  * @returns {{common:string[], aOnly:string[], bOnly:string[]}|null}
  */
-export function compareIngredientLists(aList, bList) {
+function compareIngredientLists(aList, bList) {
   const a = Array.isArray(aList) ? aList : [];
   const b = Array.isArray(bList) ? bList : [];
   if (!a.length || !b.length) return null;

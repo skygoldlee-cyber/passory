@@ -18,7 +18,7 @@ import { clampStr } from './store-utils.js';
 import { normalizeEntityName } from '../../utils.js';
 
 /** 기본 모델 — 미설정 시 사용되는 폴백 */
-export const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 /** 사용할 Gemini 모델명 — 사용자 설정(FORMULA_GEMINI_MODEL) 또는 기본값 (FO-46) */

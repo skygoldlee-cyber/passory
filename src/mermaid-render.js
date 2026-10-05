@@ -38,6 +38,16 @@ function ensureMermaid() {
  * @param {HTMLElement|null} container
  * @param {string} logPrefix 로그 접두사 ('[reader]', '[search]' 등)
  */
+/** 실패 안내를 노드 앞에 삽입 — 원본 소스는 지우지 않고 유지 (폴백) */
+function _mermaidFailNote(node, msg) {
+    if (node.querySelector('.mermaid-fail-note')) return;
+    const note = document.createElement('div');
+    note.className = 'mermaid-fail-note';
+    note.style.cssText = 'color:var(--color-text-muted);font-size:0.8rem;margin-bottom:4px;';
+    note.textContent = msg;
+    node.prepend(note);
+}
+
 export function renderMermaidIn(container, logPrefix = '[mermaid]') {
     const nodes = container ? container.querySelectorAll('pre.mermaid') : [];
     if (nodes.length === 0) return;
@@ -72,7 +82,7 @@ export function renderMermaidIn(container, logPrefix = '[mermaid]') {
                         .catch((e) => {
                             failed++;
                             console.warn(`${logPrefix} mermaid node ${i} failed:`, e?.message || e);
-                            node.innerHTML = '<span style="color:var(--color-text-muted);font-size:0.8rem;">[다이어그램 렌더링 실패]</span>';
+                            _mermaidFailNote(node, '[다이어그램 렌더링 실패 — 아래 원본 코드 참조]');
                             renderNext(i + 1);
                         });
                 };
@@ -81,7 +91,10 @@ export function renderMermaidIn(container, logPrefix = '[mermaid]') {
                 console.warn(`${logPrefix} mermaid render failed:`, e);
             }
         })
-        .catch((e) => console.warn(`${logPrefix} mermaid load failed:`, e));
+        .catch((e) => {
+            console.warn(`${logPrefix} mermaid load failed:`, e);
+            nodes.forEach(n => _mermaidFailNote(n, '[다이어그램을 불러올 수 없습니다 — 네트워크 확인 후 새로고침. 아래 원본 코드 참조]'));
+        });
 }
 
 /* =========================================================

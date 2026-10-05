@@ -20,7 +20,8 @@ import { checkFormulaItems, countChangedStandards } from '../formula-check.js';
 import { evaluateStability, STAB } from '../formula-stability.js';
 import { getIndex } from './formula.js';
 import { buildAuditReportHtml, printHtml, batchQcSummary } from './formula-print.js';
-import { localDateTime } from '../store-utils.js';
+import { showToast } from '../../../ui-utils.js';
+import { localDateTime, fmtLocalDateTime } from '../store-utils.js';
 
 const RECENT_BATCH_MAX = 10;   // 최근 배치 목록 상한 — 판매내역 증적
 const CONSULT_RECENT_MAX = 3;  // 고객별 최근 상담 이력 상한 (설계 §9-4)
@@ -45,7 +46,7 @@ function collectChecklist(set, checked) {
         text: it.text,
         note: it.note || '',
         done: !!at,
-        doneAt: at ? String(at).slice(0, 10) : null,
+        doneAt: at ? fmtLocalDateTime(at).slice(0, 10) : null,
         refs: (it.refs || []).map(k => (LAW_DOCS[k] ? LAW_DOCS[k].label : k)).filter(Boolean),
       };
     }),
@@ -83,7 +84,7 @@ function collectAdlint() {
   const text = typeof s.text === 'string' ? s.text : '';
   return {
     id: 'adlint', title: '광고 문구 점검',
-    summary: `최근 점검 ${String(s.at || '').slice(0, 10) || '—'} — ${s.hits.length ? `적발 ${s.hits.length}건` : '적발 없음'}`,
+    summary: `최근 점검 ${s.at ? fmtLocalDateTime(s.at).slice(0, 10) : '—'} — ${s.hits.length ? `적발 ${s.hits.length}건` : '적발 없음'}`,
     empty: false,
     at: s.at || '',
     text: text.slice(0, ADLINT_TEXT_MAX),
@@ -228,6 +229,28 @@ export function listAuditLog() {
   return Array.isArray(log) ? log : [];
 }
 
+/** 섹션별 데이터 기준일 추출 — 이력에 "언제 기준 데이터인지" 스냅샷 병기 (개선 ③) */
+function sectionFreshness(d) {
+  const fresh = {};
+  const latest = arr => arr.filter(Boolean).sort().pop() || '';
+  for (const s of d.sections) {
+    if (s.empty) continue;
+    if (s.id === 'checklist') {
+      const ats = (s.groups || []).flatMap(g => (g.items || []).map(it => it.doneAt));
+      fresh.checklist = latest(ats);
+    } else if (s.id === 'adlint' && s.at) {
+      fresh.adlint = fmtLocalDateTime(s.at).slice(0, 10);
+    } else if (s.id === 'batches' && s.latestAt) {
+      fresh.batches = fmtLocalDateTime(s.latestAt).slice(0, 10);
+    } else if (s.id === 'adverse') {
+      fresh.adverse = latest((s.recent || []).map(a => a.reportedAt || a.occurredAt)).slice(0, 10);
+    } else if (s.id === 'customers') {
+      fresh.customers = latest((s.rows || []).map(r => r.lastDate)).slice(0, 10);
+    }
+  }
+  return fresh;
+}
+
 /**
  * 출력 이력 1건 기록 — auditPrintReport가 수집 직후 호출.
  * @param {object} d - collectAuditReportData() 반환값
@@ -241,9 +264,10 @@ export function recordAuditLog(d) {
     done: checklist ? checklist.done : 0,
     total: checklist ? checklist.total : 0,
     sections: d.sections.length,
+    fresh: sectionFreshness(d),
   };
   const log = [entry, ...listAuditLog()].slice(0, AUDIT_LOG_MAX);
-  setJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG, log);
+  entry.saved = setJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG, log);
   return entry;
 }
 
@@ -292,6 +316,7 @@ export function collectAuditReportData(now) {
 /** 종합 보고서 출력 — 수집 → 이력 기록(FO-63) → fp-doc 렌더 → print */
 export function auditPrintReport() {
   const data = collectAuditReportData();
-  recordAuditLog(data);
+  const entry = recordAuditLog(data);
+  if (!entry.saved) showToast('보고서 출력 이력 저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error');
   printHtml(buildAuditReportHtml(data));
 }

@@ -22,7 +22,7 @@ import {
 } from './store-utils.js';
 
 // Free 플랜 저장 한도
-export const ADVERSE_LIMIT_FREE = 30;
+const ADVERSE_LIMIT_FREE = 30;
 
 const MAX_NAME_LEN = 30;
 const MAX_PRODUCT_LEN = 80;

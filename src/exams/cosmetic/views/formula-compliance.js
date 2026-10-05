@@ -366,12 +366,18 @@ function renderAuditLog() {
     const parsed = raw ? JSON.parse(raw) : null;
     log = Array.isArray(parsed) ? parsed : [];
   } catch (e) { log = []; }
+  const FRESH_LABEL = { checklist: '체크리스트', adlint: '광고', batches: '조제', adverse: '이상사례', customers: '상담' };
   box.innerHTML = log.length
-    ? log.slice(0, 5).map(e => `<div class="comp-doc-row">
+    ? log.slice(0, 5).map(e => {
+      const fresh = e.fresh && typeof e.fresh === 'object'
+        ? Object.keys(FRESH_LABEL).filter(k => e.fresh[k]).map(k => `${FRESH_LABEL[k]} ${e.fresh[k].slice(5)}`).join('·')
+        : '';
+      return `<div class="comp-doc-row">
         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
         <span class="comp-doc-label">${esc(fmtLocalDateTime(e.at))}</span>
-        <span class="comp-doc-desc">${esc(e.bizLabel || '')} · ${esc(e.setLabel || '')} · 점검 ${e.done}/${e.total} · 섹션 ${e.sections}개</span>
-      </div>`).join('')
+        <span class="comp-doc-desc">${esc(e.bizLabel || '')} · ${esc(e.setLabel || '')} · 점검 ${e.done}/${e.total} · 섹션 ${e.sections}개${fresh ? ` · 기준 ${esc(fresh)}` : ''}</span>
+      </div>`;
+    }).join('')
     : '<div class="formula-rec-note">출력 이력이 없습니다 — 종합 보고서를 출력하면 여기에 기록됩니다.</div>';
 }
 
@@ -412,14 +418,14 @@ export function compToggle(itemId) {
   } else {
     checked[itemId] = localDateTime();
   }
-  saveChecks(checked);
+  if (!saveChecks(checked)) { showToast('저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error'); return; }
   render();
 }
 
 export function compReset() {
   showConfirm('체크리스트 점검 상태를 모두 초기화할까요?').then(ok => {
     if (!ok) return;
-    saveChecks({});
+    if (!saveChecks({})) { showToast('초기화 저장에 실패했습니다.', 'error'); return; }
     render();
     showToast('체크리스트를 초기화했습니다.');
   }).catch(() => {});

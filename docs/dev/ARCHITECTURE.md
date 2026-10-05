@@ -609,6 +609,12 @@ passory/
 - **`localStorage`**: 학습 진행 상황 (외운 카드, 오답, 모의고사 성적, 스트릭, 설정 등)
 - **Cache Storage (Service Worker)**: App Shell + 데이터 번들의 오프라인 캐시
 
+#### 시각 저장 규약 — naive 로컬 표준, 서버 경계만 ISO
+
+- **사용자에게 보이는 모든 타임스탬프는 `utils.localDateTime`(`'YYYY-MM-DDTHH:MM'` naive 로컬)으로 저장**한다. `toISOString()`은 UTC라 표시 슬라이스·날짜 버킷에서 KST 기준 -9시간 어긋남이 발생하므로 저장에 사용하지 않는다.
+- **표시는 `utils.fmtLocalDateTime`**을 경유 — 신형식(naive)은 그대로, 구버전 ISO 저장분(Z/오프셋)은 로컬 변환해 양쪽 모두 정확히 보인다.
+- **예외는 서버 경계뿐**: `sync.js`의 `updated_at`·충돌 백업 등 Supabase와 주고받는 절대시각 비교용 필드는 ISO를 유지한다 (표시는 `toLocaleString`으로 로컬 변환).
+
 ---
 
 ## 🧩 모듈 설계

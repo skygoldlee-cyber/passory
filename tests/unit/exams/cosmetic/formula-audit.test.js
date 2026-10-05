@@ -6,7 +6,7 @@
 
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { collectAuditReportData } from '../../../../src/exams/cosmetic/views/formula-audit.js';
+import { collectAuditReportData, recordAuditLog } from '../../../../src/exams/cosmetic/views/formula-audit.js';
 import { buildAuditReportHtml } from '../../../../src/exams/cosmetic/views/formula-print.js';
 import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
 import { setJSON } from '../../../../src/storage.js';
@@ -251,4 +251,29 @@ test('buildAuditReportHtml — 체크 항목 ☑ 렌더 + 유형별 섹션 라�
   assert.ok(html.includes('☑'));
   assert.ok(html.includes('2026-10-02'));
   assert.ok(!html.includes('고객 상담 기록')); // mfg는 고객 섹션 없음
+});
+
+/* =======================================================
+   출력 이력 — 섹션 기준 시각 스냅샷 (개선 ③)
+   ======================================================= */
+
+test('recordAuditLog — fresh 맵에 섹션별 최신 데이터 기준일 병기', () => {
+  setJSON(STORAGE_KEYS.COMPLIANCE_CHECKS, {
+    checked: { [FIRST_CHECK_ID]: '2026-10-03T09:00:00Z' },
+    updatedAt: '2026-10-03T09:00:00Z',
+  });
+  setJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE, {
+    text: '주름 개선', hits: [], at: '2026-10-04T01:00:00Z',
+  });
+  const d = collectAuditReportData(NOW);
+  const entry = recordAuditLog(d);
+  assert.equal(entry.fresh.checklist, fmtLocalDateTime('2026-10-03T09:00:00Z').slice(0, 10));
+  assert.equal(entry.fresh.adlint, fmtLocalDateTime('2026-10-04T01:00:00Z').slice(0, 10));
+  assert.ok(!('batches' in entry.fresh), '데이터 없는 섹션은 fresh 미포함');
+});
+
+test('recordAuditLog — naive 로컬 저장분은 fresh가 그대로 유지', () => {
+  createBatch({ formulaName: '세럼', madeAt: '2026-10-01T10:00' });
+  const entry = recordAuditLog(collectAuditReportData(NOW));
+  assert.equal(entry.fresh.batches, '2026-10-01');
 });

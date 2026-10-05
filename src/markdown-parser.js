@@ -117,36 +117,38 @@ export function parseMarkdown(mdText, options = {}) {
     let html = String(mdText);
 
     // 1. 안전한 인라인 태그/특수 토큰 치환 (이스케이프 전에 처리)
-    html = html.replace(/<br\s*\/?>/gi, 'BR_TOKEN');
-    html = html.replace(/<sup>/gi, 'SUP_O');
-    html = html.replace(/<\/sup>/gi, 'SUP_C');
-    html = html.replace(/&nbsp;/gi, 'NBSP_TOKEN');
+    //    보호 토큰은 \x00…\x00 구분자 형식 — 토큰끼리 부분문자열 관계가
+    //    생겨도(SQUOT ⊃ QUOT처럼) 복원 치환 순서와 무관하게 충돌하지 않는다.
+    html = html.replace(/<br\s*\/?>/gi, '\x00BR\x00');
+    html = html.replace(/<sup>/gi, '\x00SUPO\x00');
+    html = html.replace(/<\/sup>/gi, '\x00SUPC\x00');
+    html = html.replace(/&nbsp;/gi, '\x00NBSP\x00');
 
     // 1-1. $$...$$ 수식 블록을 플레이스홀더로 보호 (HTML 이스케이프 전)
     const _mathBlocks = [];
     html = html.replace(/\$\$([\s\S]*?)\$\$/g, (m, formula) => {
         const i = _mathBlocks.length;
         _mathBlocks.push(formula.trim());
-        return `MATHBLOCK_TOKEN${i}END_TOKEN`;
+        return `\x00MBLOCK${i}\x00`;
     });
 
     // 2. HTML 이스케이프
     html = escapeHTML(html);
 
     // 3. 토큰 복원
-    html = html.replace(/BR_TOKEN/gi, '<br>');
-    html = html.replace(/SUP_O/gi, '<sup>');
-    html = html.replace(/SUP_C/gi, '</sup>');
-    html = html.replace(/NBSP_TOKEN/gi, '&nbsp;');
+    html = html.replace(/\x00BR\x00/gi, '<br>');
+    html = html.replace(/\x00SUPO\x00/gi, '<sup>');
+    html = html.replace(/\x00SUPC\x00/gi, '</sup>');
+    html = html.replace(/\x00NBSP\x00/gi, '&nbsp;');
 
     // 3-1. $$...$$ 수식 블록을 HTML 분수로 변환
-    html = html.replace(/MATHBLOCK_TOKEN(\d+)END_TOKEN/g, (m, i) => {
+    html = html.replace(/\x00MBLOCK(\d+)\x00/g, (m, i) => {
         const formula = _mathBlocks[parseInt(i)];
         return convertMathToHtml(formula);
     });
 
     // 4. 펜스 라인 토큰 치환 (```언어)
-    html = html.replace(/^```(\w*).*$/gm, (m, lang) => 'FENCE_TOKEN' + (lang || ''));
+    html = html.replace(/^```(\w*).*$/gm, (m, lang) => '\x00FENCE\x00' + (lang || ''));
 
     // 4-1. 펜스 코드/머메이드 블록 "내부" 라인의 인라인 트리거 문자(* `)를 임시 보호.
     //      (인라인 서식(5)이 문서 전체에 적용되므로, 보호하지 않으면 코드블록 안의
@@ -156,20 +158,20 @@ export function parseMarkdown(mdText, options = {}) {
         const fenceLines = html.split(/\r?\n/);
         let inFence = false;
         for (let i = 0; i < fenceLines.length; i++) {
-            if (/^FENCE_TOKEN/.test(fenceLines[i].trim())) { inFence = !inFence; continue; }
+            if (/^\x00FENCE\x00/.test(fenceLines[i].trim())) { inFence = !inFence; continue; }
             if (inFence) {
                 fenceLines[i] = fenceLines[i]
-                    .replace(/\*/g, 'STAR_TOKEN')
-                    .replace(/`/g, 'BTICK_TOKEN')
-                    .replace(/\[/g, 'SBR_O_TOKEN')
-                    .replace(/\]/g, 'SBR_C_TOKEN')
-                    .replace(/\(/g, 'PAR_O_TOKEN')
-                    .replace(/\)/g, 'PAR_C_TOKEN')
-                    .replace(/&lt;/g, 'LT_TOKEN')
-                    .replace(/&gt;/g, 'GT_TOKEN')
-                    .replace(/&quot;/g, 'QUOT_TOKEN')
-                    .replace(/&#39;/g, 'SQUOT_TOKEN')
-                    .replace(/<br>/g, 'BR_IN_FENCE');
+                    .replace(/\*/g, '\x00STAR\x00')
+                    .replace(/`/g, '\x00BTICK\x00')
+                    .replace(/\[/g, '\x00SBRO\x00')
+                    .replace(/\]/g, '\x00SBRC\x00')
+                    .replace(/\(/g, '\x00PARO\x00')
+                    .replace(/\)/g, '\x00PARC\x00')
+                    .replace(/&lt;/g, '\x00LT\x00')
+                    .replace(/&gt;/g, '\x00GT\x00')
+                    .replace(/&quot;/g, '\x00QUOT\x00')
+                    .replace(/&#39;/g, '\x00SQUOT\x00')
+                    .replace(/<br>/g, '\x00BRFENCE\x00');
             }
         }
         html = fenceLines.join('\n');
@@ -185,8 +187,8 @@ export function parseMarkdown(mdText, options = {}) {
     }
 
     // 복원 (펜스 마커 + 코드블록 내부 보호 토큰)
-    html = html.replace(/FENCE_TOKEN(\w*)/g, '```$1');
-    html = html.replace(/STAR_TOKEN/g, '*').replace(/BTICK_TOKEN/g, '`');
+    html = html.replace(/\x00FENCE\x00(\w*)/g, '```$1');
+    html = html.replace(/\x00STAR\x00/g, '*').replace(/\x00BTICK\x00/g, '`');
 
     // 5-1. 마크다운 이미지 ![alt](url) → <img src="url" alt="alt">
     // (링크 파싱 전에 처리하여 ![alt](url)가 [text](url)로 변환되지 않도록 함)
@@ -215,11 +217,11 @@ export function parseMarkdown(mdText, options = {}) {
     // []() 리터럴 복원 + HTML 엔티티를 엔티티 형태로 복원
     // (&lt; &gt; &quot; 그대로 유지 → 브라우저 textContent에서 < > " 로 디코딩됨)
     // 이렇게 하면 < 가 HTML 태그 시작으로 해석되는 것을 방지
-    html = html.replace(/SBR_O_TOKEN/g, '[').replace(/SBR_C_TOKEN/g, ']')
-               .replace(/PAR_O_TOKEN/g, '(').replace(/PAR_C_TOKEN/g, ')')
-               .replace(/LT_TOKEN/g, '&lt;').replace(/GT_TOKEN/g, '&gt;')
-               .replace(/SQUOT_TOKEN/g, '&#39;').replace(/QUOT_TOKEN/g, '&quot;')
-               .replace(/BR_IN_FENCE/g, '&lt;br/&gt;');
+    html = html.replace(/\x00SBRO\x00/g, '[').replace(/\x00SBRC\x00/g, ']')
+               .replace(/\x00PARO\x00/g, '(').replace(/\x00PARC\x00/g, ')')
+               .replace(/\x00LT\x00/g, '&lt;').replace(/\x00GT\x00/g, '&gt;')
+               .replace(/\x00SQUOT\x00/g, '&#39;').replace(/\x00QUOT\x00/g, '&quot;')
+               .replace(/\x00BRFENCE\x00/g, '&lt;br/&gt;');
 
     // 6. 줄 단위 블록 파싱
     const lines = html.split(/\r?\n/);
@@ -243,9 +245,9 @@ export function parseMarkdown(mdText, options = {}) {
         if (s.startsWith('|')) s = s.slice(1);
         if (s.endsWith('|')) s = s.slice(0, -1);
         return s
-            .replace(/\\\|/g, 'PIPE_ESC_TOKEN')
+            .replace(/\\\|/g, '\x00PIPE\x00')
             .split('|')
-            .map(c => c.trim().replace(/PIPE_ESC_TOKEN/g, '|'));
+            .map(c => c.trim().replace(/\x00PIPE\x00/g, '|'));
     };
 
     let _lastTableLine = 0;

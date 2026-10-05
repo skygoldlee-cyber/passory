@@ -57,8 +57,10 @@ function writeLabelForm(d) {
   if (fn) fn.checked = d['label-functional'] === '1';
 }
 
+let _labelSaveWarned = false;
 function saveLabelDraft() {
-  setJSON(STORAGE_KEYS.FORMULA_LABEL_DRAFT, readLabelForm());
+  if (setJSON(STORAGE_KEYS.FORMULA_LABEL_DRAFT, readLabelForm())) { _labelSaveWarned = false; return; }
+  if (!_labelSaveWarned) { _labelSaveWarned = true; showToast('표시사항 임시 저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error'); }
 }
 
 /**
@@ -174,9 +176,9 @@ export function adlintRun() {
   const text = ta.value;
   if (!text.trim()) { showToast('점검할 문구를 입력하세요.', 'error'); return; }
   const hits = lintAdCopy(text);
-  setJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE, {
+  if (!setJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE, {
     text, hits, at: localDateTime(),
-  });
+  })) showToast('점검 결과 저장에 실패했습니다 — 이번 점검은 보고서에 반영되지 않습니다.', 'error');
 
   // 본문 하이라이트 — 위치 기준 <mark> 삽입
   let html = '';

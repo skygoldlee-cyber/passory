@@ -179,7 +179,7 @@ const PAREN_ANNOTATION_RE = /제외|한함|이하|이상|까지|로서|부가|�
  * @param {string} name
  * @returns {string[]}
  */
-export function parenNameParts(name) {
+function parenNameParts(name) {
   if (typeof name !== 'string' || !/[(\[（]/.test(name)) return [];
   const parts = [];
   const outer = name.replace(/[(\[（][^)\]）]*[)\]）]/g, '').trim();

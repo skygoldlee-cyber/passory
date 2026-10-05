@@ -6,6 +6,19 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 코드베이스 보완·개선 9개 항목 일괄 적용
+
+- **① 구버전 ISO 잔존 표시**: 보고서 체크리스트 점검일(`doneAt`)·광고 점검일 요약·드래프트 자동 저장 시각의 `slice` 직접 절단을 `fmtLocalDateTime` 경유로 통일 — 과거 ISO 저장분도 로컬로 변환되어 정확히 표시
+- **② 저장 실패 무음 처리 해소**: 체크리스트 토글·초기화, 표시사항 드래프트, 광고 점검 결과, 보고서 출력 이력의 `setJSON` 실패가 무시되던 경로에 실패 토스트 추가 (CRUD 경로는 기존 `showStoreError`로 커버됨을 확인)
+- **③ 보고서 이력 기준 시각**: 출력 이력(`recordAuditLog`)에 `fresh` 맵 추가 — 체크리스트·광고·조제·이상사례·상담 각 섹션의 최신 데이터 기준일 스냅샷, 컴플라이언스 패널 이력 행에 '기준' 병기
+- **④ 미사용 export 5건 제거**: `ADVERSE_LIMIT_FREE`·`parenNameParts`·`compareIngredientLists`·`GEMINI_MODEL`·`applyFormulaContrast`의 `export` 제거 — check:imports 경고 0건
+- **⑤ 시각 저장 규약 명문화**: ARCHITECTURE.md 영속성 계층에 "사용자 표시 시각은 `localDateTime` naive, 서버 경계(sync.js)만 ISO" 규약 기술
+- **⑥ esc() 정적 체크**: 기존 `check:escape`(check_html_escape.js, 싱크 보간 미이스케이프 기준선 게이트)가 이미 check:ci·CI에 포함됨을 확인 — 추가 도구 불필요
+- **⑦ Letter 인쇄 검증**: `fp-doc` 상대폭(96%)이라 Letter(612pt)에서도 표 우측선 542pt로 경계 내 출력 — Playwright+pdfplumber 실측 확인
+- **⑧ Mermaid 로드 실패 폴백**: vendor 지연 로딩 실패(오프라인)·개별 렌더 실패 시 노드 내용을 지우지 않고 실패 안내를 앞에 삽입 — 원본 소스 유지
+- **⑨ 토큰 부분문자열 충돌 구조 차단**: markdown-parser 보호 토큰을 `\x00…\x00` 구분자 형식으로 전환 — 치환 순서와 무관하게 충돌 불가 (SQUOT ⊃ QUOT 류 재발 방지)
+- **검증**: 유닛 122+19건·DOM 20건·parser parity·types·lint·imports(경고 0)·escape(기준선 86) 통과, 회귀 테스트 2건 추가
+
 ## 2026-10-05 프로젝트 전체 시각 — UTC → 로컬(naive) 기준으로 통일
 
 - **문제**: `toISOString()`(UTC)으로 저장된 타임스탬프를 표시 측이 앞 N자만 잘라 UTC 값 그대로 노출 — 보고서 발행일시 -9시간(KST), 체크리스트 점검일·광고 점검일은 KST 00~09시에 하루 전 날짜, 드래프트 자동 저장 시각·연습 이력 시각도 UTC
