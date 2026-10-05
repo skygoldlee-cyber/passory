@@ -133,9 +133,17 @@ html.light-theme #manual-overlay #manual-article pre.reader-code-block{
 body.manual-open{overflow:hidden;}
 @media print{
   body.manual-open>*:not(#manual-overlay){display:none !important;}
-  #manual-overlay{position:static !important;display:block !important;}
+  /* print.css html,body와 별개로 오버레이 자체 배경·글자색도 인쇄용으로 강제 —
+     다크 테마(--bg-app 어두움·--color-text-main 밝음)에서 출력 시 밝은 글자 방지 */
+  #manual-overlay{position:static !important;display:block !important;
+    background:#fff !important;color:#000 !important;}
   #manual-overlay .manual-ov-bar,#manual-overlay .manual-ov-toc{display:none !important;}
-  #manual-overlay .manual-ov-scroll{overflow:visible !important;padding:0 !important;}
+  /* @page margin:0 — 스크롤 패딩을 페이지 여백 대용으로 사용 (review-view와 동일).
+     clone: 패딩을 페이지 조각마다 반복해 연속 페이지 상하 여백 유지 (fp-doc와 동일) */
+  #manual-overlay .manual-ov-scroll{overflow:visible !important;padding:10mm 8mm !important;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+  /* h1 그라디언트 텍스트는 배경 미출력 시 transparent fill로 보이지 않음 — 인쇄 시 고정색 */
+  #manual-overlay #manual-article h1{-webkit-text-fill-color:#000 !important;}
 }`;
 
     const _overlay = createDocOverlay({

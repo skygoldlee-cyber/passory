@@ -140,6 +140,15 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         expect(css).toContain('overflow-x:auto');
     });
 
+    it('인쇄 CSS — @page margin:0 대응 패딩으로 좌우 여백 확보 (회귀 방지)', async () => {
+        await ManualViewer.openManual();
+        const css = el('manual-overlay-style').textContent;
+        // @page{margin:0} — 스크롤 컨테이너 패딩이 페이지 여백을 대신한다 (review-view와 동일 규약)
+        expect(css).toMatch(/\.manual-ov-scroll\{[^}]*padding:10mm 8mm/);
+        // 연속 페이지 상하에도 여백이 반복되도록 clone 지정
+        expect(css).toMatch(/\.manual-ov-scroll\{[^}]*box-decoration-break:clone/);
+    });
+
     it('닫기 → 오버레이 닫힘·body 클래스 해제', async () => {
         await ManualViewer.openManual();
         await flushAsync(30);

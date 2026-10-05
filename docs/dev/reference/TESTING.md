@@ -263,7 +263,7 @@ npm run hooks:install
 | 18 | `study-reader.dom.test.js` | 29 | 교재 리더 | 과목 옵션·본문/TOC 렌더, 읽기 위치 이어하기, 북마크 영속, 빈 상태 + 툴바(툴바 접기)·본문 검색 하이라이트·모바일 TOC 드로어·표 인라인 렌더(확장 모달 제거 회귀)·이미지 라이트박스(클릭 확대·배율·닫기·모바일 미바인딩 — 데스크탑 전용)·TOC 클릭 스크롤·테마 동기화 + 이야기형 서사 태깅(명시 마커·sr-only 구간 라벨 포함)(명시 마커 📖┈이야기┈~┈본문┈� + �📖 장면·💭 에필로그·프롤로그 폴백) | 2026-09-23 추가 · 2026-10-06 갱신(글자/줄간격 제거·이미지 라이트박스 데스크탑 복원) |
 | 19 | `study-search.dom.test.js` | 7 | 교재 검색 | 역색인 검색·하이라이트·건수, AND 교집합, 과목 필터, 결과 없음, 더보기 토글, 초기화 | 2026-09-23 추가 |
 | 20 | `study-dictionary.dom.test.js` | 14 | 성분 사전 + 전체 CSV (DI-10) | 카드·3상태 배지, 이름/영문/초성 검색, type 필터, 빈 DB·결과 없음, 상세 토글, 필터 결과 CSV보내기·전체 CSV보내기 | 2026-10-18 갱신 |
-| 21 | `study-manual.dom.test.js` | 9 | 매뉴얼 뷰어 | 오버레이·MD 렌더·TOC, doc: 링크 문서 전환, sessionStorage 캐시, mermaid 마크업, 미등록 소스 오류, 닫기 | 2026-09-23 추가 |
+| 21 | `study-manual.dom.test.js` | 10 | 매뉴얼 뷰어 | 오버레이·MD 렌더·TOC, doc: 링크 문서 전환, sessionStorage 캐시, mermaid 마크업, 미등록 소스 오류, 인쇄 CSS 좌우 여백(@page margin:0 대응 패딩·clone), 닫기 | 2026-09-23 추가 · 2026-10-06 갱신 |
 | 22 | `study-examviewer.dom.test.js` | 7 | 문제집 뷰어 | 오버레이·MD 렌더·TOC, 인쇄 버튼→window.print, 캐시 재사용, 미존재 문서 오류, 닫기 | 2026-09-23 추가 |
 | 23 | `study-examselect.dom.test.js` | 4 | 시험 선택 | 카드 렌더·현재 시험 배지, 다른 시험→저장·리로드, 같은 시험→대시보드 복귀, 빈 목록 | 2026-09-23 추가 |
 | 24 | `common-theme.dom.test.js` | 4 | 테마 토글 | data-theme·localStorage 영속, 아이콘 전환, 시스템 테마 초기화 | 2026-09-23 추가 |
