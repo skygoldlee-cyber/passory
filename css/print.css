@@ -4,6 +4,12 @@
    ========================================== */
 
 /* @spec RR-14,FO-21 */
+/* 브라우저 머리글·바닥글(문서 제목·URL·페이지 번호)은 페이지 여백에 그려짐 —
+   @page 여백을 0으로 두면 출력할 공간이 없어 항상 숨겨진다 (인쇄 대화상자 설정과 무관) */
+@page {
+    margin: 0;
+}
+
 @media print {
     /* 인쇄 전용 토큰 — 화면 테마와 독립 */
     :root {
@@ -60,7 +66,8 @@
 
     #review-view.view-section {
         display: block !important;
-        padding: 0 !important;
+        /* @page margin:0 — 본문 패딩으로 여백 대체 */
+        padding: 10mm 8mm !important;
         height: auto !important;
         overflow: visible !important;
     }
@@ -193,9 +200,13 @@
     #formula-print-area .fp-doc {
         font-family: 'Noto Sans KR', sans-serif;
         color: var(--print-fg);
-        /* 720px는 A4 인쇄 가능 폭과 같아 우측 테두리가 경계 클립됨 — 여유 확보 */
+        /* @page margin:0 환경 — 문서 자체 여백으로 대체 (96%로 양옆 여유) */
         max-width: 96%;
         margin: 0 auto;
+        padding: 10mm 0;
+        /* clone: 패딩을 페이지 조각마다 반복 — 연속 페이지 상하에도 여백 유지 */
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
         /* 공백 없는 긴 토큰(성분명·URL 등)이 표를 페이지 밖으로 밀어내는 것 방지 —
            td의 min-content 축소로 표가 컨테이너 안에 머묾 (상속됨) */
         overflow-wrap: anywhere;

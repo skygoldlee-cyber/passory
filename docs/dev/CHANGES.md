@@ -6,6 +6,11 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 인쇄 머리글·바닥글(제목·URL) 제거
+
+- **문제**: 브라우저 '머리글 및 바닥글' 옵션으로 `Passmula — 맞춤형화장품 조제관리사` 제목과 `https://passory.vercel.app/index.html#/formula` URL이 PDF 상·하단에 출력됨 — 페이지 여백 영역에 그려지므로 CSS `display:none`으로는 제거 불가
+- **수정**: `css/print.css` — `@page { margin: 0 }`으로 머리글 영역 자체를 제거하고, 본문 여백은 `.fp-doc`의 `padding: 10mm 0` + `box-decoration-break: clone`(연속 페이지 상하에도 패딩 반복)로 대체. `#review-view` 인쇄에도 `padding: 10mm 8mm` 부여. 검증: Playwright `displayHeaderFooter` 재현에서 제목·URL 미출력 확인
+
 ## 2026-10-05 인쇄 표 우측 세로선 소실 — 2차 수정 (문서 폭이 인쇄 경계와 일치)
 
 - **문제**: `.fp-doc`의 `max-width: 720px`가 A4 인쇄 가능 폭(여백 1cm 기준 ≈718px)과 사실상 동일해 표 우측 테두리가 페이지 클립 경계에 걸쳐 PDF 뷰어에서 선이 보이지 않음 — 1cm 여백 재현 시 우측선이 경계(568.5pt)와 일치함을 확인
