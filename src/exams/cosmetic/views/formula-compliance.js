@@ -17,6 +17,7 @@ import { lawUrlFor } from '../../../law-links.js';
 import { resolveRefPath } from '../../../pdf-registry.js';
 import { showPanel, formulaSubNav } from './formula.js';
 import { getBizType, bizChecklistSet } from '../biz-profile.js';
+import { fmtLocalDateTime, localDateTime } from '../store-utils.js';
 
 /* =======================================================
    참조 문서 테이블 — contentRoot 기준 상대 경로
@@ -283,7 +284,8 @@ function activeSet() {
 }
 
 /* =======================================================
-   체크 상태 영속화 — {checked: {id: isoString}, updatedAt}
+   체크 상태 영속화 — {checked: {id: 로컬시각}, updatedAt}
+   시각은 'YYYY-MM-DDTHH:MM' naive 로컬 (utils.localDateTime — 구버전은 ISO)
    세트별 분리 키 (FO-34) — 유형 전환 시 점검 이력이 섞이지 않는다.
    ======================================================= */
 
@@ -302,7 +304,7 @@ export function loadChecks(set) {
 
 function saveChecks(checked, set) {
   const s = set || activeSet();
-  return safeSetItem(s.key, JSON.stringify({ checked, updatedAt: new Date().toISOString() }));
+  return safeSetItem(s.key, JSON.stringify({ checked, updatedAt: localDateTime() }));
 }
 
 /* =======================================================
@@ -367,7 +369,7 @@ function renderAuditLog() {
   box.innerHTML = log.length
     ? log.slice(0, 5).map(e => `<div class="comp-doc-row">
         <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-        <span class="comp-doc-label">${esc(String(e.at || '').slice(0, 16).replace('T', ' '))}</span>
+        <span class="comp-doc-label">${esc(fmtLocalDateTime(e.at))}</span>
         <span class="comp-doc-desc">${esc(e.bizLabel || '')} · ${esc(e.setLabel || '')} · 점검 ${e.done}/${e.total} · 섹션 ${e.sections}개</span>
       </div>`).join('')
     : '<div class="formula-rec-note">출력 이력이 없습니다 — 종합 보고서를 출력하면 여기에 기록됩니다.</div>';
@@ -408,7 +410,7 @@ export function compToggle(itemId) {
   if (checked[itemId]) {
     delete checked[itemId];
   } else {
-    checked[itemId] = new Date().toISOString();
+    checked[itemId] = localDateTime();
   }
   saveChecks(checked);
   render();

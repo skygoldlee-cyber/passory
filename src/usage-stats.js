@@ -11,7 +11,7 @@ import { STORAGE_KEYS } from './storage-keys.js';
 import { safeGetItem, safeSetItem } from './state.js';
 import { esc } from './sanitize.js';
 import { trapFocus } from './ui-utils.js';
-import { todayKey } from './utils.js';
+import { todayKey, localDateTime } from './utils.js';
 
 const DAYS_KEEP = 90; // days 맵 상한 — 저장량 제한
 
@@ -65,7 +65,7 @@ function _ownerId() {
 function _bump(bucket, key) {
     if (!key) return;
     const d = _load();
-    const now = new Date().toISOString();
+    const now = localDateTime();
     if (!d.owner) d.owner = _ownerId();
     if (!d.firstUse) d.firstUse = now;
     d.lastUse = now;

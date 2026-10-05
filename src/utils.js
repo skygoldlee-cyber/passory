@@ -28,6 +28,35 @@ export function todayKey(date) {
     return localDateKey(date || new Date());
 }
 
+/**
+ * Date → 'YYYY-MM-DDTHH:MM' 로컬 시각 문자열 — 프로젝트 시각 저장의 표준 형식.
+ * toISOString()은 UTC라 표시 슬라이스 시 시간·날짜가 어긋나므로
+ * 사용자에게 보이는 타임스탬프는 모두 이 naive 로컬 형식으로 저장한다.
+ */
+export function localDateTime(d = new Date()) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** 현재 시각을 'YYYY-MM-DDTHH:MM' 로컬 문자열로 반환 (기록·드래프트 공용) */
+export function localDateTimeNow() {
+    return localDateTime(new Date());
+}
+
+/**
+ * 저장 시각 문자열의 표시용 변환 — 'YYYY-MM-DD HH:MM' 로컬 시각.
+ * Z/오프셋이 붙은 절대시각(구버전 ISO 저장분)은 로컬로 변환하고,
+ * 표준 형식인 naive 로컬은 그대로 잘라 표시한다.
+ */
+export function fmtLocalDateTime(v) {
+    if (typeof v !== 'string' || !v) return '—';
+    if (/[zZ]$|[+-]\d{2}:?\d{2}$/.test(v)) {
+        const d = new Date(v);
+        if (!Number.isNaN(d.getTime())) return localDateTime(d).replace('T', ' ');
+    }
+    return v.slice(0, 16).replace('T', ' ');
+}
+
 /** 정규식 특수문자 이스케이프 — 동적 RegExp 생성 시 필수 */
 export function escapeRegExp(string) {
     return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

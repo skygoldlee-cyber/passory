@@ -6,6 +6,7 @@ import { buildCalcQuestion } from '../trainer-calc.js';
 import { clearScratchpad } from '../scratchpad.js';
 import { showToast, vibrate, HAPTIC, showAnswerFeedback } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
+import { localDateTimeNow, fmtLocalDateTime } from '../utils.js';
 import { resetMainScroll } from './navigation.js';
 
 /* =======================================================
@@ -155,7 +156,7 @@ function renderCalcHistory() {
     history.forEach(item => {
         const badgeColor = item.isCorrect ? 'var(--color-success)' : 'var(--color-danger)';
         const badgeBg = item.isCorrect ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
-        const dateStr = item.date ? item.date.substring(5, 16).replace('T', ' ') : '';
+        const dateStr = fmtLocalDateTime(item.date).slice(5);
 
         const cardHTML = `
             <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.8rem; text-align: left;">
@@ -188,7 +189,7 @@ function addCalcHistoryItem(questionText, type, userVal, correctAns, isCorrect, 
     }
 
     const newItem = {
-        date: new Date().toISOString(),
+        date: localDateTimeNow(),
         question: stripTags(questionText).substring(0, 80) + (questionText.length > 80 ? '...' : ''),
         type: type,
         userVal: userVal,

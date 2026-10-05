@@ -7,6 +7,9 @@
 
 import { getJSON, setJSON, getJSONAsync, setJSONAsync } from '../../storage.js';
 
+// 시각 표준은 범용 utils.js에 위임 — 도메인 호출처는 이 re-export로 유지
+export { localDateTime, localDateTimeNow, fmtLocalDateTime } from '../../utils.js';
+
 /** 키의 배열 항목 전체 로드 — 파싱 실패·비배열은 빈 배열 */
 export function loadItems(key) {
   const parsed = getJSON(key);
@@ -63,9 +66,4 @@ export function clampDateTime(s) {
   return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(v) ? v : '';
 }
 
-/** datetime-local 입력용 현재 시각 문자열 (로컬 시간대 기준) */
-export function localDateTimeNow() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+// (localDateTime·localDateTimeNow·fmtLocalDateTime는 상단의 utils.js re-export 참조)

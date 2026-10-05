@@ -10,6 +10,7 @@ import { todayKey } from '../../../utils.js';
 import { QC_FIELDS, HYGIENE_FIELDS } from '../batch-store.js';
 import { PHASE_OPTIONS } from '../formula-store.js';
 import { buildUsageGuideFromBatch } from '../usage-guide.js';
+import { fmtLocalDateTime } from '../store-utils.js';
 
 const QC_BADGE = { '정상': '○', '이상': '✕', '미확인': '—' };
 
@@ -158,7 +159,7 @@ export function buildWorkOrderHtml(f) {
 const AUDIT_SECTION_MARK = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
 
 function auditFmtDateTime(v) {
-  return typeof v === 'string' && v ? v.slice(0, 16).replace('T', ' ') : '—';
+  return fmtLocalDateTime(v);
 }
 
 function auditChecklistBody(s) {

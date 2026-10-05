@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 프로젝트 전체 시각 — UTC → 로컬(naive) 기준으로 통일
+
+- **문제**: `toISOString()`(UTC)으로 저장된 타임스탬프를 표시 측이 앞 N자만 잘라 UTC 값 그대로 노출 — 보고서 발행일시 -9시간(KST), 체크리스트 점검일·광고 점검일은 KST 00~09시에 하루 전 날짜, 드래프트 자동 저장 시각·연습 이력 시각도 UTC
+- **수정**: 시각 저장 표준을 `utils.localDateTime`('YYYY-MM-DDTHH:MM' naive 로컬 — localDateKey와 동일 원칙)으로 통일. `utils.js`에 `localDateTime`·`localDateTimeNow`·`fmtLocalDateTime`(구버전 ISO 저장분 표시용 로컬 변환) 추가, `store-utils.js`는 re-export로 위임. 저장 전환: generatedAt(보고서)·checked[](체크리스트)·updatedAt·adlint at·드래프트 savedAt·제품 분석 내보내기·연습 이력 date·usage-stats·pro-notice·실제 시험 결과 reportedAt. 표시 전환: 발행일시·보고서 이력(컴플라이언스)·연습 이력은 `fmtLocalDateTime`으로 구버전 ISO와 신버전 모두 로컬 표기. 예외: `sync.js`는 Supabase 서버 upsert·원격 비교용 절대시각이 필요해 ISO 유지(표시는 `toLocaleString`으로 이미 로컬 변환됨)
+- **검증**: 회귀 테스트(fmtLocalDateTime ISO→로컬·naive 유지·generatedAt 형식), 유닛 17건·types·lint·imports 통과
+
 ## 2026-10-05 마크다운 파서 — 코드블록 작은따옴표 깨짐 수정 (mermaid 렌더 오류)
 
 - **문제**: 펜스 코드 블록 내 `'`(작은따옴표)가 `S"`로 깨져 출력 — 매뉴얼 mermaid 다이어그램이 `A["... '종합 보고서' ..."]` 라벨에서 파싱 오류. 원인: `markdown-parser.js`의 토큰 복원이 `QUOT_TOKEN → &quot;`를 `SQUOT_TOKEN`보다 먼저 실행 — `SQUOT_TOKEN`은 `QUOT_TOKEN`을 부분문자열로 포함하므로 `S` + `&quot;`로 오염

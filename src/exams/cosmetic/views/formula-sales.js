@@ -14,6 +14,7 @@ import { showPanel, formulaSubNav } from './formula.js';
 import { listFormulas } from '../formula-store.js';
 import { printHtml } from './formula-print.js';
 import { lintAdCopy, summarizeLint, AD_CATEGORIES } from '../ad-lint.js';
+import { localDateTime } from '../store-utils.js';
 
 /* =======================================================
    표시사항 검토 (FO-35) — 화장품법 제10조·시행규칙 별표4 기준 필드
@@ -174,7 +175,7 @@ export function adlintRun() {
   if (!text.trim()) { showToast('점검할 문구를 입력하세요.', 'error'); return; }
   const hits = lintAdCopy(text);
   setJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE, {
-    text, hits, at: new Date().toISOString(),
+    text, hits, at: localDateTime(),
   });
 
   // 본문 하이라이트 — 위치 기준 <mark> 삽입

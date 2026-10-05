@@ -16,6 +16,7 @@ import { createMaterial } from '../../../../src/exams/cosmetic/material-ledger.j
 import { createBatch } from '../../../../src/exams/cosmetic/batch-store.js';
 import { createFormula } from '../../../../src/exams/cosmetic/formula-store.js';
 import { COMPLIANCE_SECTIONS } from '../../../../src/exams/cosmetic/views/formula-compliance.js';
+import { fmtLocalDateTime, localDateTime } from '../../../../src/exams/cosmetic/store-utils.js';
 
 function createMockStorage() {
   const store = {};
@@ -54,7 +55,19 @@ test('custom 유형 — 고객 첫·체크리스트 끝 순서, 라벨·광고 �
     d.sections.map(s => s.id),
     ['customers', 'adverse', 'formulas', 'batches', 'materials', 'checklist']);
   assert.equal(d.biz.id, 'custom');
-  assert.equal(d.generatedAt, '2026-10-05T10:00:00.000Z');
+  assert.equal(d.generatedAt, localDateTime(NOW), 'naive 로컬 형식 (YYYY-MM-DDTHH:MM)');
+});
+
+test('발행일시 표시 — ISO(UTC)는 로컬 시각으로 변환, naive 로컬은 그대로 (fmtLocalDateTime)', () => {
+  // generatedAt은 naive 로컬 — 표시는 그대로, 구버전 ISO 저장분만 로컬 변환
+  const expected = localDateTime(NOW).replace('T', ' ');
+  const html = buildAuditReportHtml(collectAuditReportData(NOW));
+  assert.ok(html.includes(`발행일시: ${expected}`), `로컬 시각 표시 (${expected})`);
+  assert.equal(fmtLocalDateTime('2026-10-05T03:21:00.000Z'),
+    localDateTime(new Date('2026-10-05T03:21:00.000Z')).replace('T', ' '), 'Z ISO → 로컬');
+  assert.equal(fmtLocalDateTime('2026-10-05T10:00'), '2026-10-05 10:00', 'naive 로컬 유지');
+  assert.equal(fmtLocalDateTime('2026-10-05'), '2026-10-05', '날짜만');
+  assert.equal(fmtLocalDateTime(''), '—', '빈 값');
 });
 
 test('mfg 유형 — 라벨·광고·포뮬러·배치·원료 포함, 고객 제외·체크리스트 끝', () => {

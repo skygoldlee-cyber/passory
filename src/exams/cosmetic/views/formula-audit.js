@@ -20,6 +20,7 @@ import { checkFormulaItems, countChangedStandards } from '../formula-check.js';
 import { evaluateStability, STAB } from '../formula-stability.js';
 import { getIndex } from './formula.js';
 import { buildAuditReportHtml, printHtml, batchQcSummary } from './formula-print.js';
+import { localDateTime } from '../store-utils.js';
 
 const RECENT_BATCH_MAX = 10;   // 최근 배치 목록 상한 — 판매내역 증적
 const CONSULT_RECENT_MAX = 3;  // 고객별 최근 상담 이력 상한 (설계 §9-4)
@@ -280,7 +281,7 @@ export function collectAuditReportData(now) {
   sections.push(collectChecklist(set, checked));
 
   return {
-    generatedAt: (now instanceof Date ? now : new Date()).toISOString(),
+    generatedAt: localDateTime(now instanceof Date ? now : new Date()),
     appVersion: (typeof window !== 'undefined' && window.APP_VERSION) || '',
     biz,
     setLabel: set.label,

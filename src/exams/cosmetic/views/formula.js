@@ -606,7 +606,7 @@ function readCalcDraft() {
     targetVolume, unit, phTarget, phActual,
     name: nameEl ? nameEl.value.trim() : '',
     notes: notesEl ? notesEl.value.trim() : '',
-    savedAt: new Date().toISOString(),
+    savedAt: localDateTimeNow(),
   };
 }
 

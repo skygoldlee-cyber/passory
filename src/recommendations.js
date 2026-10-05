@@ -20,6 +20,7 @@ export function getSimHistory() {
 }
 
 import { subjectKeyFromItemId } from './weak-items.js';
+import { localDateTime } from './utils.js';
 const subjectKeyOf = subjectKeyFromItemId;
 
 /**
@@ -305,7 +306,7 @@ export function saveActualResult(passed, score, expectedAtReport) {
         passed: !!passed,
         score,
         expectedAtReport: typeof expectedAtReport === 'number' ? expectedAtReport : null,
-        reportedAt: new Date().toISOString(),
+        reportedAt: localDateTime(),
         examId
     }));
     return true;

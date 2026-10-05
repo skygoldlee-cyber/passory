@@ -14,6 +14,7 @@ import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
 import { trackAction } from './usage-stats.js';
 import { hasFeature, getActiveExamId } from './exam-context.js';
+import { localDateTime } from './utils.js';
 
 /** 스토어 오류가 무료 한도 초과인지 판별 */
 function isFreeLimitError(error) {
@@ -94,7 +95,7 @@ export function proFeatureNotice(featureKey, featureName) {
     let seen = {};
     try { seen = JSON.parse(safeGetItem(STORAGE_KEYS.PRO_NOTICE_SEEN) || '{}') || {}; } catch (e) { seen = {}; }
     if (seen[featureKey]) return;
-    seen[featureKey] = new Date().toISOString();
+    seen[featureKey] = localDateTime();
     safeSetItem(STORAGE_KEYS.PRO_NOTICE_SEEN, JSON.stringify(seen));
 
     const { overlay, close } = _showDialog(`

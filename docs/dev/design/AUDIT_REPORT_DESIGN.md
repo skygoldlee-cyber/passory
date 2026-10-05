@@ -118,7 +118,7 @@ DOM 비의존 순수 함수 — 모든 소스를 읽기 전용으로 호출하�
 ### 4.2 뷰모델 스키마
 
 ```js
-{ generatedAt: 'ISO',
+{ generatedAt: 'naive 로컬 YYYY-MM-DDTHH:MM (utils.localDateTime — 구버전은 ISO)',
   biz: { id, label, desc },
   checklistSet: { id, label, total, done },
   sections: [
@@ -154,7 +154,7 @@ DOM 비의존 순수 함수 — 모든 소스를 읽기 전용으로 호출하�
 // STORAGE_KEYS.FORMULA_ADLINT_STATE = 'formula_adlint_state'
 { text: '점검 대상 원문 (textarea maxlength 5000과 동일 상한)',
   hits: [{ term, category, label, suggestion }],   // lintAdCopy 결과 그대로
-  at: 'ISO 시각' }
+  at: 'naive 로컬 시각' }
 ```
 
 - 저장 시점: `adlintRun`에서 입력이 비어 있지 않고 실행 완료 시 덮어쓰기 (최근 1건만)
