@@ -47,8 +47,8 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         const chips = document.querySelectorAll('#formula-biz-bar .formula-biz-chip');
         expect(chips.length).toBe(3);
         expect(document.querySelector('#formula-biz-bar .formula-biz-chip.is-active').dataset.arg).toBe('custom');
-        // 맞춤형: 7카드 (표시사항·광고 카드는 숨김, 기성품 DB는 전 유형 공용)
-        expect(hubCards().length).toBe(7);
+        // 맞춤형: 8카드 (표시사항·광고 카드는 숨김, 기성품 DB·종합 보고서는 전 유형 공용)
+        expect(hubCards().length).toBe(8);
     });
 
     it('책임판매업 전환 — 제조 기능 숨기고 표시사항·광고 카드 노출·영속', () => {
@@ -136,11 +136,12 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         expect(formulaSubNav('batch')).toContain('조제 기록');
     });
 
-    it('법규 준수 카드는 전 유형에서 항상 마지막 배치 (FO-33)', () => {
+    it('법규 준수·종합 보고서 카드는 전 유형에서 항상 마지막 배치 (FO-33)', () => {
         for (const biz of ['custom', 'mfg', 'sales']) {
             formulaSetBizType(biz);
             const clicks = hubCards().map(c => c.dataset.click);
-            expect(clicks[clicks.length - 1]).toBe('openCompliancePanel');
+            expect(clicks[clicks.length - 2]).toBe('openCompliancePanel');
+            expect(clicks[clicks.length - 1]).toBe('auditPrintReport'); // FO-56 허브 진입점
         }
     });
 

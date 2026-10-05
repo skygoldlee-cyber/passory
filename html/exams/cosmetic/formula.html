@@ -18,7 +18,7 @@
                     <div id="notice-status-view" class="notice-status-view is-hidden"></div>
                     <div class="section-title-area">
                         <h3><i class="fa-solid fa-flask-vial" aria-hidden="true"></i> Formula OS — 실전 배합 작업실</h3>
-                        <p><span id="formula-biz-guide">실제 업무 흐름 순서입니다. ① 상담(고객) → ② 설계(계산기·작업대) → ③ 레시피 확정(My 포뮬러·보관함) → ④ 재료 확인(원료 장부) → ⑤ 조제·기록 순으로 진행하고, 아래 분석·법규 도구에서 기성품 전성분 분석·법규 준수를 상시 점검합니다.</span>
+                        <p><span id="formula-biz-guide">실제 업무 흐름 순서입니다. ① 상담(고객) → ② 설계(계산기·작업대) → ③ 레시피 확정(My 포뮬러·보관함) → ④ 재료 확인(원료 장부) → ⑤ 조제·기록 순으로 진행하고, 아래 분석·법규 도구에서 기성품 전성분 분석·법규 준수를 상시 점검하고, 종합 보고서 카드에서 점검 결과를 A4 문서로 출력합니다.</span>
                             <button type="button" data-click="ManualViewer.openFormulaManual" class="comp-ref-link"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 실무 매뉴얼</button>
                         </p>
                         <p class="formula-principle-note">
@@ -111,8 +111,17 @@
                                 <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
                             </div>
                             <h4>법규 준수</h4>
-                            <p>영업 신고·시설 위생·기록 보관·표시 의무 등 법정 준수사항을 점검하고 법령 원문을 확인합니다.</p>
+                            <p>영업 신고·시설 위생·기록 보관·표시 의무 등 법정 준수사항을 점검하고 법령 원문을 확인합니다. 점검 결과는 종합 보고서로 출력합니다.</p>
                             <span class="trainer-card-btn">체크리스트 열기 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="trainer-menu-card" data-click="auditPrintReport">
+                            <span class="trainer-step-badge is-continuous" aria-hidden="true">보고서</span>
+                            <div class="trainer-card-icon icon-purple">
+                                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                            </div>
+                            <h4>종합 보고서</h4>
+                            <p>사업 유형별 법규 점검 자산(체크리스트·표시사항·광고·조제·원료·고객 상담)을 수집해 A4 보고서로 인쇄합니다 — 법규 준수 패널의 보고서 버튼과 동일합니다.</p>
+                            <span class="trainer-card-btn">보고서 인쇄 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
                         </div>
                     </div>
                     <div class="formula-safety-note">
