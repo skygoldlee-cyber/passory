@@ -91,6 +91,21 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         // 지연 로딩 트리거 호출 — jsdom에서는 라이브러리 미로드로 렌더 생략, 마크업만 검증
     });
 
+    it('상대 이미지 경로 → 문서 디렉터리 기준 절대 URL로 해석 (H)', async () => {
+        window.__DOC_MD__[PATHS.USER_MANUAL] =
+            '# 문서\n\n![구조](map.svg)\n\n![원격](https://x.test/a.png)\n\n![데이터](data:image/svg+xml,x)\n';
+        await ManualViewer.openManual();
+        await flushAsync(30);
+
+        const imgs = el('manual-article').querySelectorAll('img');
+        expect(imgs.length).toBe(3);
+        // 상대 경로는 문서가 있는 docs/ 디렉터리 기준 절대 URL로 해석
+        expect(imgs[0].src).toMatch(/^https?:\/\/.+\/docs\/map\.svg$/);
+        // http·data: URL은 그대로 유지
+        expect(imgs[1].src).toBe('https://x.test/a.png');
+        expect(imgs[2].src).toMatch(/^data:image\/svg/);
+    });
+
     it('닫기 → 오버레이 닫힘·body 클래스 해제', async () => {
         await ManualViewer.openManual();
         await flushAsync(30);

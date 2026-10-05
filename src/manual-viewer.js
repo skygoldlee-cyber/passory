@@ -156,6 +156,7 @@ body.manual-open{overflow:hidden;}
         onClose() {
             _currentTitle = '';
             _currentBodyHtml = '';
+            _currentMdPath = '';
         }
     });
     const _ensureOverlay = _overlay.ensure;
@@ -169,13 +170,31 @@ body.manual-open{overflow:hidden;}
         renderMermaidIn(document.getElementById('manual-article'), '[manual]');
     }
 
-    function _renderBody(title, bodyHtml) {
+    // 상대 이미지 경로를 문서 위치 기준으로 해석 — docs/*.md의 로컬 이미지를
+    // 문서 디렉터리 기준 절대 URL로 변환 (exam-viewer._renderBody와 동일 패턴)
+    let _currentMdPath = '';
+    function _resolveArticleImages(article) {
+        if (!_currentMdPath) return;
+        const baseUrl = new URL(
+            _currentMdPath.substring(0, _currentMdPath.lastIndexOf('/') + 1),
+            location.href).href;
+        article.querySelectorAll('img').forEach(img => {
+            const src = img.getAttribute('src');
+            if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+                img.src = new URL(src, baseUrl).href;
+            }
+        });
+    }
+
+    function _renderBody(title, bodyHtml, mdPath) {
         _currentTitle = title;
         _currentBodyHtml = bodyHtml;
+        _currentMdPath = mdPath || '';
         const el = _ensureOverlay();
         el.querySelector('#manual-ov-title').textContent = title;
         const article = el.querySelector('#manual-article');
         article.innerHTML = bodyHtml;
+        _resolveArticleImages(article);
 
         // 목차를 본문 앞에 삽입 (오버레이 스크롤 컨테이너 안쪽 상단)
         const scroll = el.querySelector('.manual-ov-scroll');
@@ -304,7 +323,7 @@ body.manual-open{overflow:hidden;}
         const title = src.title;
 
         const cached = _cache.get(src.path);
-        if (cached) { _renderBody(title, cached.html); _open(); return; }
+        if (cached) { _renderBody(title, cached.html, src.path); _open(); return; }
 
         _showLoading(title);
 
@@ -312,7 +331,7 @@ body.manual-open{overflow:hidden;}
             const mdText = await _loadMd(sourceKey);
             const bodyHtml = _mdToHtml(mdText);
             _cache.set(src.path, { html: bodyHtml });
-            _renderBody(title, bodyHtml);
+            _renderBody(title, bodyHtml, src.path);
         } catch (err) {
             console.error('Document load failed:', err);
             _showError(title, err && err.message ? err.message : String(err));
@@ -331,6 +350,7 @@ body.manual-open{overflow:hidden;}
             const el = _ensureOverlay();
             const article = el.querySelector('#manual-article');
             article.innerHTML = _currentBodyHtml;
+            _resolveArticleImages(article);
             _renderMermaid();
         }
     });

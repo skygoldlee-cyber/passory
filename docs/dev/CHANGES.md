@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 학습안내서 마인드맵 SVG 교체 + 매뉴얼 뷰어 상대 이미지 해석 (MV-01)
+
+- **학습안내서 마인드맵**: mermaid mindmap 블록 → `학습안내서_마인드맵.svg` 삽화로 교체 (문서 통계는 실측값 정정 — 객관식/단답형 746/254·ㄱㄴㄷ 990·시각화 수치 갱신 + 스마트·맞춤학습 노드)
+- **상대 이미지 해석**: `manual-viewer.js` `_resolveArticleImages` — docs/*.md의 로컬 이미지(`![alt](file.svg)`)를 문서 디렉터리 기준 절대 URL로 해석 (exam-viewer와 동일 패턴). 캐시·테마 재렌더 경로 모두 적용, `onClose` 리셋
+- **검증**: DOM +1건 (상대/원격/data: 이미지 해석) — check:types·lint·specrefs·docbundles 통과
+
 ## 2026-10-05 SC-15 읽기 추적 정확화 + 맞춤학습 안내 문구 갱신
 
 - **읽기 하트비트**: `textbook-reader.js` 읽기 시간 기록을 스크롤 플러시 → 15초 하트비트(`startReadingSession`)로 전환 — 스크롤 없는 정독도 `readMin` 누적, 뷰 이탈·탭 숨김 동안 미누적(오계상 제거) + `stopReadingSession` 리셋

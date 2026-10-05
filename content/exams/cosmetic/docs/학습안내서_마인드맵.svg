@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="1120" viewBox="0 0 680 560" role="img" aria-labelledby="t d">
+<title id="t">학습안내서 마인드맵 삽화 (컬러)</title>
+<desc id="d">학습안내서를 중심으로 교재 구성, 학습 방법, 출처 추적, 시각화, 법령 일관성 다섯 가지를 색상별 그림 카드로 나타낸 삽화</desc>
+<style>
+text{font-family:"Noto Sans CJK KR","Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic","NanumGothic",sans-serif}
+.tw{font-size:14px;font-weight:700;fill:#FFFFFF}
+.tc{font-size:12px;font-weight:400;fill:#E6F1FB}
+.ts{font-size:12px;font-weight:400;fill:#444441}
+.tb{font-size:12px;font-weight:700;fill:#2C2C2A}
+.wire{fill:none;stroke:#888780;stroke-width:1.25}
+</style>
+<rect width="680" height="560" fill="#FFFFFF"/>
+<path class="wire" d="M340 80V100M185 120V100H495V120"/>
+<path class="wire" d="M340 100V350M133 370V350H546V370M340 350V370"/>
+<rect x="230" y="24" width="220" height="56" rx="28" fill="#0C447C"/>
+<text class="tw" x="340" y="43" text-anchor="middle" dominant-baseline="central">학습안내서</text><text class="tc" x="340" y="62" text-anchor="middle" dominant-baseline="central">맞춤형화장품조제관리사</text>
+<rect x="40" y="120" width="290" height="210" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/><path d="M40 150V132Q40 120 52 120H318Q330 120 330 132V150Z" fill="#534AB7"/><text class="tw" x="56" y="135" dominant-baseline="central">교재 구성</text><text class="ts" x="56" y="166" dominant-baseline="central">4과목 · 문제은행 1,000제</text>
+<rect x="60" y="269" width="32" height="25" rx="3" fill="#E24B4A" stroke="#A32D2D" stroke-width="0.75"/>
+<text class="tb" x="76" y="258" text-anchor="middle" dominant-baseline="central">10%</text><text class="ts" x="76" y="310" text-anchor="middle" dominant-baseline="central">1과목</text>
+<rect x="102" y="232" width="32" height="62" rx="3" fill="#378ADD" stroke="#185FA5" stroke-width="0.75"/>
+<text class="tb" x="118" y="221" text-anchor="middle" dominant-baseline="central">25%</text><text class="ts" x="118" y="310" text-anchor="middle" dominant-baseline="central">2과목</text>
+<rect x="144" y="232" width="32" height="62" rx="3" fill="#EF9F27" stroke="#854F0B" stroke-width="0.75"/>
+<text class="tb" x="160" y="221" text-anchor="middle" dominant-baseline="central">25%</text><text class="ts" x="160" y="310" text-anchor="middle" dominant-baseline="central">3과목</text>
+<rect x="186" y="194" width="32" height="100" rx="3" fill="#639922" stroke="#3B6D11" stroke-width="0.75"/>
+<text class="tb" x="202" y="183" text-anchor="middle" dominant-baseline="central">40%</text><text class="ts" x="202" y="310" text-anchor="middle" dominant-baseline="central">4과목</text>
+<line x1="52" y1="294" x2="226" y2="294" stroke="#534AB7" stroke-width="1"/>
+<circle cx="240" cy="208" r="3" fill="#7F77DD"/><text class="ts" x="250" y="208" text-anchor="start" dominant-baseline="central">객관식 746</text>
+<circle cx="240" cy="230" r="3" fill="#7F77DD"/><text class="ts" x="250" y="230" text-anchor="start" dominant-baseline="central">단답형 254</text>
+<circle cx="240" cy="252" r="3" fill="#7F77DD"/><text class="ts" x="250" y="252" text-anchor="start" dominant-baseline="central">ㄱㄴㄷ 990</text>
+<circle cx="240" cy="274" r="3" fill="#7F77DD"/><text class="ts" x="250" y="274" text-anchor="start" dominant-baseline="central">OX 3,700+</text>
+<rect x="350" y="120" width="290" height="210" rx="12" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/><path d="M350 150V132Q350 120 362 120H628Q640 120 640 132V150Z" fill="#0F6E56"/><text class="tw" x="366" y="135" dominant-baseline="central">학습 방법</text><text class="ts" x="366" y="166" dominant-baseline="central">S·A·B·C 등급 · 4회독 · 앱 학습 순환</text>
+<rect x="368" y="270" width="44" height="24" fill="#9FE1CB" stroke="#085041" stroke-width="0.75"/>
+<text class="tb" x="390" y="259" text-anchor="middle" dominant-baseline="central">1회독</text><text class="ts" x="390" y="310" text-anchor="middle" dominant-baseline="central">구조</text>
+<rect x="412" y="246" width="44" height="48" fill="#5DCAA5" stroke="#085041" stroke-width="0.75"/>
+<text class="tb" x="434" y="235" text-anchor="middle" dominant-baseline="central">2회독</text><text class="ts" x="434" y="310" text-anchor="middle" dominant-baseline="central">핵심</text>
+<rect x="456" y="222" width="44" height="72" fill="#1D9E75" stroke="#085041" stroke-width="0.75"/>
+<text class="tb" x="478" y="211" text-anchor="middle" dominant-baseline="central">3회독</text><text class="ts" x="478" y="310" text-anchor="middle" dominant-baseline="central">숫자</text>
+<rect x="500" y="198" width="44" height="96" fill="#0F6E56" stroke="#085041" stroke-width="0.75"/>
+<text class="tb" x="522" y="187" text-anchor="middle" dominant-baseline="central">4회독</text><text class="ts" x="522" y="310" text-anchor="middle" dominant-baseline="central">문제</text>
+<circle cx="560" cy="230" r="3" fill="#1D9E75"/><text class="ts" x="570" y="230" text-anchor="start" dominant-baseline="central">스마트학습</text>
+<circle cx="560" cy="252" r="3" fill="#1D9E75"/><text class="ts" x="570" y="252" text-anchor="start" dominant-baseline="central">맞춤학습</text>
+<circle cx="560" cy="274" r="3" fill="#1D9E75"/><text class="ts" x="570" y="274" text-anchor="start" dominant-baseline="central">시험 직전</text>
+<rect x="40" y="370" width="187" height="170" rx="12" fill="#FAECE7" stroke="#993C1D" stroke-width="1"/><path d="M40 400V382Q40 370 52 370H215Q227 370 227 382V400Z" fill="#993C1D"/><text class="tw" x="56" y="385" dominant-baseline="central">출처 추적</text><text class="ts" x="56" y="416" dominant-baseline="central">출처 박스 · 원천자료 11개</text>
+<rect x="58" y="440" width="50" height="66" rx="4" fill="#FFFFFF" stroke="#993C1D" stroke-width="1"/><rect x="58" y="440" width="50" height="12" rx="4" fill="#D85A30"/>
+<line x1="67" y1="464" x2="99" y2="464" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="67" y1="478" x2="99" y2="478" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="67" y1="492" x2="89" y2="492" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round"/>
+<text class="ts" x="124" y="452" text-anchor="start" dominant-baseline="central">법령 조문</text>
+<text class="ts" x="124" y="474" text-anchor="start" dominant-baseline="central">시행일</text>
+<text class="ts" x="124" y="496" text-anchor="start" dominant-baseline="central">최종확인일</text>
+<rect x="246" y="370" width="187" height="170" rx="12" fill="#E6F1FB" stroke="#185FA5" stroke-width="1"/><path d="M246 400V382Q246 370 258 370H421Q433 370 433 382V400Z" fill="#185FA5"/><text class="tw" x="262" y="385" dominant-baseline="central">시각화</text><text class="ts" x="262" y="416" dominant-baseline="central">한눈에 보는 그림·표</text>
+<path d="M280 474L302 450M280 474L308 474M280 474L302 498" fill="none" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/><circle cx="278" cy="474" r="10" fill="#185FA5"/><circle cx="304" cy="448" r="5.5" fill="#EF9F27"/><circle cx="311" cy="474" r="5.5" fill="#D4537E"/><circle cx="304" cy="500" r="5.5" fill="#1D9E75"/>
+<text class="ts" x="328" y="452" text-anchor="start" dominant-baseline="central">Mermaid 65개</text>
+<text class="ts" x="328" y="474" text-anchor="start" dominant-baseline="central">비교표 4,019행</text>
+<text class="ts" x="328" y="496" text-anchor="start" dominant-baseline="central">체크리스트 37</text>
+<rect x="453" y="370" width="187" height="170" rx="12" fill="#EAF3DE" stroke="#3B6D11" stroke-width="1"/><path d="M453 400V382Q453 370 465 370H628Q640 370 640 382V400Z" fill="#3B6D11"/><text class="tw" x="469" y="385" dominant-baseline="central">법령 일관성</text><text class="ts" x="469" y="416" dominant-baseline="central">과목 간 번호·숫자 일치</text>
+<circle cx="487" cy="474" r="18" fill="#639922"/><path d="M478 474L485 481L497 467" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text class="ts" x="516" y="452" text-anchor="start" dominant-baseline="central">8개 법령 교차검증</text>
+<text class="ts" x="516" y="474" text-anchor="start" dominant-baseline="central">핵심 숫자 5종 확인</text>
+<text class="ts" x="516" y="496" text-anchor="start" dominant-baseline="central">15일 · 15초 · 97%</text>
+</svg>
