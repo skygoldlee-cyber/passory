@@ -9,7 +9,18 @@ text{font-family:"Noto Sans CJK KR","Noto Sans KR","Pretendard","Apple SD Gothic
 .tb{font-size:12px;font-weight:700;fill:#2C2C2A}
 .wire{fill:none;stroke:#888780;stroke-width:1.25}
 </style>
-<rect width="680" height="560" fill="#FFFFFF"/>
+<defs>
+<linearGradient id="bgBase" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDFCF9"/><stop offset="0.55" stop-color="#F8F5EE"/><stop offset="1" stop-color="#F1ECE1"/></linearGradient>
+<radialGradient id="bgGlowA" cx="0.12" cy="0.08" r="0.7"><stop offset="0" stop-color="#DCE8F5" stop-opacity="0.75"/><stop offset="1" stop-color="#DCE8F5" stop-opacity="0"/></radialGradient>
+<radialGradient id="bgGlowB" cx="0.92" cy="0.95" r="0.65"><stop offset="0" stop-color="#EBD9B4" stop-opacity="0.6"/><stop offset="1" stop-color="#EBD9B4" stop-opacity="0"/></radialGradient>
+<pattern id="bgDots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.6" fill="#8A7B5C" fill-opacity="0.16"/></pattern>
+</defs>
+<rect width="680" height="560" fill="url(#bgBase)"/>
+<rect width="680" height="560" fill="url(#bgGlowA)"/>
+<rect width="680" height="560" fill="url(#bgGlowB)"/>
+<rect width="680" height="560" fill="url(#bgDots)"/>
+<rect x="8" y="8" width="664" height="544" rx="10" fill="none" stroke="#B79A5B" stroke-width="1" stroke-opacity="0.75"/>
+<rect x="12" y="12" width="656" height="536" rx="7" fill="none" stroke="#B79A5B" stroke-width="0.5" stroke-opacity="0.55"/>
 <path class="wire" d="M340 80V100M185 120V100H495V120"/>
 <path class="wire" d="M340 100V350M133 370V350H546V370M340 350V370"/>
 <rect x="230" y="24" width="220" height="56" rx="28" fill="#0C447C"/>
