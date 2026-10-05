@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: c02a99390a37af00
-> 생성: 2026-10-05 · 원천: SPEC.md(452개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 13524be109195134
+> 생성: 2026-10-05 · 원천: SPEC.md(453개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 452개 — 문서 연결 293 · 소스 연결 418 · 테스트 연결 439 · 보고서 연결 109
+**커버리지 요약**: 요구사항 453개 — 문서 연결 293 · 소스 연결 419 · 테스트 연결 440 · 보고서 연결 109
 
 ---
 
@@ -389,6 +389,7 @@
 | SC-06 | ✅ | 테스트 | DOC-DSN-16 | css/study-calendar.css<br>src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 | SC-07 | ✅ | 테스트 | DOC-DSN-16 | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 | SC-08 | ✅ | 테스트 | DOC-DSN-16 | css/study-calendar.css<br>src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| SC-09 | ✅ | 테스트 | — | src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 
 ## 3.21 UI 모드 전환
 

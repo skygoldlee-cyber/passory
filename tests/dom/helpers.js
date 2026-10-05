@@ -180,6 +180,7 @@ export function resetStudyState() {
     }
     state._prevMemCount = 0;
     state._prevQuizCount = 0;
+    state._prevMemBySubj = {};
     delete window.STUDY_DATA;
     delete window.EXAM_DATA;
     delete window.DATA_REGISTRY;

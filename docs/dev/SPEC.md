@@ -466,6 +466,7 @@
 | SC-06 | 계획 대비 주간 진행률 — 주간 필요 카드량 대비 최근 7일 카드 실적 비율을 계획 패널에 진행률 바·상태 문구로 표시 (met/ontrack/behind, 부족 시 보충·목표 조정 권고) (`computePlanAdherence`) | ✅ |
 | SC-07 | 학습 마일스톤 인앱 안내 — D-30/14/7/1/0 진입·주간 계획 달성(주차 id)·전체 진도 50%/75% 도달 시 1회성 토스트, 표시 이력 `study_milestones_seen` 로컬 저장 (`evalStudyMilestones`·`checkStudyMilestones`) | ✅ |
 | SC-08 | 스마트학습 — 과목별 가중 배분 계획: 주차 총량을 잔여 카드×출제 비중×약점 가중(퀴즈 표본 ≥20문 게이트, 미만 중립)으로 과목 배분, 워터필링 잔여 상한·재배분. 계획 패널에 이번 주 과목별 목표 칩 + 주차×과목 매트릭스 + `study_plan_pro` Pro 표기 (`computeSubjectAllocation`, STUDY_PLAN_PRO_DESIGN.md) | ✅ |
+| SC-09 | 스마트학습 보강 — ① 과목 칩에 주간 실적 표시(`N/배정`장, 캘린더 `bySubj` 과목별 카드 기록) ② 칩 클릭 시 해당 과목 카드 학습 바로가기(`startSubjectStudy`) ③ 약점 집중·출제 비중 근거 배지 ④ 약점 가중 확장: 최근 퀴즈 표본(`recentQuizBySubject`, 과목당 최근 60문) 우선 + 취약 카드 비율 가산(최대 +0.5, 상한 2.5) ⑤ 과목 키 해석을 `subjectKeyFromItemId`로 견고화 | ✅ |
 | RV-01 | 오답/중요 복습 뷰 — 헷갈림 카드·틀린 문제 통합 목록 (`review-view`) | ✅ |
 | ND-01 | 숫자 암기 드릴 — `number-drills/` JSON 기반 수치·기한·횟수 훈련 (훈련소 수치 훈련) | ✅ |
 | DR-01 | **O/X 판정 드릴** — 객관식 문항을 진위형으로 자동 변환 (3,700+문, `build_ox_drills.js` → `drills/ox_subject*.js`, `trainer-drills.js`) | ✅ |

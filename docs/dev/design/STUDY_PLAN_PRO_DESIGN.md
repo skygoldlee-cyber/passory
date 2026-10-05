@@ -133,3 +133,18 @@ D-30, 전 과목 미학습(잔여 = 카드 수), 정답률 표본 없음(가중 
 - **재계획 이벤트**: 목표 변경·장기 미접속 시 "계획 재조정됨" 안내 — SC-07 마일스톤 id 체계(`replan-*`)로 확장 가능
 - **entitlement 실게이트**: ROAD-P1 결제 도입 시 `hasProEntitlement()` 분기 추가 — 현 설계는 표기 게이트만
 - **내보내기**: 배분표를 주간 리포트(AN-09)에도 넣을지 — Pro 리포트 가치 강화 옵션
+
+---
+
+## 8. 보강 (SC-09, 2026-10-05)
+
+구현 후 검토에서 도출한 5개 보강 항목:
+
+| # | 항목 | 구현 |
+|---|---|---|
+| 1 | 과목별 주간 실적 | 캘린더 엔트리에 `bySubj` 맵 추가 — `saveProgress`가 암기 카드 과목별 증분(`_prevMemBySubj` 차분)을 `recordStudyActivity({bySubj})`로 기록, `sumRecentCardsBySubject`로 최근 7일 합산 → 칩 `N/배정장` 표시 |
+| 2 | 실행 동선 | 칩을 `<button data-click="startSubjectStudy" data-arg="<subj>">`로 — 해당 과목 플래시카드 바로 진입 |
+| 3 | 근거 투명성 | 약점 가중 활성 시 `약점` 배지(퀴즈 가중 >1.15 또는 취약 카드 가산 ≥0.25), 비중 선언 시 `N%` 배지 — 배분 개인화가 사용자에게 보이도록 |
+| 4 | 약점 신호 확장 | `recentQuizBySubject`(과목당 최근 60문)가 표본 ≥20이면 누적 대신 우선 적용(현재 약점 반영) + 헷갈림 카드 비율 최대 +0.5 가산, 약점 가중 상한 2.5 |
+| 5 | 키 해석 견고화 | `[a-z]+_card_` 정규식 → `subjectKeyFromItemId()`(weak-items) — 숫자·밑줄 포함 과목 키·`weak_*` 접두사 안전 |
+| — | 기저 수정 | `loadState`에 `_prevMemCount/_prevQuizCount/_prevMemBySubj` 기준점 스탬프 — 미초기화 시 첫 저장이 전체 진도를 오늘 활동으로 기록하던 기존 결함 해소 |

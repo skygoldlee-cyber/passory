@@ -334,7 +334,7 @@
     color: var(--color-warning);
 }
 
-/* === 과목별 가중 배분 (SC-08 — study_plan_pro) === */
+/* === 과목별 가중 배분 (SC-08·SC-09 — study_plan_pro) === */
 .plan-alloc {
     margin: 0.25rem 0 0.75rem;
     padding: 0.75rem;
@@ -364,10 +364,41 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--color-primary);
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+button.alloc-chip {
+    cursor: pointer;
+}
+button.alloc-chip:hover,
+button.alloc-chip:focus-visible {
+    border-color: var(--color-primary);
+    background: var(--primary-tint-10);
 }
 .alloc-chip.alloc-done {
     color: var(--color-success);
     border-color: var(--success-tint-20, var(--color-success));
+}
+.alloc-chip.alloc-chip-met {
+    color: var(--color-success);
+    border-color: var(--success-tint-20, var(--color-success));
+    background: var(--success-tint-10, var(--bg-card));
+}
+.alloc-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    border-radius: var(--radius-pill);
+    background: var(--primary-tint-10);
+    border: 1px solid var(--primary-tint-20, var(--border-color));
+    color: var(--color-text-muted);
+}
+.alloc-badge.alloc-badge-weak {
+    color: var(--color-warning, #b45309);
+    border-color: var(--warning-tint-20, #fbbf24);
+    background: var(--warning-tint-10, transparent);
 }
 .plan-alloc-basis {
     font-size: 0.75rem;

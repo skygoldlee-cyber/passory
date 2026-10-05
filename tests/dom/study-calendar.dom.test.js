@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,D-17
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -36,7 +36,7 @@ import {
 } from '../../src/views/study-calendar.js';
 import { recordStudyActivity, getTodayStr, setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { DataLoader } from '../../src/data-loader.js';
-import { safeSetItem } from '../../src/state.js';
+import { safeSetItem, state } from '../../src/state.js';
 import { STORAGE_KEYS } from '../../src/storage-keys.js';
 
 describe('학습 캘린더 — 렌더·기록·목표', () => {
@@ -277,16 +277,46 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(alloc).not.toBeNull();
         expect(alloc.textContent).toContain('스마트학습');
         expect(alloc.textContent).toContain('이번 주 과목별 목표');
-        // 비중 1:3 → 과목B 배정이 과목A보다 큼
+        // 비중 1:3 → 과목B 배정이 과목A보다 큼 (칩 형식: "과목명 실적/배정장")
         const chips = [...alloc.querySelectorAll('.alloc-chip')].map(c => c.textContent);
         expect(chips.some(t => t.includes('과목A'))).toBe(true);
         expect(chips.some(t => t.includes('과목B'))).toBe(true);
-        const num = (t) => parseInt(t.replace(/\D/g, ''), 10);
-        expect(num(chips.find(t => t.includes('과목B')))).toBeGreaterThan(num(chips.find(t => t.includes('과목A'))));
+        const target = (t) => parseInt(((t.match(/(\d+)\/(\d+)장/) || [])[2]) || '0', 10);
+        expect(target(chips.find(t => t.includes('과목B')))).toBeGreaterThan(target(chips.find(t => t.includes('과목A'))));
         // PRO 배지 + 매트릭스
         expect(alloc.querySelector('[data-pro-feature="study_plan_pro"]')).not.toBeNull();
         expect(alloc.querySelector('.plan-alloc-detail')).not.toBeNull();
         expect(alloc.querySelectorAll('.plan-alloc-table tbody tr').length).toBe(2); // D-14 → 2주차
+    });
+
+    it('스마트학습 보강 — 칩 버튼 바로가기 + 주간 실적 + 약점·비중 배지 (SC-09)', () => {
+        stubRegistry([
+            { key: 'suba', name: '과목A', cards: Array.from({ length: 40 }, (_, i) => ({ id: `suba_card_${i}` })) },
+            { key: 'subb', name: '과목B', cards: Array.from({ length: 40 }, (_, i) => ({ id: `subb_card_${i}` })) },
+        ]);
+        DataLoader.registry.exams = [
+            { subject: 'suba', stats: { questions: 100 } },
+            { subject: 'subb', stats: { questions: 300 } },
+        ];
+        // SC-09 시드 — 과목A: 이번 주 실적 5장 + 취약 카드 10장(잔여 대비 25% → 약점 배지)
+        state.weakCards = new Set(Array.from({ length: 10 }, (_, i) => `suba_card_${i}`));
+        recordStudyActivity({ cards: 5, bySubj: { suba: 5 } });
+        const d = new Date();
+        d.setDate(d.getDate() + 14);
+        setExamDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        renderStudyCalendar();
+
+        const alloc = el('study-calendar-content').querySelector('.plan-alloc');
+        const chipA = [...alloc.querySelectorAll('button.alloc-chip')].find(c => c.dataset.arg === 'suba');
+        expect(chipA).not.toBeNull();
+        expect(chipA.dataset.click).toBe('startSubjectStudy'); // 과목 카드 학습 바로가기
+        expect(chipA.textContent).toMatch(/과목A\s*5\/\d+장/);  // 주간 실적 N/배정장
+        expect(chipA.querySelector('.alloc-badge-weak')).not.toBeNull(); // 약점 가중 배지
+        expect(chipA.querySelector('.alloc-badge:not(.alloc-badge-weak)').textContent).toContain('25%'); // 출제 비중
+        // 과목B — 실적 0, 약점 배지 없음
+        const chipB = [...alloc.querySelectorAll('button.alloc-chip')].find(c => c.dataset.arg === 'subb');
+        expect(chipB.textContent).toMatch(/과목B\s*0\/\d+장/);
+        expect(chipB.querySelector('.alloc-badge-weak')).toBeNull();
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

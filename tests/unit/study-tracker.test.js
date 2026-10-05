@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,SC-06,SC-07,SC-08,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -320,4 +320,74 @@ test('computeSubjectAllocation: plan·과목 없음 → null', () => {
   assert.equal(tracker.computeSubjectAllocation(null, mkSubjects([['suba', 10]])), null);
   assert.equal(tracker.computeSubjectAllocation(mkPlan(10), []), null);
   assert.equal(tracker.computeSubjectAllocation({ weeks: [] }, mkSubjects([['suba', 10]])), null);
+});
+
+// --- SC-09 스마트학습 보강 ---
+
+test('recordStudyActivity: bySubj 과목별 카드 증분 누적', () => {
+  tracker.recordStudyActivity({ cards: 3, bySubj: { law: 2, safety: 1 } });
+  tracker.recordStudyActivity({ cards: 1, bySubj: { law: 1 } });
+  const cal = tracker.getStudyCalendar();
+  assert.deepEqual(cal[tracker.getTodayStr()].bySubj, { law: 3, safety: 1 });
+  assert.equal(cal[tracker.getTodayStr()].cards, 4);
+});
+
+test('sumRecentCardsBySubject: 최근 N일 bySubj 합산 — 범위 밖·레거시 엔트리 제외', () => {
+  const pad = (n) => String(n).padStart(2, '0');
+  const key = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const today = new Date(2026, 9, 5);
+  const y = new Date(2026, 9, 4);
+  const old = new Date(2026, 8, 20); // 15일 전 — 범위 밖
+  const cal = {
+    [key(today)]: { cards: 4, bySubj: { law: 3, safety: 1 } },
+    [key(y)]: { cards: 2, bySubj: { law: 2 } },
+    [key(old)]: { cards: 9, bySubj: { law: 9 } },
+    '2026-10-03': { cards: 5 }, // bySubj 없는 레거시 엔트리 → 제외
+  };
+  assert.deepEqual(tracker.sumRecentCardsBySubject(cal, 7, today), { law: 5, safety: 1 });
+});
+
+test('recentQuizBySubject: 과목당 최근 윈도우만 집계', () => {
+  const qr = {};
+  for (let i = 0; i < 70; i++) qr[`law_quiz_${i}`] = { solved: true, correct: i < 35 };
+  for (let i = 0; i < 10; i++) qr[`safety_quiz_${i}`] = { solved: true, correct: true };
+  const r = tracker.recentQuizBySubject(qr, 60);
+  assert.equal(r.law.solved, 60);   // 윈도우 상한 — 최근 60문
+  assert.equal(r.law.correct, 25);  // 뒤에서 60개(i=10..69) 중 i<35는 25개
+  assert.equal(r.safety.solved, 10);
+});
+
+test('computeSubjectAllocation: 최근 표본 우선 + 약점·비중 필드 노출', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    quizBySubject: { suba: { solved: 100, correct: 100 }, subb: { solved: 20, correct: 20 } }, // 누적은 만점
+    recentQuizBySubject: { suba: { solved: 25, correct: 5 } }, // 최근 정답률 20% → 약점 우선 적용
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  assert.ok(allocOf(res, 0, 'suba') > allocOf(res, 0, 'subb'));
+  const a = res.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.ok(a.weakW > 1.5);
+  assert.equal(a.weightPct, 50);
+  assert.equal(a.weakBadge, true);
+});
+
+test('computeSubjectAllocation: 취약 카드 비율 가산 (+0.5 상한) + 중립 폴백', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    weakBySubject: { suba: 50 }, // 잔여 100 중 50% 취약 → +0.5
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a = res.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a.weakW, 1.5);
+  assert.equal(a.weakBadge, true);
+  assert.ok(allocOf(res, 0, 'suba') > allocOf(res, 0, 'subb'));
+  // 표본·취약 모두 없음 → 중립 1.0, 배지 없음
+  const flat = tracker.computeSubjectAllocation(plan, subjects, {
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const fb = flat.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(fb.weakW, 1.0);
+  assert.equal(fb.weakBadge, false);
 });

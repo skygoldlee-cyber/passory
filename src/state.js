@@ -10,7 +10,7 @@
 // 호출합니다. 전역 함수 참조이므로 모듈 분리 후에도 동작은 동일합니다.
 
 import { STORAGE_KEYS } from './storage-keys.js';
-import { WEAK_QUIZ_PREFIX } from './weak-items.js';
+import { WEAK_QUIZ_PREFIX, subjectKeyFromItemId } from './weak-items.js';
 import { todayKey } from './utils.js';
 import {
     getItem as storageGetItem,
@@ -33,6 +33,11 @@ export const state = {
     quizResults: {},           // { quizId: { solved: true, correct: true } }
     wrongCauses: {},           // { itemId: { cause: 'memorize'|'concept'|'calc', ts, subjectId } }
     reviewFilter: 'all',       // 오답노트 필터 상태 ('all' 또는 과목 key — 런타임에 registry에서 동적 생성)
+
+    // saveProgress 증분 기준 — loadState에서 로드된 진도로 재스탬프
+    _prevMemCount: 0,
+    _prevQuizCount: 0,
+    _prevMemBySubj: {},         // {subjKey: 암기 수} — SC-09 bySubj 증분 기준
 
     // 플래시카드 현재 세션 상태
     flashcards: {
@@ -202,6 +207,24 @@ export function loadProgress() {
             state.trainer.pomodoro.sessionCount = parseInt(sessionCount) || 0;
         }
     }
+
+    // saveProgress 증분 기준점 — 미초기화 시 첫 저장에서 로드된 전체 진도가
+    // 오늘 활동으로 잘못 기록된다 (SC-09 bySubj와 동일 기준)
+    state._prevMemCount = state.memorizedCards.size;
+    state._prevQuizCount = Object.keys(state.quizResults).length;
+    state._prevMemBySubj = _countMemBySubj();
+}
+
+/** 암기 카드 ID → 과목별 개수 — saveProgress의 bySubj 증분 계산용
+ * @returns {Object.<string, number>} */
+function _countMemBySubj() {
+    /** @type {Object.<string, number>} */
+    const out = {};
+    state.memorizedCards.forEach(id => {
+        const k = subjectKeyFromItemId(id);
+        if (k) out[k] = (out[k] || 0) + 1;
+    });
+    return out;
 }
 
 // 로컬스토리지에 진도 저장
@@ -218,13 +241,23 @@ export function saveProgress() {
     const memDelta = state.memorizedCards.size - prevMemCount;
     const quizDelta = Object.keys(state.quizResults).length - prevQuizCount;
     if (memDelta > 0 || quizDelta > 0) {
+        // SC-09 과목별 카드 증분 — 스마트학습 과목별 주간 실적 (bySubj)
+        const memBySubj = _countMemBySubj();
+        const prevBySubj = state._prevMemBySubj || {};
+        /** @type {Object.<string, number>} */
+        const bySubj = {};
+        Object.keys(memBySubj).forEach(k => {
+            const d = memBySubj[k] - (prevBySubj[k] || 0);
+            if (d > 0) bySubj[k] = d;
+        });
+        state._prevMemBySubj = memBySubj;
         try {
             // 동적 import로 순환 참조 방지
             import('./study-tracker.js').then(({ recordStudyActivity }) => {
                 const correctDelta = quizDelta > 0
                     ? Object.values(state.quizResults).slice(-quizDelta).filter(r => r && r.correct).length
                     : 0;
-                recordStudyActivity({ cards: Math.max(0, memDelta), quizzes: Math.max(0, quizDelta), correct: correctDelta });
+                recordStudyActivity({ cards: Math.max(0, memDelta), quizzes: Math.max(0, quizDelta), correct: correctDelta, bySubj });
             }).catch(() => {});
         } catch (e) { /* noop */ }
     }
