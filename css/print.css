@@ -220,7 +220,12 @@
 
     #formula-print-area .fp-table {
         width: 100%;
-        border-collapse: collapse;
+        /* collapse 표에서는 Chromium이 tr의 분할 금지를 무시해 행이 잘림 —
+           separate + spacing 0으로 바꾸고 셀 경계선을 아래·오른쪽으로만 그어 동일한 외관 유지 */
+        border-collapse: separate;
+        border-spacing: 0;
+        border-top: 1px solid var(--print-border);
+        border-left: 1px solid var(--print-border);
         margin-top: 8pt;
         font-size: 9.5pt;
     }
@@ -229,14 +234,19 @@
     #formula-print-area .fp-table thead {
         display: table-header-group;
     }
-    #formula-print-area .fp-table tr {
+    /* tr에만 걸면 무시하는 엔진이 있어 td·th에도 지정 (avoid-page: 페이지 단위 전용 지시) */
+    #formula-print-area .fp-table tr,
+    #formula-print-area .fp-table td,
+    #formula-print-area .fp-table th {
         page-break-inside: avoid;
         break-inside: avoid;
+        break-inside: avoid-page;
     }
 
     #formula-print-area .fp-table th,
     #formula-print-area .fp-table td {
-        border: 1px solid var(--print-border);
+        border-bottom: 1px solid var(--print-border);
+        border-right: 1px solid var(--print-border);
         padding: 4pt 6pt;
         text-align: left;
         vertical-align: top;

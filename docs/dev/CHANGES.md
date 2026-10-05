@@ -6,6 +6,11 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 인쇄 표 페이지 넘김 잘림 — 2차 수정 (collapse → separate)
+
+- **문제**: 1차 수정(`tr` 분할 금지) 후에도 PDF에서 표 행이 페이지 경계에서 잘림 — Chromium이 `border-collapse: collapse` 표의 `tr` 레벨 `break-inside`를 무시하는 알려진 제약
+- **수정**: `css/print.css` — `.fp-table`을 `border-collapse: separate; border-spacing: 0`으로 전환(외관 동일: 표 상·좌 + 셀 하·우 경계선)하고 `tr`뿐 아니라 `td`·`th`에도 `break-inside: avoid`·`avoid-page` 지정
+
 ## 2026-10-05 인쇄 표 페이지 넘김 잘림 방지
 
 - **문제**: 종합 보고서 등 긴 표가 페이지 경계에서 행 중간이 잘려 출력되고, 넘어간 페이지에 헤더 행이 반복되지 않음
