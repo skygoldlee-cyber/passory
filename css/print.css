@@ -213,6 +213,9 @@
         margin: 12pt 0 4pt;
         border-bottom: 1px solid var(--print-border);
         padding-bottom: 2pt;
+        /* 섹션 제목만 페이지 끝에 남지 않도록 다음 내용과 함께 넘김 */
+        page-break-after: avoid;
+        break-after: avoid;
     }
 
     #formula-print-area .fp-table {
@@ -220,6 +223,15 @@
         border-collapse: collapse;
         margin-top: 8pt;
         font-size: 9.5pt;
+    }
+
+    /* 페이지 넘김 — 행 중간 잘림 방지 + 넘어간 페이지에 헤더 반복 */
+    #formula-print-area .fp-table thead {
+        display: table-header-group;
+    }
+    #formula-print-area .fp-table tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
 
     #formula-print-area .fp-table th,
@@ -287,6 +299,8 @@
         margin-top: 18pt;
         padding-top: 10pt;
         border-top: 1px solid var(--print-border);
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
     #formula-print-area .fp-sign {
         font-size: 10pt;

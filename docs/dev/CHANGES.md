@@ -6,6 +6,11 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 인쇄 표 페이지 넘김 잘림 방지
+
+- **문제**: 종합 보고서 등 긴 표가 페이지 경계에서 행 중간이 잘려 출력되고, 넘어간 페이지에 헤더 행이 반복되지 않음
+- **수정**: `css/print.css` — `.fp-table tr`에 `page-break-inside: avoid`(행 분할 방지), `thead`에 `display: table-header-group`(페이지마다 헤더 반복), `.fp-doc h3`에 `page-break-after: avoid`(섹션 제목 고립 방지), `.fp-sign-row`에 `page-break-inside: avoid`(서명란 분할 방지)
+
 ## 2026-10-05 인쇄물에 '본문으로 바로가기' 스킵 링크 노출 방지
 
 - **문제**: 종합 보고서·판매내역서 등 인쇄/PDF 산출물에 접근성 스킵 링크(`index.template.html`의 `.skip-link`)가 함께 출력 — body 직속 요소라 `.view-section`·`.btn` 등 기존 인쇄 숨김 규칙 범위 밖이었고, 화면 숨김이 `position: fixed` + `transform`이라 인쇄 매체에서 노출됨
