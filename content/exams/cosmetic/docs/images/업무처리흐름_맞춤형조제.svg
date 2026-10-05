@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="1452" viewBox="0 0 680 726" role="img" aria-labelledby="t d">
+<title id="t">Formula OS 업무 처리 흐름 — 맞춤형 조제 기준</title>
+<desc id="d">고객 관리, 배합 계산기, My 포뮬러, 조제 기록, 출력물, 판매 완료로 이어지는 주 흐름과 원료 장부, 이상사례 기록, 법규 준수, 식약처 보고의 연결</desc>
+<defs><marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<style>
+text{font-family:"Noto Sans CJK KR","Noto Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic","NanumGothic",sans-serif}
+.tw{font-size:14px;font-weight:700;fill:#FFFFFF}
+.tb{font-size:14px;font-weight:700;fill:#2C2C2A}
+.tc{font-size:14px;font-weight:700;fill:#712B13}
+.ts{font-size:12px;font-weight:400;fill:#444441}
+.tl{font-size:12px;font-weight:400;fill:#5F5E5A}
+.a{fill:none;stroke:#5F5E5A;stroke-width:1.5;stroke-linejoin:round}
+</style>
+<rect width="680" height="726" fill="#FFFFFF"/>
+<path class="a" d="M340 88V124" marker-end="url(#ag)"/>
+<text class="tl" x="350" y="107" text-anchor="start" dominant-baseline="central">고객 카드 불러오기</text>
+<path class="a" d="M340 192V228" marker-end="url(#ag)"/>
+<text class="tl" x="350" y="211" text-anchor="start" dominant-baseline="central">저장</text>
+<path class="a" d="M340 296V332" marker-end="url(#ag)"/>
+<text class="tl" x="350" y="315" text-anchor="start" dominant-baseline="central">조제 기록 버튼</text>
+<path class="a" d="M340 400V436" marker-end="url(#ag)"/>
+<text class="tl" x="350" y="419" text-anchor="start" dominant-baseline="central">기록지·라벨·안내문 인쇄</text>
+<path class="a" d="M340 504V550" marker-end="url(#ag)"/>
+<text class="tl" x="350" y="526" text-anchor="start" dominant-baseline="central">고객 인도</text>
+<path class="a" d="M150 88V160H248" marker-end="url(#ag)"/>
+<text class="tl" x="158" y="148" text-anchor="start" dominant-baseline="central">기한 경고 연동</text>
+<path class="a" d="M80 88V436" marker-end="url(#ag)"/>
+<text class="tl" x="88" y="256" text-anchor="start" dominant-baseline="central">원료 기록·</text>
+<text class="tl" x="88" y="272" text-anchor="start" dominant-baseline="central">LOT 역추적</text>
+<path class="a" d="M428 56H552V368H432" marker-end="url(#ag)"/>
+<text class="tl" x="560" y="212" text-anchor="start" dominant-baseline="central">고객 연결</text>
+<path class="a" d="M252 368H170V436" marker-end="url(#ag)"/>
+<text class="tl" x="246" y="355" text-anchor="end" dominant-baseline="central">판매내역서·기록 보관</text>
+<path class="a" d="M428 576H552V654" marker-end="url(#ag)"/>
+<text class="tl" x="436" y="564" text-anchor="start" dominant-baseline="central">이상 반응 접수</text>
+<path class="a" d="M464 680H240V472H220" marker-end="url(#ag)"/>
+<text class="tl" x="352" y="668" text-anchor="middle" dominant-baseline="central">보고서 집계</text>
+<path class="a" d="M128 504V654" marker-end="url(#ag)"/>
+<text class="tl" x="136" y="580" text-anchor="start" dominant-baseline="central">부작용·위반 확인</text>
+<rect x="40" y="24" width="176" height="64" rx="12" fill="#FAEEDA" stroke="#854F0B"/><path d="M40 52V36Q40 24 52 24H204Q216 24 216 36V52Z" fill="#854F0B"/><text class="tw" x="52" y="38" text-anchor="start" dominant-baseline="central">원료 장부</text><g transform="translate(196 38)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="-6" y="-5" width="12" height="11" rx="1"/><path d="M-6 -1H6M-2 -5V-1M2 -5V-1"/></g><text class="ts" x="128.0" y="70" text-anchor="middle" dominant-baseline="central">입고·기한·재고</text>
+<rect x="252" y="24" width="176" height="64" rx="12" fill="#E6F1FB" stroke="#185FA5"/><path d="M252 52V36Q252 24 264 24H416Q428 24 428 36V52Z" fill="#185FA5"/><text class="tw" x="264" y="38" text-anchor="start" dominant-baseline="central">1. 고객 관리</text><g transform="translate(408 38)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-3" r="3"/><path d="M-6 6Q0 -3 6 6"/></g><text class="ts" x="340.0" y="70" text-anchor="middle" dominant-baseline="central">고객 카드·상담 이력</text>
+<rect x="252" y="128" width="176" height="64" rx="12" fill="#EEEDFE" stroke="#534AB7"/><path d="M252 156V140Q252 128 264 128H416Q428 128 428 140V156Z" fill="#534AB7"/><text class="tw" x="264" y="142" text-anchor="start" dominant-baseline="central">2. 배합 계산기</text><g transform="translate(408 142)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M-2 -6V-1L-6 6H6L2 -1V-6M-4 -6H4"/></g><text class="ts" x="340.0" y="174" text-anchor="middle" dominant-baseline="central">처방 작성·규정 검증</text>
+<rect x="252" y="232" width="176" height="64" rx="12" fill="#EEEDFE" stroke="#534AB7"/><path d="M252 260V244Q252 232 264 232H416Q428 232 428 244V260Z" fill="#534AB7"/><text class="tw" x="264" y="246" text-anchor="start" dominant-baseline="central">3. My 포뮬러</text><g transform="translate(408 246)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="-5" y="-6" width="10" height="12" rx="1"/><path d="M-2 -2H2M-2 1H2"/></g><text class="ts" x="340.0" y="278" text-anchor="middle" dominant-baseline="central">처방 목록 (최대 5개)</text>
+<rect x="252" y="336" width="176" height="64" rx="12" fill="#E1F5EE" stroke="#0F6E56"/><path d="M252 364V348Q252 336 264 336H416Q428 336 428 348V364Z" fill="#0F6E56"/><text class="tw" x="264" y="350" text-anchor="start" dominant-baseline="central">4. 조제 기록</text><g transform="translate(408 350)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="-5" y="-6" width="10" height="12" rx="1"/><path d="M-3 0L-1 2L3 -2"/></g><text class="ts" x="340.0" y="382" text-anchor="middle" dominant-baseline="central">배치 생성·QC·위생 점검</text>
+<rect x="252" y="440" width="176" height="64" rx="12" fill="#E1F5EE" stroke="#0F6E56"/><path d="M252 468V452Q252 440 264 440H416Q428 440 428 452V468Z" fill="#0F6E56"/><text class="tw" x="264" y="454" text-anchor="start" dominant-baseline="central">5. 출력물</text><g transform="translate(408 454)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="-6" y="-2" width="12" height="6" rx="1"/><path d="M-4 -2V-6H4V-2M-4 4V7H4V4"/></g><text class="ts" x="340.0" y="486" text-anchor="middle" dominant-baseline="central">기록지·라벨·안내문</text>
+<rect x="40" y="440" width="176" height="64" rx="12" fill="#EAF3DE" stroke="#3B6D11"/><path d="M40 468V452Q40 440 52 440H204Q216 440 216 452V468Z" fill="#3B6D11"/><text class="tw" x="52" y="454" text-anchor="start" dominant-baseline="central">6. 법규 준수</text><g transform="translate(196 454)" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -7L6 -4V1Q6 5 0 7Q-6 5 -6 1V-4Z"/><path d="M-3 0L-1 2L3 -2"/></g><text class="ts" x="128.0" y="486" text-anchor="middle" dominant-baseline="central">체크리스트·종합 보고서</text>
+<rect x="252" y="554" width="176" height="44" rx="22" fill="#F1EFE8" stroke="#888780"/><text class="tb" x="340.0" y="576" text-anchor="middle" dominant-baseline="central">판매·사용 안내 완료</text>
+<rect x="464" y="658" width="176" height="44" rx="22" fill="#FAECE7" stroke="#993C1D"/><text class="tc" x="552.0" y="680" text-anchor="middle" dominant-baseline="central">이상사례 기록</text>
+<rect x="40" y="658" width="176" height="44" rx="22" fill="#A32D2D" stroke="#A32D2D"/><text class="tw" x="128.0" y="680" text-anchor="middle" dominant-baseline="central">식약처 보고·시정 조치</text>
+</svg>
