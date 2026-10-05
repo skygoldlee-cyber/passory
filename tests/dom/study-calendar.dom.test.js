@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,SC-11,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -317,6 +317,11 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         const chipB = [...alloc.querySelectorAll('button.alloc-chip')].find(c => c.dataset.arg === 'subb');
         expect(chipB.textContent).toMatch(/과목B\s*0\/\d+장/);
         expect(chipB.querySelector('.alloc-badge-weak')).toBeNull();
+
+        // SC-11 배정 근거 딥링크 — 칩 옆 ⓘ 버튼이 맞춤학습 과목 분석으로 연결
+        const whyA = alloc.querySelector('.alloc-why[data-arg="suba"]');
+        expect(whyA).not.toBeNull();
+        expect(whyA.dataset.click).toBe('gotoSubjectAnalysis');
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

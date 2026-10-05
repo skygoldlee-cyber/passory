@@ -400,6 +400,26 @@ button.alloc-chip:focus-visible {
     border-color: var(--warning-tint-20, #fbbf24);
     background: var(--warning-tint-10, transparent);
 }
+.alloc-chip-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+.alloc-why {
+    font-size: 0.7rem;
+    padding: 0.15rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+.alloc-why:hover,
+.alloc-why:focus-visible {
+    color: var(--color-primary);
+    background: var(--primary-tint-10);
+}
 .plan-alloc-basis {
     font-size: 0.75rem;
     color: var(--color-text-muted);

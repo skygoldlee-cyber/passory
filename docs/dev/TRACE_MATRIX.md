@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 341d203dcab7acdf
-> 생성: 2026-10-05 · 원천: SPEC.md(454개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 3121c47623f5ec78
+> 생성: 2026-10-05 · 원천: SPEC.md(456개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 454개 — 문서 연결 293 · 소스 연결 420 · 테스트 연결 441 · 보고서 연결 109
+**커버리지 요약**: 요구사항 456개 — 문서 연결 293 · 소스 연결 421 · 테스트 연결 443 · 보고서 연결 109
 
 ---
 
@@ -54,7 +54,7 @@
 | AN-06 | ✅ | 테스트 | — | src/recommendations.js<br>src/views/dashboard.js | tests/unit/analysis-deepening.test.js | — | — |
 | AN-07 | ✅ | 테스트 | — | src/analysis-engine.js<br>src/recommendations.js<br>src/views/dashboard.js | tests/unit/analysis-deepening.test.js | — | — |
 | AN-08 | ✅ | 테스트 | — | src/analysis-engine.js<br>src/views/dashboard.js | tests/fixtures/analysis-seed.js<br>tests/unit/analysis-deepening.test.js | — | — |
-| AN-09 | ✅ | E2E 테스트 | — | html/views/analysis.html<br>index.html<br>src/analysis-engine.js<br>src/views/dashboard.js | tests/e2e/analysis-view.spec.js<br>tests/unit/analysis-deepening.test.js | — | — |
+| AN-09 | ✅ | E2E 테스트 | — | html/views/analysis.html<br>index.html<br>src/analysis-engine.js<br>src/views/dashboard.js | tests/dom/study-dashboard.dom.test.js<br>tests/e2e/analysis-view.spec.js<br>tests/unit/analysis-deepening.test.js | — | — |
 
 ## 3.2 플래시카드
 
@@ -391,6 +391,8 @@
 | SC-08 | ✅ | 테스트 | DOC-DSN-16 | css/study-calendar.css<br>src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 | SC-09 | ✅ | 테스트 | — | src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 | SC-10 | ✅ | 테스트 | — | css/dashboard.css<br>src/views/dashboard.js | tests/dom/study-dashboard.dom.test.js | — | — |
+| SC-11 | ✅ | 테스트 | — | src/views/dashboard.js | tests/dom/study-calendar.dom.test.js<br>tests/dom/study-dashboard.dom.test.js | — | — |
+| SC-12 | ✅ | 테스트 | — | — | tests/unit/study-tracker.test.js | — | — |
 
 ## 3.21 UI 모드 전환
 

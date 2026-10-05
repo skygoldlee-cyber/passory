@@ -1,5 +1,5 @@
 // src/views/dashboard.js - 대시보드 뷰 로직 및 전역 통계 관리
-// @spec D-01~17,AN-01~09,PF-07,SC-04,SC-06,SC-07,SC-10
+// @spec D-01~17,AN-01~09,PF-07,SC-04,SC-06,SC-07,SC-10,SC-11
 import { state } from '../state.js';
 import { esc } from '../sanitize.js';
 import { DataLoader } from '../data-loader.js';
@@ -14,7 +14,7 @@ import {
     getSimHistory, computeWrongCauseSummary, getWrongCauseLabels,
     snapshotRecommendations, evaluateRecommendationEffect
 } from '../recommendations.js';
-import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar, computeStudyPlan, computePlanAdherence, checkStudyMilestones } from '../study-tracker.js';
+import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject } from '../study-tracker.js';
 import { getWeakStatements, getDueStatementSids, getAnomalousStatements, getAllStatementStats } from '../statement-tracker.js';
 import {
     computeSubjectWeakChapters, computeWeeklyGrowth, computePassGap,
@@ -238,7 +238,7 @@ export function renderDashboard() {
         const weakSubjCards = sc.weak;
 
         const cardHTML = `
-            <div class="subject-card">
+            <div class="subject-card" id="subj-card-${subjId}">
                 <div class="subj-header">
                     <h4>${esc(subjMeta.name)}</h4>
                     <span>카드 ${totalSubjCards}개 / 퀴즈 ${totalSubjQuizzes}개</span>
@@ -389,11 +389,89 @@ function _renderWeakSubjectRecommendation(subjects) {
 export function renderAnalysisView() {
     renderDashboard();
     _renderAnalysisOnboarding();
+    _renderSmartPlanInsight();
     _renderWrongCauseInsight();
     _renderWeakStatementInsight();
     _renderStudyRhythmInsight();
     _renderChapterWeakness();
     _renderPassGapInsight();
+}
+
+/** 과목별 취약 단원 그룹 공용 계산 — 단원 카드·스마트학습 배분·리포트가 공유 (SC-11·SC-12) */
+function _weakChapterGroups(chaptersPerSubject = 2) {
+    const qc = (DataLoader._questionChapters) || { questions: {}, ranges: {} };
+    const subjectsMeta = (typeof DataLoader !== 'undefined' && DataLoader.registry)
+        ? DataLoader.getSubjectList() : [];
+    const nameOf = (key) => { const s = subjectsMeta.find(x => x.key === key); return s ? s.name : key; };
+    return computeSubjectWeakChapters({
+        quizResults: state.quizResults, weakCards: state.weakCards,
+        statementStats: getAllStatementStats(),
+        questionChapters: qc.questions, chapterRanges: qc.ranges,
+        resolveQuiz: resolveWrongQuiz, subjectName: nameOf, chaptersPerSubject
+    });
+}
+
+/** 스마트학습 배분 입력 공용 집계 — 분석 카드·리포트가 캘린더 칩과 동일 입력 공유 (SC-11·SC-12) */
+function _allocInputs() {
+    return computeSubjectAllocInputs({
+        memorizedCards: state.memorizedCards,
+        quizResults: state.quizResults,
+        weakCards: state.weakCards,
+        exams: (DataLoader.registry && DataLoader.registry.exams) || [],
+        wrongCauses: state.wrongCauses,
+        weakChapterGroups: _weakChapterGroups()
+    });
+}
+
+/**
+ * 이번 주 스마트학습 카드 (SC-11) — 캘린더 계획 패널의 과목별 배분을
+ * 맞춤학습 뷰에 요약 표시 (진단 → 실행 연결). 시험일 미설정 시 설정 유도.
+ */
+function _renderSmartPlanInsight() {
+    const el = document.getElementById('analysis-smart-plan');
+    if (!el) return;
+    const subjectsMeta = (typeof DataLoader !== 'undefined' && DataLoader.registry)
+        ? DataLoader.getSubjectList()
+        : Object.keys(window.STUDY_DATA || {}).map(key => {
+            const d = (window.STUDY_DATA || {})[key];
+            return { key, name: d.name, stats: { cards: (d.cards || []).length, quizzes: (d.quizzes || []).length } };
+        });
+    const totalCards = subjectsMeta.reduce((s, m) => s + _displayCounts(m).cards, 0);
+    const plan = computeStudyPlan(Math.max(0, totalCards - state.memorizedCards.size));
+    const alloc = plan && plan.tier !== 'done' ? computeSubjectAllocation(plan, subjectsMeta, _allocInputs()) : null;
+    if (!alloc) {
+        el.innerHTML = `<h4>🧠 이번 주 스마트학습 <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span></h4>
+            <p class="analysis-empty">시험일을 설정하면 출제 비중과 약점 가중으로 과목별 주간 목표를 배분해 보여줍니다.</p>
+            <button class="btn btn-primary btn-sm analysis-card-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear" aria-hidden="true"></i> 시험일·목표 설정</button>`;
+        return;
+    }
+    const doneBySubj = sumRecentCardsBySubject(getStudyCalendar());
+    const rowsHtml = alloc.thisWeek.alloc.filter(a => a.remaining > 0).map(a => {
+        const done = doneBySubj[a.key] || 0;
+        const met = a.cards > 0 && done >= a.cards;
+        const badgesHtml = (a.weakBadge ? ' <span class="alloc-badge alloc-badge-weak">약점</span>' : '')
+            + (alloc.hasWeights && a.weightPct > 0 ? ` <span class="alloc-badge">${a.weightPct}%</span>` : '');
+        return `<div class="wc-row"><span>${esc(a.name)}${badgesHtml}</span><strong${met ? ' class="alloc-met"' : ''}>${done}/${a.cards}장</strong></div>`;
+    }).join('');
+    el.innerHTML = `<h4>🧠 이번 주 스마트학습 <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span></h4>
+        ${rowsHtml}
+        <p class="analysis-advice">배정 = 잔여량 × 출제 비중 × 약점 가중 — 칩의 ⓘ 버튼으로 과목별 근거를 볼 수 있습니다.</p>
+        <button class="btn btn-secondary btn-sm analysis-card-btn" data-click="switchView" data-arg="calendar-view"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> 캘린더 보기</button>`;
+}
+
+/**
+ * 스마트학습 배정 근거 딥링크 (SC-11) — 맞춤학습 뷰로 전환 후
+ * 해당 과목 카드로 스크롤·일시 강조한다.
+ */
+export function gotoSubjectAnalysis(subjKey) {
+    switchView('analysis-view', { scrollTop: true });
+    setTimeout(() => {
+        const card = document.getElementById(`subj-card-${subjKey}`);
+        if (!card) return;
+        if (card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('subj-card-flash');
+        setTimeout(() => card.classList.remove('subj-card-flash'), 1600);
+    }, 60);
 }
 
 /**
@@ -544,20 +622,7 @@ function _renderStudyRhythmInsight() {
 function _renderChapterWeakness() {
     const el = document.getElementById('analysis-chapter-weak');
     if (!el) return;
-    const qc = (DataLoader._questionChapters) || { questions: {}, ranges: {} };
-    const subjectsMeta = (typeof DataLoader !== 'undefined' && DataLoader.registry)
-        ? DataLoader.getSubjectList() : [];
-    const nameOf = (key) => { const s = subjectsMeta.find(x => x.key === key); return s ? s.name : key; };
-    const groups = computeSubjectWeakChapters({
-        quizResults: state.quizResults,
-        weakCards: state.weakCards,
-        statementStats: getAllStatementStats(),
-        questionChapters: qc.questions,
-        chapterRanges: qc.ranges,
-        resolveQuiz: resolveWrongQuiz,
-        subjectName: nameOf,
-        chaptersPerSubject: 2
-    });
+    const groups = _weakChapterGroups();
     if (groups.length === 0) {
         el.innerHTML = `<h4>📖 단원별 취약 분석</h4>
             <p class="analysis-empty">퀴즈·모의고사·드릴에서 오답이 쌓이면 과목별로 어떤 단원이 약한지 보여줍니다.</p>`;
@@ -796,9 +861,21 @@ export function exportAnalysisReport() {
     const dday = getDDay();
     const qc = (DataLoader._questionChapters) || { questions: {}, ranges: {} };
     const est = _compositeEstimate();
+    // 스마트학습 과목별 준수 (SC-11) — 배분이 없으면(시험일 미설정·완료) null
+    const totalCards = subjects.reduce((s, m) => s + _displayCounts(m).cards, 0);
+    const weekPlan = computeStudyPlan(Math.max(0, totalCards - state.memorizedCards.size));
+    const weekAlloc = weekPlan && weekPlan.tier !== 'done'
+        ? computeSubjectAllocation(weekPlan, subjects, _allocInputs()) : null;
+    const doneBySubj = weekAlloc ? sumRecentCardsBySubject(getStudyCalendar()) : {};
+    const planBySubject = weekAlloc
+        ? weekAlloc.thisWeek.alloc
+            .filter(a => a.remaining > 0 && a.cards > 0)
+            .map(a => ({ name: a.name, done: doneBySubj[a.key] || 0, cards: a.cards }))
+        : null;
     const text = buildWeeklyReportText({
         appName: getExamAppName(),
         plan: _planAdherenceSummary(subjects),
+        planBySubject,
         growth: computeWeeklyGrowth(getStudyCalendar()),
         estimate: est,
         gap: computePassGap({

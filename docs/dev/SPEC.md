@@ -141,7 +141,7 @@
 | AN-06 | 추천 효과 추적 — "오늘의 합격 전략" 발행 시 대상 과목 정답률을 `rec_snapshot` 기준선으로 저장(동일 대상 6시간 내 재기록 방지). 12시간 경과·과목당 신규 표본 5문 이상이면 다음 방문에서 정답률 변화(▲▼%p)를 추천 카드 상단에 표시 (`snapshotRecommendations`/`evaluateRecommendationEffect`) | ✅ |
 | AN-07 | 오답 원인 분류 확장 — 기본 3종(암기/개념/계산)에 manifest `analysis.wrongCauses`(key·label·advice)가 레지스트리 경유로 병합되는 시험별 분류표 (`getWrongCauseTaxonomy`). 자동 추정(`estimateUntaggedCauses`)은 선언된 키만 사용 — 조문 참조 문항→법령 혼동, 비산술 수치→수치 착각 등. 미선언 시험은 기본 3종만 노출 | ✅ |
 | AN-08 | 학습 패턴 분석 — `recordStudyActivity`가 활동별 시간대 버킷(캘린더 엔트리 `h`)을 기록하고 `computeStudyPattern`이 최다 시간대·요일·주말 비중을 집계해 학습 리듬 카드에 표시 (활동 4일·8회 미만이면 미표시) | ✅ |
-| AN-09 | 주간 리포트보내기 — 진단 요약 섹션의 "주간 리포트" 버튼이 `buildWeeklyReportText`로 평문 리포트(학습량·정답률 추이·예상 점수·합격 갭·취약 단원·패턴·주간 계획 대비 실적)를 생성, Web Share API 또는 클립보드로 출력 (`exportAnalysisReport`, `analysis_report` 액션 카운터). 계획 대비 실적은 SC-06 `computePlanAdherence` 요약을 `p.plan`으로 전달 | ✅ |
+| AN-09 | 주간 리포트보내기 — 진단 요약 섹션의 "주간 리포트" 버튼이 `buildWeeklyReportText`로 평문 리포트(학습량·정답률 추이·예상 점수·합격 갭·취약 단원·패턴·주간 계획 대비 실적)를 생성, Web Share API 또는 클립보드로 출력 (`exportAnalysisReport`, `analysis_report` 액션 카운터). 계획 대비 실적은 SC-06 `computePlanAdherence` 요약을 `p.plan`으로, 과목별 실적/배정 행은 SC-09 배분 결과를 `p.planBySubject`로 전달 | ✅ |
 
 ### 3.2 플래시카드 (Flashcard)
 
@@ -468,6 +468,8 @@
 | SC-08 | 스마트학습 — 과목별 가중 배분 계획: 주차 총량을 잔여 카드×출제 비중×약점 가중(퀴즈 표본 ≥20문 게이트, 미만 중립)으로 과목 배분, 워터필링 잔여 상한·재배분. 계획 패널에 이번 주 과목별 목표 칩 + 주차×과목 매트릭스 + `study_plan_pro` Pro 표기 (`computeSubjectAllocation`, STUDY_PLAN_PRO_DESIGN.md) | ✅ |
 | SC-09 | 스마트학습 보강 — ① 과목 칩에 주간 실적 표시(`N/배정`장, 캘린더 `bySubj` 과목별 카드 기록) ② 칩 클릭 시 해당 과목 카드 학습 바로가기(`startSubjectStudy`) ③ 약점 집중·출제 비중 근거 배지 ④ 약점 가중 확장: 최근 퀴즈 표본(`recentQuizBySubject`, 과목당 최근 60문) 우선 + 취약 카드 비율 가산(최대 +0.5, 상한 2.5) ⑤ 과목 키 해석을 `subjectKeyFromItemId`로 견고화 | ✅ |
 | SC-10 | 시험일 최우선 설정 안내 — 대시보드 통계 그리드 첫 카드로 D-day 카드를 배치하고, 시험일 미설정 시 `stat-card-attn`으로 강조 + "학습 계획의 시작점" 안내 + `지금 설정` 버튼을 표시 (`_examPlanDescHtml` 미설정 분기) | ✅ |
+| SC-11 | 스마트학습–맞춤학습 연계 — ① 맞춤학습 뷰에 '이번 주 스마트학습' 요약 카드(과목별 실적/배정 + PRO 배지 + 캘린더 링크, `analysis-smart-plan`, `_renderSmartPlanInsight`) ② 계획 패널 칩 옆 `이유` 버튼 → `gotoSubjectAnalysis(과목키)`로 맞춤학습 해당 과목 카드(`subj-card-<키>`) 스크롤·강조 — 배정 근거의 진단 상세로 연결 | ✅ |
+| SC-12 | 약점 신호 통합 — 오답 원인 자가 태깅(`wrongCauses` subjectId별 최근 30일)과 단원 취약(`computeSubjectWeakChapters` 과목별 취약 단원 수)을 약점 가중에 가산(`diagBoost` 최대 +0.5, 합계 상한 MAX_WEAK_WEIGHT 유지) — 퀴즈 표본 부족 과목의 콜드스타트 약점 반영 (`computeSubjectAllocation`의 `diagBySubject` 입력, STUDY_PLAN_PRO_DESIGN.md Rev 2) | ✅ |
 | RV-01 | 오답/중요 복습 뷰 — 헷갈림 카드·틀린 문제 통합 목록 (`review-view`) | ✅ |
 | ND-01 | 숫자 암기 드릴 — `number-drills/` JSON 기반 수치·기한·횟수 훈련 (훈련소 수치 훈련) | ✅ |
 | DR-01 | **O/X 판정 드릴** — 객관식 문항을 진위형으로 자동 변환 (3,700+문, `build_ox_drills.js` → `drills/ox_subject*.js`, `trainer-drills.js`) | ✅ |

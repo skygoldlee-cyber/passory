@@ -319,6 +319,18 @@
     opacity: 0.5;
 }
 
+/* SC-11 배정 근거 딥링크 — 스마트학습 칩 ⓘ로 진입한 과목 카드 일시 강조 */
+.subject-card.subj-card-flash {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--primary-tint-20, rgba(59, 130, 246, 0.25));
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* SC-11 분석 카드 — 스마트학습 배정 달성 과목 표시 */
+.alloc-met {
+    color: var(--color-success);
+}
+
 .subj-header h4 {
     font-size: var(--text-md-lg);
     font-weight: var(--font-weight-bold);

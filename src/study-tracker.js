@@ -455,6 +455,80 @@ export const MAX_WEAK_WEIGHT = 2.5;
 /** 최근 퀴즈 표본 윈도우 — 과목당 최근 N문만 약점 가중에 반영 (SC-09) */
 export const RECENT_QUIZ_WINDOW = 60;
 
+/** 진단 신호 윈도우 — 오답 원인 태그는 최근 30일만 가산 (SC-12) */
+export const DIAG_CAUSE_WINDOW_DAYS = 30;
+
+/** 진단 신호 가산 상한 — 오답 원인·취약 단원 가산 합계 상한 (SC-12) */
+export const MAX_DIAG_BOOST = 0.5;
+
+/**
+ * 스마트학습 배분 입력 집계 (SC-11·SC-12) — 캘린더 칩·맞춤학습 카드·주간 리포트가
+ * 동일 입력을 공유하도록 raw state/레지스트리 → computeSubjectAllocation opts 변환을
+ * 한 곳에 둔다. 과목 키 해석은 subjectKeyFromItemId (숫자·밑줄 키 안전).
+ * @param {Object} p
+ * @param {Set|Array} [p.memorizedCards] 암기 카드 id 집합
+ * @param {Object} [p.quizResults] {quizId: {correct}}
+ * @param {Set|Array} [p.weakCards] 헷갈림 카드 id 집합
+ * @param {Array} [p.exams] registry.exams — 출제 비중 (미전달 시 균등 배분)
+ * @param {Object} [p.wrongCauses] {itemId: {cause, ts, subjectId}} — 최근 30일 태그만 집계 (SC-12)
+ * @param {Array} [p.weakChapterGroups] computeSubjectWeakChapters 결과 — 과목별 취약 단원 수 (SC-12)
+ * @param {Date|number} [p.now] 기준 시각 (테스트 주입용)
+ * @returns {{memBySubject:Object, quizBySubject:Object, recentQuizBySubject:Object,
+ *   weakBySubject:Object, weightBySubject:Object, diagBySubject:Object}}
+ */
+export function computeSubjectAllocInputs(p = {}) {
+    /** @type {{ [x: string]: number }} */
+    const mem = {};
+    /** @type {{ [x: string]: { solved: number, correct: number } }} */
+    const quiz = {};
+    /** @type {{ [x: string]: number }} */
+    const weak = {};
+    /** @type {{ [x: string]: number }} */
+    const weights = {};
+    /** @type {{ [x: string]: { causes: number, weakChapters: number } }} */
+    const diag = {};
+    const _diag = (k) => (diag[k] = diag[k] || { causes: 0, weakChapters: 0 });
+    (p.memorizedCards || []).forEach(id => {
+        const k = subjectKeyFromItemId(id);
+        if (k) mem[k] = (mem[k] || 0) + 1;
+    });
+    Object.keys(p.quizResults || {}).forEach(id => {
+        const k = subjectKeyFromItemId(id);
+        if (k) {
+            quiz[k] = quiz[k] || { solved: 0, correct: 0 };
+            quiz[k].solved++;
+            const r = p.quizResults[id];
+            if (r && r.correct) quiz[k].correct++;
+        }
+    });
+    (p.weakCards || []).forEach(id => {
+        const clean = id.replace(/^weak_(quiz|sim)_/, '');
+        if (!clean.includes('_card_')) return; // 카드 외 항목은 카드 잔여 대비 비율 왜곡 방지
+        const k = subjectKeyFromItemId(id);
+        if (k) weak[k] = (weak[k] || 0) + 1;
+    });
+    (p.exams || []).forEach(ex => {
+        if (ex && ex.subject) weights[ex.subject] = (weights[ex.subject] || 0) + ((ex.stats && ex.stats.questions) || 0);
+    });
+    // SC-12 진단 신호 — 오답 원인 태그(최근 30일) + 과목별 취약 단원 수
+    const cutoff = (p.now !== undefined ? new Date(p.now).getTime() : Date.now()) - DIAG_CAUSE_WINDOW_DAYS * 86400000;
+    Object.values(p.wrongCauses || {}).forEach(c => {
+        if (!c || !c.subjectId || (c.ts || 0) < cutoff) return;
+        _diag(c.subjectId).causes++;
+    });
+    (p.weakChapterGroups || []).forEach(g => {
+        if (g && g.subjectKey) _diag(g.subjectKey).weakChapters += (g.chapters || []).length;
+    });
+    return {
+        memBySubject: mem,
+        quizBySubject: quiz,
+        recentQuizBySubject: recentQuizBySubject(p.quizResults || {}),
+        weakBySubject: weak,
+        weightBySubject: weights,
+        diagBySubject: diag
+    };
+}
+
 /**
  * 과목별 최근 퀴즈 표본 (SC-09) — quizResults를 뒤(최신)에서 읽어
  * 과목당 최근 RECENT_QUIZ_WINDOW문까지만 집계한다. 전 기간 누적 정답률 대신
@@ -529,8 +603,9 @@ function _allocWeek(rows, remNow, total) {
  * @param {Object} [opts.recentQuizBySubject] {key: {solved, correct}} — 최근 윈도우 (SC-09)
  * @param {Object} [opts.weakBySubject] {key: 취약 카드 수} — 약점 가산 (SC-09)
  * @param {Object} [opts.weightBySubject] {key: 출제 문항 수} — 미선언 시 균등
+ * @param {Object} [opts.diagBySubject] {key: {causes, weakChapters}} — 진단 신호 가산 (SC-12)
  * @returns {Object|null}
- *   { weeks:[{week, range, total, alloc:[{key, name, cards, remaining, weakW, weightPct, weakBadge}]}],
+ *   { weeks:[{week, range, total, alloc:[{key, name, cards, remaining, weakW, diagBoost, weightPct, weakBadge}]}],
  *     thisWeek, hasWeights }
  */
 export function computeSubjectAllocation(plan, subjects, opts = {}) {
@@ -541,6 +616,7 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
     const quiz = opts.quizBySubject || {};
     const recent = opts.recentQuizBySubject || {};
     const weak = opts.weakBySubject || {};
+    const diag = opts.diagBySubject || {};
     const wBySubj = opts.weightBySubject || {};
     const hasWeights = Object.keys(wBySubj).length > 0;
     const weightSum = Object.values(wBySubj).reduce((s, n) => s + (n || 0), 0);
@@ -555,6 +631,9 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
             ? Math.max(0.1, 2 - q.correct / q.solved) : 1.0;
         // 취약 카드 비율 가산 — 헷갈림 표시 카드가 잔여에서 차지하는 비중, 최대 +0.5
         const weakBoost = remaining > 0 ? Math.min(0.5, (weak[s.key] || 0) / remaining) : 0;
+        // SC-12 진단 신호 가산 — 최근 오답 원인 태그·취약 단원 수 (콜드스타트 과목 반영)
+        const dg = diag[s.key] || { causes: 0, weakChapters: 0 };
+        const diagBoost = Math.min(MAX_DIAG_BOOST, dg.causes * 0.1 + dg.weakChapters * 0.15);
         const weight = hasWeights ? (wBySubj[s.key] || 0) : 1;
         return {
             key: s.key,
@@ -562,8 +641,9 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
             remaining,
             weight,
             weightPct: (hasWeights && weightSum > 0) ? Math.round(weight / weightSum * 100) : 0,
-            weakW: Math.min(MAX_WEAK_WEIGHT, quizW + weakBoost),
-            weakBadge: quizW > 1.15 || weakBoost >= 0.25
+            weakW: Math.min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost),
+            diagBoost,
+            weakBadge: quizW > 1.15 || weakBoost >= 0.25 || diagBoost >= 0.15
         };
     });
     const remNow = rows.map(r => r.remaining);
@@ -576,7 +656,7 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
             total: w.cards,
             alloc: rows.map((r, i) => ({
                 key: r.key, name: r.name, cards: counts[i], remaining: r.remaining,
-                weakW: r.weakW, weightPct: r.weightPct, weakBadge: r.weakBadge
+                weakW: r.weakW, diagBoost: r.diagBoost, weightPct: r.weightPct, weakBadge: r.weakBadge
             }))
         };
     });

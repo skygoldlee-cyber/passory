@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-12,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -390,4 +390,66 @@ test('computeSubjectAllocation: 취약 카드 비율 가산 (+0.5 상한) + 중�
   const fb = flat.weeks[0].alloc.find(x => x.key === 'suba');
   assert.equal(fb.weakW, 1.0);
   assert.equal(fb.weakBadge, false);
+});
+
+// --- SC-12: 약점 신호 통합 (diagBySubject) + 공용 입력 집계 ---
+
+test('computeSubjectAllocInputs: 과목별 입력 맵 집계 — mem·quiz·weak·weights·diag', () => {
+  const now = Date.now();
+  const inputs = tracker.computeSubjectAllocInputs({
+    memorizedCards: new Set(['suba_card_1', 'suba_card_2']),
+    quizResults: { suba_quiz_1: { correct: true }, subb_quiz_1: { correct: false } },
+    weakCards: new Set(['suba_card_9', 'weak_quiz_suba_quiz_1']),
+    exams: [{ subject: 'suba', stats: { questions: 10 } }, { subject: 'subb', stats: { questions: 30 } }],
+    wrongCauses: {
+      q1: { cause: 'memorize', ts: now - 10 * 864e5, subjectId: 'suba' },  // 10일 전 — 포함
+      q2: { cause: 'memorize', ts: now - 40 * 864e5, subjectId: 'suba' },  // 40일 전 — 윈도우 밖 제외
+      q3: { cause: 'calc', ts: now, subjectId: 'subb' },
+    },
+    weakChapterGroups: [{ subjectKey: 'suba', chapters: [{ chapter: 'x', wrongs: 3 }, { chapter: 'y', wrongs: 2 }] }],
+    now
+  });
+  assert.equal(inputs.memBySubject.suba, 2);
+  assert.deepEqual(inputs.quizBySubject.subb, { solved: 1, correct: 0 });
+  assert.equal(inputs.weakBySubject.suba, 1);          // weak_quiz 접두사 항목은 카드 집계 제외
+  assert.equal(inputs.weightBySubject.subb, 30);
+  assert.deepEqual(inputs.diagBySubject.suba, { causes: 1, weakChapters: 2 });
+  assert.deepEqual(inputs.diagBySubject.subb, { causes: 1, weakChapters: 0 });
+});
+
+test('computeSubjectAllocation: 진단 신호 가산 (SC-12) — 오답 원인·취약 단원, 상한 캡', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    diagBySubject: { suba: { causes: 5, weakChapters: 2 } }, // 5×0.1 + 2×0.15 = 0.8 → MAX_DIAG_BOOST 0.5 캡
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a = res.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a.diagBoost, 0.5);
+  assert.equal(a.weakW, 1.5); // 중립 1.0 + 0.5
+  assert.equal(a.weakBadge, true); // diagBoost ≥ 0.15
+  assert.ok(allocOf(res, 0, 'suba') > allocOf(res, 0, 'subb'));
+
+  // diagBoost가 약하면 배지 미표시, 약한 가산만
+  const res2 = tracker.computeSubjectAllocation(plan, subjects, {
+    diagBySubject: { suba: { causes: 1, weakChapters: 0 } }, // +0.1
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a2 = res2.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a2.diagBoost, 0.1);
+  assert.equal(a2.weakW, 1.1);
+  assert.equal(a2.weakBadge, false);
+});
+
+test('computeSubjectAllocation: 진단+퀴즈+취약카드 합산도 약점 가중 상한 2.5 유지', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    quizBySubject: { suba: { solved: 20, correct: 0 } },   // 2 − 0 = 2.0
+    weakBySubject: { suba: 50 },                            // +0.5
+    diagBySubject: { suba: { causes: 5, weakChapters: 2 } },// +0.5
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a = res.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a.weakW, tracker.MAX_WEAK_WEIGHT); // 3.0 → 2.5 캡
 });

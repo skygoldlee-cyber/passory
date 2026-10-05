@@ -30,7 +30,8 @@ import {
     startDueReview,
     saveActualExamResult,
     editActualExamResult,
-    exportAnalysisReport
+    exportAnalysisReport,
+    gotoSubjectAnalysis
 } from './views/dashboard.js';
 import {
     loadFlashcards,
@@ -539,7 +540,7 @@ const DELEGATED_HANDLERS = {
     openComboDrillSetup, startComboDrill, nextComboDrill, submitComboJudgments,
     openWeakReview, setWeakFilter, setDrillCount,
     // 뷰 전환 (data-click="switchView" data-arg="<view-id>") — 딥링크 공용
-    switchView, gotoWeakReview,
+    switchView, gotoWeakReview, gotoSubjectAnalysis,
     // 훈련소 (제한값·계산·원료·뽀모도로)
     // 계산 연습·지식DB 챌린지 핸들러는 LAZY_MODULE_HANDLERS에 등록 (도메인 모듈 지연 로딩)
     exitTrainerSubView, startLimitsTrainer, nextLimitsQuestion,

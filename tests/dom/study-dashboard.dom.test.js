@@ -1,5 +1,5 @@
 // tests/dom/study-dashboard.dom.test.js — 대시보드 통계·추천 시나리오
-// @spec D-01~15,D-17,AN-01~03,SC-10
+// @spec D-01~15,D-17,AN-01~03,AN-09,SC-10,SC-11
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 3)
 // 검증: 진도 0건 렌더(E), 시딩 진도→통계 반영(H/P), 과목 카드·히트맵(H),
 //       약점 과목 추천(H — 최소 3문 응시 조건·헷갈림 카드最多)
@@ -17,9 +17,9 @@ vi.mock('../../src/ui-utils.js', () => ({
 
 import {
     loadIndexHtml, el,
-    seedStudyData, seedProgress, resetStudyState,
+    seedStudyData, seedProgress, resetStudyState, flushAsync,
 } from './helpers.js';
-import { updateGlobalStats, renderDashboard, renderAnalysisView } from '../../src/views/dashboard.js';
+import { updateGlobalStats, renderDashboard, renderAnalysisView, gotoSubjectAnalysis } from '../../src/views/dashboard.js';
 import { setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { state } from '../../src/state.js';
 
@@ -228,6 +228,36 @@ describe('맞춤학습 뷰 — 진단 요약 카드', () => {
         expect(el('analysis-wrong-cause').textContent).toContain('오답 패턴');
         expect(el('analysis-weak-statements').textContent).toContain('취약 진술');
         expect(el('analysis-study-rhythm').textContent).toContain('학습 리듬');
+    });
+
+    it('이번 주 스마트학습 카드 — 과목별 실적/배정 + 캘린더 링크 (SC-11)', () => {
+        seedTwoSubjects();
+        // 시험일 미설정 → 설정 유도 빈 상태 카드
+        renderAnalysisView();
+        let card = el('analysis-smart-plan');
+        expect(card.textContent).toContain('시험일을 설정하면');
+        expect(card.querySelector('[data-pro-feature="study_plan_pro"]')).not.toBeNull();
+
+        // 시험일 설정 → 과목별 실적/배정 행 + 캘린더 딥링크
+        setExamDate(todayPlus(60));
+        renderAnalysisView();
+        card = el('analysis-smart-plan');
+        expect(card.textContent).toContain('이번 주 스마트학습');
+        expect(card.textContent).toContain('과목1');
+        expect(card.textContent).toMatch(/과목1.*\d+\/\d+장/s);
+        const calBtn = card.querySelector('[data-click="switchView"][data-arg="calendar-view"]');
+        expect(calBtn).not.toBeNull();
+    });
+
+    it('칩 이유 버튼 → gotoSubjectAnalysis 과목 카드 강조 (SC-11)', async () => {
+        seedTwoSubjects();
+        renderAnalysisView();
+        expect(el('subj-card-subja')).not.toBeNull(); // 과목 카드 앵커 id
+
+        // 뷰 전환 위임은 delegation-guard가 정적 검증 — 여기서는 앵커 강조만 본다
+        gotoSubjectAnalysis('subja');
+        await flushAsync(80);
+        expect(el('subj-card-subja').classList.contains('subj-card-flash')).toBe(true);
     });
 
     it('오답 원인 태그 → 분포와 권장 학습법 표시', () => {

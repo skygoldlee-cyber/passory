@@ -132,7 +132,7 @@ D-30, 전 과목 미학습(잔여 = 카드 수), 정답률 표본 없음(가중 
 - **문항(퀴즈) 배분**: 카드 완료 후 문항 풀이까지 계획에 넣을지 — 문제은행 1,000제를 같은 주차 축에 얹는 2단계 과제
 - **재계획 이벤트**: 목표 변경·장기 미접속 시 "계획 재조정됨" 안내 — SC-07 마일스톤 id 체계(`replan-*`)로 확장 가능
 - **entitlement 실게이트**: ROAD-P1 결제 도입 시 `hasProEntitlement()` 분기 추가 — 현 설계는 표기 게이트만
-- **내보내기**: 배분표를 주간 리포트(AN-09)에도 넣을지 — Pro 리포트 가치 강화 옵션
+- **내보내기**: 배분표를 주간 리포트(AN-09)에도 넣을지 — Pro 리포트 가치 강화 옵션 → ✅ 구현 (Rev 2 — `p.planBySubject` 과목별 준수 행)
 
 ---
 
@@ -148,3 +148,56 @@ D-30, 전 과목 미학습(잔여 = 카드 수), 정답률 표본 없음(가중 
 | 4 | 약점 신호 확장 | `recentQuizBySubject`(과목당 최근 60문)가 표본 ≥20이면 누적 대신 우선 적용(현재 약점 반영) + 헷갈림 카드 비율 최대 +0.5 가산, 약점 가중 상한 2.5 |
 | 5 | 키 해석 견고화 | `[a-z]+_card_` 정규식 → `subjectKeyFromItemId()`(weak-items) — 숫자·밑줄 포함 과목 키·`weak_*` 접두사 안전 |
 | — | 기저 수정 | `loadState`에 `_prevMemCount/_prevQuizCount/_prevMemBySubj` 기준점 스탬프 — 미초기화 시 첫 저장이 전체 진도를 오늘 활동으로 기록하던 기존 결함 해소 |
+
+---
+
+## 9. Rev 2 — 맞춤학습 연계·약점 신호 통합 (SC-11·SC-12, 2026-10-05)
+
+스마트학습(계획)과 맞춤학습(진단)의 양방향 연결. 진단 뷰에서 "지금 할 일"이 보이고,
+계획 뷰에서 "왜 이렇게 배정됐는지" 진단 상세로 진입할 수 있어야 한다.
+
+### 9.1 맞춤학습 뷰 스마트학습 요약 카드 (SC-11①)
+
+- 분석 인사이트 그리드에 `analysis-smart-plan` 카드 추가 — `_renderSmartPlanInsight()`가
+  `computeStudyPlan` + `computeSubjectAllocation` + `sumRecentCardsBySubject`로 과목별 `실적/배정` 행 렌더
+- PRO 배지(`data-pro-feature="study_plan_pro"`) + "캘린더 보기" 버튼
+- 시험일 미설정·완료 시엔 빈 상태 카드로 전환(시험일 설정 유도) — 진단 뷰에서도 계획 설정이 최우선 동선
+
+### 9.2 배정 근거 딥링크 (SC-11②)
+
+- 칩 옆 `이유` 버튼(`data-click="gotoSubjectAnalysis" data-arg="<key>"`) → 맞춤학습 뷰로 전환 후
+  해당 과목 카드(`id="subj-card-<key>"`)로 스크롤 + `subj-card-flash` 일시 강조
+- 과목 카드는 기존 맞춤학습 그리드(`subject-cards-container`)의 카드에 id 부여 — 별도 DOM 추가 없음
+
+### 9.3 주간 리포트 과목별 준수 (AN-09 확장)
+
+- `buildWeeklyReportText`에 `p.planBySubject` 배열 추가 — `  - 과목명: 실적/배정장` 행을
+  `p.plan`(총량 준수) 줄 아래에 나열. 배분 없으면(시험일 미설정·완료) 총량 행만 출력
+
+### 9.4 약점 신호 통합 (SC-12)
+
+맞춤학습이 이미 집계하는 진단 신호를 약점 가중에 가산한다 — 퀴즈 표본 부족
+과목(콜드스타트)도 실제 약점을 반영하도록:
+
+```text
+diagBoost_i = min(0.5, 0.1 × causes30d_i + 0.15 × weakChapters_i)
+weakW_i     = min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost)
+```
+
+| 신호 | 출처 | 가산 |
+|---|---|---|
+| `causes30d` | `state.wrongCauses` — `subjectId` 일치 + `ts` 최근 30일 태그 수 | 건당 +0.1 |
+| `weakChapters` | `computeSubjectWeakChapters` 결과의 과목별 취약 단원 수 | 단원당 +0.15 |
+
+- 상한은 기존 `MAX_WEAK_WEIGHT = 2.5` 유지 — 모든 신호가 같은 예산을 공유,
+  어떤 신호 조합이든 과배정 폭주 방지
+- `weakBadge` 표시 조건에 `diagBoost ≥ 0.15` 추가
+- 입력 파이프라인 공용화: `computeSubjectAllocInputs()`가 mem·quiz·recent·weak·
+  weights·diag 맵을 한 번에 집계 — 캘린더 칩·분석 카드·리포트 3곳이 동일 입력 공유
+
+### 9.5 테스트 계획 (Rev 2)
+
+| 계층 | 검증 |
+|---|---|
+| 유닛 | `computeSubjectAllocInputs` 집계 · diagBoost 가산·상한 · `p.planBySubject` 리포트 행 |
+| DOM | 분석 뷰 요약 카드 렌더 · 칩 `이유` 버튼 존재 · `gotoSubjectAnalysis` 뷰 전환+앵커 |

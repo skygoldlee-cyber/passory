@@ -232,3 +232,16 @@ test('AN-09: 빈 데이터로도 리포트가 생성된다 (방어)', () => {
     const text = buildWeeklyReportText({});
     assert.ok(text.includes('주간 학습 리포트'));
 });
+
+test('AN-09: 과목별 스마트학습 준수 행 출력 — planBySubject (SC-11)', () => {
+    const text = buildWeeklyReportText({
+        plan: { weekActual: 10, weekTarget: 25, percent: 40, statusLabel: '추적 중' },
+        planBySubject: [
+            { name: '화장품법', done: 3, cards: 8 },
+            { name: '맞춤형화장품', done: 7, cards: 17 },
+        ],
+    });
+    assert.ok(text.includes('주간 계획 대비: 카드 10/25장 (40%)'));
+    assert.ok(text.includes('화장품법: 3/8장'));
+    assert.ok(text.includes('맞춤형화장품: 7/17장'));
+});

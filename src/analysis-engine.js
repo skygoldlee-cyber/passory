@@ -448,6 +448,7 @@ export function computeStudyPattern(calendar) {
  * @param {Array} [p.weakChapters] computeSubjectWeakChapters 결과
  * @param {Object} [p.pattern] computeStudyPattern 결과
  * @param {Object} [p.plan] SC-06 계획 준수 요약 {weekActual, weekTarget, percent, statusLabel}
+ * @param {Array} [p.planBySubject] SC-11 과목별 준수 행 [{name, done, cards}] — 스마트학습 배분 대비 실적
  * @param {string|null} [p.ddayLabel] D-day 표기
  * @returns {string}
  */
@@ -487,6 +488,9 @@ export function buildWeeklyReportText(p) {
     if (p.plan) {
         lines.push(`■ 주간 계획 대비: 카드 ${p.plan.weekActual}/${p.plan.weekTarget}장 (${p.plan.percent}%) — ${p.plan.statusLabel}`);
     }
+    (p.planBySubject || []).forEach(s => {
+        lines.push(`  - ${s.name}: ${s.done}/${s.cards}장`);
+    });
     if (p.ddayLabel) lines.push(`■ 시험일: ${p.ddayLabel}`);
     lines.push('', '— Passory 맞춤학습 리포트');
     return lines.join('\n');
