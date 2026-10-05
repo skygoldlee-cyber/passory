@@ -202,6 +202,35 @@ function checkTarget(target) {
     if (!subjectKeys.has(k)) err(scope, `integratedExam.questionsPerSubject의 "${k}"이 subjects에 없음`);
   }
 
+  // study 블록 수치 범위 (SC-15/D-17 — 잘못된 값이 계획 수학을 망가뜨리지 않도록 빌드타임 차단)
+  const st = m.study || {};
+  for (const [key, min, max] of [['minExamLeadDays', 1, 365], ['readThroughDays', 1, 90]]) {
+    if (st[key] !== undefined && (!Number.isFinite(st[key]) || st[key] < min || st[key] > max)) {
+      err(scope, `study.${key} 값이 범위(${min}~${max}) 밖: ${st[key]}`);
+    }
+  }
+  if (st.readDayShare !== undefined
+    && (!Number.isFinite(st.readDayShare) || st.readDayShare <= 0 || st.readDayShare > 1)) {
+    err(scope, `study.readDayShare는 0 초과 1 이하의 비율이어야 함: ${st.readDayShare}`);
+  }
+
+  // 오답 원인 분류표 — key 누락·autoPattern 정규식 컴파일 검증 (AN-07 — 무음 스킵 방지)
+  const causes = ((m.analysis || {}).wrongCauses) || [];
+  const seenCause = new Set();
+  for (const c of causes) {
+    if (!c || !c.key) { err(scope, 'analysis.wrongCauses[] 항목에 key 없음'); continue; }
+    if (seenCause.has(c.key)) err(scope, `analysis.wrongCauses[].key 중복: ${c.key}`);
+    seenCause.add(c.key);
+    if (c.autoPattern !== undefined) {
+      if (typeof c.autoPattern !== 'string' || !c.autoPattern) {
+        err(scope, `analysis.wrongCauses["${c.key}"].autoPattern이 빈 문자열/비문자열`);
+      } else {
+        try { new RegExp(c.autoPattern); }
+        catch (e) { err(scope, `analysis.wrongCauses["${c.key}"].autoPattern 정규식 컴파일 실패: ${e.message}`); }
+      }
+    }
+  }
+
   // 지식DB registryKey가 registry 최상위 키와 충돌하면 메타가 registry를 덮어씀
   const kKey = (m.knowledge || {}).registryKey;
   if (kKey && RESERVED_REGISTRY_KEYS.includes(kKey)) {

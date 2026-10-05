@@ -67,7 +67,7 @@ npm.cmd run check:content               # 인용·귀속·레이아웃·드릴·
 npm.cmd run check:content -- --build    # build:data 선실행 후 검증 (교재 교체 시 권장)
 npm.cmd run check:content -- --quick    # DOM 테스트 생략
 npm.cmd run check:content -- --content-only  # 콘텐츠 추적 단계만 (CI용 — 파서·임포트·테스트 등 별도 게이트 제외)
-npm.cmd run check:manifest              # manifest 선언 ↔ 파일/과목 자산 정합성 + 미등록 .md 역방향 경고
+npm.cmd run check:manifest              # manifest 선언 ↔ 파일/과목 자산 정합성 + 미등록 .md 역방향 경고 + study 값 범위·wrongCauses autoPattern 정규식 검증
 npm.cmd run check:reflayout             # 참조자료 4계층 정합성 (PDF 폴더↔ref_md↔references.json↔규칙, 링크 해석)
 npm.cmd run check:refsubjects           # ref_md 문서의 인용 득표↔과목 귀속 교차 검증
 npm.cmd run check:reffresh              # 참조자료 PDF 해시 ↔ ref_md 신선도 (PDF 교체 감지)
