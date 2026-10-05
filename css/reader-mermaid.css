@@ -313,8 +313,10 @@ pre.mermaid svg {
 }
 
 /* 다이어그램 확대 모달 — reader-table-modal 셸 재사용 + 본문만 양방향 스크롤.
-   매뉴얼/HTML 뷰어 오버레이(z-index 9999~10001) 위에서도 동작해야 하므로 최상위 부여 */
-.mermaid-zoom-modal {
+   매뉴얼/HTML 뷰어 오버레이(z-index 9999~10001) 위에서도 동작해야 하므로 최상위 부여.
+   결합 셀렉터 필수: 이 파일은 reader.css 상단 @import로 확장되므로 단일 클래스면
+   reader.css 뒤쪽의 .reader-table-modal(z-modal)에 캐스케이드 순서로 밀린다 */
+.reader-table-modal.mermaid-zoom-modal {
     z-index: calc(var(--z-html-viewer) + 1);
 }
 .mermaid-zoom-content {
