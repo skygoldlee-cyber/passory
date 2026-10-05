@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,SC-05,D-17
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -211,6 +211,46 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         setExamDate('');
         renderStudyCalendar();
         expect(el('study-calendar-content').querySelector('.study-plan-card')).toBeNull();
+    });
+
+    it('계획 대비 주간 진행률 — 최근 7일 실적 바·상태 표시 (SC-06)', () => {
+        seedStudyData('subja', {
+            name: '과목1',
+            cards: Array.from({ length: 40 }, (_, i) => ({ id: `subja_card_${i}`, term: `t${i}`, definition: 'd' })),
+        });
+        const d = new Date();
+        d.setDate(d.getDate() + 14);
+        setExamDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        // D-14·주 5일 → 학습 가능 10일 → 일당 4장 → 이번 주 배정 20장, 실적 4장 → behind
+        recordStudyActivity({ cards: 4, quizzes: 0, correct: 0 });
+        renderStudyCalendar();
+
+        const adh = el('study-calendar-content').querySelector('.plan-adherence');
+        expect(adh).not.toBeNull();
+        expect(adh.classList.contains('plan-adh-behind')).toBe(true);
+        expect(adh.textContent).toContain('이번 주 진행');
+        expect(adh.textContent).toContain('4 / 20장');
+        expect(adh.querySelector('.plan-adh-bar > span').style.width).toBe('20%');
+        expect(adh.textContent).toContain('부족');
+    });
+
+    it('마일스톤 안내 — 임계 도달 시 1회성 토스트·재렌더 중복 억제 (SC-07)', () => {
+        const d = new Date();
+        d.setDate(d.getDate() + 5);
+        setExamDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        renderStudyCalendar();
+        // D-5 → 긴급 순으로 최대 2건 (d7·d14)
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('1주'), 'warning');
+        const calls = showToast.mock.calls.length;
+        expect(calls).toBeLessThanOrEqual(2);
+
+        // 재렌더 — 안내된 마일스톤은 seen 처리되어 재표시 없음
+        showToast.mockClear();
+        renderStudyCalendar();
+        const again = showToast.mock.calls.filter(c => String(c[0]).includes('1주'));
+        expect(again.length).toBe(0);
+        // 나머지 마일스톤(d30)은 다음 렌더에 표시될 수 있음
+        expect(showToast.mock.calls.length).toBeLessThanOrEqual(2);
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

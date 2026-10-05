@@ -1,5 +1,5 @@
 // src/views/dashboard.js - 대시보드 뷰 로직 및 전역 통계 관리
-// @spec D-01~17,AN-01~09,PF-07,SC-04
+// @spec D-01~17,AN-01~09,PF-07,SC-04,SC-06,SC-07
 import { state } from '../state.js';
 import { esc } from '../sanitize.js';
 import { DataLoader } from '../data-loader.js';
@@ -14,7 +14,7 @@ import {
     getSimHistory, computeWrongCauseSummary, getWrongCauseLabels,
     snapshotRecommendations, evaluateRecommendationEffect
 } from '../recommendations.js';
-import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar } from '../study-tracker.js';
+import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar, computeStudyPlan, computePlanAdherence, checkStudyMilestones } from '../study-tracker.js';
 import { getWeakStatements, getDueStatementSids, getAnomalousStatements, getAllStatementStats } from '../statement-tracker.js';
 import {
     computeSubjectWeakChapters, computeWeeklyGrowth, computePassGap,
@@ -126,6 +126,12 @@ export function updateGlobalStats() {
         }
     }
 
+    // SC-07 학습 마일스톤 — 새로 도달한 임계점을 1회성 토스트로 안내
+    checkStudyMilestones({
+        remaining: Math.max(0, totalCards - state.memorizedCards.size),
+        total: totalCards, limit: 2
+    }).forEach(m => showToast(m.msg, m.tone));
+
     // 전체 진척도 퍼센트 계산
     const totalProgress = totalCards > 0 ? Math.round((state.memorizedCards.size / totalCards) * 100) : 0;
     if (totalProgressValEl) totalProgressValEl.textContent = `${totalProgress}%`;
@@ -151,6 +157,17 @@ function _examPlanDescHtml(plan) {
         triage: ` — 전량 커버 어려움, ${topName ? esc(topName) + ' 등 ' : ''}비중 큰 과목 우선 권장`
     }[plan.tier] || '';
     return `역산 권장: 하루 카드 ${plan.suggested}장${advice} · ${openBtn('설정')}`;
+}
+
+// SC-06 주간 리포트용 계획 준수 요약 — {weekActual, weekTarget, percent, statusLabel} | null
+function _planAdherenceSummary(subjects) {
+    let total = 0;
+    (subjects || []).forEach(s => { total += _displayCounts(s).cards; });
+    const plan = computeStudyPlan(Math.max(0, total - state.memorizedCards.size));
+    const adh = computePlanAdherence(plan);
+    if (!adh || adh.status === 'done') return null;
+    const statusLabel = { met: '달성', ontrack: '추적 중', behind: '부족' }[adh.status];
+    return { weekActual: adh.weekActual, weekTarget: adh.weekTarget, percent: adh.percent, statusLabel };
 }
 
 // 출제 문항 수 합계가 가장 큰 과목명 (registry exams 기준 — 없으면 null)
@@ -776,6 +793,7 @@ export function exportAnalysisReport() {
     const est = _compositeEstimate();
     const text = buildWeeklyReportText({
         appName: getExamAppName(),
+        plan: _planAdherenceSummary(subjects),
         growth: computeWeeklyGrowth(getStudyCalendar()),
         estimate: est,
         gap: computePassGap({

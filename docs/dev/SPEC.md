@@ -102,7 +102,7 @@
 | 3.17 | **콘텐츠 품질 감사** | 카드 품질·복수정답·인용 유효성 자동 감사 | CQ-01~CQ-06 (6) |
 | 3.18 | **Formula OS** | 사업 유형별 실무 — 고객·포뮬러·조제 기록·원료 장부·표시사항·광고·기성품 분석·이상사례·법규 체크리스트·LOT 추적·판매내역서·동의서·재고 차감·종합 점검 보고서 출력 | FO-01~FO-68 (68) |
 | 3.19 | **계정·동기화** | Supabase 로그인·클라우드 스냅샷 동기화(선택적) | AU-01~AU-08 (8) |
-| 3.20 | **캘린더·복습·드릴** | 학습 캘린더·목표·학습 계획·뽀모도로·취약 진술 드릴 | SC-01~DR-07 (14) |
+| 3.20 | **캘린더·복습·드릴** | 학습 캘린더·목표·학습 계획·계획 준수·뽀모도로·취약 진술 드릴 | SC-01~DR-07 (16) |
 | 3.21 | **UI 모드 전환** | 학습 ↔ 실무(Formula OS) 모드 전환 | UM-01~UM-05 (5) |
 | 3.22 | **시험 선택·전환** | 멀티시험 팩 선택·전환·레지스트리 기반 | ES-01~ES-05 (5) |
 | 3.23 | **사용자 의견** | 피드백 폼·건의 수신 | FB-01~FB-08 (8) |
@@ -141,7 +141,7 @@
 | AN-06 | 추천 효과 추적 — "오늘의 합격 전략" 발행 시 대상 과목 정답률을 `rec_snapshot` 기준선으로 저장(동일 대상 6시간 내 재기록 방지). 12시간 경과·과목당 신규 표본 5문 이상이면 다음 방문에서 정답률 변화(▲▼%p)를 추천 카드 상단에 표시 (`snapshotRecommendations`/`evaluateRecommendationEffect`) | ✅ |
 | AN-07 | 오답 원인 분류 확장 — 기본 3종(암기/개념/계산)에 manifest `analysis.wrongCauses`(key·label·advice)가 레지스트리 경유로 병합되는 시험별 분류표 (`getWrongCauseTaxonomy`). 자동 추정(`estimateUntaggedCauses`)은 선언된 키만 사용 — 조문 참조 문항→법령 혼동, 비산술 수치→수치 착각 등. 미선언 시험은 기본 3종만 노출 | ✅ |
 | AN-08 | 학습 패턴 분석 — `recordStudyActivity`가 활동별 시간대 버킷(캘린더 엔트리 `h`)을 기록하고 `computeStudyPattern`이 최다 시간대·요일·주말 비중을 집계해 학습 리듬 카드에 표시 (활동 4일·8회 미만이면 미표시) | ✅ |
-| AN-09 | 주간 리포트보내기 — 진단 요약 섹션의 "주간 리포트" 버튼이 `buildWeeklyReportText`로 평문 리포트(학습량·정답률 추이·예상 점수·합격 갭·취약 단원·패턴)를 생성, Web Share API 또는 클립보드로 출력 (`exportAnalysisReport`, `analysis_report` 액션 카운터) | ✅ |
+| AN-09 | 주간 리포트보내기 — 진단 요약 섹션의 "주간 리포트" 버튼이 `buildWeeklyReportText`로 평문 리포트(학습량·정답률 추이·예상 점수·합격 갭·취약 단원·패턴·주간 계획 대비 실적)를 생성, Web Share API 또는 클립보드로 출력 (`exportAnalysisReport`, `analysis_report` 액션 카운터). 계획 대비 실적은 SC-06 `computePlanAdherence` 요약을 `p.plan`으로 전달 | ✅ |
 
 ### 3.2 플래시카드 (Flashcard)
 
@@ -463,6 +463,8 @@
 | SC-03 | 학습 활동 자동 기록 (`recordStudyActivity` — 카드 외움·퀴즈 응답 등) | ✅ |
 | SC-04 | 스트릭 복구권 — 7일 연속 학습마다 1장 획득(최대 2장), 1일 결손 감지 시 자동 소비로 스트릭 유지 + 데일리 카드에 보유 수·이번 주 학습일 칩 표시 (`daily-challenge.js`) | ✅ |
 | SC-05 | 학습 계획 패널 — 시험일 설정 시 캘린더 뷰에 설정된 목표·잔여 카드·학습 가능 일수(주간 학습일 반영)·학습일당 필요량·주차별 마일스톤 표 + 계획 등급 배지(tight·triage 시 전략 권고) (`computeStudyPlan`, `study-calendar.js`) | ✅ |
+| SC-06 | 계획 대비 주간 진행률 — 주간 필요 카드량 대비 최근 7일 카드 실적 비율을 계획 패널에 진행률 바·상태 문구로 표시 (met/ontrack/behind, 부족 시 보충·목표 조정 권고) (`computePlanAdherence`) | ✅ |
+| SC-07 | 학습 마일스톤 인앱 안내 — D-30/14/7/1/0 진입·주간 계획 달성(주차 id)·전체 진도 50%/75% 도달 시 1회성 토스트, 표시 이력 `study_milestones_seen` 로컬 저장 (`evalStudyMilestones`·`checkStudyMilestones`) | ✅ |
 | RV-01 | 오답/중요 복습 뷰 — 헷갈림 카드·틀린 문제 통합 목록 (`review-view`) | ✅ |
 | ND-01 | 숫자 암기 드릴 — `number-drills/` JSON 기반 수치·기한·횟수 훈련 (훈련소 수치 훈련) | ✅ |
 | DR-01 | **O/X 판정 드릴** — 객관식 문항을 진위형으로 자동 변환 (3,700+문, `build_ox_drills.js` → `drills/ox_subject*.js`, `trainer-drills.js`) | ✅ |

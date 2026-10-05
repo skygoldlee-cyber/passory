@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -174,4 +174,73 @@ test('computeStudyPlan: 잔여 0 → done, 목표 이내 → normal, 초과 → 
   assert.equal(tracker.computeStudyPlan(200).tier, 'normal'); // 10장/일 vs 50
   tracker.setStudyGoals({ dailyCards: 1 });
   assert.equal(tracker.computeStudyPlan(100).tier, 'triage'); // 5장/일 vs 1 → ratio 5
+});
+
+// --- SC-06 계획 대비 주간 진행률 ---
+
+const seedCal = (entries) => {
+  const cal = {};
+  entries.forEach(([daysAgo, cards]) => {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    cal[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`] = { cards, quizzes: 0, correct: 0 };
+  });
+  return cal;
+};
+
+test('sumRecentCards: 최근 N일 카드 합계 — 범위 밖 제외', () => {
+  const cal = seedCal([[0, 10], [3, 20], [6, 30], [7, 99], [20, 88]]);
+  assert.equal(tracker.sumRecentCards(cal, 7), 60); // 10+20+30, 7일·20일 전 제외
+});
+
+test('computePlanAdherence: 주간 배정 대비 실적 → met/ontrack/behind/done', () => {
+  const plan = { remaining: 100, weeklyCards: 50, weeks: [{ cards: 50 }] };
+  assert.equal(tracker.computePlanAdherence(null), null);
+  assert.equal(tracker.computePlanAdherence({ ...plan, remaining: 0 }).status, 'done');
+  assert.equal(tracker.computePlanAdherence(plan, seedCal([[0, 50]])).status, 'met');     // 50/50
+  assert.equal(tracker.computePlanAdherence(plan, seedCal([[1, 30]])).status, 'ontrack'); // 60%
+  const behind = tracker.computePlanAdherence(plan, seedCal([[2, 10]]));
+  assert.equal(behind.status, 'behind');                                                // 20%
+  assert.equal(behind.weekTarget, 50);
+  assert.equal(behind.weekActual, 10);
+  assert.equal(behind.percent, 20);
+  // 마지막 부분 주차 — weeks[0].cards가 주간 목표보다 작으면 그 값이 기준
+  const lastWeek = { remaining: 10, weeklyCards: 50, weeks: [{ cards: 10 }] };
+  assert.equal(tracker.computePlanAdherence(lastWeek, seedCal([])).weekTarget, 10);
+});
+
+// --- SC-07 학습 마일스톤 ---
+
+test('evalStudyMilestones: D-day 임계 도달 → 긴급 순 정렬·seen 제외', () => {
+  const m5 = tracker.evalStudyMilestones({ dday: 5 });
+  assert.deepEqual(m5.map(m => m.id), ['d7', 'd14', 'd30']); // 긴급한 것 먼저
+  const again = tracker.evalStudyMilestones({ dday: 5 }, ['d7', 'd14', 'd30']);
+  assert.equal(again.length, 0);
+  assert.equal(tracker.evalStudyMilestones({ dday: -2 }).length, 0); // 경과 → 안내 없음
+  assert.equal(tracker.evalStudyMilestones({ dday: null }).length, 0);
+  assert.deepEqual(tracker.evalStudyMilestones({ dday: 0 }).map(m => m.id), ['d0', 'd1', 'd7', 'd14', 'd30']);
+});
+
+test('evalStudyMilestones: 주간 달성·진도 경유 — 주차 id·75% 우선', () => {
+  const met = tracker.evalStudyMilestones({
+    dday: 60, adherence: { status: 'met', weekActual: 50 }, progressPercent: 80, weekId: '2026-10-05'
+  });
+  assert.deepEqual(met.map(m => m.id), ['wk-2026-10-05', 'p75']);
+  // 같은 주차는 재발화 안 함, 다른 주차는 다시 발화
+  assert.equal(tracker.evalStudyMilestones({ adherence: { status: 'met', weekActual: 5 }, weekId: '2026-10-05' }, ['wk-2026-10-05']).length, 0);
+  assert.equal(tracker.evalStudyMilestones({ adherence: { status: 'met', weekActual: 5 }, weekId: '2026-10-12' }, ['wk-2026-10-05']).length, 1);
+  // p75 미표시 + 진도 55% → p50
+  assert.deepEqual(tracker.evalStudyMilestones({ progressPercent: 55 }).map(m => m.id), ['p50']);
+});
+
+test('checkStudyMilestones: 저장소 seen 갱신 + limit으로 분할 안내', () => {
+  tracker.setExamDate(todayPlus(5));
+  const first = tracker.checkStudyMilestones({ remaining: 50, total: 100, limit: 2 });
+  assert.deepEqual(first.map(m => m.id), ['d7', 'd14']); // p50도 있지만 limit=2
+  const seenKey = Object.keys(mockStorage._store).find(k => k.endsWith('study_milestones_seen'));
+  assert.deepEqual(JSON.parse(mockStorage.getItem(seenKey)), ['d7', 'd14']);
+  // 다음 호출 — 이미 안내한 것 제외, 남은 것만
+  const next = tracker.checkStudyMilestones({ remaining: 50, total: 100, limit: 2 });
+  assert.deepEqual(next.map(m => m.id), ['d30', 'p50']);
+  assert.equal(tracker.checkStudyMilestones({ remaining: 50, total: 100 }).length, 0);
 });

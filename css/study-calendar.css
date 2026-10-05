@@ -1,6 +1,6 @@
 /* css/study-calendar.css — 학습 캘린더/목표 스타일 */
 
-/* @spec SC-01,SC-05 */
+/* @spec SC-01,SC-05,SC-06 */
 
 /* === 목표 요약 카드 === */
 .study-goals-summary {
@@ -293,6 +293,45 @@
 }
 .plan-summary-row strong {
     color: var(--color-text-main);
+}
+/* === 계획 대비 주간 진행률 (SC-06) === */
+.plan-adherence {
+    margin: 0.25rem 0 0.75rem;
+}
+.plan-adh-label {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+}
+.plan-adh-bar {
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--border-color);
+    overflow: hidden;
+}
+.plan-adh-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+}
+.plan-adh-met .plan-adh-bar > span {
+    background: var(--color-success);
+}
+.plan-adh-behind .plan-adh-bar > span {
+    background: var(--color-warning);
+}
+.plan-adh-msg {
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    color: var(--color-text-muted);
+}
+.plan-adh-met .plan-adh-msg {
+    color: var(--color-success);
+}
+.plan-adh-behind .plan-adh-msg {
+    color: var(--color-warning);
 }
 .plan-note {
     font-size: 0.82rem;

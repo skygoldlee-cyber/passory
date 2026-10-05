@@ -1,6 +1,6 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
-// @spec SC-01,SC-02,SC-05,D-17
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,D-17
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
 import { localDateKey } from '../utils.js';
 import { showToast } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
@@ -123,6 +123,16 @@ export function renderStudyCalendar() {
             </div>
         </div>
     `;
+
+    // SC-07 학습 마일스톤 — 새로 도달한 임계점을 1회성 토스트로 안내
+    _showStudyMilestones();
+}
+
+/** SC-07 마일스톤 안내 표시 — seen 세트로 중복 억제, 한 번에 최대 2건 */
+function _showStudyMilestones() {
+    const remaining = _remainingCards();
+    const total = remaining + (state.memorizedCards ? state.memorizedCards.size : 0);
+    checkStudyMilestones({ remaining, total, limit: 2 }).forEach(m => showToast(m.msg, m.tone));
 }
 
 function _ddayChipHtml() {
@@ -171,6 +181,19 @@ function _studyPlanHtml() {
         tight: '설정 목표를 초과하는 페이스입니다 — 카드·퀴즈 병행 학습을 권장합니다.',
         triage: '현재 페이스로는 전량 커버가 어렵습니다 — 출제 비중이 큰 과목부터 우선하거나 목표를 조정하세요.'
     }[plan.tier] || '';
+    // SC-06 계획 대비 주간 진행률 — 이번 주 배정량 대 최근 7일 실적
+    const adh = computePlanAdherence(plan);
+    const adhMsg = adh && {
+        met: '계획 페이스 달성 중입니다 — 이 속도를 유지하세요.',
+        ontrack: '주간 필요량의 절반 이상 진행 — 조금만 더 하면 목표에 도달합니다.',
+        behind: '계획 대비 부족합니다 — 남은 요일에 보충하거나 목표를 조정하세요.'
+    }[adh.status];
+    const adhHtml = adh && adh.status !== 'done' ? `
+        <div class="plan-adherence plan-adh-${adh.status}">
+            <div class="plan-adh-label">이번 주 진행 — 카드 ${adh.weekActual} / ${adh.weekTarget}장 (${adh.percent}%)</div>
+            <div class="plan-adh-bar"><span style="width:${Math.min(100, adh.percent)}%"></span></div>
+            <div class="plan-adh-msg">${adhMsg}</div>
+        </div>` : '';
     const rows = plan.weeks.slice(0, 12).map(w => `
                 <tr><td>${w.week}주차</td><td>${w.range}</td><td>${w.cards}장</td><td>${w.cumulative}장 (${w.percent}%)</td></tr>`).join('');
     const more = plan.weeks.length > 12
@@ -183,6 +206,7 @@ function _studyPlanHtml() {
             <div class="plan-summary-row"><span>학습일당 필요</span><strong>카드 ${plan.perStudyDay}장</strong></div>
             <div class="plan-summary-row"><span>설정 목표</span><strong>카드 ${plan.goals.dailyCards}장 · 퀴즈 ${plan.goals.dailyQuizzes}문/일</strong></div>
         </div>
+        ${adhHtml}
         ${advice ? `<p class="plan-note plan-warn">${advice}</p>` : ''}
         ${plan.tier === 'done' ? '<p class="plan-note">남은 카드가 없습니다 — 복습과 모의고사로 실력을 유지하세요.</p>' : `
         <table class="plan-table">

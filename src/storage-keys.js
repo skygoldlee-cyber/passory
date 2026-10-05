@@ -36,6 +36,7 @@ export const STORAGE_KEYS = {
   // 학습 목표
   STUDY_GOALS: 'study_goals',  // { dailyCards: 50, dailyQuizzes: 10, weeklyStudyDays: 5 }
   EXAM_DATE: 'exam_date',      // 'YYYY-MM-DD' — 시험일 (D-day 역산)
+  STUDY_MILESTONES_SEEN: 'study_milestones_seen', // [id,...] — 안내 완료 마일스톤 (SC-07, 기기 로컬·백업 제외)
 
   // 트레이너
   CALC_HISTORY: 'calc_history',
