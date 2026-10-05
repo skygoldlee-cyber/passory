@@ -218,7 +218,7 @@ export function parseMarkdown(mdText, options = {}) {
     html = html.replace(/SBR_O_TOKEN/g, '[').replace(/SBR_C_TOKEN/g, ']')
                .replace(/PAR_O_TOKEN/g, '(').replace(/PAR_C_TOKEN/g, ')')
                .replace(/LT_TOKEN/g, '&lt;').replace(/GT_TOKEN/g, '&gt;')
-               .replace(/QUOT_TOKEN/g, '&quot;').replace(/SQUOT_TOKEN/g, '&#39;')
+               .replace(/SQUOT_TOKEN/g, '&#39;').replace(/QUOT_TOKEN/g, '&quot;')
                .replace(/BR_IN_FENCE/g, '&lt;br/&gt;');
 
     // 6. 줄 단위 블록 파싱

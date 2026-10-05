@@ -150,6 +150,21 @@ test('코드블록: 내부 링크 미적용', () => {
     assert.ok(!html.includes('<a href='), '코드블록 내 링크 미적용');
 });
 
+test('코드블록: 작은따옴표는 &#39;로 보존 — SQUOT/QUOT 토큰 부분문자열 충돌 없음', () => {
+    // QUOT_TOKEN 복원이 SQUOT_TOKEN보다 먼저 실행되면 S + &quot; = S" 로 깨짐
+    const md = "```js\nconst s = '문자열';\n```";
+    const html = parseMarkdown(md);
+    assert.ok(html.includes('&#39;문자열&#39;'), '작은따옴표 엔티티 보존');
+    assert.ok(!html.includes('S&quot;'), 'SQUOT_TOKEN 오염 없음');
+});
+
+test('코드블록(mermaid): 라벨의 작은따옴표·따옴표가 textContent에서 복원 가능', () => {
+    const md = "```mermaid\ngraph TD\n    A[\"허브 '종합 보고서' 카드\"] --> B[\"다음\"]\n```";
+    const html = parseMarkdown(md, { allowMermaid: true });
+    assert.ok(html.includes('<pre class="mermaid">'), 'mermaid pre 변환');
+    assert.ok(html.includes('&quot;허브 &#39;종합 보고서&#39; 카드&quot;'), '엔티티 형태로 보존 — textContent 디코딩 시 원문 복원');
+});
+
 // ==================== 인용문 ====================
 
 test('인용문: > 기호 → <blockquote>', () => {
