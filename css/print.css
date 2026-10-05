@@ -18,6 +18,7 @@
         --print-muted: #555555;
         --print-light: #666666;
         --print-border: #e5e7eb;
+        --print-border-strong: #9ca3af;   /* 표 격자선 — 인쇄 시 육안 식별 가능 수준 */
         --print-bg-subtle: #f3f4f6;
         --print-warning: #d97706;
         --print-success: #059669;
@@ -241,8 +242,8 @@
            separate + spacing 0으로 바꾸고 셀 경계선을 아래·오른쪽으로만 그어 동일한 외관 유지 */
         border-collapse: separate;
         border-spacing: 0;
-        border-top: 1px solid var(--print-border);
-        border-left: 1px solid var(--print-border);
+        border-top: 1px solid var(--print-border-strong);
+        border-left: 1px solid var(--print-border-strong);
         margin-top: 8pt;
         font-size: 9.5pt;
     }
@@ -262,8 +263,8 @@
 
     #formula-print-area .fp-table th,
     #formula-print-area .fp-table td {
-        border-bottom: 1px solid var(--print-border);
-        border-right: 1px solid var(--print-border);
+        border-bottom: 1px solid var(--print-border-strong);
+        border-right: 1px solid var(--print-border-strong);
         padding: 4pt 6pt;
         text-align: left;
         vertical-align: top;
