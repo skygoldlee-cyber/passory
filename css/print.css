@@ -201,10 +201,8 @@
     #formula-print-area .fp-doc {
         font-family: 'Noto Sans KR', sans-serif;
         color: var(--print-fg);
-        /* @page margin:0 환경 — 문서 자체 여백으로 대체 (96%로 양옆 여유) */
-        max-width: 96%;
-        margin: 0 auto;
-        padding: 10mm 0;
+        /* @page margin:0 환경 — 문서 패딩으로 여백 대체 (manual-ov-scroll과 동일 규약) */
+        padding: 10mm 8mm;
         /* clone: 패딩을 페이지 조각마다 반복 — 연속 페이지 상하에도 여백 유지 */
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;

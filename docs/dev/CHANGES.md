@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-06 실무 출력물 좌우 여백 매뉴얼과 통일
+
+- **문제**: 종합 점검 보고서 등 `.fp-doc` 계열 출력물의 좌우 여백이 `max-width:96%`로 약 4.2mm — 매뉴얼 인쇄(8mm)와 불일치
+- **수정**: `print.css` `.fp-doc` 규칙을 매뉴얼 오버레이와 동일 규약으로 통일 — `max-width:96%`+`margin:0 auto` 제거, `padding:10mm 8mm`로 대체. 조제 기록지·작업지시서·판매내역서·동의서·LOT 추적·점검 보고서 등 fp-doc 계열 전체에 적용 (소형 라벨 `.fp-label`은 별도 규칙으로 영향 없음)
+- **검증**: formula-audit.test.js 32→33건(fp-doc 여백 규약 회귀 — print.css 정적 검증) · formula-audit/print/batch DOM 40건 통과
+
 ## 2026-10-06 매뉴얼 인쇄 좌우 여백 없음 수정
 
 - **문제**: 사용자·실무 매뉴얼·학습안내서 PDF 출력 시 본문이 용지 좌우 끝까지 붙음 — `print.css`의 `@page{margin:0}` 규약상 각 인쇄 영역이 자체 패딩으로 여백을 대체하는데, 매뉴얼 오버레이만 `.manual-ov-scroll{padding:0}`로 제거

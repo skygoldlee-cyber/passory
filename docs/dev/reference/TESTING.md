@@ -26,10 +26,10 @@
 
 | 구분 | 프레임워크 | 환경 | 파일 위치 | 테스트 수 |
 |------|-----------|------|-----------|-----------|
-| **Unit** | `node:test` | Node.js (DOM 없음) | `tests/unit/**/*.test.js` | 842 |
+| **Unit** | `node:test` | Node.js (DOM 없음) | `tests/unit/**/*.test.js` | 843 |
 | **DOM** | Vitest + jsdom | 브라우저 DOM 시뮬레이션 | `tests/dom/**/*.test.js` | 546 |
 | **E2E** | Playwright | 실브라우저 (Chromium + 모바일 + 태블릿) | `tests/e2e/**/*.spec.js` | 74 |
-| **합계** | | | | **1462** |
+| **합계** | | | | **1463** |
 
 ### 설계 원칙
 
@@ -236,7 +236,8 @@ npm run hooks:install
 | 56 | `test-first.test.js` | 7 | `tools/check/check_test_first.js` — 로직 트리거/테스트 경로 분류, analyze 위반 판정 | 정적 패턴 검증, 2026-11-02 추가 |
 | 57 | `property-based.test.js` | 8 | `deriveComboAnswer`·`generateComboOptions`·`weak-items` ID 문법·SM-2 불변식 | fast-check 속성 기반 테스트 (PBT), 2026-10-04 추가 |
 | 58 | `error-telemetry.test.js` | 6 | `src/error-telemetry.js` — 페이로드·중복 억제·세션 상한·disabled/failed 경로·리스너 | insert 주입식, 2026-10-04 추가 |
-| | **합계** | **715** | | |
+| 59 | `exams/cosmetic/formula-audit.test.js` | 33 | `src/exams/cosmetic/views/formula-audit.js` — 유형별 섹션 게이트·수집기·빌더 마크업·출력 이력·문서 식별자·고시 스탬프·점검자 성명 + print.css fp-doc 여백 규약 | 2026-10-06 추가 |
+| | **합계** | **748** | | |
 
 ### DOM 테스트 (`tests/dom/`)
 

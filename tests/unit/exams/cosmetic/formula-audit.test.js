@@ -6,6 +6,9 @@
 
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { collectAuditReportData, recordAuditLog } from '../../../../src/exams/cosmetic/views/formula-audit.js';
 import { buildAuditReportHtml } from '../../../../src/exams/cosmetic/views/formula-print.js';
 import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
@@ -400,4 +403,17 @@ test('점검자 성명 HTML 특수문자 — esc 이스케이프 적용 (FO-69)'
   const html = buildAuditReportHtml(collectAuditReportData(NOW));
   assert.ok(!html.includes('김<b>철수'));
   assert.ok(html.includes('김&lt;b&gt;철수 (인)'));
+});
+
+/* =======================================================
+   인쇄 여백 규약 — @page margin:0 대응 (print.css, FO-21)
+   ======================================================= */
+
+test('print.css — fp-doc 페이지 여백이 매뉴얼과 동일 규약 (10mm 8mm + clone)', () => {
+  const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+  const css = readFileSync(join(ROOT, 'css', 'print.css'), 'utf-8');
+  // @page{margin:0} — 문서 패딩이 페이지 여백을 대신한다 (manual-ov-scroll과 동일)
+  assert.match(css, /\.fp-doc\s*\{[^}]*padding:\s*10mm 8mm/, 'fp-doc 좌우 8mm 패딩');
+  // clone: 패딩을 페이지 조각마다 반복해 연속 페이지 상하 여백 유지
+  assert.match(css, /\.fp-doc\s*\{[^}]*box-decoration-break:\s*clone/, '페이지 조각별 여백 반복');
 });
