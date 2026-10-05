@@ -27,7 +27,7 @@ text{font-family:"Noto Sans CJK KR","Noto Sans KR","Pretendard","Apple SD Gothic
 <circle cx="240" cy="208" r="3" fill="#7F77DD"/><text class="ts" x="250" y="208" text-anchor="start" dominant-baseline="central">객관식 746</text>
 <circle cx="240" cy="230" r="3" fill="#7F77DD"/><text class="ts" x="250" y="230" text-anchor="start" dominant-baseline="central">단답형 254</text>
 <circle cx="240" cy="252" r="3" fill="#7F77DD"/><text class="ts" x="250" y="252" text-anchor="start" dominant-baseline="central">ㄱㄴㄷ 990</text>
-<circle cx="240" cy="274" r="3" fill="#7F77DD"/><text class="ts" x="250" y="274" text-anchor="start" dominant-baseline="central">OX 3,700+</text>
+<circle cx="240" cy="274" r="3" fill="#7F77DD"/><text class="ts" x="250" y="274" text-anchor="start" dominant-baseline="central">OX 3,703</text>
 <rect x="350" y="120" width="290" height="210" rx="12" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/><path d="M350 150V132Q350 120 362 120H628Q640 120 640 132V150Z" fill="#0F6E56"/><text class="tw" x="366" y="135" dominant-baseline="central">학습 방법</text><text class="ts" x="366" y="166" dominant-baseline="central">S·A·B·C 등급 · 4회독 · 앱 학습 순환</text>
 <rect x="368" y="270" width="44" height="24" fill="#9FE1CB" stroke="#085041" stroke-width="0.75"/>
 <text class="tb" x="390" y="259" text-anchor="middle" dominant-baseline="central">1회독</text><text class="ts" x="390" y="310" text-anchor="middle" dominant-baseline="central">구조</text>

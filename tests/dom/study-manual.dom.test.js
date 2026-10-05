@@ -11,7 +11,7 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { loadIndexHtml, el, flushAsync } from './helpers.js';
 import { PATHS } from '../../src/paths.js';
 
-const MD_USER = '# 학습 매뉴얼\n\n## 섹션 1\n\n본문 내용입니다.\n\n## 섹션 2\n\n[실무 매뉴얼로](doc:formula_manual)\n';
+const MD_USER = '# 사용자 매뉴얼\n\n## 섹션 1\n\n본문 내용입니다.\n\n## 섹션 2\n\n[실무 매뉴얼로](doc:formula_manual)\n';
 const MD_MERMAID = '# 다이어그램 문서\n\n```mermaid\nflowchart LR\n  A --> B\n```\n';
 const MD_FORMULA = '# 실무 매뉴얼\n\n## 배합\n\n포뮬러 내용.\n';
 
@@ -37,10 +37,10 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         await flushAsync(30);
 
         expect(ManualViewer.isOpen()).toBe(true);
-        expect(el('manual-ov-title').textContent).toBe('학습 매뉴얼');
+        expect(el('manual-ov-title').textContent).toBe('사용자 매뉴얼');
         const article = el('manual-article');
         expect(article.textContent).toContain('본문 내용입니다');
-        expect(article.querySelector('h1').textContent).toContain('학습 매뉴얼');
+        expect(article.querySelector('h1').textContent).toContain('사용자 매뉴얼');
         // h2 2개 → 목차 생성
         const toc = document.querySelector('.manual-ov-toc');
         expect(toc).not.toBeNull();

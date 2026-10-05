@@ -108,7 +108,7 @@
 
 ```javascript
 const MD_SOURCES = {
-    'user_manual': { path: PATHS.USER_MANUAL, title: '학습 매뉴얼' },
+    'user_manual': { path: PATHS.USER_MANUAL, title: '사용자 매뉴얼' },
     'study_summary': { path: PATHS.STUDY_GUIDE, title: '학습 안내서' }
 };
 // PATHS.* 는 contentPath() 기반 — 시험별 {contentRoot}/docs/ 로 해석됨

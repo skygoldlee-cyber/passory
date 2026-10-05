@@ -22,7 +22,7 @@ import { makeSessionCache, injectBundleScript, fetchMd, buildTocHtml, mountToc, 
 export const ManualViewer = (() => {
     // 지원하는 마크다운 소스 정의
     const MD_SOURCES = {
-        'user_manual': { path: PATHS.USER_MANUAL, title: '학습 매뉴얼' },
+        'user_manual': { path: PATHS.USER_MANUAL, title: '사용자 매뉴얼' },
         'formula_manual': { path: PATHS.FORMULA_MANUAL, title: '실무 매뉴얼 (Formula OS)' },
         'study_summary': { path: PATHS.STUDY_GUIDE, title: '학습 안내서' },
         'mnemonic_guide': { path: PATHS.MNEMONIC_GUIDE, title: '두음법·숫자 암기 총정리' }

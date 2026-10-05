@@ -84,7 +84,7 @@ cosmetic의 모든 파일을 복사할 필요는 없다 — food가 최소 구�
 | 플래그 | 필수 문서 | 기능 |
 |---|---|---|
 | `studyGuide` | `{contentRoot}/docs/학습안내서.md` | 대시보드 학습 안내서 카드 |
-| `userManual` | `{contentRoot}/docs/user_manual.md` | 사이드바 학습 매뉴얼 링크 |
+| `userManual` | `{contentRoot}/docs/user_manual.md` | 사이드바 사용자 매뉴얼 링크 |
 | `formula` | `{contentRoot}/docs/formula_manual.md` | 실무 매뉴얼 링크 + Formula OS |
 | `appendixDocs` | `{contentRoot}/docs/두음법_암기_총정리.md` | 부록 문서 |
 
