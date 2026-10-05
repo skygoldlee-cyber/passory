@@ -3,7 +3,7 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 469ecfbac8a71b7c
+> 입력 해시: fe7640736ee8f2f3
 > 생성: 2026-10-05 · 원천: SPEC.md(461개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -562,7 +562,7 @@
 | UX-PWA-02 | 브라우저 탭에서 의미 없는 버튼(앱 종료 등)을 숨겨 혼란 방지. iOS는 `navigator.standalone`만 지원하므로 둘 다 확인 필수 | E2E 테스트 | — | src/pwa-install.js | tests/e2e/responsive-flow.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
 | UX-PWA-03 | "배포했는데 안 바뀐다" 보고의 대부분이 이 패턴. 사용자 안내 문구와 업데이트 토스트 필수 | E2E 테스트 | — | sw.js<br>tools/check/check_perf_budget.js | tests/e2e/app-chrome.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
 | UX-PWA-04 | 미설치 상태에서만 노출, 설치 후 자동 숨김 — 헤더 공간 절약 | E2E 테스트 | — | src/pwa-install.js | tests/e2e/app-chrome.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
-| UX-PWA-05 | PWA 콜드 스타트에서 `dvh`가 실제 화면보다 크게 측정되면 `.main-content` 끝이 화면 밖으로 밀려 스크롤 끝 콘텐츠가 탭 바에 가려짐(대시보드 '내 학습 분석·도구' 실제 장애). JS 미실행 시 `100dvh` 폴백 | E2E 테스트 | — | src/app.js | tests/e2e/responsive-flow.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
+| UX-PWA-05 | PWA 콜드 스타트에서 `dvh`가 실제 화면보다 크게 측정되면 `.main-content` 끝이 화면 밖으로 밀려 스크롤 끝 콘텐츠가 탭 바에 가려짐(대시보드 '내 학습 분석·도구' 실제 장애). JS 미실행 시 `100dvh` 폴백 | E2E 테스트 | — | src/app.js | tests/dom/app-shell.dom.test.js<br>tests/e2e/responsive-flow.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
 | UX-PWA-06 | 현장(실습·조제실)에서 대시보드 경유 탭을 생략. 시험 도메인 기능이라 플랫폼 공통 `manifest.webmanifest`가 아닌 시험별 매니페스트에만 선언 — exams.json `pwaShortcuts` → `build_exams_list.js` 패스스루 | E2E 테스트 | — | tools/build/build_exams_list.js | tests/e2e/exams/cosmetic/formula-tablet.spec.js<br>tests/unit/pwa-sw.test.js | — | — |
 | UX-SCR-01 | `@media (pointer: coarse), (max-width: 900px) { * { scrollbar-width: none } ::-webkit-scrollbar { width:0; height:0 } }` — `pointer: coarse`만 믿지 말고 폭 기준을 병기할 것(일부 기기에서 pointer 감지 실패 사례 있음). 모바일 스크롤바는 드래그용이 아니므로 위치 표시도 불필요 | E2E 테스트 | — | css/reader.css<br>src/views/reader-toolbar.js | tests/e2e/responsive-flow.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
 | UX-SCR-02 | `*` 또는 개별 컨테이너에 지정 | E2E 테스트 | — | css/reader.css | tests/e2e/app-chrome.spec.js<br>tests/unit/ux-invariants.test.js | — | — |
