@@ -910,83 +910,6 @@
 .reader-table tr:hover td {
     background: var(--primary-tint-15);
 }
-.reader-table-expand-btn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    z-index: var(--z-raised);
-    background: var(--drawer-bg);
-    border: 1px solid var(--border-color);
-    color: var(--color-text-muted);
-    width: 28px;
-    height: 28px;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    font-size: var(--text-xs-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-base);
-}
-.reader-table-expand-btn:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-/* U1: 모바일 터치 피드백 */
-.reader-table-expand-btn:active {
-    transform: scale(0.92);
-    transition: transform 0.05s ease;
-}
-
-/* Table fullscreen modal */
-.reader-table-modal {
-    position: fixed;
-    inset: 0;
-    /* 모바일 탭 바(--z-drawer)·TOC 드로어 위 — 모달 계층 (하단 가림 방지) */
-    z-index: var(--z-modal, 2000);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.reader-table-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: var(--overlay-bg-strong);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-}
-.reader-table-modal-content {
-    position: relative;
-    width: min(92vw, 1100px);
-    max-height: calc(var(--app-height, 100dvh) * 0.85);
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border-color-active);
-    border-radius: var(--radius-md);
-    padding: var(--space-5);
-    overflow: auto;
-    box-shadow: var(--shadow-lg);
-    animation: fadeIn 0.25s ease;
-}
-.reader-table-modal-close {
-    position: sticky;
-    top: 0;
-    float: right;
-    background: var(--danger-tint-15);
-    border: 1px solid var(--danger-tint-30);
-    color: var(--color-danger-light);
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: var(--text-1rem);
-    z-index: var(--z-raised);
-}
-.reader-table-modal-close:hover {
-    background: var(--danger-tint-30);
-}
-.reader-table-modal-body .reader-table {
-    font-size: var(--text-base);
-}
 
 /* Light reading theme (scoped to reader only) */
 .reader-light-theme {
@@ -1199,10 +1122,6 @@
     fill: var(--mermaid-task-fill) !important;
     stroke: var(--mermaid-task-stroke) !important;
 }
-.reader-light-theme .reader-table-expand-btn {
-    background: var(--overlay-bg);
-    color: var(--reader-light-quote-text);
-}
 .reader-light-theme .reader-bookmark-btn {
     color: var(--reader-light-muted);
 }
@@ -1287,18 +1206,6 @@
     #reader-audio-controls > #reader-audio-scroll-btn {
         flex: 1 1 calc(50% - 0.25rem);
         min-width: 0;
-    }
-    /* M4: 표 확장 버튼 터치 영역 확대 (28px → 40px) */
-    .reader-table-expand-btn {
-        width: 40px !important;
-        height: 40px !important;
-        font-size: 0.9rem !important;
-    }
-    /* M5: 표 모달 닫기 버튼 터치 영역 확대 (34px → 44px) */
-    .reader-table-modal-close {
-        width: 44px !important;
-        height: 44px !important;
-        font-size: 1.15rem !important;
     }
     /* M7: 섹션 헤더 패딩 모바일 축소 (1.1rem 1.5rem → 0.9rem 1rem) */
     .reader-section-header {

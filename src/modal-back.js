@@ -93,7 +93,7 @@ function _closeTopModal() {
 
     // 2. 모달 내부의 닫기 버튼 클릭 — 모듈의 닫기 핸들러 경유
     const closeBtn = top.querySelector(
-        'button[aria-label="닫기"], [id$="-close"], .modal-close, .pwa-modal-close, .more-sheet-close, .mermaid-zoom-close'
+        'button[aria-label="닫기"], [id$="-close"], .modal-close, .pwa-modal-close, .more-sheet-close'
     );
     if (closeBtn) {
         /** @type {HTMLElement} */ (closeBtn).click();

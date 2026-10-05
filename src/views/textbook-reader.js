@@ -8,7 +8,6 @@ import { formatSectionContentForReader, markStoryNarrative } from '../reader-for
 import { parseTextbookContent } from '../textbook-parser.js';
 import { renderStudyAids, bindStudyAidToggles } from '../study-aids.js';
 import { renderMermaidIn } from '../mermaid-render.js';
-import { attachImageZoomIn } from '../image-zoom.js';
 import {
     getRefTables, mapSourceToRef
 } from '../pdf-registry.js';
@@ -48,7 +47,7 @@ import { CACHE } from '../config/cache.js';
 import {
     readerChapterContext, getReaderBookmarks, toggleReaderBookmark,
     applyReaderThemeClass,
-    bindReaderScrollEvents, initReaderToolbar, openTableModal
+    bindReaderScrollEvents, initReaderToolbar
 } from './reader-toolbar.js';
 import { bindReferenceLinks, refreshRefLinkNotices } from './reader-ref-links.js';
 
@@ -928,16 +927,6 @@ async function _renderChapterContentInternal(subjId, chapterIdx, subj, chapter, 
         });
     });
 
-    // Table expand buttons
-    container.querySelectorAll('.reader-table-wrapper').forEach(wrapper => {
-        const expandBtn = document.createElement('button');
-        expandBtn.className = 'reader-table-expand-btn';
-        expandBtn.title = '표 전체 화면으로 보기';
-        expandBtn.innerHTML = '<i class="fa-solid fa-expand"></i>';
-        expandBtn.addEventListener('click', () => openTableModal(wrapper));
-        wrapper.appendChild(expandBtn);
-    });
-
     // Scroll position reset + scroll spy binding
     container.scrollTop = 0;
     bindReaderScrollEvents();
@@ -945,7 +934,6 @@ async function _renderChapterContentInternal(subjId, chapterIdx, subj, chapter, 
 
     // Mermaid 다이어그램 렌더링 (pre.mermaid 노드가 있을 때만 온디맨드 로드)
     renderMermaidIn(container, '[reader]');
-    attachImageZoomIn(container);
 
     // 참조자료 링크 이벤트 바인딩
     bindReferenceLinks();

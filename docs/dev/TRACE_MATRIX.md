@@ -3,7 +3,7 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 63d9bbb1a59b58a4
+> 입력 해시: 26763d8c34721a60
 > 생성: 2026-10-05 · 원천: SPEC.md(461개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 461개 — 문서 연결 293 · 소스 연결 423 · 테스트 연결 447 · 보고서 연결 109
+**커버리지 요약**: 요구사항 461개 — 문서 연결 293 · 소스 연결 422 · 테스트 연결 446 · 보고서 연결 109
 
 ---
 
@@ -109,7 +109,7 @@
 | TR-03 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-flow.spec.js | — | — |
 | TR-04 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-flow.spec.js | — | — |
 | TR-05 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-markers.spec.js | — | — |
-| TR-06 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader-mermaid.css<br>src/mermaid-render.js<br>src/mermaid-utils.js<br>src/reader-toc.js<br>…외 1개 | tests/dom/mermaid-zoom.dom.test.js<br>tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-advanced.spec.js<br>tests/unit/mermaid/mermaid-parser.test.js<br>…외 6개 | — | — |
+| TR-06 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader-mermaid.css<br>src/mermaid-render.js<br>src/mermaid-utils.js<br>src/reader-toc.js<br>…외 1개 | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-advanced.spec.js<br>tests/unit/mermaid/mermaid-parser.test.js<br>tests/unit/mermaid/mermaid-pipeline.test.js<br>…외 5개 | — | — |
 | TR-07 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/mermaid-render.js<br>src/mermaid-utils.js<br>src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-markers.spec.js<br>tests/unit/mermaid/mermaid-parser.test.js<br>tests/unit/mermaid/mermaid-pipeline.test.js<br>…외 4개 | — | — |
 | TR-08 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/mermaid-render.js<br>src/mermaid-utils.js<br>src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-markers.spec.js<br>tests/unit/mermaid/mermaid-parser.test.js<br>tests/unit/mermaid/mermaid-pipeline.test.js<br>…외 4개 | — | — |
 | TR-09 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/markdown-parser.js<br>src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-markers.spec.js<br>tests/unit/markdown-parser-general.test.js | — | — |
@@ -124,7 +124,7 @@
 | TR-17 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader-extras.css<br>css/reader.css<br>src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-flow.spec.js | — | — |
 | TR-18 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader-extras.css<br>css/reader.css<br>src/views/reader-toolbar.js<br>src/views/textbook-reader.js | tests/dom/study-reader.dom.test.js<br>tests/e2e/reader-flow.spec.js | — | — |
 | TR-19 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/views/textbook-reader.js | tests/e2e/reader-flow.spec.js<br>tests/unit/reader-analysis-gates.test.js | — | — |
-| TR-20 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | src/image-zoom.js | tests/dom/onboarding-zoom.dom.test.js<br>tests/e2e/reader-advanced.spec.js | — | — |
+| TR-20 | ✅ | 문서 검토 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | — | — | — | — |
 | TR-21 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader.css<br>html/views/textbook-reader.html<br>index.html<br>src/views/reader-toolbar.js | tests/e2e/toc-sidebar.spec.js | — | — |
 | TR-22 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader.css<br>html/views/textbook-reader.html<br>index.html<br>src/views/reader-toolbar.js | tests/e2e/toc-sidebar.spec.js | — | — |
 | TR-23 | ✅ | E2E 테스트 | DOC-DSN-11<br>DOC-RBK-07<br>DOC-REF-05 | css/reader.css<br>html/views/textbook-reader.html<br>index.html<br>src/views/reader-toolbar.js | tests/e2e/toc-sidebar.spec.js | — | — |

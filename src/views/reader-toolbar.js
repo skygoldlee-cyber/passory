@@ -4,7 +4,6 @@
 //       툴바 버튼 바인딩, 표 전체화면 모달. 렌더링 로직은 textbook-reader.js에 남음.
 import { safeGetItem, safeSetItem } from '../state.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
-import { trapFocus } from '../ui-utils.js';
 import { scheduleSaveReaderPosition } from './textbook-reader.js';
 export const readerChapterContext = { subjId: '', chapterIdx: 0 };
 let readerScrollBound = false;
@@ -244,8 +243,6 @@ export function initReaderToolbar() {
     }
 
     const toolbarToggleBtn = document.getElementById('reader-toolbar-toggle');
-    const modalClose = document.getElementById('reader-table-modal-close');
-    const modal = document.getElementById('reader-table-modal');
     const tocMobileBtn = document.getElementById('reader-toc-mobile-btn');
     const tocBackdrop = document.getElementById('reader-toc-backdrop');
     const tocAside = document.getElementById('reader-toc');
@@ -401,43 +398,8 @@ export function initReaderToolbar() {
             });
         }
     }
-    if (modalClose && !modalClose.dataset.bound) {
-        modalClose.dataset.bound = 'true';
-        modalClose.addEventListener('click', closeTableModal);
-    }
-    if (modal && !modal.dataset.bound) {
-        modal.dataset.bound = 'true';
-        modal.querySelector('.reader-table-modal-backdrop')?.addEventListener('click', closeTableModal);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) closeTableModal();
-        });
-    }
 }
 
-export function openTableModal(wrapper) {
-    const modal = /** @type {HTMLElement & {_untrapFocus?: (() => void) | null} | null} */ (document.getElementById('reader-table-modal'));
-    const body = document.getElementById('reader-table-modal-body');
-    if (!modal || !body) return;
-    const table = wrapper.querySelector('table');
-    if (!table) return;
-    body.innerHTML = '';
-    body.appendChild(table.cloneNode(true));
-    modal.classList.remove('is-hidden');
-    // 포커스 트랩 적용
-    if (modal._untrapFocus) modal._untrapFocus();
-    modal._untrapFocus = trapFocus(modal, wrapper);
-}
-
-function closeTableModal() {
-    const modal = /** @type {HTMLElement & {_untrapFocus?: (() => void) | null} | null} */ (document.getElementById('reader-table-modal'));
-    if (modal) {
-        modal.classList.add('is-hidden');
-        if (modal._untrapFocus) {
-            modal._untrapFocus();
-            modal._untrapFocus = null;
-        }
-    }
-}
 
 // --- 참조자료 링크 기능 ---
 

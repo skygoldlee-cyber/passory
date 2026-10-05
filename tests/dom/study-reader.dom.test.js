@@ -219,24 +219,13 @@ describe('교재 리더 — 툴바·검색·드로어·표 모달', () => {
         expect(el('reader-toc-backdrop').classList.contains('is-hidden')).toBe(true);
     });
 
-    it('표 확장 → 모달에 테이블 복제, 닫기 버튼·Escape로 닫힘', async () => {
+    it('표는 인라인으로만 렌더되고 확장 버튼·모달은 생성되지 않는다 (핀치 줌 대체)', async () => {
         await renderRichChapter();
 
-        const expandBtn = el('textbook-reader-container').querySelector('.reader-table-expand-btn');
-        expect(expandBtn).toBeTruthy();
-        expandBtn.click();
-
-        const modal = el('reader-table-modal');
-        expect(modal.classList.contains('is-hidden')).toBe(false);
-        expect(el('reader-table-modal-body').querySelector('table')).toBeTruthy();
-
-        el('reader-table-modal-close').click();
-        expect(modal.classList.contains('is-hidden')).toBe(true);
-
-        // 다시 열어 Escape로 닫기
-        expandBtn.click();
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-        expect(modal.classList.contains('is-hidden')).toBe(true);
+        const container = el('textbook-reader-container');
+        expect(container.querySelector('.reader-table-wrapper table')).toBeTruthy();
+        expect(container.querySelector('.reader-table-expand-btn')).toBeNull();
+        expect(document.getElementById('reader-table-modal')).toBeNull();
     });
 
     it('TOC 항목 클릭 → 해당 섹션으로 스크롤 + 접힘 해제', async () => {
@@ -473,56 +462,15 @@ describe('이야기형 서사 태깅 — markStoryNarrative', () => {
     });
 });
 
-import { attachImageZoomIn, openImageZoom, closeImageZoom } from '../../src/image-zoom.js';
-
-describe('이미지 확대 모달 — image-zoom', () => {
-    function buildContentWithImg() {
+describe('이미지 확대 모달 — 제거 회귀 (핀치 줌 대체)', () => {
+    it('.reader-img 클릭 시 확대 모달이 생성되지 않는다', () => {
         document.body.innerHTML = `
             <div class="textbook-reader-section-content">
                 <p class="md-para"><img class="reader-img" src="./content/exams/cosmetic/교재/law/images/1과목_삽화.png" alt="삽화"></p>
-                <p class="md-para">본문 문단</p>
             </div>`;
-        return document.querySelector('.textbook-reader-section-content');
-    }
-
-    it('.reader-img 클릭 시 확대 모달이 열리고 클릭 원본 src/alt를 복제한다', () => {
-        const content = buildContentWithImg();
-        attachImageZoomIn(content);
-        const img = content.querySelector('img.reader-img');
+        const img = document.querySelector('img.reader-img');
         img.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-        const modal = document.getElementById('reader-img-zoom-modal');
-        expect(modal).toBeTruthy();
-        expect(modal.classList.contains('is-hidden')).toBe(false);
-        const zoomed = modal.querySelector('.img-zoom-target');
-        expect(zoomed.src).toContain('images/1%');
-        expect(zoomed.alt).toBe('삽화');
-        expect(zoomed.classList.contains('reader-img')).toBe(false);
-        closeImageZoom();
-        expect(modal.classList.contains('is-hidden')).toBe(true);
-    });
-
-    it('본문 문단 클릭은 모달을 열지 않고, 재바인딩은 위임이라 중복되지 않는다', () => {
-        const content = buildContentWithImg();
-        attachImageZoomIn(content);
-        attachImageZoomIn(content); // 재렌더 재호출 방어
-        content.querySelectorAll('p.md-para')[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        const modal = document.getElementById('reader-img-zoom-modal');
-        expect(!modal || modal.classList.contains('is-hidden')).toBe(true);
-    });
-
-    it('닫기 버튼·배율 버튼이 동작한다', () => {
-        const content = buildContentWithImg();
-        openImageZoom(content.querySelector('img.reader-img'));
-        const modal = document.getElementById('reader-img-zoom-modal');
-        const level = () => parseInt(modal.querySelector('#img-zoom-level').textContent, 10);
-        const before = level();
-        modal.querySelector('#img-zoom-in').click();
-        expect(level()).toBeGreaterThan(before);
-        modal.querySelector('#img-zoom-out').click();
-        expect(level()).toBe(before);
-        modal.querySelector('#img-zoom-close').click();
-        expect(modal.classList.contains('is-hidden')).toBe(true);
+        expect(document.getElementById('reader-img-zoom-modal')).toBeNull();
     });
 });
 

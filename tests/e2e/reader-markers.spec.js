@@ -73,7 +73,7 @@ test.describe('리더 마커·다이어그램 파이프라인', () => {
             null, { timeout: 60_000 });
         const typed = await page.evaluate(() =>
             [...document.querySelectorAll('#textbook-reader-container pre.mermaid')]
-                .map(p => [...p.classList].find(c => c.startsWith('mermaid-') && c !== 'mermaid-zoom-content'))
+                .map(p => [...p.classList].find(c => c.startsWith('mermaid-') && c !== 'mermaid'))
                 .filter(Boolean));
         expect(typed.length).toBeGreaterThan(0);
         expect(typed).toContain('mermaid-mindmap');

@@ -1,6 +1,6 @@
 // tests/e2e/reader-advanced.spec.js — 리더 고급 기능 실브라우저 회귀
-// @spec TR-06,TR-10,TR-15,TR-16,TR-16a,TR-20
-// 계층 TOC·모바일 드로어 제스처·툴바 자동숨김·Mermaid/이미지 모달·기출 링크 뷰어 —
+// @spec TR-06,TR-10,TR-15,TR-16,TR-16a
+// 계층 TOC·모바일 드로어 제스처·툴바 자동숨김·Mermaid 렌더·기출 링크 뷰어 —
 // 레이아웃·제스처·오버레이 상호작용이라 jsdom 불가.
 
 import { test, expect } from '@playwright/test';
@@ -107,7 +107,7 @@ test.describe('교재리더 고급 기능', () => {
         await expect(chrome).not.toHaveClass(/reader-chrome-hidden/);
     });
 
-    test('본문 Mermaid 다이어그램이 렌더되고 확대 모달이 동작한다 (TR-06)', async ({ page }) => {
+    test('본문 Mermaid 다이어그램이 인라인 렌더되고 확대 버튼·모달은 없다 (TR-06)', async ({ page }) => {
         test.setTimeout(90_000);
         await openReader(page);
         const count = await page.evaluate(() =>
@@ -117,13 +117,9 @@ test.describe('교재리더 고급 기능', () => {
         await page.waitForFunction(() =>
             document.querySelector('#textbook-reader-container .mermaid svg, #textbook-reader-container pre.mermaid svg'),
             null, { timeout: 30_000 });
-        const expandBtn = page.locator('#textbook-reader-container .mermaid-expand-btn, #textbook-reader-container [class*="mermaid-zoom"], #textbook-reader-container .mermaid').first();
-        await expandBtn.scrollIntoViewIfNeeded();
-        // 확대 트리거 — 전용 버튼이 있으면 클릭, 없으면 다이어그램 탭
-        const btn = page.locator('#textbook-reader-container .mermaid-expand-btn').first();
-        if (await btn.count()) await btn.click(); else await expandBtn.click();
-        const modal = page.locator('#mermaid-zoom-modal, .mermaid-zoom-modal').first();
-        await expect(modal).not.toHaveClass(/is-hidden/, { timeout: 5_000 });
+        // 확대 수단은 제거됨 — 브라우저 핀치 줌이 대체 (TR-20/TR-06 제거 회귀)
+        await expect(page.locator('#textbook-reader-container .mermaid-expand-btn')).toHaveCount(0);
+        await expect(page.locator('#mermaid-zoom-modal')).toHaveCount(0);
     });
 
     test('기출문제 링크가 문제집 뷰어 오버레이를 연다 (TR-10)', async ({ page }) => {
@@ -136,16 +132,15 @@ test.describe('교재리더 고급 기능', () => {
         await expect(page.locator('#exam-overlay')).toHaveClass(/open/, { timeout: 15_000 });
     });
 
-    test('본문 이미지 라이트박스가 열리고 닫힌다 (TR-20)', async ({ page }) => {
+    test('본문 이미지·표는 인라인만 — 클릭해도 확대 모달이 열리지 않는다 (TR-20 제거 회귀)', async ({ page }) => {
         test.setTimeout(90_000);
         await openReader(page);
-        const img = page.locator('#textbook-reader-container .reader-img, #textbook-reader-container img').first();
+        const img = page.locator('#textbook-reader-container .reader-img').first();
         if (!(await img.count())) { test.skip(true, '선택 과목 챕터에 이미지 없음'); return; }
         await img.scrollIntoViewIfNeeded();
         await img.click();
-        const modal = page.locator('#reader-img-zoom-modal');
-        await expect(modal).not.toHaveClass(/is-hidden/, { timeout: 5_000 });
-        await page.keyboard.press('Escape');
-        await expect(modal).toHaveClass(/is-hidden/, { timeout: 5_000 });
+        await expect(page.locator('#reader-img-zoom-modal')).toHaveCount(0);
+        await expect(page.locator('#textbook-reader-container .reader-table-expand-btn')).toHaveCount(0);
+        await expect(page.locator('#reader-table-modal')).toHaveCount(0);
     });
 });
