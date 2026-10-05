@@ -6,6 +6,11 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 인쇄 잘림 — 실제 원인 수정 (고정 오버레이 덧씌움)
+
+- **문제**: PDF 출력에서 표가 잘려 보이던 실제 원인은 행 분할이 아니라 `position: fixed` 요소(업데이트 토스트 '새 버전 확인 중…', 오프라인 배너 '인터넷 연결이…')가 **매 페이지마다 표 위에 반복 출력**돼 아래 텍스트를 가린 것 — Playwright+pdfplumber 재현으로 확인 (1페이지엔 대시보드도 누출)
+- **수정**: `css/print.css` — 개별 클래스 나열 대신 `body.formula-printing > :not(#formula-print-area) { display:none }`로 인쇄 영역 외 모든 최상위 요소 차단. 재현 검증: 120행 전부 온전·오버레이 누출 0·헤더 반복 정상
+
 ## 2026-10-05 인쇄 표 페이지 넘김 잘림 — 2차 수정 (collapse → separate)
 
 - **문제**: 1차 수정(`tr` 분할 금지) 후에도 PDF에서 표 행이 페이지 경계에서 잘림 — Chromium이 `border-collapse: collapse` 표의 `tr` 레벨 `break-inside`를 무시하는 알려진 제약
