@@ -103,6 +103,9 @@ export const ManualViewer = (() => {
 #manual-overlay #manual-article .reader-table tr:last-child td{border-bottom:none;}
 #manual-overlay #manual-article .reader-table tr:hover td{background:rgba(255,255,255,.02);}
 html.light-theme #manual-overlay #manual-article .reader-table tr:hover td{background:rgba(0,0,0,.02);}
+#manual-overlay #manual-article .reader-img{display:block;max-width:100%;height:auto;
+  margin:1.25rem auto;border-radius:16px;border:1px solid var(--border-color);
+  overflow:hidden;}
 #manual-overlay #manual-article pre.reader-code-block{margin:1.25rem 0;padding:1.25rem;overflow-x:auto;
   border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border-color);
   font-family:'Outfit',ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.5;}

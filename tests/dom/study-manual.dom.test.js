@@ -104,6 +104,8 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         // http·data: URL은 그대로 유지
         expect(imgs[1].src).toBe('https://x.test/a.png');
         expect(imgs[2].src).toMatch(/^data:image\/svg/);
+        // 오버레이 CSS에 본문 이미지 폭 제한 규칙 존재 (고유 크기 오버플로 방지)
+        expect(el('manual-overlay-style').textContent).toContain('.reader-img');
     });
 
     it('닫기 → 오버레이 닫힘·body 클래스 해제', async () => {

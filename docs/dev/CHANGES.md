@@ -10,6 +10,7 @@
 
 - **학습안내서 마인드맵**: mermaid mindmap 블록 → `학습안내서_마인드맵.svg` 삽화로 교체 (문서 통계는 실측값 정정 — 객관식/단답형 746/254·ㄱㄴㄷ 990·시각화 수치 갱신 + 스마트·맞춤학습 노드)
 - **상대 이미지 해석**: `manual-viewer.js` `_resolveArticleImages` — docs/*.md의 로컬 이미지(`![alt](file.svg)`)를 문서 디렉터리 기준 절대 URL로 해석 (exam-viewer와 동일 패턴). 캐시·테마 재렌더 경로 모두 적용, `onClose` 리셋
+- **본문 이미지 폭 제한**: 오버레이 CSS에 `#manual-article .reader-img` 규칙 추가 — `max-width:100%`로 테이블 폭(기사 폭 900px)에 맞춤. 고유 크기 SVG가 본문 폭을 넘어 표시되던 문제 해소
 - **검증**: DOM +1건 (상대/원격/data: 이미지 해석) — check:types·lint·specrefs·docbundles 통과
 
 ## 2026-10-05 SC-15 읽기 추적 정확화 + 맞춤학습 안내 문구 갱신
