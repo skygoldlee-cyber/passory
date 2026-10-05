@@ -6,6 +6,16 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 SC-15 읽기 추적 정확화 + 맞춤학습 안내 문구 갱신
+
+- **읽기 하트비트**: `textbook-reader.js` 읽기 시간 기록을 스크롤 플러시 → 15초 하트비트(`startReadingSession`)로 전환 — 스크롤 없는 정독도 `readMin` 누적, 뷰 이탈·탭 숨김 동안 미누적(오계상 제거) + `stopReadingSession` 리셋
+- **청크 커버리지 진척**: `reader_progress`를 최대 스크롤 위치 → 100분할 청크 방문 집합으로 전환 — 목차·이어보기 점프는 착지 청크 1개만 반영. 레거시 `frac`는 시드로 승계
+- **manifest `study.readDayShare`(0~1, 기본 1)**: 일독 기간 통독 1일의 카드 학습일 대치 비율 — 병행 팩 부분 차감 지원. 진척 분모를 `getActiveSubjectCount`(registry.subjects) 단일 진입점으로 정리
+- **학습 패턴 읽기 반영**: `computeStudyPattern`이 읽기 전용일을 세션 이벤트 1건으로 집계(표본 게이트·요일·주말 집계 포함)
+- **manifest 빌드타임 검증**: `check:manifest`가 `study.*` 수치 범위 + `wrongCauses` key·`autoPattern` 정규식 컴파일 검증 — 무음 스킵 차단
+- **맞춤학습 안내 문구**: "이번 주 스마트학습"·"주간 리포트" 항목 추가, 학습 리듬에 집중 패턴·읽기 학습일 인정, 합격 갭 목표 상향 권고, 진단→배분 루프 명시
+- **검증**: 유닛 +2건·DOM +3건 전부 통과, check:types·lint·escape·specrefs·trace·docbundles·manifest·notes·mobilesafe·html·uitext 통과
+
 ## 2026-10-05 Formula OS 증적성·신선도 개선 5개 항목 (FO-64~68)
 
 - **FO-64 기준 고시 스탬프**: `notice-check.js`에 `getNoticeStamp()` 동기 접근자 추가 — `auditPrintReport`가 `ensureNoticeStatus()`를 선행(await)해 보고서 푸터에 '기준 고시: 규정명+고시번호(시행일)·고시 확인일' 표기. `isNewer` 시 개정 경고 병기, 미로드·오프라인 시 '확인 불가' 폴백
