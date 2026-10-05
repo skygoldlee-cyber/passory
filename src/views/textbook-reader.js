@@ -47,7 +47,7 @@ import { PATHS } from '../paths.js';
 import { CACHE } from '../config/cache.js';
 import {
     readerChapterContext, getReaderBookmarks, toggleReaderBookmark,
-    applyReaderFontScale, applyReaderLineHeight, applyReaderThemeClass,
+    applyReaderThemeClass,
     bindReaderScrollEvents, initReaderToolbar, openTableModal
 } from './reader-toolbar.js';
 import { bindReferenceLinks, refreshRefLinkNotices } from './reader-ref-links.js';
@@ -941,8 +941,6 @@ async function _renderChapterContentInternal(subjId, chapterIdx, subj, chapter, 
     // Scroll position reset + scroll spy binding
     container.scrollTop = 0;
     bindReaderScrollEvents();
-    applyReaderFontScale();
-    applyReaderLineHeight();
     applyReaderThemeClass();
 
     // Mermaid 다이어그램 렌더링 (pre.mermaid 노드가 있을 때만 온디맨드 로드)

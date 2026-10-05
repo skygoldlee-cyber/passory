@@ -1,14 +1,12 @@
 // views/reader-toolbar.js — 교재 리더 툴바·독서 설정·스크롤 이벤트 (textbook-reader.js에서 분리)
 // @spec TR-15,TR-16,TR-16a,TR-18,TR-21~23,UX-SCR-01
-// 역할: 북마크 토글, 폰트 스케일·줄간격·테마 클래스 적용, 스크롤 스파이(rAF 디바운스),
+// 역할: 북마크 토글, 테마 클래스 적용, 스크롤 스파이(rAF 디바운스),
 //       툴바 버튼 바인딩, 표 전체화면 모달. 렌더링 로직은 textbook-reader.js에 남음.
 import { safeGetItem, safeSetItem } from '../state.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
 import { trapFocus } from '../ui-utils.js';
 import { scheduleSaveReaderPosition } from './textbook-reader.js';
 export const readerChapterContext = { subjId: '', chapterIdx: 0 };
-let readerFontScale = (() => { try { return parseFloat(safeGetItem(STORAGE_KEYS.READER_FONT_SCALE) || '') || 1; } catch (e) { return 1; } })();
-let readerLineHeight = (() => { try { return parseFloat(safeGetItem(STORAGE_KEYS.READER_LINE_HEIGHT) || '') || 2.05; } catch (e) { return 2.05; } })();
 let readerScrollBound = false;
 
 export function getReaderBookmarks() {
@@ -32,22 +30,6 @@ export function toggleReaderBookmark(key, btn) {
         btn.title = '북마크 제거';
     }
     safeSetItem(STORAGE_KEYS.READER_BOOKMARKS, JSON.stringify(bookmarks));
-}
-
-export function applyReaderFontScale() {
-    const container = document.getElementById('textbook-reader-container');
-    const display = document.getElementById('reader-font-size-display');
-    if (container) container.style.setProperty('--reader-font-scale', String(readerFontScale));
-    if (display) display.textContent = Math.round(readerFontScale * 100) + '%';
-    safeSetItem(STORAGE_KEYS.READER_FONT_SCALE, readerFontScale);
-}
-
-export function applyReaderLineHeight() {
-    const container = document.getElementById('textbook-reader-container');
-    const display = document.getElementById('reader-line-height-display');
-    if (container) container.style.setProperty('--reader-line-height', String(readerLineHeight));
-    if (display) display.textContent = readerLineHeight.toFixed(2);
-    safeSetItem(STORAGE_KEYS.READER_LINE_HEIGHT, readerLineHeight);
 }
 
 export function applyReaderThemeClass() {
@@ -250,8 +232,8 @@ export function initReaderToolbar() {
     if (toolbarEl0) toolbarEl0.dataset.mobileInit = '1';
 
     // TR-23: 크롬 오버레이 높이 실측 → --reader-chrome-h. 본문 padding-top·
-    // scroll-margin·섹션 표시줄 top이 이 변수를 참조하므로 툴바 펼침·래핑·
-    // 폰트 스케일 등 어떤 변동에도 자동 동기화된다.
+    // scroll-margin·섹션 표시줄 top이 이 변수를 참조하므로 툴바 펼침·래핑 등
+    // 어떤 변동에도 자동 동기화된다.
     const viewEl = document.getElementById('textbook-reader-view');
     const chromeEl = document.getElementById('reader-chrome');
     if (viewEl && chromeEl && !chromeEl.dataset.roBound && typeof ResizeObserver !== 'undefined') {
@@ -261,12 +243,6 @@ export function initReaderToolbar() {
         syncChromeH();
     }
 
-    const decBtn = document.getElementById('reader-font-decrease');
-    const incBtn = document.getElementById('reader-font-increase');
-    const resetBtn = document.getElementById('reader-font-reset');
-    const lhDecBtn = document.getElementById('reader-line-height-decrease');
-    const lhIncBtn = document.getElementById('reader-line-height-increase');
-    const lhResetBtn = document.getElementById('reader-line-height-reset');
     const toolbarToggleBtn = document.getElementById('reader-toolbar-toggle');
     const modalClose = document.getElementById('reader-table-modal-close');
     const modal = document.getElementById('reader-table-modal');
@@ -274,48 +250,6 @@ export function initReaderToolbar() {
     const tocBackdrop = document.getElementById('reader-toc-backdrop');
     const tocAside = document.getElementById('reader-toc');
 
-    if (decBtn && !decBtn.dataset.bound) {
-        decBtn.dataset.bound = 'true';
-        decBtn.addEventListener('click', () => {
-            readerFontScale = Math.max(0.85, +(readerFontScale - 0.05).toFixed(2));
-            applyReaderFontScale();
-        });
-    }
-    if (incBtn && !incBtn.dataset.bound) {
-        incBtn.dataset.bound = 'true';
-        incBtn.addEventListener('click', () => {
-            readerFontScale = Math.min(1.4, +(readerFontScale + 0.05).toFixed(2));
-            applyReaderFontScale();
-        });
-    }
-    if (resetBtn && !resetBtn.dataset.bound) {
-        resetBtn.dataset.bound = 'true';
-        resetBtn.addEventListener('click', () => {
-            readerFontScale = 1;
-            applyReaderFontScale();
-        });
-    }
-    if (lhDecBtn && !lhDecBtn.dataset.bound) {
-        lhDecBtn.dataset.bound = 'true';
-        lhDecBtn.addEventListener('click', () => {
-            readerLineHeight = Math.max(1.4, +(readerLineHeight - 0.1).toFixed(2));
-            applyReaderLineHeight();
-        });
-    }
-    if (lhIncBtn && !lhIncBtn.dataset.bound) {
-        lhIncBtn.dataset.bound = 'true';
-        lhIncBtn.addEventListener('click', () => {
-            readerLineHeight = Math.min(2.6, +(readerLineHeight + 0.1).toFixed(2));
-            applyReaderLineHeight();
-        });
-    }
-    if (lhResetBtn && !lhResetBtn.dataset.bound) {
-        lhResetBtn.dataset.bound = 'true';
-        lhResetBtn.addEventListener('click', () => {
-            readerLineHeight = 2.05;
-            applyReaderLineHeight();
-        });
-    }
     if (toolbarToggleBtn && !toolbarToggleBtn.dataset.bound) {
         toolbarToggleBtn.dataset.bound = 'true';
         toolbarToggleBtn.addEventListener('click', () => {

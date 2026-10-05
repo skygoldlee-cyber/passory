@@ -141,8 +141,6 @@ export const STORAGE_KEYS = {
   EXAM_VIEW_POS: 'exam_view_pos_v1',   // 문제집 뷰어 이어보기 — 문서별 마지막 스크롤 위치 (exam-viewer.js)
   READER_LAST_POSITION: 'readerLastPosition',
   READER_PROGRESS: 'readerProgress',        // 과목별 교재 일독 진척률 {subjKey: {frac, ts}} — SC-15
-  READER_FONT_SCALE: 'readerFontScale',
-  READER_LINE_HEIGHT: 'readerLineHeight',
   READER_BOOKMARKS: 'readerBookmarks',
 
   // 설정

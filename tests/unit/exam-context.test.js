@@ -109,7 +109,7 @@ test('scopedKey: 진도 키에 시험 접두사 부여', () => {
 });
 
 test('scopedKey: GLOBAL_KEYS는 접두사 없이 유지', () => {
-    for (const k of ['current_exam', 'appTheme', 'preferredOrientation', 'readerFontScale']) {
+    for (const k of ['current_exam', 'appTheme', 'preferredOrientation', 'readerAudioRate']) {
         assert.equal(scopedKey(k), k, `${k}는 전역 키`);
     }
     mockStorage.setItem('current_exam', 'alpha');

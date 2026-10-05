@@ -128,8 +128,6 @@ const GLOBAL_KEYS = new Set([
     'appTheme',
     'preferredOrientation',
     '__inappGuideShown',
-    'readerFontScale',
-    'readerLineHeight',
     'readerAudioRate',
     'readerAudioAutoScroll',
     'ui_analysis_open',

@@ -122,14 +122,6 @@
     align-items: center;
     gap: var(--space-2);
 }
-.reader-toolbar-label {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    font-weight: var(--font-weight-semibold);
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
 .reader-toolbar-divider {
     width: 1px;
     height: 22px;
@@ -211,14 +203,6 @@
     color: var(--color-primary);
     box-shadow: var(--glow-primary);
 }
-.reader-font-size-display {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    min-width: 44px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-}
-
 /* 교재리더 뷰 — flex 컬럼으로 .main-content의 잔여 높이를 정확히 차지.
    .reader-layout에 확정 높이가 생겨야 TOC/본문의 max-height:100%가 동작한다. */
 #textbook-reader-view.active {
@@ -625,8 +609,6 @@
        static 위치가 레이아웃 scrollHeight를 팽창시켜 스크롤러로 만들고
        스크롤 시 콘텐츠와 분리되어 떠다닌다 (TR-23 — 이야기형 sr 라벨 실발견) */
     position: relative;
-    /* CSS variable driven font sizing for A-/A+ controls */
-    --reader-font-scale: 1;
     /* 첫 줄이 크롬 오버레이 아래 묻지 않도록 — 크롬 높이 JS 실측 변수 + 여유.
        스크롤과 함께 밀려나므로 읽는 중 잠식은 0 (TR-22/23, UX-NAV-09) */
     padding-top: calc(var(--reader-chrome-h, 64px) + var(--space-3));
@@ -700,7 +682,7 @@
     transform: rotate(-90deg);
 }
 .reader-section-title {
-    font-size: calc(1.15rem * var(--reader-font-scale, 1));
+    font-size: 1.15rem;
     color: var(--color-primary);
     font-weight: var(--font-weight-bold);
     margin: 0;
@@ -739,7 +721,7 @@
 }
 
 .reader-subsection-title {
-    font-size: calc(1.1rem * var(--reader-font-scale, 1));
+    font-size: 1.1rem;
     color: var(--color-primary);
     font-weight: var(--font-weight-bold);
     margin-top: 2.25rem;
@@ -769,22 +751,22 @@
 
 /* Optimized typography inside reader */
 .textbook-reader-content .textbook-reader-section-content {
-    line-height: var(--reader-line-height, 2.05);
-    font-size: calc(1.06rem * var(--reader-font-scale, 1));
+    line-height: 2.05;
+    font-size: 1.06rem;
     color: var(--color-text-main);
     word-break: keep-all;
     overflow-wrap: break-word;
 }
 .textbook-reader-content .textbook-reader-section-content .md-para {
     margin-bottom: 1.35rem;
-    font-size: calc(1.06rem * var(--reader-font-scale, 1));
+    font-size: 1.06rem;
 }
 /* $$...$$ 수식 블록 (KaTeX 없이 HTML/CSS 분수 렌더링) */
 .textbook-reader-content .textbook-reader-section-content .math-block {
     margin: 1.2rem 0;
     padding: 0.8rem 1rem;
     text-align: center;
-    font-size: calc(1.1rem * var(--reader-font-scale, 1));
+    font-size: 1.1rem;
     color: inherit;
     background: rgba(128, 128, 128, 0.08);
     border-radius: 6px;
@@ -808,26 +790,26 @@
     margin-bottom: 0.65rem;
 }
 .textbook-reader-content .textbook-reader-section-content .md-h3 {
-    font-size: calc(1.2rem * var(--reader-font-scale, 1));
+    font-size: 1.2rem;
     font-weight: 700;
     margin-top: 1.75rem;
     margin-bottom: 0.85rem;
 }
 .textbook-reader-content .textbook-reader-section-content .md-h4 {
-    font-size: calc(1.1rem * var(--reader-font-scale, 1));
+    font-size: 1.1rem;
     font-weight: 500;
     margin-top: 1.4rem;
     margin-bottom: 0.65rem;
 }
 .textbook-reader-content .textbook-reader-section-content .md-h5 {
-    font-size: calc(1.02rem * var(--reader-font-scale, 1));
+    font-size: 1.02rem;
     font-weight: 600;
     margin-top: 1.1rem;
     margin-bottom: 0.5rem;
 }
 .textbook-reader-content .textbook-reader-section-content .md-quote {
-    font-size: calc(1rem * var(--reader-font-scale, 1));
-    line-height: var(--reader-line-height, 2.05);
+    font-size: 1rem;
+    line-height: 2.05;
     border-left: 3px solid var(--color-primary);
     background: var(--primary-tint-8);
     padding: 0.6rem 0.9rem;
@@ -1040,9 +1022,7 @@
 .reader-light-theme .reader-toc-item.active {
     color: var(--reader-accent);
 }
-.reader-light-theme .reader-toc-item,
-.reader-light-theme .reader-toolbar-label,
-.reader-light-theme .reader-font-size-display {
+.reader-light-theme .reader-toc-item {
     color: var(--reader-text-muted);
 }
 .reader-light-theme .reader-toc-item:hover {
@@ -1326,10 +1306,7 @@
         gap: 0.5rem !important;
     }
     /* M9: 리더 툴바 버튼 터치 영역 44px 보장 */
-    .reader-toolbar button,
-    #reader-font-decrease,
-    #reader-font-increase,
-    #reader-font-reset {
+    .reader-toolbar button {
         min-width: 44px;
         min-height: 44px;
         padding: 0.5rem 0.75rem !important;

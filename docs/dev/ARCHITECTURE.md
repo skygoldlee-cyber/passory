@@ -345,7 +345,7 @@ passory/
 │       ├── exam-sim-weak.js    #     오답 모의고사 (exam-simulator.js에서 분리)
 │       ├── exam-select.js      #     시험 선택/전환 뷰
 │       ├── textbook-reader.js  #     교재 리더 코어 (렌더링·TOC·포지션)
-│       ├── reader-toolbar.js   #     리더 툴바·폰트/줄간격·스크롤스파이·표 모달
+│       ├── reader-toolbar.js   #     리더 툴바·스크롤스파이·표 모달
 │       ├── reader-ref-links.js #     참조자료 링크 생성·프리뷰·클릭 위임
 │       ├── reader-audio.js    #     오디오북 플레이어
 │       ├── textbook-search.js  #     교재 본문 검색
@@ -1048,7 +1048,7 @@ pullSync() (로그인 시 / "지금 동기화" 버튼)
 | 분류 | 판별 | 예시 |
 |------|------|------|
 | **스코프드 진도 키** | `scopedKey()`가 `<examId>:` 접두사 부여 | `cosmetic:fc_memorized`, `cosmetic:quiz_results`, `cosmetic:formula_items` |
-| **전역 키** | `GLOBAL_KEYS` Set — 접두사 없음 | `appTheme`, `ui_mode`, `readerFontScale`, `device_id`, `current_exam` |
+| **전역 키** | `GLOBAL_KEYS` Set — 접두사 없음 | `appTheme`, `ui_mode`, `readerAudioRate`, `device_id`, `current_exam` |
 | **동적 키** | 접두사 패턴 (`isDailyCompletedKey`) | `daily_completed_2026-09-24` |
 | **동기화 메타** | `META_KEYS` — 쓰기 훅에서 제외 | `sync_dirty`, `sync_last_ts` |
 | **세션 키** | `sessionStorage` | `__inappGuideShown` |

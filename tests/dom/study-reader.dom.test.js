@@ -166,35 +166,6 @@ describe('교재 리더 — 툴바·검색·드로어·표 모달', () => {
         vi.clearAllMocks();
     });
 
-    it('글자 크기 +/-/리셋 → 표시·CSS 변수·localStorage 영속, 경계 클램프', async () => {
-        await renderRichChapter();
-
-        el('reader-font-increase').click();
-        expect(el('reader-font-size-display').textContent).toBe('105%');
-        expect(storedJson(STORAGE_KEYS.READER_FONT_SCALE)).toBe(1.05);
-        expect(el('textbook-reader-container').style.getPropertyValue('--reader-font-scale')).toBe('1.05');
-
-        el('reader-font-reset').click();
-        expect(el('reader-font-size-display').textContent).toBe('100%');
-
-        // 하한 클램프: 1.0 → 0.85까지
-        for (let i = 0; i < 5; i++) el('reader-font-decrease').click();
-        expect(el('reader-font-size-display').textContent).toBe('85%');
-        el('reader-font-decrease').click();
-        expect(el('reader-font-size-display').textContent).toBe('85%');
-    });
-
-    it('줄 간격 조절 → 표시·CSS 변수·영속, 리셋 복원', async () => {
-        await renderRichChapter();
-
-        el('reader-line-height-decrease').click();
-        expect(el('reader-line-height-display').textContent).toBe('1.95');
-        expect(storedJson(STORAGE_KEYS.READER_LINE_HEIGHT)).toBe(1.95);
-
-        el('reader-line-height-reset').click();
-        expect(el('reader-line-height-display').textContent).toBe('2.05');
-    });
-
     it('툴바 접기 토글 → collapsed + aria-expanded', async () => {
         await renderRichChapter();
 
