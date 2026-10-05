@@ -128,7 +128,7 @@ export function closeImageZoom() {
 /**
  * 컨테이너 내 .reader-img 클릭 → 확대 모달 바인딩 (이벤트 위임, 1회 바인딩).
  * 리렌더로 자식이 교체돼도 컨테이너 위임이라 유효하다.
- * @param {HTMLElement} root - 렌더 컨테이너
+ * @param {HTMLElement | null} root - 렌더 컨테이너
  */
 export function attachImageZoomIn(root) {
     if (!root || root.dataset.imgZoomBound) return;

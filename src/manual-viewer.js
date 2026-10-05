@@ -16,6 +16,7 @@ import { openSubjectChapter } from './views/textbook-reader.js';
 import { PATHS } from './paths.js';
 import { dataPath } from './exam-context.js';
 import { CACHE } from './config/cache.js';
+import { attachImageZoomIn } from './image-zoom.js';
 import { makeSessionCache, injectBundleScript, fetchMd, buildTocHtml, mountToc, createDocOverlay } from './doc-overlay.js';
 
 export const ManualViewer = (() => {
@@ -105,7 +106,7 @@ export const ManualViewer = (() => {
 html.light-theme #manual-overlay #manual-article .reader-table tr:hover td{background:rgba(0,0,0,.02);}
 #manual-overlay #manual-article .reader-img{display:block;max-width:100%;height:auto;
   margin:1.25rem auto;border-radius:16px;border:1px solid var(--border-color);
-  overflow:hidden;}
+  overflow:hidden;cursor:zoom-in;}
 #manual-overlay #manual-article pre.reader-code-block{margin:1.25rem 0;padding:1.25rem;overflow-x:auto;
   border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border-color);
   font-family:'Outfit',ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.5;}
@@ -155,6 +156,9 @@ body.manual-open{overflow:hidden;}
         wire(el) {
             el.querySelector('[data-manual-close]')?.addEventListener('click', close);
             el.querySelector('[data-manual-print]')?.addEventListener('click', () => window.print());
+            // 본문 이미지(SVG 삽화 등) 클릭 → 확대 모달. article 요소는 셸 고정이므로
+            // 위임 바인딩은 재렌더와 무관하게 1회면 충분하다.
+            attachImageZoomIn(el.querySelector('#manual-article'));
         },
         onClose() {
             _currentTitle = '';

@@ -108,6 +108,23 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         expect(el('manual-overlay-style').textContent).toContain('.reader-img');
     });
 
+    it('본문 이미지 클릭 → 확대 모달 오픈 (H)', async () => {
+        window.__DOC_MD__[PATHS.USER_MANUAL] = '# 문서\n\n![구조](map.svg)\n';
+        await ManualViewer.openManual();
+        await flushAsync(30);
+
+        const article = el('manual-article');
+        expect(article.dataset.imgZoomBound).toBe('1');
+        const img = article.querySelector('img.reader-img');
+        img.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+        img.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        const modal = document.getElementById('reader-img-zoom-modal');
+        expect(modal).not.toBeNull();
+        expect(modal.classList.contains('is-hidden')).toBe(false);
+        expect(modal.querySelector('#img-zoom-body img.img-zoom-target')).not.toBeNull();
+    });
+
     it('닫기 → 오버레이 닫힘·body 클래스 해제', async () => {
         await ManualViewer.openManual();
         await flushAsync(30);
