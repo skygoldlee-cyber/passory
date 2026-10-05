@@ -215,7 +215,7 @@ export function getSuggestedDailyCount(remainingItems) {
 }
 
 /** 시험일 설정 권고 — 최소 권장 준비 기간(일) */
-export const MIN_EXAM_LEAD_DAYS = 30;
+export const MIN_EXAM_LEAD_DAYS = 40;
 
 /**
  * 시험일 리드타임 평가 — 목표 설정 모달의 인라인 권고용.

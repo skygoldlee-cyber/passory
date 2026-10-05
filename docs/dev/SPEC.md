@@ -127,7 +127,7 @@
 | D-14 | 실제 시험 결과 자가 보고 (`actual_exam_result`) — D-day 경과 시 진단 카드에 입력 폼, 기록 후 예상 대비 오차 표시. 예측 보정 데이터 수집 경로 | ✅ |
 | D-15 | 대시보드 추천 카드에서 "맞춤학습 보기" 버튼으로 `analysis-view` 연결 (퍼널) — 상세 분석(과목 카드·히트맵·모의고사 차트)은 맞춤학습 뷰로 분리됨 | ✅ |
 | D-16 | 과목별 마스터리 레벨 — 판정 진술 중 졸업(연속 정답 3회, DR-03) 비율을 과목별로 집계해 과목 카드에 Lv.1~5 표시 (`computeMasteryLevels`, 데이터 없으면 미표시) | ✅ |
-| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간(30일, `MIN_EXAM_LEAD_DAYS`) 미만 시험일을 인라인 권고(`getExamLeadStatus`), 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
+| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간(40일, `MIN_EXAM_LEAD_DAYS`) 미만 시험일을 인라인 권고(`getExamLeadStatus`), 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
 
 ### 3.1.5 맞춤학습 (Personal Analysis, `analysis-view`)
 
