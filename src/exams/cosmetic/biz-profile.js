@@ -1,10 +1,10 @@
 // Formula OS — 사업 유형 프로파일 (FO-33)
-// @spec FO-33,FO-34
+// @spec FO-33,FO-34,FO-69
 // 맞춤형화장품 판매업(기본)·화장품제조업·책임판매업 — 유형 선택을 영속하고
 // 허브 카드·서브내비·체크리스트 세트의 가시 범위를 여기서 한 곳에 선언한다.
 // 유형별 UI 게이트는 "숨김"일 뿐 저장 데이터(포뮬러·배치·체크 상태)는 공유·보존된다.
 
-import { getJSON, setJSON } from '../../storage.js';
+import { getJSON, setJSON, removeItem } from '../../storage.js';
 import { STORAGE_KEYS } from '../../storage-keys.js';
 
 /** 사업 유형 정의 — id는 FORMULA_BIZ_TYPE 저장값으로 영구 안정 */
@@ -27,6 +27,22 @@ export function setBizType(type) {
   if (!BIZ_IDS.includes(type)) return false;
   setJSON(STORAGE_KEYS.FORMULA_BIZ_TYPE, type);
   return true;
+}
+
+/* =======================================================
+   보고서 점검자 성명 (FO-69) — 종합 보고서 서명란 기입용.
+   빈 값은 키 자체를 제거해 '미설정' 상태로 되돌린다.
+   ======================================================= */
+export function getInspectorName() {
+  const v = getJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME);
+  return typeof v === 'string' ? v.trim() : '';
+}
+
+/** @returns {boolean} 저장 성공 여부 — 비우기(키 제거)도 성공으로 간주 */
+export function setInspectorName(name) {
+  const v = typeof name === 'string' ? name.trim() : '';
+  if (!v) { removeItem(STORAGE_KEYS.FORMULA_INSPECTOR_NAME); return true; }
+  return setJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME, v);
 }
 
 /* =======================================================

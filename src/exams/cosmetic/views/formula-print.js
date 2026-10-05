@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula-print.js — Formula OS 인쇄 산출물 빌더 (Phase A)
-// @spec FO-14,FO-21,FO-29,FO-56,FO-57,FO-58,FO-60
+// @spec FO-14,FO-21,FO-29,FO-56,FO-57,FO-58,FO-60,FO-69
 //
 // 조제 기록지(배치)·제품 라벨·사용 안내문·작업지시서 HTML 생성 + 공용 인쇄 트리거.
 // 기존 formula.js의 조제 기록지와 같은 #formula-print-area + body.formula-printing
@@ -279,7 +279,7 @@ const AUDIT_BODY = {
 /**
  * 종합 규정 점검 보고서 (FO-56) — collectAuditReportData() 뷰모델 → fp-doc.
  * @param {object} d - {generatedAt, appVersion, biz:{label,desc}, setLabel, sections:[],
- *   id, hash, notice:{notice,ruleName,effectiveDate,checkedAt,isNewer}|null, printedBy}
+ *   id, hash, notice:{notice,ruleName,effectiveDate,checkedAt,isNewer}|null, printedBy, inspector}
  */
 export function buildAuditReportHtml(d) {
   const scoreRows = d.sections
@@ -313,7 +313,7 @@ export function buildAuditReportHtml(d) {
     <table class="fp-table"><tbody>${scoreRows}</tbody></table>
     ${body}
     <div class="fp-sign-row">
-      <span class="fp-sign">점검자(조제관리사/책임판매관리자): ______________</span>
+      <span class="fp-sign">점검자(조제관리사/책임판매관리자): ${d.inspector ? `${esc(d.inspector)} (인)` : '______________'}</span>
       <span class="fp-sign">확인자: ______________</span>
       <span class="fp-sign">확인일: ________</span>
     </div>

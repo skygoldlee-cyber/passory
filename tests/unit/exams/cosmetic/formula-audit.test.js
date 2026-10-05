@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/formula-audit.test.js
-// @spec FO-56,FO-64,FO-66,FO-67
+// @spec FO-56,FO-64,FO-66,FO-67,FO-69
 // formula-audit.js — 종합 규정 점검 보고서 수집기.
 // 검증: 유형별 섹션 게이트(bizVisible 재사용), 빈 데이터 '기록 없음' 분기,
 //       체크리스트·라벨·광고·포뮬러·배치·원료·고객 수집, 뷰모델→빌더 마크업
@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 import { collectAuditReportData, recordAuditLog } from '../../../../src/exams/cosmetic/views/formula-audit.js';
 import { buildAuditReportHtml } from '../../../../src/exams/cosmetic/views/formula-print.js';
 import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
-import { setJSON } from '../../../../src/storage.js';
-import { setBizType } from '../../../../src/exams/cosmetic/biz-profile.js';
+import { getJSON, setJSON } from '../../../../src/storage.js';
+import { setBizType, setInspectorName } from '../../../../src/exams/cosmetic/biz-profile.js';
 import { createCustomer } from '../../../../src/exams/cosmetic/customer-store.js';
 import { createMaterial } from '../../../../src/exams/cosmetic/material-ledger.js';
 import { createBatch } from '../../../../src/exams/cosmetic/batch-store.js';
@@ -364,4 +364,40 @@ test('deviceLabel — UA 문자열에서 브라우저·OS 요약', () => {
 test('collectAuditReportData — printedBy 필드 존재 (node 환경 폴백)', () => {
   const d = collectAuditReportData(NOW);
   assert.ok(typeof d.printedBy === 'string' && d.printedBy.length > 0);
+});
+
+/* =======================================================
+   점검자 성명 (FO-69)
+   ======================================================= */
+
+test('점검자 미설정 — inspector 빈 문자열 + 서명란 공란 출력 (FO-69)', () => {
+  const d = collectAuditReportData(NOW);
+  assert.equal(d.inspector, '');
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes('점검자(조제관리사/책임판매관리자): ______________'));
+});
+
+test('점검자 설정 — 뷰모델 수집 + 서명란에 성명 (인) 기입 (FO-69)', () => {
+  setInspectorName('  홍길동  ');
+  const d = collectAuditReportData(NOW);
+  assert.equal(d.inspector, '홍길동', '공백은 trim되어 수집');
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes('점검자(조제관리사/책임판매관리자): 홍길동 (인)'));
+  // 확인자·확인일은 수기 서명용 공란 유지
+  assert.ok(html.includes('확인자: ______________'));
+  assert.ok(html.includes('확인일: ________'));
+});
+
+test('점검자 비우기 — 키 제거로 미설정 복귀 (FO-69)', () => {
+  setInspectorName('홍길동');
+  setInspectorName('   ');
+  assert.equal(getJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME), null);
+  assert.equal(collectAuditReportData(NOW).inspector, '');
+});
+
+test('점검자 성명 HTML 특수문자 — esc 이스케이프 적용 (FO-69)', () => {
+  setInspectorName('김<b>철수');
+  const html = buildAuditReportHtml(collectAuditReportData(NOW));
+  assert.ok(!html.includes('김<b>철수'));
+  assert.ok(html.includes('김&lt;b&gt;철수 (인)'));
 });

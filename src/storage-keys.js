@@ -115,6 +115,9 @@ export const STORAGE_KEYS = {
   // [{at, bizId, bizLabel, setLabel, done, total, sections, id, hash, fresh}]
   FORMULA_AUDIT_LOG: 'formula_audit_log',
 
+  // Formula OS — 종합 보고서 점검자 성명 (FO-69) — 평문 문자열, 서명란 기입용
+  FORMULA_INSPECTOR_NAME: 'formula_inspector_name',
+
   // 증적 백업 마지막보내기 시각 (backup.js 스탬프, FO-65) — 'YYYY-MM-DDTHH:MM' 로컬, 기기 로컬 마커
   LAST_BACKUP_AT: 'last_backup_at',
   /* ── domain:cosmetic 계약 키 끝 ── */
@@ -197,6 +200,7 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.FORMULA_ADLINT_STATE, // 광고 점검 최근 결과 — 종합 보고서 작업 데이터 (FO-56)
   STORAGE_KEYS.ADVERSE_ITEMS,      // 소비자 이상사례 기록 — 법적 증적 (FO-59)
   STORAGE_KEYS.FORMULA_AUDIT_LOG,  // 보고서 출력 이력 — 점검 진척 근거 (FO-63)
+  STORAGE_KEYS.FORMULA_INSPECTOR_NAME, // 보고서 점검자 성명 — 서명란 기입 설정 (FO-69)
 ];
 
 // 전체 초기화(Reset Progress) 시 제거할 키 목록

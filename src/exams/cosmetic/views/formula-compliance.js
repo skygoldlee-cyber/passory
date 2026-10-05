@@ -1,5 +1,5 @@
 // Formula OS — 법규 준수 체크리스트 (Phase D)
-// @spec FO-19,FO-33,FO-34,FO-63
+// @spec FO-19,FO-33,FO-34,FO-63,FO-69
 // 맞춤형화장품판매업자·조제관리사의 법정 의무를 카테고리별 자가점검 항목으로 정리.
 // FO-34: 사업 유형별 세트화 — 맞춤형(custom)·제조업(mfg, CGMP)·책임판매업(sales).
 // 항목 내용은 참조자료 법령 정리(과목1 cosmetic-law, 과목4 mixing-subdivision·overview)와
@@ -16,7 +16,7 @@ import { contentPath } from '../../../exam-context.js';
 import { lawUrlFor } from '../../../law-links.js';
 import { resolveRefPath } from '../../../pdf-registry.js';
 import { showPanel, formulaSubNav } from './formula.js';
-import { getBizType, bizChecklistSet } from '../biz-profile.js';
+import { getBizType, bizChecklistSet, getInspectorName, setInspectorName } from '../biz-profile.js';
 import { fmtLocalDateTime, localDateTime } from '../store-utils.js';
 
 /* =======================================================
@@ -406,6 +406,19 @@ export function openCompliancePanel() {
   const subnav = document.getElementById('formula-compliance-subnav');
   if (subnav) subnav.innerHTML = formulaSubNav('compliance');
   render();
+  // FO-69 — 점검자 성명: 종합 보고서 서명란 기입용 프로필값. 입력 즉시 저장.
+  const inp = /** @type {HTMLInputElement | null} */(document.getElementById('comp-inspector-name'));
+  if (inp) {
+    inp.value = getInspectorName();
+    if (!inp.dataset.wired) {
+      inp.dataset.wired = '1';
+      inp.addEventListener('input', () => {
+        if (!setInspectorName(inp.value)) {
+          showToast('점검자 성명 저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error');
+        }
+      });
+    }
+  }
 }
 
 export function compToggle(itemId) {

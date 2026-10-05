@@ -1,5 +1,5 @@
 // tests/dom/exams/cosmetic/formula-audit.dom.test.js — 종합 규정 점검 보고서 시나리오
-// @spec FO-56
+// @spec FO-56,FO-69
 // 설계: docs/dev/design/AUDIT_REPORT_DESIGN.md (DOC-DSN-14)
 // 검증: 보고서 버튼 존재, auditPrintReport→print-area 렌더·print 호출,
 //       체크 상태 반영, 유형별 섹션 게이트, 광고 점검 영속 왕복
@@ -102,6 +102,33 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(html).toContain('알레르기 상담');
         expect(html).toContain('개인정보');
         expect(html).not.toContain('포뮬러 규정 검증'); // sales는 제조 안 함
+    });
+
+    it('점검자 성명 — 패널 입력 영속 → 보고서 서명란 기입 (FO-69)', async () => {
+        openCompliancePanel();
+        const inp = /** @type {HTMLInputElement} */(el('comp-inspector-name'));
+        expect(inp).toBeTruthy();
+        expect(inp.value).toBe('');
+
+        inp.value = '홍길동';
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(getJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME)).toBe('홍길동');
+
+        // 패널 재진입 시 저장값 복원
+        openCompliancePanel();
+        expect(el('comp-inspector-name').value).toBe('홍길동');
+
+        await auditPrintReport();
+        const html = printArea().innerHTML;
+        expect(html).toContain('점검자(조제관리사/책임판매관리자): 홍길동 (인)');
+        expect(html).toContain('확인자: ______________'); // 수기 서명란 유지
+
+        // 비우기 → 공란 출력으로 복귀
+        el('comp-inspector-name').value = '';
+        el('comp-inspector-name').dispatchEvent(new Event('input', { bubbles: true }));
+        expect(getJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME)).toBeNull();
+        await auditPrintReport();
+        expect(printArea().innerHTML).toContain('점검자(조제관리사/책임판매관리자): ______________');
     });
 
     it('빈 데이터 — 기록 없음 섹션 표기 + 출력 가능', async () => {

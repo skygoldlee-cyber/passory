@@ -1,5 +1,5 @@
 // Formula OS — 종합 규정 점검 보고서 수집기 (FO-56)
-// @spec FO-56,FO-59,FO-63,FO-64,FO-66,FO-67
+// @spec FO-56,FO-59,FO-63,FO-64,FO-66,FO-67,FO-69
 // 사업 유형별 법규 점검 자산(체크리스트·표시사항·광고 점검·포뮬러 검증·
 // 조제 기록·원료 기한·고객 상담·이상사례)을 출력 순간 라이브 수집해 fp-doc 보고서로 산출.
 // 보고서 결과 자체는 저장하지 않는다 — 출력이 곧 스냅샷 (설계 DOC-DSN-14).
@@ -8,7 +8,7 @@
 
 import { getJSON, setJSON } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
-import { getBizType, BIZ_TYPES, bizVisible, bizChecklistSet } from '../biz-profile.js';
+import { getBizType, BIZ_TYPES, bizVisible, bizChecklistSet, getInspectorName } from '../biz-profile.js';
 import { CHECKLIST_SETS, LAW_DOCS, loadChecks } from './formula-compliance.js';
 import { summarizeLabelDraft } from './formula-sales.js';
 import { listFormulas } from '../formula-store.js';
@@ -325,6 +325,7 @@ export function collectAuditReportData(now) {
     appVersion: (typeof window !== 'undefined' && window.APP_VERSION) || '',
     notice: getNoticeStamp(),  // FO-64 — 진입 시 채워진 고시 기준 스탬프 (미로드 시 null)
     printedBy: deviceLabel(),  // FO-67 — 서명란 출력 기록 (브라우저·OS 요약)
+    inspector: getInspectorName(),  // FO-69 — 점검자 성명 (미설정 시 '' → 서명란 공란)
     biz,
     setLabel: set.label,
     sections,

@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 종합 보고서 점검자 성명 기입 (FO-69)
+
+- **점검자 입력 필드**: 법규 준수 패널에 '보고서 점검자' 섹션 + `comp-inspector-name` 입력 — 입력 즉시 `FORMULA_INSPECTOR_NAME`에 영속, 비우기는 키 제거로 미설정 복귀. 백업·동기 대상(`BACKUP_KEYS`)이라 기기 변경·복원 후에도 유지
+- **서명란 기입**: `biz-profile.js`의 `getInspectorName`/`setInspectorName` 접근자 → `collectAuditReportData`가 `inspector`로 수집 → `buildAuditReportHtml` 서명란에 `성명 (인)` 기입. 미설정 시 기존 공란 출력, 확인자·확인일은 수기 서명용 공란 유지. 성명은 `esc()` 이스케이프
+- **검증**: 유닛 +4건·DOM +1건 전부 통과 — SPEC FO-69 신설, TRACE_MATRIX 재생성
+
 ## 2026-10-05 인쇄 표 페이지 분할 미관 개선 + 격자선 시인성
 
 - **페이지 분할 상단선 소실 수정**: `fp-table`에 `box-decoration-break: clone` — 테이블 `border-top`이 첫 조각에만 그려져 넘어간 페이지가 "열린 표"로 보이던 문제 해소. 조각마다 테두리 박스 복제
