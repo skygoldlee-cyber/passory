@@ -13,7 +13,11 @@ import { showToast, showAlert } from "./ui-utils.js";
 // 과대 측정 시 .main-content 끝이 화면 밖으로 나가 스크롤 끝 콘텐츠가 탭 바에 가려짐.
 export function initViewportHeight() {
     const sync = () => {
-        const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const vv = window.visualViewport;
+        // 핀치 줌은 제외 — scale>1이면 height가 배율만큼 축소 보고돼 --app-height가
+        // 앱 셸을 위쪽으로 잘라 하단이 화면 밖처럼 보인다 (키보드 개폐는 scale=1 유지)
+        if (vv && vv.scale !== 1) return;
+        const h = vv ? vv.height : window.innerHeight;
         document.documentElement.style.setProperty('--app-height', `${h}px`);
     };
     sync();

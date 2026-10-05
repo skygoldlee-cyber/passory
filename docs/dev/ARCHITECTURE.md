@@ -1419,6 +1419,8 @@ app-fallback.js 폴링 시작 (400ms 간격, 15s 데드라인)
    단, 설치형 PWA 콜드 스타트에서 `dvh`가 실제 화면보다 크게 측정되는 사례가 있어(스플래시~시스템 인셋 확정 사이),
    `initViewportHeight()`가 `visualViewport.height`를 `--app-height` CSS 변수로 반영하고
    `.app-container { height: var(--app-height, 100dvh) }`로 사용 — `resize`/`orientationchange`/`visualViewport.resize`에 자동 갱신.
+   단 핀치 줌(`visualViewport.scale !== 1`) 중에는 동기화를 건너뛴다 — 줌 중 height가 배율만큼 축소 보고돼
+   그대로 반영하면 앱 셸이 위쪽으로 찌그러져 하단(교재리더 본문 등)이 잘려 보인다. 키보드 개폐는 scale=1 유지.
    과대측정 시 `.main-content` 끝이 화면 밖으로 밀려 스크롤 끝 콘텐츠가 탭 바에 가려지는 실제 장애를 유발했다
 2. **Safe Area 대응**: `env(safe-area-inset-bottom)` → iPhone 홈 인디케이터 영역 자동 확보
 3. **하단 탭 바 겹침 방지**: `.main-content`는 `padding-bottom: calc(80px + safe)`(탭 바 70px + 여유 10px)와
