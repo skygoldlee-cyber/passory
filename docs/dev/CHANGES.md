@@ -6,7 +6,13 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
-## 2026-10-05 인쇄 표 격자선 시인성 수정 — fp-table 전용 진한 테두리
+## 2026-10-05 인쇄 표 페이지 분할 미관 개선 + 격자선 시인성
+
+- **페이지 분할 상단선 소실 수정**: `fp-table`에 `box-decoration-break: clone` — 테이블 `border-top`이 첫 조각에만 그려져 넘어간 페이지가 "열린 표"로 보이던 문제 해소. 조각마다 테두리 박스 복제
+- **반복 헤더 배경 인쇄 강제**: `th`·`fp-phase-head`에 `print-color-adjust: exact` — 브라우저 기본 "배경 그래픽 끔"에서도 헤더·단계 구분 행 배경 출력 (옅은 회색이라 잉크 부담 미미)
+- **서명란 분할**: 기존 `fp-sign-row`의 `break-inside: avoid`로 이미 커버 — 확인만
+- **fp-table 격자선 무보임**: `--print-border`(#e5e7eb) → `--print-border-strong`(#9ca3af) 토큰 신설 후 전면 적용 — 인쇄 시 육안 식별 가능 수준
+- **검증**: check:types·lint 통과
 
 - **종합 점검 보고서 등 인쇄 산출물의 표 선 무보임**: `fp-table` 격자선이 `--print-border`(#e5e7eb)라 인쇄 출력에서 사실상 식별 불가 — `--print-border-strong`(#9ca3af) 토큰 신설 후 fp-table 상·좌측 + th·td 하·우측 전면 적용. 조제 기록지·작업지시서·판매내역서·종합 보고서 등 fp-table 사용 문서 일괄 개선
 - **검증**: check:types·lint 통과

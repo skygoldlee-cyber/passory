@@ -244,6 +244,10 @@
         border-spacing: 0;
         border-top: 1px solid var(--print-border-strong);
         border-left: 1px solid var(--print-border-strong);
+        /* clone: 페이지 분할 시 상단선이 첫 조각에만 그려지는 것 방지 —
+           각 페이지 조각의 표 상단에 테두리 박스를 복제해 "열린 표" 방지 */
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
         margin-top: 8pt;
         font-size: 9.5pt;
     }
@@ -272,6 +276,10 @@
 
     #formula-print-area .fp-table th {
         background: var(--print-bg-subtle);
+        /* exact: 브라우저 기본 "배경 그래픽 끔"에서도 헤더 배경 출력 —
+           페이지 분할 시 반복되는 헤더 행이 본문과 구분되도록 */
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 
     #formula-print-area .fp-table .fp-num {
@@ -359,6 +367,9 @@
     }
     #formula-print-area .fp-phase-head {
         background: var(--print-bg-subtle);
+        /* exact: 단계 구분 행 배경을 인쇄에 강제 — th와 동일 사유 */
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
         font-weight: 700;
         font-size: 9.5pt;
     }
