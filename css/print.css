@@ -40,7 +40,8 @@
     .review-header,
     #review-empty-state,
     .btn,
-    .sidebar-footer {
+    .sidebar-footer,
+    .skip-link {
         display: none !important;
     }
 
