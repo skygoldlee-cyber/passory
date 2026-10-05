@@ -125,6 +125,21 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         expect(modal.querySelector('#img-zoom-body img.img-zoom-target')).not.toBeNull();
     });
 
+    it('테이블 — 래퍼 렌더 + 가로 스크롤 CSS (width:100% 압축 회귀 방지)', async () => {
+        window.__DOC_MD__[PATHS.USER_MANUAL] = '# 문서\n\n| a | b |\n|---|---|\n| 1 | 2 |\n';
+        await ManualViewer.openManual();
+        await flushAsync(30);
+
+        const wrap = el('manual-article').querySelector('.reader-table-wrapper');
+        expect(wrap).not.toBeNull();
+        expect(wrap.querySelector('table.reader-table')).not.toBeNull();
+        const css = el('manual-overlay-style').textContent;
+        // 넓은 표가 자연 폭으로 늘어나 래퍼가 가로 스크롤해야 한다
+        expect(css).toContain('.reader-table{width:max-content');
+        expect(css).toContain('min-width:100%');
+        expect(css).toContain('overflow-x:auto');
+    });
+
     it('닫기 → 오버레이 닫힘·body 클래스 해제', async () => {
         await ManualViewer.openManual();
         await flushAsync(30);

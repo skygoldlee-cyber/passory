@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-05 매뉴얼 오버레이 테이블 가로 스크롤 복원
+
+- **문제**: 학습안내서·매뉴얼의 넓은 표가 매뉴얼 오버레이에서 압축 표시 — `#manual-article .reader-table`의 `width:100%`가 표를 컨테이너 폭으로 강제해 셀이 잘려 보임. 교재 리더의 `.reader-table`은 width 미지정으로 자연 폭 + `reader-table-wrapper`의 `overflow-x:auto`가 정상 스크롤
+- **수정**: 오버레이 테이블을 `width:max-content; min-width:100%`로 — 좁으면 컨테이너 폭, 넓으면 자연 폭으로 늘어나 래퍼 가로 스크롤. `th{white-space:nowrap}`(리더와 동일), `td{min-width:5em;max-width:26em;vertical-align:top}`로 과도한 폭 방지, `-webkit-overflow-scrolling:touch`
+- **검증**: check:types·lint·study-manual DOM 8건 통과
+
 ## 2026-10-05 보고서 출력 이력 삭제 버튼 (FO-63 확장)
 
 - **이력 삭제 버튼**: 법규 준수 패널 '보고서 출력 이력' 섹션 헤더에 [이력 삭제] — `compAuditLogClear`가 확인 후 `FORMULA_AUDIT_LOG` 전체 삭제. 이전에는 전체 초기화로만 삭제 가능했고 패널의 '초기화'는 체크 상태만 리셋했음

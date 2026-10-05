@@ -92,13 +92,17 @@ export const ManualViewer = (() => {
 #manual-overlay #manual-article hr{border:none;border-top:1px solid var(--border-color);
   margin:2rem 0;}
 #manual-overlay #manual-article sup{color:var(--color-warning);}
-#manual-overlay #manual-article .reader-table-wrapper{margin:1.25rem 0;overflow-x:auto;}
-#manual-overlay #manual-article .reader-table{width:100%;border-collapse:collapse;
+#manual-overlay #manual-article .reader-table-wrapper{margin:1.25rem 0;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;}
+/* width:max-content + min-width:100% — 좁으면 컨테이너 폭, 넓으면 자연 폭으로 늘어나
+   래퍼가 가로 스크롤 (교재 리더 .reader-table과 동일 동작). td max-width로 과도한 폭 제한 */
+#manual-overlay #manual-article .reader-table{width:max-content;min-width:100%;border-collapse:collapse;
   border:1px solid var(--border-color);border-radius:8px;overflow:hidden;}
 #manual-overlay #manual-article .reader-table th,
 #manual-overlay #manual-article .reader-table td{padding:.75rem 1rem;text-align:left;
-  border-bottom:1px solid var(--border-color);}
-#manual-overlay #manual-article .reader-table th{
+  border-bottom:1px solid var(--border-color);vertical-align:top;}
+#manual-overlay #manual-article .reader-table td{min-width:5em;max-width:26em;}
+#manual-overlay #manual-article .reader-table th{white-space:nowrap;
   background:rgba(6,182,212,.12);color:var(--color-primary);font-weight:700;
   border-bottom:2px solid var(--color-primary);}
 #manual-overlay #manual-article .reader-table tr:last-child td{border-bottom:none;}
