@@ -48,28 +48,44 @@ function section(data, id) {
    유형별 섹션 게이트 (BIZ_PANELS 재사용)
    ======================================================= */
 
-test('custom 유형 — 체크리스트+포뮬러·배치·원료·고객, 라벨·광고 제외', () => {
+test('custom 유형 — 고객 첫·체크리스트 끝 순서, 라벨·광고 제외', () => {
   const d = collectAuditReportData(NOW);
   assert.deepEqual(
     d.sections.map(s => s.id),
-    ['checklist', 'formulas', 'batches', 'materials', 'customers']);
+    ['customers', 'formulas', 'batches', 'materials', 'checklist']);
   assert.equal(d.biz.id, 'custom');
   assert.equal(d.generatedAt, '2026-10-05T10:00:00.000Z');
 });
 
-test('mfg 유형 — 라벨·광고·포뮬러·배치·원료 포함, 고객 제외', () => {
+test('mfg 유형 — 라벨·광고·포뮬러·배치·원료 포함, 고객 제외·체크리스트 끝', () => {
   setBizType('mfg');
   const d = collectAuditReportData(NOW);
   const ids = d.sections.map(s => s.id);
-  assert.deepEqual(ids, ['checklist', 'label', 'adlint', 'formulas', 'batches', 'materials']);
+  assert.deepEqual(ids, ['label', 'adlint', 'formulas', 'batches', 'materials', 'checklist']);
   assert.equal(d.biz.id, 'mfg');
   assert.equal(d.setLabel, '화장품제조업 (CGMP)');
 });
 
-test('sales 유형 — 라벨·광고·고객 포함, 포뮬러·배치·원료 제외', () => {
+test('sales 유형 — 고객 첫·체크리스트 끝, 포뮬러·배치·원료 제외', () => {
   setBizType('sales');
   const d = collectAuditReportData(NOW);
-  assert.deepEqual(d.sections.map(s => s.id), ['checklist', 'label', 'adlint', 'customers']);
+  assert.deepEqual(d.sections.map(s => s.id), ['customers', 'label', 'adlint', 'checklist']);
+});
+
+test('비대상 유형의 잔존 데이터 — 패널 숨겨도 보고서에 비대상 표기로 포함', () => {
+  createCustomer({ name: '홍길동', consultLog: [{ date: '2026-10-01', text: '상담' }] });
+  createFormula({ name: '잔존 처방', ingredients: [{ name: '정제수', concentration: 80 }] });
+  setBizType('mfg'); // customer 패널 비대상 — 카드가 있으면 보고해야 함
+  const d = collectAuditReportData(NOW);
+  const cust = section(d, 'customers');
+  assert.ok(cust, 'mfg에도 고객 카드 잔존 시 섹션 포함');
+  assert.match(cust.summary, /비대상 잔존/);
+  assert.equal(cust.rows[0].name, '홍길동');
+  // sales로 전환 — formulas 패널 비대상이지만 처방 잔존 → 포함
+  setBizType('sales');
+  const f = section(collectAuditReportData(NOW), 'formulas');
+  assert.ok(f, 'sales에도 포뮬러 잔존 시 섹션 포함');
+  assert.match(f.summary, /비대상 잔존/);
 });
 
 /* =======================================================
@@ -197,6 +213,18 @@ test('buildAuditReportHtml — 헤더·섹션 번호·서명·면책·개인정�
   assert.ok(html.includes('법률 자문이 아닙니다'));
   assert.ok(html.includes('개인정보'));
   assert.ok(html.includes('기록 없음'));
+});
+
+test('buildAuditReportHtml — 미점검 항목은 한 줄 압축 (note·근거 생략)', () => {
+  let html = buildAuditReportHtml(collectAuditReportData(NOW)); // 전 항목 미점검
+  assert.ok(html.includes('미점검'));
+  assert.ok(!html.includes('근거:'), '미점검만 있으면 근거 줄 없음');
+  setJSON(STORAGE_KEYS.COMPLIANCE_CHECKS, {
+    checked: { [FIRST_CHECK_ID]: '2026-10-01T09:30:00Z' },
+    updatedAt: '2026-10-01T09:30:00Z',
+  });
+  html = buildAuditReportHtml(collectAuditReportData(NOW));
+  assert.equal(html.split('근거:').length - 1, 1, '점검 완료 1건만 근거 1줄');
 });
 
 test('buildAuditReportHtml — 체크 항목 ☑ 렌더 + 유형별 섹션 라벨 (mfg)', () => {

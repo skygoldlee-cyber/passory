@@ -209,13 +209,21 @@ export function collectAuditReportData(now) {
   const checked = loadChecks(set);
 
   /** @type {Array<object>} */
-  const sections = [collectChecklist(set, checked)];
-  if (bizVisible('label', biz.id)) sections.push(collectLabel());
-  if (bizVisible('adlint', biz.id)) sections.push(collectAdlint());
-  if (bizVisible('calc', biz.id)) sections.push(collectFormulas());
-  if (bizVisible('batch', biz.id)) sections.push(collectBatches());
-  if (bizVisible('material', biz.id)) sections.push(collectMaterials());
-  if (bizVisible('customer', biz.id)) sections.push(collectCustomers());
+  const sections = [];
+  // 섹션 게이트 — 패널 가시(bizVisible)면 미실시도 '기록 없음'으로 표기,
+  // 패널이 숨겨져도 잔존 데이터가 있으면 감사 증적이므로 비대상 표기로 포함한다.
+  const pushIf = (panel, s) => {
+    if (bizVisible(panel, biz.id)) { sections.push(s); return; }
+    if (!s.empty) { s.summary += ' — 현재 사업 유형 비대상 잔존 데이터'; sections.push(s); }
+  };
+  // 순서 — 고객 정보가 맨 앞, 법규 준수 체크리스트가 맨 뒤 (실무 증적 → 준수 확인 결론)
+  pushIf('customer', collectCustomers());
+  pushIf('label', collectLabel());
+  pushIf('adlint', collectAdlint());
+  pushIf('calc', collectFormulas());
+  pushIf('batch', collectBatches());
+  pushIf('material', collectMaterials());
+  sections.push(collectChecklist(set, checked));
 
   return {
     generatedAt: (now instanceof Date ? now : new Date()).toISOString(),

@@ -164,10 +164,17 @@ function auditFmtDateTime(v) {
 function auditChecklistBody(s) {
   const rows = s.groups.map(g => {
     const doneN = g.items.filter(i => i.done).length;
-    const items = g.items.map(it => `<tr>
-      <td class="fp-check-cell">${it.done ? '☑' : '☐'}</td>
+    // 미점검 항목은 note·근거를 생략해 한 줄로 압축 — 상세 증적은 점검 완료 항목에만 남긴다
+    const items = g.items.map(it => it.done
+      ? `<tr>
+      <td class="fp-check-cell">☑</td>
       <td>${esc(it.text)}${it.note ? `<br><span class="fp-meta-line">${esc(it.note)}</span>` : ''}${it.refs && it.refs.length ? `<br><span class="fp-meta-line">근거: ${esc(it.refs.join(' · '))}</span>` : ''}</td>
-      <td class="fp-num">${it.done ? esc(it.doneAt || '') : '미점검'}</td>
+      <td class="fp-num">${esc(it.doneAt || '')}</td>
+    </tr>`
+      : `<tr>
+      <td class="fp-check-cell">☐</td>
+      <td>${esc(it.text)}</td>
+      <td class="fp-num">미점검</td>
     </tr>`).join('');
     return `<tr><td colspan="3" class="fp-phase-head">${esc(g.title)} (${doneN}/${g.items.length})</td></tr>${items}`;
   }).join('');
