@@ -7,14 +7,14 @@ import { renderPerformanceChart, renderPassFailDiagnosis, renderRadarChart } fro
 import { switchView } from './navigation.js';
 import { updateStreakAndDailyUI } from './daily-challenge.js';
 import { updatePomodoroUI } from './pomodoro.js';
-import { getDueCount } from '../spaced-repetition.js';
+import { getDueCount, getDueCards } from '../spaced-repetition.js';
 import {
     computeRecommendations, estimateCompositeScore,
     computeCalibrationBias, getActualResult, saveActualResult, clearActualResult,
     getSimHistory, computeWrongCauseSummary, getWrongCauseLabels,
     snapshotRecommendations, evaluateRecommendationEffect
 } from '../recommendations.js';
-import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject } from '../study-tracker.js';
+import { getDDay, getExamPlanStatus, getStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject, sumRecentQuizzesBySubject } from '../study-tracker.js';
 import { getWeakStatements, getDueStatementSids, getAnomalousStatements, getAllStatementStats } from '../statement-tracker.js';
 import {
     computeSubjectWeakChapters, computeWeeklyGrowth, computePassGap,
@@ -419,6 +419,7 @@ function _allocInputs() {
         weakCards: state.weakCards,
         exams: (DataLoader.registry && DataLoader.registry.exams) || [],
         wrongCauses: state.wrongCauses,
+        dueCardIds: getDueCards(),
         weakChapterGroups: _weakChapterGroups()
     });
 }
@@ -446,16 +447,19 @@ function _renderSmartPlanInsight() {
         return;
     }
     const doneBySubj = sumRecentCardsBySubject(getStudyCalendar());
+    const quizDoneBySubj = sumRecentQuizzesBySubject(getStudyCalendar());
     const rowsHtml = alloc.thisWeek.alloc.filter(a => a.remaining > 0).map(a => {
         const done = doneBySubj[a.key] || 0;
+        const qDone = quizDoneBySubj[a.key] || 0;
         const met = a.cards > 0 && done >= a.cards;
+        const quizPart = a.quizzes > 0 ? ` · 퀴즈 ${qDone}/${a.quizzes}문` : '';
         const badgesHtml = (a.weakBadge ? ' <span class="alloc-badge alloc-badge-weak">약점</span>' : '')
             + (alloc.hasWeights && a.weightPct > 0 ? ` <span class="alloc-badge">${a.weightPct}%</span>` : '');
-        return `<div class="wc-row"><span>${esc(a.name)}${badgesHtml}</span><strong${met ? ' class="alloc-met"' : ''}>${done}/${a.cards}장</strong></div>`;
+        return `<div class="wc-row"><span>${esc(a.name)}${badgesHtml}</span><strong${met ? ' class="alloc-met"' : ''}>${done}/${a.cards}장${quizPart}</strong></div>`;
     }).join('');
     el.innerHTML = `<h4>🧠 이번 주 스마트학습 <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span></h4>
         ${rowsHtml}
-        <p class="analysis-advice">배정 = 잔여량 × 출제 비중 × 약점 가중 — 칩의 ⓘ 버튼으로 과목별 근거를 볼 수 있습니다.</p>
+        <p class="analysis-advice">배정 = 잔여량 × 출제 비중 × 약점 가중(밀린 복습 포함) — 칩의 ⓘ 버튼으로 과목별 근거를 볼 수 있습니다.</p>
         <button class="btn btn-secondary btn-sm analysis-card-btn" data-click="switchView" data-arg="calendar-view"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> 캘린더 보기</button>`;
 }
 
@@ -667,10 +671,26 @@ function _renderPassGapInsight() {
     const weakBtn = gap.weakest
         ? `<button class="btn btn-primary btn-sm analysis-card-btn" data-click="startSubjectQuiz" data-arg="${esc(gap.weakest.key)}"><i class="fa-solid fa-play" aria-hidden="true"></i> ${esc(gap.weakest.name)} 퀴즈</button>`
         : '';
+    // SC-14 합격 갭→목표 상향 권고 — 진단 갭을 계획 파라미터 조정 동선으로 연결
+    let goalAdviceHtml = '';
+    if (gap.gap !== null && gap.gap > 0) {
+        const planSubjects = (subjects && subjects.length) ? subjects
+            : Object.keys(window.STUDY_DATA || {}).map(k => ({
+                key: k, stats: { cards: (((window.STUDY_DATA || {})[k] || {}).cards || []).length }
+            }));
+        const totalCards2 = planSubjects.reduce((s, m) => s + _displayCounts(m).cards, 0);
+        const plan = totalCards2 > 0 ? computeStudyPlan(Math.max(0, totalCards2 - state.memorizedCards.size)) : null;
+        const goals = getStudyGoals();
+        const advice = (plan && plan.tier !== 'done' && plan.perStudyDay > goals.dailyCards)
+            ? `예상 점수가 합격선에 미달합니다. 계획 속도를 따라잡으려면 일일 카드 목표를 ${goals.dailyCards}→${plan.perStudyDay}장으로 올리는 것을 권장합니다.`
+            : '예상 점수가 합격선에 미달합니다. 일일 목표 또는 주간 학습 일수를 올려 커버 속도를 높이는 것을 권장합니다.';
+        goalAdviceHtml = `<p class="analysis-advice">${esc(advice)}</p>
+            <button class="btn btn-secondary btn-sm analysis-card-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear" aria-hidden="true"></i> 목표 상향</button>`;
+    }
     el.innerHTML = `<h4>🎓 합격 갭 분석</h4>
         ${gapRow}${weakRow}
         ${gap.weakest ? `<p class="analysis-advice">${esc(gap.weakest.reason)} — 이 과목이 점수 상승 여력이 가장 큽니다.</p>` : ''}
-        ${weakBtn}`;
+        ${weakBtn}${goalAdviceHtml}`;
 }
 
 /**
@@ -867,10 +887,11 @@ export function exportAnalysisReport() {
     const weekAlloc = weekPlan && weekPlan.tier !== 'done'
         ? computeSubjectAllocation(weekPlan, subjects, _allocInputs()) : null;
     const doneBySubj = weekAlloc ? sumRecentCardsBySubject(getStudyCalendar()) : {};
+    const quizDoneBySubj = weekAlloc ? sumRecentQuizzesBySubject(getStudyCalendar()) : {};
     const planBySubject = weekAlloc
         ? weekAlloc.thisWeek.alloc
             .filter(a => a.remaining > 0 && a.cards > 0)
-            .map(a => ({ name: a.name, done: doneBySubj[a.key] || 0, cards: a.cards }))
+            .map(a => ({ name: a.name, done: doneBySubj[a.key] || 0, cards: a.cards, quizDone: quizDoneBySubj[a.key] || 0, quizzes: a.quizzes || 0 }))
         : null;
     const text = buildWeeklyReportText({
         appName: getExamAppName(),

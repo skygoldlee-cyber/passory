@@ -119,6 +119,7 @@
  * @property {number}  [_prevMemCount]   이전 외운 카드 수 (변동 감지용)
  * @property {number}  [_prevQuizCount]  이전 퀴즈 결과 수 (변동 감지용)
  * @property {Object.<string, number>} [_prevMemBySubj] 과목별 이전 외운 카드 수 (SC-09 bySubj 증분용)
+ * @property {Object.<string, number>} [_prevQuizBySubj] 과목별 이전 퀴즈 풀이 수 (SC-13 quizBySubj 증분용)
  */
 
 /**

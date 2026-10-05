@@ -1,6 +1,6 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
 // @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject, sumRecentQuizzesBySubject, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
 import { computeSubjectWeakChapters } from '../analysis-engine.js';
 import { getAllStatementStats } from '../statement-tracker.js';
 import { proFeatureNotice, refreshProBadges } from '../pro-upgrade.js';
@@ -13,6 +13,7 @@ import { DataLoader } from '../data-loader.js';
 import { switchView } from './navigation.js';
 import { esc } from '../sanitize.js';
 import { resolveWrongQuiz } from '../weak-items.js';
+import { getDueCards } from '../spaced-repetition.js';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -260,6 +261,7 @@ function _subjectAllocHtml(plan) {
         weakCards: state.weakCards,
         exams: (typeof DataLoader !== 'undefined' && DataLoader.registry ? DataLoader.registry.exams : []) || [],
         wrongCauses: state.wrongCauses || {},
+        dueCardIds: getDueCards(),
         weakChapterGroups: computeSubjectWeakChapters({
             quizResults: state.quizResults, weakCards: state.weakCards,
             statementStats: getAllStatementStats(),
@@ -270,18 +272,22 @@ function _subjectAllocHtml(plan) {
     const alloc = computeSubjectAllocation(plan, subjects, inputs);
     if (!alloc) return '';
     const doneBySubj = sumRecentCardsBySubject(getStudyCalendar());
+    const quizDoneBySubj = sumRecentQuizzesBySubject(getStudyCalendar());
     const chips = alloc.thisWeek.alloc.map(a => {
         if (a.remaining === 0) return `<span class="alloc-chip alloc-done">${esc(a.name)} 완료</span>`;
         const done = doneBySubj[a.key] || 0;
+        const qDone = quizDoneBySubj[a.key] || 0;
         const metCls = a.cards > 0 && done >= a.cards ? ' alloc-chip-met' : '';
-        const badges = (a.weakBadge ? '<span class="alloc-badge alloc-badge-weak" title="약점 가중 반영 — 최근 퀴즈 정답률·취약 카드·오답 원인·취약 단원">약점</span>' : '')
+        // SC-13 퀴즈 배분 병기 — 배정된 퀴즈가 있을 때만 `·실적/배정문`
+        const quizPart = a.quizzes > 0 ? `·${qDone}/${a.quizzes}문` : '';
+        const badges = (a.weakBadge ? '<span class="alloc-badge alloc-badge-weak" title="약점 가중 반영 — 최근 퀴즈 정답률·취약 카드·오답 원인·취약 단원·밀린 복습">약점</span>' : '')
             + (alloc.hasWeights && a.weightPct > 0 ? `<span class="alloc-badge" title="출제 비중 ${a.weightPct}%">${a.weightPct}%</span>` : '');
         const whyHtml = `<button type="button" class="alloc-why" data-click="gotoSubjectAnalysis" data-arg="${esc(a.key)}" title="배정 근거 보기 — 맞춤학습의 ${esc(a.name)} 분석으로 이동"><i class="fa-solid fa-circle-question" aria-hidden="true"></i><span class="sr-only">${esc(a.name)} 배정 근거</span></button>`;
-        return `<span class="alloc-chip-wrap"><button type="button" class="alloc-chip${metCls}" data-click="startSubjectStudy" data-arg="${esc(a.key)}" title="${esc(a.name)} 카드 학습으로 이동">${esc(a.name)} ${done}/${a.cards}장${badges}</button>${whyHtml}</span>`;
+        return `<span class="alloc-chip-wrap"><button type="button" class="alloc-chip${metCls}" data-click="startSubjectStudy" data-arg="${esc(a.key)}" title="${esc(a.name)} 카드 학습으로 이동">${esc(a.name)} ${done}/${a.cards}장${quizPart}${badges}</button>${whyHtml}</span>`;
     }).join('');
     const cols = alloc.thisWeek.alloc.map(a => `<th>${esc(a.name)}</th>`).join('');
     const mrows = alloc.weeks.slice(0, 12).map(w =>
-        `<tr><td>${w.week}주차</td>${w.alloc.map(a => `<td>${a.cards}</td>`).join('')}</tr>`).join('');
+        `<tr><td>${w.week}주차</td>${w.alloc.map(a => `<td>${a.cards}장${a.quizzes > 0 ? `·${a.quizzes}문` : ''}</td>`).join('')}</tr>`).join('');
     const more = alloc.weeks.length > 12
         ? `<tr><td colspan="${alloc.thisWeek.alloc.length + 1}" class="plan-more">… 이후 ${alloc.weeks.length - 12}주</td></tr>` : '';
     return `
@@ -291,7 +297,7 @@ function _subjectAllocHtml(plan) {
                 <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span>
             </div>
             <div class="plan-alloc-chips">${chips}</div>
-            <p class="plan-alloc-basis">${alloc.hasWeights ? '배정 근거: 잔여량 × 출제 비중 × 약점 가중(최근 퀴즈 정답률·취약 카드·오답 원인·취약 단원)' : '배정 근거: 잔여량 × 약점 가중 (출제 비중 미선언 — 균등 배분)'} · 칩을 누르면 해당 과목 학습으로 이동 · ⓘ 배정 근거를 맞춤학습에서 확인</p>
+            <p class="plan-alloc-basis">${alloc.hasWeights ? '배정 근거: 잔여량 × 출제 비중 × 약점 가중(최근 퀴즈 정답률·취약 카드·오답 원인·취약 단원·밀린 복습)' : '배정 근거: 잔여량 × 약점 가중 (출제 비중 미선언 — 균등 배분)'} · 카드 장수와 퀴즈 문항을 함께 배분 · 칩을 누르면 해당 과목 학습으로 이동 · ⓘ 배정 근거를 맞춤학습에서 확인</p>
             <details class="plan-alloc-detail">
                 <summary>주차별 배분 표 펼치기</summary>
                 <table class="plan-table plan-alloc-table">

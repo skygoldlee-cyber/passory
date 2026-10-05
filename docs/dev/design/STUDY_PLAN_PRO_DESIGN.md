@@ -129,7 +129,7 @@ D-30, 전 과목 미학습(잔여 = 카드 수), 정답률 표본 없음(가중 
 
 ## 7. 미결 사항·후속
 
-- **문항(퀴즈) 배분**: 카드 완료 후 문항 풀이까지 계획에 넣을지 — 문제은행 1,000제를 같은 주차 축에 얹는 2단계 과제
+- **문항(퀴즈) 배분**: 카드 완료 후 문항 풀이까지 계획에 넣을지 — 문제은행 1,000제를 같은 주차 축에 얹는 2단계 과제 → ✅ 구현 (Rev 3 — 과목별 퀴즈 잔여 배분 + `quizBySubj` 실적 추적)
 - **재계획 이벤트**: 목표 변경·장기 미접속 시 "계획 재조정됨" 안내 — SC-07 마일스톤 id 체계(`replan-*`)로 확장 가능
 - **entitlement 실게이트**: ROAD-P1 결제 도입 시 `hasProEntitlement()` 분기 추가 — 현 설계는 표기 게이트만
 - **내보내기**: 배분표를 주간 리포트(AN-09)에도 넣을지 — Pro 리포트 가치 강화 옵션 → ✅ 구현 (Rev 2 — `p.planBySubject` 과목별 준수 행)
@@ -201,3 +201,59 @@ weakW_i     = min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost)
 |---|---|
 | 유닛 | `computeSubjectAllocInputs` 집계 · diagBoost 가산·상한 · `p.planBySubject` 리포트 행 |
 | DOM | 분석 뷰 요약 카드 렌더 · 칩 `이유` 버튼 존재 · `gotoSubjectAnalysis` 뷰 전환+앵커 |
+
+---
+
+## 10. Rev 3 — 퀴즈 배분·복습 대기 수요·목표 상향 루프 (SC-13·SC-14, 2026-10-05)
+
+§7 미결 사항의 "문항(퀴즈) 배분" 2단계 과제와 후속 두 가지 수요 신호를 구현한다.
+
+### 10.1 퀴즈 배분 (SC-13①)
+
+카드와 같은 축으로 과목별 퀴즈 풀이량을 배분한다 — 문제은행 커버리지를 계획에 편입.
+
+```text
+quizRemaining_i = max(0, 과목 퀴즈 총량 − 풀이 수_i)
+주차 퀴즈 총량  = 주차 학습일 × 일일 퀴즈 목표 (plan.weeks[w].studyDays × goals.dailyQuizzes)
+수요_i        = quizRemaining_i × 출제비중_i × weakW_i  ← 카드와 동일 가중 공유
+```
+
+- 과목 퀴즈 총량은 `stats.targetQuizzes` 상한 적용(`stats.quizzes` 폴백) — 카드 `targetCards`와 동일 규약
+- `_allocWeek` 워터필링을 재사용한 별도 배분 패스 — 잔여 상한·초과 재배분 동일
+- 칩 표기: `과목명 카드실적/카드배정장·퀴즈실적/퀴즈배정문` — 퀴즈 배정이 있을 때만 `·` 뒤 병기
+- **과목별 퀴즈 실적 추적**: 캘린더 엔트리에 `quizBySubj` 맵 추가 — `saveProgress`가
+  `_prevQuizBySubj` 차분을 `recordStudyActivity({quizBySubj})`로 기록,
+  `sumRecentQuizzesBySubject`로 최근 7일 합산 (SC-09 `bySubj`와 동형)
+- 주차 매트릭스 셀도 `카드장·퀴즈문` 병기, 맞춤학습 요약 카드·주간 리포트 `planBySubject`에 퀴즈 행 병기
+
+### 10.2 SM-2 복습 대기 수요 (SC-13②)
+
+기한을 넘긴 복습 카드는 "망각 위험 = 실질 약점"이므로 약점 가중에 가산한다:
+
+```text
+dueBoost_i = min(0.5, due_i / max(1, mem_i))   — 암기 카드 중 기한초과 비율
+weakW_i    = min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost + dueBoost)
+```
+
+- `dueBySubject`는 `computeSubjectAllocInputs({dueCardIds})`에 `getDueCards()` 결과를 전달해 집계
+- 분모는 `mem_i`(암기 수) — `remaining`은 미암기 신규 카드라 복습 대기와 무관
+- `weakBadge` 표시 조건에 `dueBoost ≥ 0.25` 추가 — "밀린 복습 있는 과목"도 근거가 보임
+- 주의: 복습 대기는 신규 카드 배분을 늘리는 신호가 아니라 **해당 과목 우선순위 가중**으로 해석 —
+  칩 클릭 시 과목 학습 세션이 복습 대기 카드를 포함해 소화하므로 동선은 닫힘
+
+### 10.3 합격 갭→목표 상향 권고 (SC-14)
+
+진단(맞춤학습 합격 갭)이 계획 파라미터(일일 목표)까지 되먹는 루프:
+
+- `gap.gap > 0`(예상 점수가 합격선 미만)일 때 합격 갭 카드에 목표 상향 권고 추가
+- `plan.perStudyDay > dailyCards`(tight/triage)이면 "일일 카드 목표를 N→M장으로"라고
+  **계산된 권장치**를 제시 — 임의 계수가 아니라 계획 수학의 필요량을 그대로 사용
+- 계획 없거나 normal이면 "일일 목표·주간 학습일 상향을 검토하세요" 일반 권고
+- 버튼 `data-click="openGoalSettings"` — 어느 뷰에서든 목표 모달 호출 가능
+
+### 10.4 테스트 계획 (Rev 3)
+
+| 계층 | 검증 |
+|---|---|
+| 유닛 | 퀴즈 잔여·주차 배분 합계 보존 · `dueBoost` 가산·상한 · `quizBySubj` 증분 기록 · `sumRecentQuizzesBySubject` |
+| DOM | 칩 `장·문` 병기 · 매트릭스 퀴즈 셀 · 분석 카드 퀴즈 행 · 합격 갭 미달 시 목표 상향 버튼 |

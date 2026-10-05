@@ -1,5 +1,5 @@
 // tests/dom/study-dashboard.dom.test.js — 대시보드 통계·추천 시나리오
-// @spec D-01~15,D-17,AN-01~03,AN-09,SC-10,SC-11
+// @spec D-01~15,D-17,AN-01~03,AN-09,SC-10,SC-11,SC-14
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 3)
 // 검증: 진도 0건 렌더(E), 시딩 진도→통계 반영(H/P), 과목 카드·히트맵(H),
 //       약점 과목 추천(H — 최소 3문 응시 조건·헷갈림 카드最多)
@@ -22,6 +22,8 @@ import {
 import { updateGlobalStats, renderDashboard, renderAnalysisView, gotoSubjectAnalysis } from '../../src/views/dashboard.js';
 import { setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { state } from '../../src/state.js';
+import { STORAGE_KEYS } from '../../src/storage-keys.js';
+import { scopedKey } from '../../src/exam-context.js';
 
 const todayPlus = (days) => {
     const d = new Date();
@@ -258,6 +260,24 @@ describe('맞춤학습 뷰 — 진단 요약 카드', () => {
         gotoSubjectAnalysis('subja');
         await flushAsync(80);
         expect(el('subj-card-subja').classList.contains('subj-card-flash')).toBe(true);
+    });
+
+    it('합격 갭 미달 → 일일 목표 상향 권고 + 설정 버튼 (SC-14)', () => {
+        seedTwoSubjects();
+        // 예상 점수 40 — 합격선(평균 60) 미만 → gap = 20
+        localStorage.setItem(scopedKey(STORAGE_KEYS.SIM_RESULTS_HISTORY), JSON.stringify([
+            { date: '2026-10-01', examId: 'x', rate: 40, subjectRates: { subja: 40, subjb: 40 } },
+        ]));
+        // 잔여 4장 ÷ 학습일 1일(D-2, 주5일) = perStudyDay 4 > 일일 목표 1 → 권장치 제시
+        setStudyGoals({ dailyCards: 1 });
+        setExamDate(todayPlus(2));
+        renderAnalysisView();
+
+        const card = el('analysis-pass-gap');
+        expect(card.textContent).toContain('합격선');
+        expect(card.textContent).toContain('미달');
+        expect(card.textContent).toContain('1→4장');
+        expect(card.querySelector('[data-click="openGoalSettings"]')).not.toBeNull();
     });
 
     it('오답 원인 태그 → 분포와 권장 학습법 표시', () => {

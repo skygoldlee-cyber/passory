@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-12,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-12,SC-13,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -452,4 +452,76 @@ test('computeSubjectAllocation: 진단+퀴즈+취약카드 합산도 약점 가�
   });
   const a = res.weeks[0].alloc.find(x => x.key === 'suba');
   assert.equal(a.weakW, tracker.MAX_WEAK_WEIGHT); // 3.0 → 2.5 캡
+});
+
+// --- SC-13 퀴즈 배분 + SM-2 복습 대기 수요 ---
+
+const mkPlanQ = (cards, studyDays, dailyQuizzes) => ({
+  weeks: cards.map(c => ({ week: 1, range: 'D-x', cards: c, studyDays })),
+  goals: { dailyCards: 50, dailyQuizzes, weeklyStudyDays: studyDays }
+});
+
+test('computeSubjectAllocation: 퀴즈 배분 — 과목별 잔여·주차 총량·보존 (SC-13)', () => {
+  const plan = mkPlanQ([20, 20], 5, 10); // 주차 퀴즈 총량 = 5일 × 10문 = 50
+  const subjects = [
+    { key: 'suba', name: 'suba', stats: { cards: 20, quizzes: 60 } },
+    { key: 'subb', name: 'subb', stats: { cards: 20, quizzes: 20 } },
+  ];
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    quizBySubject: { subb: { solved: 10, correct: 5 } }, // subb 잔여 10
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  assert.equal(res.weeks[0].quizTotal, 50);
+  const row = (w, k) => res.weeks[w].alloc.find(a => a.key === k);
+  // 잔여 60:10 → suba 우위, 합계는 총량 50 보존
+  assert.equal(row(0, 'suba').quizzes + row(0, 'subb').quizzes, 50);
+  assert.ok(row(0, 'suba').quizzes > row(0, 'subb').quizzes);
+  // 주차 누적 잔여 상한 — subb 전 주차 합계는 잔여 10을 넘지 않음
+  assert.ok(row(0, 'subb').quizzes + row(1, 'subb').quizzes <= 10);
+  // alloc 행에 quizRemaining 노출
+  assert.equal(row(0, 'suba').quizRemaining, 60);
+  assert.equal(row(0, 'subb').quizRemaining, 10);
+});
+
+test('computeSubjectAllocation: SM-2 복습 대기 가산 (SC-13) — dueBoost·배지', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    memBySubject: { suba: 40, subb: 40 },  // 잔여 동일(60) — dueBoost 효과만 고립
+    dueBySubject: { suba: 20 },            // 20/40 = 0.5 → 상한 도달
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a = res.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a.dueBoost, 0.5);
+  assert.equal(a.weakW, 1.5);              // 중립 1.0 + 0.5
+  assert.equal(a.weakBadge, true);         // dueBoost ≥ 0.25
+  assert.ok(allocOf(res, 0, 'suba') > allocOf(res, 0, 'subb'));
+
+  // 낮은 비율 — 약한 가산만, 배지 미표시
+  const res2 = tracker.computeSubjectAllocation(plan, subjects, {
+    memBySubject: { suba: 40 },
+    dueBySubject: { suba: 4 },             // 0.1
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  const a2 = res2.weeks[0].alloc.find(x => x.key === 'suba');
+  assert.equal(a2.dueBoost, 0.1);
+  assert.equal(a2.weakBadge, false);
+});
+
+test('computeSubjectAllocInputs: dueCardIds → dueBySubject 집계 (SC-13)', () => {
+  const inputs = tracker.computeSubjectAllocInputs({
+    dueCardIds: ['suba_card_1', 'suba_card_2', 'subb_card_1', 'weak_quiz_suba_quiz_9']
+  });
+  assert.equal(inputs.dueBySubject.suba, 3);   // weak_quiz_ 접두사도 카드 id 파싱으로 과목 해석
+  assert.equal(inputs.dueBySubject.subb, 1);
+});
+
+test('recordStudyActivity: quizBySubj 과목별 퀴즈 증분 + 최근 7일 합산 (SC-13)', () => {
+  tracker.recordStudyActivity({ quizzes: 3, quizBySubj: { suba: 2, subb: 1 } });
+  tracker.recordStudyActivity({ quizzes: 1, quizBySubj: { suba: 1 } });
+  const cal = tracker.getStudyCalendar();
+  const today = tracker.getTodayStr();
+  assert.deepEqual(cal[today].quizBySubj, { suba: 3, subb: 1 });
+  assert.equal(cal[today].quizzes, 4);
+  assert.deepEqual(tracker.sumRecentQuizzesBySubject(cal), { suba: 3, subb: 1 });
 });

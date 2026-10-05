@@ -470,6 +470,8 @@
 | SC-10 | 시험일 최우선 설정 안내 — 대시보드 통계 그리드 첫 카드로 D-day 카드를 배치하고, 시험일 미설정 시 `stat-card-attn`으로 강조 + "학습 계획의 시작점" 안내 + `지금 설정` 버튼을 표시 (`_examPlanDescHtml` 미설정 분기) | ✅ |
 | SC-11 | 스마트학습–맞춤학습 연계 — ① 맞춤학습 뷰에 '이번 주 스마트학습' 요약 카드(과목별 실적/배정 + PRO 배지 + 캘린더 링크, `analysis-smart-plan`, `_renderSmartPlanInsight`) ② 계획 패널 칩 옆 `이유` 버튼 → `gotoSubjectAnalysis(과목키)`로 맞춤학습 해당 과목 카드(`subj-card-<키>`) 스크롤·강조 — 배정 근거의 진단 상세로 연결 | ✅ |
 | SC-12 | 약점 신호 통합 — 오답 원인 자가 태깅(`wrongCauses` subjectId별 최근 30일)과 단원 취약(`computeSubjectWeakChapters` 과목별 취약 단원 수)을 약점 가중에 가산(`diagBoost` 최대 +0.5, 합계 상한 MAX_WEAK_WEIGHT 유지) — 퀴즈 표본 부족 과목의 콜드스타트 약점 반영 (`computeSubjectAllocation`의 `diagBySubject` 입력, STUDY_PLAN_PRO_DESIGN.md Rev 2) | ✅ |
+| SC-13 | 스마트학습 퀴즈 배분 + 복습 대기 수요 — ① 과목별 퀴즈 잔여(은행 문항 − 풀이 수)를 카드와 동일 수요 공식(잔여×출제비중×약점가중)으로 주차 배분, 주차 총량 = 학습일×일일 퀴즈 목표. 칩 `카드장·퀴즈문` 실적/배정 병기(캘린더 `quizBySubj` 과목별 퀴즈 증분 기록, `_prevQuizBySubj` 차분), 주차 매트릭스 셀 `카드장·퀴즈문` ② SM-2 기한 도래 복습 대기(`getDueCards` → `dueBySubject`)를 약점 가중에 가산 — 암기 카드 대비 기한초과 비율 `dueBoost` 최대 +0.5, 합계 상한 MAX_WEAK_WEIGHT 유지 (`computeSubjectAllocation`의 `quizBySubject`·`dueBySubject` 입력, STUDY_PLAN_PRO_DESIGN.md Rev 3) | ✅ |
+| SC-14 | 합격 갭→목표 상향 권고 — 합격 갭 분석 카드에서 예상 점수가 합격선 미만(`gap.gap` > 0)이면 일일 목표 상향 권고 문구 + 목표 설정 버튼(`openGoalSettings`) 표시. 계획 필요량(`plan.perStudyDay`)이 일일 카드 목표를 초과하면 필요량을 권장치로 제시, 아니면 일반 권고 문구 — 진단 결과가 계획 파라미터 조정 동선으로 연결되는 피드백 루프 (`_renderPassGapInsight`) | ✅ |
 | RV-01 | 오답/중요 복습 뷰 — 헷갈림 카드·틀린 문제 통합 목록 (`review-view`) | ✅ |
 | ND-01 | 숫자 암기 드릴 — `number-drills/` JSON 기반 수치·기한·횟수 훈련 (훈련소 수치 훈련) | ✅ |
 | DR-01 | **O/X 판정 드릴** — 객관식 문항을 진위형으로 자동 변환 (3,700+문, `build_ox_drills.js` → `drills/ox_subject*.js`, `trainer-drills.js`) | ✅ |

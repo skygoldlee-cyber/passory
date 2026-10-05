@@ -40,7 +40,8 @@ export function getStudyCalendar() {
 /**
  * 오늘 학습 활동 기록 (누적)
  * @param {Object} activity - { cards: 증가할 카드 수, quizzes: 증가할 퀴즈 수, correct: 정답 수,
- *   bySubj: 과목별 카드 증분 {subjKey: n} — SC-09 스마트학습 과목별 주간 실적용 }
+ *   bySubj: 과목별 카드 증분 {subjKey: n} — SC-09 스마트학습 과목별 주간 실적용,
+ *   quizBySubj: 과목별 퀴즈 증분 {subjKey: n} — SC-13 스마트학습 퀴즈 주간 실적용 }
  */
 export function recordStudyActivity(activity = {}) {
     const today = getTodayStr();
@@ -53,6 +54,12 @@ export function recordStudyActivity(activity = {}) {
         entry.bySubj = entry.bySubj || {};
         Object.entries(activity.bySubj).forEach(([k, n]) => {
             if (n > 0) entry.bySubj[k] = (entry.bySubj[k] || 0) + n;
+        });
+    }
+    if (activity.quizBySubj && typeof activity.quizBySubj === 'object') {
+        entry.quizBySubj = entry.quizBySubj || {};
+        Object.entries(activity.quizBySubj).forEach(([k, n]) => {
+            if (n > 0) entry.quizBySubj[k] = (entry.quizBySubj[k] || 0) + n;
         });
     }
     if (activity.cards || activity.quizzes) {
@@ -328,6 +335,29 @@ export function sumRecentCards(calendar, days = 7, today = new Date()) {
 }
 
 /**
+ * 최근 N일 과목별 실적 합산 공용 — 캘린더의 과목별 맵 필드를 합산한다.
+ * @param {Object} calendar getStudyCalendar() 결과
+ * @param {string} field 엔트리의 과목별 맵 필드명 ('bySubj' | 'quizBySubj')
+ * @param {number} days 집계 일수
+ * @param {Date} today 기준일
+ * @returns {Object} {subjKey: 수}
+ */
+function _sumRecentBySubject(calendar, field, days, today) {
+    const out = {};
+    for (let i = 0; i < days; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const entry = calendar[_localDateStr(d)];
+        if (entry && entry[field]) {
+            Object.entries(entry[field]).forEach(([k, n]) => {
+                if (n > 0) out[k] = (out[k] || 0) + n;
+            });
+        }
+    }
+    return out;
+}
+
+/**
  * 최근 N일 과목별 카드 실적 (SC-09) — 캘린더 `bySubj` 항목을 과목 키별로 합산.
  * bySubj가 없는 레거시 엔트리는 과목을 알 수 없어 제외된다.
  * @param {Object} calendar getStudyCalendar() 결과
@@ -336,18 +366,19 @@ export function sumRecentCards(calendar, days = 7, today = new Date()) {
  * @returns {Object} {subjKey: 카드 수}
  */
 export function sumRecentCardsBySubject(calendar, days = 7, today = new Date()) {
-    const out = {};
-    for (let i = 0; i < days; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const entry = calendar[_localDateStr(d)];
-        if (entry && entry.bySubj) {
-            Object.entries(entry.bySubj).forEach(([k, n]) => {
-                if (n > 0) out[k] = (out[k] || 0) + n;
-            });
-        }
-    }
-    return out;
+    return _sumRecentBySubject(calendar, 'bySubj', days, today);
+}
+
+/**
+ * 최근 N일 과목별 퀴즈 실적 (SC-13) — 캘린더 `quizBySubj` 항목을 과목 키별로 합산.
+ * quizBySubj가 없는 레거시 엔트리는 과목을 알 수 없어 제외된다.
+ * @param {Object} calendar getStudyCalendar() 결과
+ * @param {number} [days] 집계 일수
+ * @param {Date} [today] 기준일 (테스트 주입용)
+ * @returns {Object} {subjKey: 퀴즈 수}
+ */
+export function sumRecentQuizzesBySubject(calendar, days = 7, today = new Date()) {
+    return _sumRecentBySubject(calendar, 'quizBySubj', days, today);
 }
 
 /**
@@ -477,9 +508,10 @@ export const MAX_DIAG_BOOST = 0.5;
  * @param {Array} [p.exams] registry.exams — 출제 비중 (미전달 시 균등 배분)
  * @param {Object} [p.wrongCauses] {itemId: {cause, ts, subjectId}} — 최근 30일 태그만 집계 (SC-12)
  * @param {Array} [p.weakChapterGroups] computeSubjectWeakChapters 결과 — 과목별 취약 단원 수 (SC-12)
+ * @param {Array} [p.dueCardIds] getDueCards() 결과 — SM-2 기한 도래 카드 id 배열 (SC-13)
  * @param {Date|number} [p.now] 기준 시각 (테스트 주입용)
  * @returns {{memBySubject:Object, quizBySubject:Object, recentQuizBySubject:Object,
- *   weakBySubject:Object, weightBySubject:Object, diagBySubject:Object}}
+ *   weakBySubject:Object, weightBySubject:Object, diagBySubject:Object, dueBySubject:Object}}
  */
 export function computeSubjectAllocInputs(p = {}) {
     /** @type {{ [x: string]: number }} */
@@ -490,6 +522,8 @@ export function computeSubjectAllocInputs(p = {}) {
     const weak = {};
     /** @type {{ [x: string]: number }} */
     const weights = {};
+    /** @type {{ [x: string]: number }} */
+    const due = {};
     /** @type {{ [x: string]: { causes: number, weakChapters: number } }} */
     const diag = {};
     const _diag = (k) => (diag[k] = diag[k] || { causes: 0, weakChapters: 0 });
@@ -515,6 +549,11 @@ export function computeSubjectAllocInputs(p = {}) {
     (p.exams || []).forEach(ex => {
         if (ex && ex.subject) weights[ex.subject] = (weights[ex.subject] || 0) + ((ex.stats && ex.stats.questions) || 0);
     });
+    // SC-13 SM-2 복습 대기 — 기한 도래 카드 id를 과목별로 집계
+    (p.dueCardIds || []).forEach(id => {
+        const k = subjectKeyFromItemId(id);
+        if (k) due[k] = (due[k] || 0) + 1;
+    });
     // SC-12 진단 신호 — 오답 원인 태그(최근 30일) + 과목별 취약 단원 수
     const cutoff = (p.now !== undefined ? new Date(p.now).getTime() : Date.now()) - DIAG_CAUSE_WINDOW_DAYS * 86400000;
     Object.values(p.wrongCauses || {}).forEach(c => {
@@ -530,7 +569,8 @@ export function computeSubjectAllocInputs(p = {}) {
         recentQuizBySubject: recentQuizBySubject(p.quizResults || {}),
         weakBySubject: weak,
         weightBySubject: weights,
-        diagBySubject: diag
+        diagBySubject: diag,
+        dueBySubject: due
     };
 }
 
@@ -599,9 +639,11 @@ function _allocWeek(rows, remNow, total) {
  * 약점가중 = 퀴즈 표본 ≥ MIN_ALLOC_SAMPLE 이면 (2 − 정답률) [1.0~2.0], 미만이면 1.0.
  *   최근 표본(`recentQuizBySubject`)이 임계 이상이면 누적 대신 우선 적용하고,
  *   취약 카드 비율(헷갈림 표시 ÷ 잔여)을 최대 +0.5 가산한다 — 상한 MAX_WEAK_WEIGHT.
+ *   SC-13: SM-2 기한초과 복습 비율(기한 도래 ÷ 암기 수)도 최대 +0.5 가산하고,
+ *   과목별 퀴즈 잔여를 카드와 동일 수요 공식으로 주차 배분한다(주차 총량 = 학습일×일일 퀴즈 목표).
  * 주차를 순차 배정해 과목 조기 완료가 다음 주 배분에 자동 반영된다.
  * @param {Object|null} plan computeStudyPlan() 결과
- * @param {Array} subjects 과목 메타 — [{key, name, stats:{cards, targetCards?}}]
+ * @param {Array} subjects 과목 메타 — [{key, name, stats:{cards, targetCards?, quizzes?, targetQuizzes?}}]
  * @param {Object} [opts]
  * @param {Object} [opts.memBySubject] {key: 암기 카드 수}
  * @param {Object} [opts.quizBySubject] {key: {solved, correct}} — 전 기간 누적
@@ -609,8 +651,10 @@ function _allocWeek(rows, remNow, total) {
  * @param {Object} [opts.weakBySubject] {key: 취약 카드 수} — 약점 가산 (SC-09)
  * @param {Object} [opts.weightBySubject] {key: 출제 문항 수} — 미선언 시 균등
  * @param {Object} [opts.diagBySubject] {key: {causes, weakChapters}} — 진단 신호 가산 (SC-12)
+ * @param {Object} [opts.dueBySubject] {key: SM-2 기한 도래 카드 수} — 복습 대기 가산 (SC-13)
  * @returns {Object|null}
- *   { weeks:[{week, range, total, alloc:[{key, name, cards, remaining, weakW, diagBoost, weightPct, weakBadge}]}],
+ *   { weeks:[{week, range, total, quizTotal, alloc:[{key, name, cards, quizzes, remaining, quizRemaining,
+ *     weakW, diagBoost, dueBoost, weightPct, weakBadge}]}],
  *     thisWeek, hasWeights }
  */
 export function computeSubjectAllocation(plan, subjects, opts = {}) {
@@ -622,13 +666,18 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
     const recent = opts.recentQuizBySubject || {};
     const weak = opts.weakBySubject || {};
     const diag = opts.diagBySubject || {};
+    const due = opts.dueBySubject || {};
     const wBySubj = opts.weightBySubject || {};
     const hasWeights = Object.keys(wBySubj).length > 0;
     const weightSum = Object.values(wBySubj).reduce((s, n) => s + (n || 0), 0);
+    const dailyQuizzes = (plan.goals && plan.goals.dailyQuizzes) || 0;
     const rows = list.map(s => {
         const stats = (s && s.stats) || {};
         const total = stats.targetCards > 0 ? Math.min(stats.cards || 0, stats.targetCards) : (stats.cards || 0);
         const remaining = Math.max(0, total - (mem[s.key] || 0));
+        // SC-13 퀴즈 잔여 — 은행 문항(targetQuizzes 상한) 대비 미풀이 수
+        const qTotal = stats.targetQuizzes > 0 ? Math.min(stats.quizzes || 0, stats.targetQuizzes) : (stats.quizzes || 0);
+        const quizRemaining = Math.max(0, qTotal - ((quiz[s.key] && quiz[s.key].solved) || 0));
         // 최근 표본이 임계 이상이면 우선, 아니면 누적 표본 폴백
         const rq = recent[s.key] || { solved: 0, correct: 0 };
         const q = (rq.solved >= MIN_ALLOC_SAMPLE) ? rq : (quiz[s.key] || { solved: 0, correct: 0 });
@@ -639,29 +688,41 @@ export function computeSubjectAllocation(plan, subjects, opts = {}) {
         // SC-12 진단 신호 가산 — 최근 오답 원인 태그·취약 단원 수 (콜드스타트 과목 반영)
         const dg = diag[s.key] || { causes: 0, weakChapters: 0 };
         const diagBoost = Math.min(MAX_DIAG_BOOST, dg.causes * 0.1 + dg.weakChapters * 0.15);
+        // SC-13 복습 대기 가산 — 암기 카드 중 SM-2 기한초과 비율, 최대 +0.5
+        const dueBoost = Math.min(0.5, (due[s.key] || 0) / Math.max(1, mem[s.key] || 0));
         const weight = hasWeights ? (wBySubj[s.key] || 0) : 1;
         return {
             key: s.key,
             name: s.name || s.key,
             remaining,
+            quizRemaining,
             weight,
             weightPct: (hasWeights && weightSum > 0) ? Math.round(weight / weightSum * 100) : 0,
-            weakW: Math.min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost),
+            weakW: Math.min(MAX_WEAK_WEIGHT, quizW + weakBoost + diagBoost + dueBoost),
             diagBoost,
-            weakBadge: quizW > 1.15 || weakBoost >= 0.25 || diagBoost >= 0.15
+            dueBoost,
+            weakBadge: quizW > 1.15 || weakBoost >= 0.25 || diagBoost >= 0.15 || dueBoost >= 0.25
         };
     });
     const remNow = rows.map(r => r.remaining);
+    const quizRemNow = rows.map(r => r.quizRemaining);
     const weeks = plan.weeks.map(w => {
         const counts = _allocWeek(rows, remNow, w.cards);
         counts.forEach((c, i) => { remNow[i] -= c; });
+        // SC-13 퀴즈 배분 — 주차 총량 = 학습일 × 일일 퀴즈 목표, 카드와 동일 수요 가중
+        const quizTotal = (w.studyDays || 0) * dailyQuizzes;
+        const quizCounts = _allocWeek(rows, quizRemNow, quizTotal);
+        quizCounts.forEach((c, i) => { quizRemNow[i] -= c; });
         return {
             week: w.week,
             range: w.range,
             total: w.cards,
+            quizTotal,
             alloc: rows.map((r, i) => ({
-                key: r.key, name: r.name, cards: counts[i], remaining: r.remaining,
-                weakW: r.weakW, diagBoost: r.diagBoost, weightPct: r.weightPct, weakBadge: r.weakBadge
+                key: r.key, name: r.name, cards: counts[i], quizzes: quizCounts[i],
+                remaining: r.remaining, quizRemaining: r.quizRemaining,
+                weakW: r.weakW, diagBoost: r.diagBoost, dueBoost: r.dueBoost,
+                weightPct: r.weightPct, weakBadge: r.weakBadge
             }))
         };
     });

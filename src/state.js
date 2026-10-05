@@ -38,6 +38,7 @@ export const state = {
     _prevMemCount: 0,
     _prevQuizCount: 0,
     _prevMemBySubj: {},         // {subjKey: 암기 수} — SC-09 bySubj 증분 기준
+    _prevQuizBySubj: {},        // {subjKey: 퀴즈 풀이 수} — SC-13 quizBySubj 증분 기준
 
     // 플래시카드 현재 세션 상태
     flashcards: {
@@ -213,6 +214,7 @@ export function loadProgress() {
     state._prevMemCount = state.memorizedCards.size;
     state._prevQuizCount = Object.keys(state.quizResults).length;
     state._prevMemBySubj = _countMemBySubj();
+    state._prevQuizBySubj = _countQuizBySubj();
 }
 
 /** 암기 카드 ID → 과목별 개수 — saveProgress의 bySubj 증분 계산용
@@ -221,6 +223,18 @@ function _countMemBySubj() {
     /** @type {Object.<string, number>} */
     const out = {};
     state.memorizedCards.forEach(id => {
+        const k = subjectKeyFromItemId(id);
+        if (k) out[k] = (out[k] || 0) + 1;
+    });
+    return out;
+}
+
+/** 퀴즈 결과 ID → 과목별 개수 — saveProgress의 quizBySubj 증분 계산용 (SC-13)
+ * @returns {Object.<string, number>} */
+function _countQuizBySubj() {
+    /** @type {Object.<string, number>} */
+    const out = {};
+    Object.keys(state.quizResults).forEach(id => {
         const k = subjectKeyFromItemId(id);
         if (k) out[k] = (out[k] || 0) + 1;
     });
@@ -251,13 +265,23 @@ export function saveProgress() {
             if (d > 0) bySubj[k] = d;
         });
         state._prevMemBySubj = memBySubj;
+        // SC-13 과목별 퀴즈 증분 — 스마트학습 퀴즈 주간 실적 (quizBySubj)
+        const quizBySubjAll = _countQuizBySubj();
+        const prevQuizBySubj = state._prevQuizBySubj || {};
+        /** @type {Object.<string, number>} */
+        const quizBySubj = {};
+        Object.keys(quizBySubjAll).forEach(k => {
+            const d = quizBySubjAll[k] - (prevQuizBySubj[k] || 0);
+            if (d > 0) quizBySubj[k] = d;
+        });
+        state._prevQuizBySubj = quizBySubjAll;
         try {
             // 동적 import로 순환 참조 방지
             import('./study-tracker.js').then(({ recordStudyActivity }) => {
                 const correctDelta = quizDelta > 0
                     ? Object.values(state.quizResults).slice(-quizDelta).filter(r => r && r.correct).length
                     : 0;
-                recordStudyActivity({ cards: Math.max(0, memDelta), quizzes: Math.max(0, quizDelta), correct: correctDelta, bySubj });
+                recordStudyActivity({ cards: Math.max(0, memDelta), quizzes: Math.max(0, quizDelta), correct: correctDelta, bySubj, quizBySubj });
             }).catch(() => {});
         } catch (e) { /* noop */ }
     }
