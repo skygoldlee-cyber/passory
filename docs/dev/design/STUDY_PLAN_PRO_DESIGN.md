@@ -1,4 +1,4 @@
-# 과목별 가중 학습 계획 설계안 (study_plan_pro)
+# 스마트학습 — 과목별 가중 학습 계획 설계안 (study_plan_pro)
 
 > 상위 문서: [`사업기획서`](../../business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md) v4.0 §8.4 (Pro 가설) · [`SPEC.md`](../SPEC.md) §3.20
 > 범위: 시험일 학습 계획 패널(SC-05)의 과목 무관 총량 계획을, 출제 비중·약점 정답률 가중 **주차별 과목 배분표**로 확장하는 Pro 가설 기능
@@ -111,7 +111,7 @@ D-30, 전 과목 미학습(잔여 = 카드 수), 정답률 표본 없음(가중 
 |---|---|
 | 플랜 키 | `feature-plan.json` → `"study_plan_pro": "pro"` |
 | 배지 | 섹션 헤더에 `<span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span>` — `refreshProBadges`가 플랜 반영 |
-| 안내 | 섹션 첫 렌더 시 `proFeatureNotice('study_plan_pro', '과목별 학습 계획')` 1회 |
+| 안내 | 섹션 첫 렌더 시 `proFeatureNotice('study_plan_pro', '스마트학습')` 1회 |
 | 접근 | entitlement 미구현 — 현 규약상 전원 이용 가능, "Pro 제공 예정" 표기로 전환 지표(`trackAction('study_plan_pro')`) 측정 |
 
 `check:plan` 게이트가 플랜 키↔코드 사용↔로드맵 문서 양방향을 검증하므로 `feature-plan.json`·`data-pro-feature`·`proFeatureNotice`·기획서 §8.4의 네 곳이 함께 갱신돼야 한다.

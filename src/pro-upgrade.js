@@ -156,6 +156,7 @@ const PLAN_FEATURES = [
     { key: 'combo_set', label: 'ㄱㄴㄷ 조합 문제집' },
     { key: 'combo_drill', label: 'ㄱㄴㄷ 조합 훈련' },
     { key: 'cloud_sync', label: '클라우드 동기화 (여러 디바이스 상태 공유)' },
+    { key: 'study_plan_pro', label: '스마트학습 (과목별 가중 배분 계획)' },
 ];
 
 /** 플래그·플랜에서 유도한 Pro 전용 혜택 항목 — 두 모달(showPlanCompare/showUpgradeNotice)이 공유 */

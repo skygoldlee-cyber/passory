@@ -275,6 +275,7 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
 
         const alloc = el('study-calendar-content').querySelector('.plan-alloc');
         expect(alloc).not.toBeNull();
+        expect(alloc.textContent).toContain('스마트학습');
         expect(alloc.textContent).toContain('이번 주 과목별 목표');
         // 비중 1:3 → 과목B 배정이 과목A보다 큼
         const chips = [...alloc.querySelectorAll('.alloc-chip')].map(c => c.textContent);

@@ -130,7 +130,7 @@ export function renderStudyCalendar() {
     const allocDetail = /** @type {HTMLDetailsElement|null} */ (container.querySelector('.plan-alloc-detail'));
     if (container.querySelector('.plan-alloc')) {
         refreshProBadges(container);
-        proFeatureNotice('study_plan_pro', '과목별 학습 계획');
+        proFeatureNotice('study_plan_pro', '스마트학습');
     }
     if (allocDetail) {
         allocDetail.addEventListener('toggle', () => {
@@ -232,7 +232,7 @@ function _studyPlanHtml() {
     </div>`;
 }
 
-/** SC-08 이번 주 과목별 목표 — 잔여×출제 비중×약점 가중 배분 (study_plan_pro 표기) */
+/** SC-08 스마트학습 — 이번 주 과목별 목표: 잔여×출제 비중×약점 가중 배분 (study_plan_pro 표기) */
 function _subjectAllocHtml(plan) {
     if (!plan || plan.tier === 'done') return '';
     let subjects = [];
@@ -280,7 +280,7 @@ function _subjectAllocHtml(plan) {
     return `
         <div class="plan-alloc">
             <div class="plan-alloc-head">
-                <span>이번 주 과목별 목표</span>
+                <span>스마트학습 — 이번 주 과목별 목표</span>
                 <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span>
             </div>
             <div class="plan-alloc-chips">${chips}</div>
