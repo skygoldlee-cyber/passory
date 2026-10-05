@@ -15,7 +15,13 @@ vi.mock('../../src/ui-utils.js', () => ({
     HAPTIC: { correct: 30, wrong: [40, 30, 40], tap: 10 },
 }));
 
+vi.mock('../../src/views/navigation.js', async (importOriginal) => {
+    const actual = await importOriginal();
+    return { ...actual, switchView: vi.fn() };
+});
+
 import { showToast } from '../../src/ui-utils.js';
+import { switchView } from '../../src/views/navigation.js';
 import {
     loadIndexHtml, el, resetStudyState, storedJson, seedStudyData,
 } from './helpers.js';
@@ -108,6 +114,16 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(showToast).toHaveBeenCalledWith(expect.stringContaining('저장'), 'success');
         // 재렌더에 새 목표 반영
         expect(el('study-calendar-content').textContent).toContain('0 / 100');
+    });
+
+    it('시험일 저장 → 캘린더 뷰로 전환 요청 (SC-02·SC-05 계획 패널 노출)', () => {
+        openGoalSettings();
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        el('goal-exam-date').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        saveGoalSettings();
+
+        expect(switchView).toHaveBeenCalledWith('calendar-view', { scrollTop: true });
     });
 
     it('목표 설정 취소 → 모달만 닫히고 목표 불변', () => {

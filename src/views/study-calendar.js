@@ -6,6 +6,7 @@ import { showToast } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
 import { safeGetItem, state } from '../state.js';
 import { DataLoader } from '../data-loader.js';
+import { switchView } from './navigation.js';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -335,4 +336,6 @@ export function saveGoalSettings() {
     showToast('학습 목표가 저장되었습니다.', 'success');
     renderStudyCalendar();
     if (typeof updateGlobalStats === 'function') updateGlobalStats();
+    // 시험일이 설정됐으면 학습 계획 패널(SC-05)이 보이는 캘린더 뷰로 이동
+    if (getExamDate()) switchView('calendar-view', { scrollTop: true });
 }
