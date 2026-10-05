@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261005-ecb77d8",
+    "date": "2026-10-05",
+    "notes": [
+      "[문서·formula] 매뉴얼에 종합 보고서 생성 절차 mermaid 다이어그램 추가"
+    ]
+  },
+  {
     "version": "v20261005-5ac2b7e",
     "date": "2026-10-05",
     "notes": [
@@ -130,15 +137,6 @@
     "date": "2026-10-05",
     "notes": [
       "[기능·search] 교재 검색 범위를 참조자료까지 확장 (TS-11)"
-    ]
-  },
-  {
-    "version": "v20261005-4f918dd",
-    "date": "2026-10-05",
-    "notes": [
-      "[정리] check_numbering @spec none 태그 + TRACE_MATRIX 재생성 [no-docs]",
-      "[정리·trace] TRACE_MATRIX 재생성 [no-docs]",
-      "[수정·content] 1과목 이야기형 서사 패치 헤딩 중복·번호 건너뜀 수정 + check:numbering 게이트"
     ]
   }
 ]
