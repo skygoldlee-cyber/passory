@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula.js — Formula OS 뷰 컨트롤러 (Phase 5-A)
-// @spec FO-01~11,FO-15,FO-27,FO-28,FO-29,FO-30,FO-31,FO-32,DI-06,DI-08,DI-09
+// @spec FO-01~11,FO-15,FO-27,FO-28,FO-29,FO-30,FO-31,FO-32,FO-62,DI-06,DI-08,DI-09
 //
 // 허브(메뉴) + My 포뮬러 목록 + 배합 계산기 서브뷰.
 // 트레이너와 동일한 패턴: 하나의 view-section 안에서 패널을 is-hidden으로 전환.
@@ -60,7 +60,7 @@ const PANELS = [
   'formula-batch-panel', 'formula-batch-form-panel', 'formula-batch-detail-panel',
   'formula-customer-panel', 'formula-customer-form-panel', 'formula-customer-detail-panel',
   'formula-material-panel', 'formula-material-form-panel',
-  'formula-compliance-panel',
+  'formula-compliance-panel', 'formula-adverse-panel',
   'formula-label-panel', 'formula-adlint-panel',
   'formula-product-panel', 'formula-product-form-panel', 'formula-product-detail-panel',
 ];
@@ -122,6 +122,7 @@ const SUBNAV_ITEMS = [
   { id: 'label', label: '표시사항', click: 'openLabelPanel' },
   { id: 'adlint', label: '광고 점검', click: 'openAdLintPanel' },
   { id: 'products', label: '기성품 분석', click: 'openProductPanel' },
+  { id: 'adverse', label: '이상사례', click: 'openAdversePanel' },
   { id: 'compliance', label: '법규 준수', click: 'openCompliancePanel' },
 ];
 
@@ -207,6 +208,41 @@ function applyBizProfile() {
   if (guide) guide.textContent = BIZ_GUIDE[biz] || BIZ_GUIDE.custom;
 }
 
+/* =======================================================
+   점검 주기 리마인더 (FO-62) — 마지막 체크리스트 저장 후 30일
+   경과 시 법규 준수 카드에 재점검 배지를 표시한다.
+   미시작(저장 자체 없음) 상태는 리마인드하지 않는다 —
+   '미실시'는 보고서의 '기록 없음' 표기가 이미 증적 역할을 한다.
+   ======================================================= */
+
+const COMPLIANCE_STALE_DAYS = 30;
+
+function complianceSetKey(biz) {
+  return {
+    custom: STORAGE_KEYS.COMPLIANCE_CHECKS,
+    mfg: STORAGE_KEYS.COMPLIANCE_CHECKS_MFG,
+    sales: STORAGE_KEYS.COMPLIANCE_CHECKS_SALES,
+  }[biz] || STORAGE_KEYS.COMPLIANCE_CHECKS;
+}
+
+function renderComplianceReminder() {
+  const card = document.querySelector('#formula-menu-panel [data-click="openCompliancePanel"]');
+  if (!card) return;
+  const prev = card.querySelector('.comp-reminder-badge');
+  if (prev) prev.remove();
+  const saved = getJSON(complianceSetKey(getBizType()));
+  const updatedAt = saved && saved.updatedAt ? new Date(saved.updatedAt).getTime() : 0;
+  if (!updatedAt || Number.isNaN(updatedAt)) return;
+  const days = Math.floor((Date.now() - updatedAt) / 86400000);
+  if (days < COMPLIANCE_STALE_DAYS) return;
+  const badge = document.createElement('span');
+  badge.className = 'f-check f-check-warn comp-reminder-badge';
+  badge.textContent = `재점검 권장 — 마지막 점검 ${days}일 전`;
+  const desc = card.querySelector('p');
+  if (desc) desc.appendChild(document.createElement('br'));
+  (desc || card).appendChild(badge);
+}
+
 /** 사업 유형 변경 — 허브 재렌더 + 서브패널이면 메뉴로 복귀 (FO-33) */
 export function formulaSetBizType(type) {
   if (!setBizType(type)) return;
@@ -219,6 +255,7 @@ export function initFormulaView() {
   showPanel('formula-menu-panel');
   applyFormulaContrast();
   applyBizProfile();
+  renderComplianceReminder();
   const usage = getFormulaUsage();
   const badge = getEl('formula-usage-badge');
   if (badge) badge.textContent = `저장 ${usage.count}/${usage.limit}`;

@@ -1,18 +1,21 @@
 // src/exams/cosmetic/views/formula-material.js — Formula OS 원료 장부 뷰 (Phase C)
-// @spec FO-18
+// @spec FO-18,FO-57,FO-61
 //
 // 목록(formula-material-panel) + 폼(formula-material-form-panel).
 // 기한 상태는 저장하지 않고 표시 시 계산한다 — materialStatus/daysUntilExpiry.
+// LOT 역추적(FO-57): 카드의 [추적] 버튼이 해당 원료를 쓴 배치→고객 목록을 표시.
 
 import { esc } from '../../../sanitize.js';
 import { todayKey } from '../../../utils.js';
 import { showToast, showConfirm } from '../../../ui-utils.js';
 import { showStoreError, showUpgradeNotice } from '../../../pro-upgrade.js';
 import { showPanel, formulaSubNav } from './formula.js';
+import { findBatchesByMaterial } from '../batch-store.js';
+import { buildRecallListHtml, printHtml } from './formula-print.js';
 import {
   listMaterials, getMaterial, getMaterialUsage,
   createMaterial, updateMaterial, deleteMaterial, importMaterials,
-  materialStatus, daysUntilExpiry, expiringMaterials, STORAGE_OPTIONS,
+  materialStatus, daysUntilExpiry, expiringMaterials, stockStatus, STORAGE_OPTIONS,
 } from '../material-ledger.js';
 import {
   parseCsv, csvToObjects, readCsvFile, toCsv, downloadCsv,
@@ -35,7 +38,10 @@ function materialBadgeHtml(m) {
   const suffix = days != null && s !== 'none'
     ? (days < 0 ? ` D+${Math.abs(days)}` : ` D-${days}`)
     : '';
-  return `<span class="f-check ${info.cls}">${info.label}${esc(suffix)}</span>`;
+  // 재고 소진 배지 (FO-61) — 배치 LOT 선택에서도 제외 대상
+  const stock = stockStatus(m) === 'out'
+    ? ' <span class="f-check f-check-banned">소진</span>' : '';
+  return `<span class="f-check ${info.cls}">${info.label}${esc(suffix)}</span>${stock}`;
 }
 
 /* =======================================================
@@ -93,11 +99,65 @@ export function openMaterialPanel() {
         <div class="formula-card-checks">${materialBadgeHtml(m)}</div>
         ${m.notes ? `<div class="formula-card-meta">메모: ${esc(m.notes)}</div>` : ''}
         <div class="formula-card-actions">
+          <button class="btn btn-secondary btn-sm" data-click="matTrace" data-arg="${esc(m.id)}" title="이 원료를 사용한 조제 기록·인도 고객 추적"><i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i> 추적</button>
           <button class="btn btn-secondary btn-sm" data-click="matEdit" data-arg="${esc(m.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>
           <button class="btn btn-secondary btn-sm f-danger" data-click="matDelete" data-arg="${esc(m.id)}" title="원료 항목 삭제 (복구 불가)"><i class="fa-solid fa-trash" aria-hidden="true"></i> 삭제</button>
         </div>
       </div>`;
   }).join('');
+}
+
+/* =======================================================
+   LOT 역추적 (FO-57) — 원료 → 배치 → 인도 고객
+   ======================================================= */
+
+let lastTrace = null; // {material, batches} — 인쇄용 최근 조회 결과
+
+export function matTrace(materialId) {
+  const m = getMaterial(materialId);
+  if (!m) { showToast('원료 항목을 찾을 수 없습니다.', 'error'); return; }
+  const batches = findBatchesByMaterial(m.id, m.name);
+  lastTrace = { material: m, batches };
+  const box = document.getElementById('material-trace-result');
+  if (!box) return;
+  box.classList.remove('is-hidden');
+  const rows = batches.map(b => `
+    <div class="formula-card">
+      <div class="formula-card-head">
+        <h4 class="formula-card-name">${esc(b.batchNo)} — ${esc(b.formulaName || '—')}</h4>
+        <span class="formula-card-meta">조제 ${esc((b.madeAt || '').replace('T', ' '))} · 고객 ${esc(b.customerName || '—')} · 인도 ${esc(b.deliveredAt || '미인도')}</span>
+      </div>
+      <div class="formula-card-actions">
+        <button class="btn btn-primary btn-sm" data-click="batchOpen" data-arg="${esc(b.id)}"><i class="fa-solid fa-eye" aria-hidden="true"></i> 상세</button>
+      </div>
+    </div>`).join('');
+  box.innerHTML = `
+    <div class="comp-section">
+      <h5 class="comp-section-title"><i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i>
+        ${esc(m.name)}${m.lot ? ` (LOT ${esc(m.lot)})` : ''} 사용 추적 <span class="comp-count">${batches.length}건</span></h5>`;
+  box.innerHTML += batches.length
+    ? rows
+    : '<p class="formula-card-meta">이 원료를 사용한 조제 기록이 없습니다.</p>';
+  box.innerHTML += `
+      <div class="formula-card-actions">
+        <button class="btn btn-secondary btn-sm" data-click="matTracePrint" title="추적 결과를 A4 문서로 인쇄"><i class="fa-solid fa-print" aria-hidden="true"></i> 추적 목록 인쇄</button>
+        <button class="btn btn-secondary btn-sm" data-click="matTraceClose"><i class="fa-solid fa-xmark" aria-hidden="true"></i> 닫기</button>
+      </div>
+    </div>`;
+  if (typeof box.scrollIntoView === 'function') {
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+export function matTraceClose() {
+  const box = document.getElementById('material-trace-result');
+  if (box) { box.classList.add('is-hidden'); box.innerHTML = ''; }
+  lastTrace = null;
+}
+
+export function matTracePrint() {
+  if (!lastTrace) { showToast('먼저 원료 추적을 실행하세요.', 'info'); return; }
+  printHtml(buildRecallListHtml(lastTrace));
 }
 
 /* =======================================================

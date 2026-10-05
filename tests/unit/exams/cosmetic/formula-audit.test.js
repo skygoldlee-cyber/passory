@@ -52,7 +52,7 @@ test('custom 유형 — 고객 첫·체크리스트 끝 순서, 라벨·광고 �
   const d = collectAuditReportData(NOW);
   assert.deepEqual(
     d.sections.map(s => s.id),
-    ['customers', 'formulas', 'batches', 'materials', 'checklist']);
+    ['customers', 'adverse', 'formulas', 'batches', 'materials', 'checklist']);
   assert.equal(d.biz.id, 'custom');
   assert.equal(d.generatedAt, '2026-10-05T10:00:00.000Z');
 });
@@ -61,7 +61,7 @@ test('mfg 유형 — 라벨·광고·포뮬러·배치·원료 포함, 고객 �
   setBizType('mfg');
   const d = collectAuditReportData(NOW);
   const ids = d.sections.map(s => s.id);
-  assert.deepEqual(ids, ['label', 'adlint', 'formulas', 'batches', 'materials', 'checklist']);
+  assert.deepEqual(ids, ['adverse', 'label', 'adlint', 'formulas', 'batches', 'materials', 'checklist']);
   assert.equal(d.biz.id, 'mfg');
   assert.equal(d.setLabel, '화장품제조업 (CGMP)');
 });
@@ -69,7 +69,7 @@ test('mfg 유형 — 라벨·광고·포뮬러·배치·원료 포함, 고객 �
 test('sales 유형 — 고객 첫·체크리스트 끝, 포뮬러·배치·원료 제외', () => {
   setBizType('sales');
   const d = collectAuditReportData(NOW);
-  assert.deepEqual(d.sections.map(s => s.id), ['customers', 'label', 'adlint', 'checklist']);
+  assert.deepEqual(d.sections.map(s => s.id), ['customers', 'adverse', 'label', 'adlint', 'checklist']);
 });
 
 test('비대상 유형의 잔존 데이터 — 패널 숨겨도 보고서에 비대상 표기로 포함', () => {

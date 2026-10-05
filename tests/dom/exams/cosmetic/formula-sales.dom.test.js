@@ -47,8 +47,8 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         const chips = document.querySelectorAll('#formula-biz-bar .formula-biz-chip');
         expect(chips.length).toBe(3);
         expect(document.querySelector('#formula-biz-bar .formula-biz-chip.is-active').dataset.arg).toBe('custom');
-        // 맞춤형: 8카드 (표시사항·광고 카드는 숨김, 기성품 DB·종합 보고서는 전 유형 공용)
-        expect(hubCards().length).toBe(8);
+        // 맞춤형: 9카드 (표시사항·광고 카드는 숨김, 기성품 DB·이상사례·종합 보고서는 전 유형 공용)
+        expect(hubCards().length).toBe(9);
     });
 
     it('책임판매업 전환 — 제조 기능 숨기고 표시사항·광고 카드 노출·영속', () => {

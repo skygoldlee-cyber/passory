@@ -309,7 +309,8 @@ passory/
 │   │       ├── formula-stability.js #  제형 안정성 체크 (상 비율·상호작용·단계·pH)
 │   │       ├── batch-store.js      #   조제 기록(배치) 채번·QC·스냅샷 (한도 50)
 │   │       ├── customer-store.js   #   고객 카드·상담 이력 (한도 20, 동기화 제외)
-│   │       ├── material-ledger.js  #   원료 입고·기한·재고 (한도 30)
+│   │       ├── material-ledger.js  #   원료 입고·기한·재고·차감 (한도 30)
+│   │       ├── adverse-store.js    #   소비자 이상사례 기록 (한도 30, FO-59)
 │   │       ├── usage-guide.js      #   사용 안내문 생성기
 │   │       ├── store-utils.js      #   스토어 공통 헬퍼 (loadItems/newId/clamp…)
 │   │       └── views/              #   Formula OS 뷰 (practice-registry 지연 로드)
@@ -318,7 +319,8 @@ passory/
 │   │           ├── formula-fields.js   # 처방 작업대 필드 블록
 │   │           ├── formula-batch.js    # 조제 기록(배치) 목록·폼·상세
 │   │           ├── formula-customer.js # 고객 관리 패널
-│   │           ├── formula-material.js # 원료 장부 패널
+│   │           ├── formula-material.js # 원료 장부 패널 (LOT 추적)
+│   │           ├── formula-adverse.js  # 소비자 이상사례 기록 패널 (FO-59)
 │   │           ├── formula-compliance.js # 법규 준수 체크리스트
 │   │           ├── formula-audit.js    # 종합 규정 점검 보고서 수집기 (FO-56)
 │   │           ├── formula-print.js    # 인쇄 빌더 (기록지·라벨·안내문·종합 보고서)
@@ -592,9 +594,9 @@ passory/
 | `data/exams/<id>/<key>_data.<hash>.js` | 범용 지식DB 번들 (food 예: `additives_data` — 식품첨가물 사전). `content/exams/food/knowledge/additives.json`처럼 시험 콘텐츠 루트의 `knowledge/` 원본 → `<KEY>_DATA` 전역 + `registry[key]` 메타(version·updatedAt·stats) — `DataLoader.loadDictionary()`가 `registry.knowledge.registryKey`로 온디맨드 로드 | `tools/build/index.js` (knowledge plugin) |
 | `registry.js` → `ingredients` 메타 | 원료 DB `version`·`updatedAt`·`notice`·`history`(개정 이력 누적)·`contentHash`(내용 지문) — `content/…/knowledge/ingredients.json`의 `meta`에서 병합. 사전 버전 배지·갱신 알림·Formula OS 검증 기준이 여기서 나옴 | `tools/build/index.js` |
 | `src/exams/cosmetic/formula-store.js` · `src/exams/cosmetic/formula-rules.js` · `src/exams/cosmetic/formula-check.js` · `src/exams/cosmetic/formula-stability.js` | Formula OS 도메인 레이어 — 포뮬러 CRUD/한도(5개)·고객·안정성 스키마·전성분 표시 순서, 추천 규칙(BASE_TEMPLATES·고민/피부 매핑·맞춤 규칙 병합), 고시 한도 검증 엔진, 제형 안정성 체크(상 비율·상호작용·투입 단계·pH) | 수동 관리 |
-| `src/exams/cosmetic/batch-store.js` · `src/exams/cosmetic/customer-store.js` · `src/exams/cosmetic/material-ledger.js` · `src/exams/cosmetic/usage-guide.js` · `src/exams/cosmetic/store-utils.js` · `src/csv-utils.js` | Formula OS 업무 레이어 — 배치(조제 기록) 채번·QC·위생·스냅샷, 고객 카드·상담 이력, 원료 입고·기한·재고, 사용 안내문 생성기, 스토어 공통 헬퍼, CSV 파서·인코딩(EUC-KR 폴백)·직렬화 (FORMULA_OS_WORKFLOW_DESIGN.md) | 수동 관리 |
+| `src/exams/cosmetic/batch-store.js` · `src/exams/cosmetic/customer-store.js` · `src/exams/cosmetic/material-ledger.js` · `src/exams/cosmetic/adverse-store.js` · `src/exams/cosmetic/usage-guide.js` · `src/exams/cosmetic/store-utils.js` · `src/csv-utils.js` | Formula OS 업무 레이어 — 배치(조제 기록) 채번·QC·위생·스냅샷, 고객 카드·상담 이력, 원료 입고·기한·재고·차감, 이상사례 기록(FO-59), 사용 안내문 생성기, 스토어 공통 헬퍼, CSV 파서·인코딩(EUC-KR 폴백)·직렬화 (FORMULA_OS_WORKFLOW_DESIGN.md) | 수동 관리 |
 | `src/exams/cosmetic/views/formula.js` | Formula OS 뷰 — 배합 계산기(sticky 요약·액션바, 카드형 원료 행, 접이식 고객/제조 정보), My 포뮬러, 추천 패널, 서브내비 칩, 인쇄·JSON 공유 | 수동 관리 |
-| `src/exams/cosmetic/views/formula-batch.js` · `formula-customer.js` · `formula-material.js` · `formula-compliance.js` · `formula-audit.js` · `formula-print.js` | Formula OS 패널 뷰 — 조제 기록(목록·폼·상세), 고객 관리, 원료 장부, 법규 준수 체크리스트(법령 MD 링크·체크 영속), 종합 점검 보고서 수집(FO-56), 인쇄 빌더(기록지·라벨·안내문·종합 보고서) | 수동 관리 |
+| `src/exams/cosmetic/views/formula-batch.js` · `formula-customer.js` · `formula-material.js` · `formula-compliance.js` · `formula-adverse.js` · `formula-audit.js` · `formula-print.js` | Formula OS 패널 뷰 — 조제 기록(목록·폼·상세), 고객 관리, 원료 장부(LOT 추적), 법규 준수 체크리스트(법령 MD 링크·체크 영속), 이상사례 기록(FO-59), 종합 점검 보고서 수집(FO-56), 인쇄 빌더(기록지·라벨·안내문·종합 보고서·추적·판매내역·동의서) | 수동 관리 |
 | [`data/exams/cosmetic/id_migration.js`](../../data/exams/cosmetic/id_migration.js) | 레거시 ID → 안정 ID 일회성 매핑 | `tools/build/index.js` (id_factory) |
 | [`data/audio_manifest.js`](../../data/audio_manifest.js) | 오디오 파일 경로 매니페스트 | 오디오북 파이프라인 |
 
@@ -999,8 +1001,9 @@ pullSync() (로그인 시 / "지금 동기화" 버튼)
 | My 포뮬러 | `formula-store.js` | `formula.js` | 저장(5)·열기·복제·삭제, 규정 스냅샷, 전성분 표시 자동 생성 |
 | 고객 관리 | `customer-store.js` | `formula-customer.js` | 고객 카드 + 상담 이력(append-only), CSV 입출력, 포뮬러·배치 역참조 |
 | 조제 기록 | `batch-store.js` | `formula-batch.js` | 날짜-순번 채번(`YYYYMMDD-NN`), 처방 스냅샷, QC·위생 필드, 기록지 인쇄 |
-| 원료 장부 | `material-ledger.js` | `formula-material.js` | 입고·사용기한·재고, 기한 경고 배지, 계산기 원료명 자동 매칭 |
-| 법규 준수 | (체크 상태) | `formula-compliance.js` | 실무 체크리스트 + 관련 법령 MD `openExam` 링크 |
+| 원료 장부 | `material-ledger.js` | `formula-material.js` | 입고·사용기한·재고, 기한 경고 배지, 계산기 원료명 자동 매칭, LOT 역추적(FO-57), 재고 자동 차감(FO-61) |
+| 이상사례 | `adverse-store.js` | `formula-adverse.js` | 소비자 이상사례 기록 — 발생일·고객·제품·증상·조치·관계기관 보고일 (FO-59) |
+| 법규 준수 | (체크 상태) | `formula-compliance.js` | 실무 체크리스트 + 관련 법령 MD `openExam` 링크, 보고서 출력 이력(FO-63) |
 
 - **서브내비 칩**: 모든 패널 상단에 동일한 `formulaSubNav` 칩 바 — 패널 간 상호 이동
 - **공유 컨텍스트**: 계산기의 고객/처방이 배치 폼과 안내문 생성에 재사용됨 (customerId 바인딩)

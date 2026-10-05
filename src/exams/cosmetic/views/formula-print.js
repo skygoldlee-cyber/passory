@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula-print.js — Formula OS 인쇄 산출물 빌더 (Phase A)
-// @spec FO-14,FO-21,FO-29,FO-56
+// @spec FO-14,FO-21,FO-29,FO-56,FO-57,FO-58,FO-60
 //
 // 조제 기록지(배치)·제품 라벨·사용 안내문·작업지시서 HTML 생성 + 공용 인쇄 트리거.
 // 기존 formula.js의 조제 기록지와 같은 #formula-print-area + body.formula-printing
@@ -251,6 +251,19 @@ function auditCustomersBody(s) {
     ${logs ? `<h3>최근 상담 이력 (고객별 최대 3건)</h3><ul class="fp-steps">${logs}</ul>` : ''}`;
 }
 
+function auditAdverseBody(s) {
+  const rows = s.recent.map(a => `<tr>
+    <td>${esc(a.occurredAt || '—')}</td><td>${esc(a.customerName || '—')}</td>
+    <td>${esc(a.product || '—')}</td><td>${esc(a.symptoms || '—')}</td>
+    <td>${esc(a.reportedAt || '미보고')}</td>
+  </tr>`).join('');
+  return `<p class="fp-meta-line">총 ${s.total}건 — 관계기관 보고 ${s.reported}건</p>
+    <table class="fp-table">
+    <thead><tr><th>발생일</th><th>고객</th><th>제품</th><th>증상</th><th>보고일</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    ${s.total > s.recent.length ? `<p class="fp-meta-line">최근 ${s.recent.length}건만 표시 — 전체 ${s.total}건</p>` : ''}`;
+}
+
 const AUDIT_BODY = {
   checklist: auditChecklistBody,
   label: auditLabelBody,
@@ -259,6 +272,7 @@ const AUDIT_BODY = {
   batches: auditBatchesBody,
   materials: auditMaterialsBody,
   customers: auditCustomersBody,
+  adverse: auditAdverseBody,
 };
 
 /**
@@ -290,6 +304,98 @@ export function buildAuditReportHtml(d) {
     </div>
     <p class="fp-disclaimer">본 보고서는 자가점검용 참고 자료이며 법률 자문이 아닙니다. 실제 의무·기준의 판단은 법령 원문과 관할 지방식약청 안내를 따르세요.</p>
     <p class="fp-disclaimer">본 문서에는 고객 개인정보(이름·피부 정보·상담 내용)가 포함될 수 있습니다 — 출력물의 보관·폐기에 주의하세요.</p>
+  </div>`;
+}
+
+/* =======================================================
+   실무 증적 문서 (FO-57~60) — LOT 추적·판매내역서·고객 동의서
+   ======================================================= */
+
+/**
+ * 원료 LOT 역추적 목록 (FO-57) — 해당 원료를 사용한 배치와 인도 고객.
+ * 위해사례·리콜 상황의 대상 고객 특정용.
+ * @param {object} q - {material:{name,lot}, batches:[{batchNo,formulaName,customerName,madeAt,deliveredAt}]}
+ */
+export function buildRecallListHtml(q) {
+  const m = q.material || {};
+  const batches = Array.isArray(q.batches) ? q.batches : [];
+  const rows = batches.map(b => `<tr>
+    <td>${esc(b.batchNo || '—')}</td><td>${esc(b.formulaName || '—')}</td>
+    <td>${esc(b.customerName || '—')}</td><td>${esc(auditFmtDateTime(b.madeAt))}</td>
+    <td>${esc(b.deliveredAt || '미인도')}</td>
+  </tr>`).join('');
+  return `<div class="fp-doc">
+    <h1>원료 LOT 사용 추적</h1>
+    <p class="fp-meta-line">원료: ${esc(m.name || '—')}${m.lot ? ` · LOT ${esc(m.lot)}` : ''} · 조회일: ${esc(todayKey())} · 대상 배치 ${batches.length}건</p>
+    ${batches.length ? `<table class="fp-table">
+      <thead><tr><th>배치번호</th><th>처방·제품</th><th>인도 고객</th><th>조제 일시</th><th>인도일</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <p class="fp-meta-line">상기 고객에게 해당 원료 사용 제품의 인도 이력이 있습니다 — 위해사례·회수 시 연락 대상 목록으로 활용하세요.</p>`
+    : '<p class="fp-meta-line">해당 원료를 사용한 조제 기록이 없습니다.</p>'}
+    <p class="fp-disclaimer">추적 결과는 장부 LOT 선택 기록 기준이며, LOT 미기록 배치는 포함되지 않습니다.</p>
+  </div>`;
+}
+
+/**
+ * 판매내역서 (FO-58) — 인도 완료(deliveredAt 기재) 배치 목록.
+ * 맞춤형화장품 판매내역 기록·보존 근거 문서.
+ * @param {object[]} batches - 인도 완료 배치 (deliveredAt 내림차순 권장)
+ */
+export function buildSalesRecordHtml(batches) {
+  const list = Array.isArray(batches) ? batches : [];
+  const rows = list.map(b => `<tr>
+    <td>${esc(b.deliveredAt || '—')}</td><td>${esc(b.batchNo || '—')}</td>
+    <td>${esc(b.formulaName || '—')}</td><td>${esc(b.customerName || '—')}</td>
+    <td class="fp-num">${b.targetVolume != null ? `${b.targetVolume}${b.unit || 'g'}` : '—'}</td>
+    <td>${esc(b.disposition || '—')}</td>
+  </tr>`).join('');
+  const period = list.length
+    ? `${list[list.length - 1].deliveredAt} ~ ${list[0].deliveredAt}` : '—';
+  return `<div class="fp-doc">
+    <h1>판매내역서</h1>
+    <p class="fp-meta-line">기간: ${esc(period)} · 발행일: ${esc(todayKey())} · 인도 완료 ${list.length}건</p>
+    ${list.length ? `<table class="fp-table">
+      <thead><tr><th>인도일</th><th>배치번호</th><th>제품·처방</th><th>고객</th><th class="fp-num">내용량</th><th>비고</th></tr></thead>
+      <tbody>${rows}</tbody></table>`
+    : '<p class="fp-meta-line">인도일이 기록된 판매 내역이 없습니다 — 배치 폼의 "고객 인도일"을 입력하면 내역서에 포함됩니다.</p>'}
+    <div class="fp-sign-row">
+      <span class="fp-sign">작성자: ______________</span>
+      <span class="fp-sign">확인일: ________</span>
+    </div>
+    <p class="fp-disclaimer">본 내역서는 앱에 기록된 인도 정보를 집계한 자료입니다. 법정 보존 서식 요건은 관할 지방식약청 안내를 확인하세요.</p>
+  </div>`;
+}
+
+/**
+ * 고객 안내·동의서 (FO-60) — 맞춤형화장품 사용 전 고지와 고객 서명.
+ * 고객 알레르기 이력 + 제품 주의사항을 담는다.
+ * @param {object} d - {customer:{name,skinType,allergies}, product:{formulaName,batchNo}, ingredientsNote}
+ */
+export function buildConsentHtml(d) {
+  const c = d.customer || {};
+  const p = d.product || {};
+  const allergyLine = c.allergies && c.allergies.length
+    ? esc(c.allergies.join(', ')) : '보고된 알레르기 없음';
+  return `<div class="fp-doc">
+    <h1>맞춤형화장품 사용 안내·동의서</h1>
+    <p class="fp-meta-line">고객: ${esc(c.name || '—')}${c.skinType ? ` · 피부타입 ${esc(c.skinType)}` : ''} · 발행일: ${esc(todayKey())}</p>
+    ${p.formulaName || p.batchNo ? `<p class="fp-meta-line">대상 제품: ${esc(p.formulaName || '—')}${p.batchNo ? ` (배치 ${esc(p.batchNo)})` : ''}</p>` : ''}
+    <h3>고객 알레르기 이력</h3>
+    <p class="fp-notes">${allergyLine}</p>
+    <h3>사용 전 안내사항</h3>
+    <ul class="fp-steps">
+      <li>본 제품은 고객 개인의 피부 상태와 상담 내용을 반영해 조제된 맞춤형화장품입니다 — 표시된 고객 외 사용을 금합니다.</li>
+      <li>사용 중 붉은 반점·부종·가려움 등 이상 증상이 나타나면 즉시 사용을 중지하고 상담하세요.</li>
+      <li>상기 알레르기 이력과 관련된 성분의 포함 여부를 조제 전 확인했으나, 모든 개별 반응을 보장하지는 않습니다.</li>
+      <li>직사광선·고온을 피해 표시된 사용기한 내에 사용하세요. 개봉 후 변색·변취 시 사용을 중지하세요.</li>
+      <li>이상 증상 발생 시 조제 사업장에 연락하면 이상사례로 기록·관리됩니다.</li>
+    </ul>
+    <p class="fp-notes">위 안내사항을 설명받고 이해하였으며, 제품 사용에 동의합니다.</p>
+    <div class="fp-sign-row">
+      <span class="fp-sign">고객 서명: ______________</span>
+      <span class="fp-sign">조제관리사: ______________</span>
+      <span class="fp-sign">일자: ________</span>
+    </div>
   </div>`;
 }
 

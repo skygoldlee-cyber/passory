@@ -24,6 +24,7 @@ import {
 } from '../customer-store.js';
 import { CUSTOMER_OPTIONS } from '../formula-store.js';
 import { listProducts, findAllergyHits } from '../product-store.js';
+import { buildConsentHtml, printHtml } from './formula-print.js';
 
 import {
   parseCsv, csvToObjects, readCsvFile, toCsv, downloadCsv,
@@ -310,10 +311,25 @@ export function custOpen(id) {
       ${prodHtml}
 
       <div class="formula-card-actions">
+        <button class="btn btn-secondary btn-sm" data-click="custPrintConsent" data-arg="${esc(c.id)}" title="사용 전 안내·동의서 인쇄 (FO-60)"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> 동의서</button>
         <button class="btn btn-secondary btn-sm" data-click="custEdit" data-arg="${esc(c.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>
         <button class="btn btn-secondary btn-sm f-danger" data-click="custDelete" data-arg="${esc(c.id)}" title="고객 카드 삭제 (복구 불가)"><i class="fa-solid fa-trash" aria-hidden="true"></i> 삭제</button>
       </div>
     </div>`;
+}
+
+/**
+ * 고객 안내·동의서 인쇄 (FO-60) — 알레르기 이력과 최근 인도 제품을 담은
+ * 서명용 고지 문서. 대상 제품은 해당 고객의 최신 배치를 사용한다.
+ */
+export function custPrintConsent(id) {
+  const c = getCustomer(id);
+  if (!c) { showToast('고객 카드를 찾을 수 없습니다.', 'error'); return; }
+  const latest = listBatches().filter(b => b.customerId === c.id)[0] || null;
+  printHtml(buildConsentHtml({
+    customer: c,
+    product: latest ? { formulaName: latest.formulaName, batchNo: latest.batchNo } : {},
+  }));
 }
 
 /** 상담 이력 추가 — 오늘 날짜로 append */

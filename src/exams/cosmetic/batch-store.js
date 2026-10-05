@@ -163,6 +163,20 @@ export function listBatchesByFormula(formulaId) {
   return listBatches().filter(b => b.formulaId === formulaId);
 }
 
+/**
+ * 원료 역추적 (FO-57) — 해당 원료 항목을 사용한 배치 목록.
+ * materialId 우선 매칭, 스냅샷 정합을 위해 name도 보조 매칭한다.
+ * (장부 항목 삭제 후에도 name으로는 추적 가능)
+ * @param {string} materialId - 장부 항목 id
+ * @param {string} name - 원료명
+ * @returns {object[]} madeAt 내림차순 배치 배열
+ */
+export function findBatchesByMaterial(materialId, name) {
+  const target = typeof name === 'string' ? name.trim() : '';
+  return listBatches().filter(b => (b.materialLots || []).some(l =>
+    (materialId && l.materialId === materialId) || (target && l.name === target)));
+}
+
 /** 저장 한도·현재 개수 */
 export function getBatchUsage() {
   const count = loadAll().length;

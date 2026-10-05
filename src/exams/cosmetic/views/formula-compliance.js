@@ -1,5 +1,5 @@
 // Formula OS — 법규 준수 체크리스트 (Phase D)
-// @spec FO-19,FO-33,FO-34
+// @spec FO-19,FO-33,FO-34,FO-63
 // 맞춤형화장품판매업자·조제관리사의 법정 의무를 카테고리별 자가점검 항목으로 정리.
 // FO-34: 사업 유형별 세트화 — 맞춤형(custom)·제조업(mfg, CGMP)·책임판매업(sales).
 // 항목 내용은 참조자료 법령 정리(과목1 cosmetic-law, 과목4 mixing-subdivision·overview)와
@@ -354,6 +354,25 @@ function renderSections(sections, checked) {
   }).join('');
 }
 
+/** 보고서 출력 이력 (FO-63) — formula-audit.js가 출력 시점에 기록한 최근 5건 표시 */
+function renderAuditLog() {
+  const box = document.getElementById('comp-audit-log');
+  if (!box) return;
+  let log = [];
+  try {
+    const raw = safeGetItem(STORAGE_KEYS.FORMULA_AUDIT_LOG);
+    const parsed = raw ? JSON.parse(raw) : null;
+    log = Array.isArray(parsed) ? parsed : [];
+  } catch (e) { log = []; }
+  box.innerHTML = log.length
+    ? log.slice(0, 5).map(e => `<div class="comp-doc-row">
+        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+        <span class="comp-doc-label">${esc(String(e.at || '').slice(0, 16).replace('T', ' '))}</span>
+        <span class="comp-doc-desc">${esc(e.bizLabel || '')} · ${esc(e.setLabel || '')} · 점검 ${e.done}/${e.total} · 섹션 ${e.sections}개</span>
+      </div>`).join('')
+    : '<div class="formula-rec-note">출력 이력이 없습니다 — 종합 보고서를 출력하면 여기에 기록됩니다.</div>';
+}
+
 function render() {
   const set = activeSet();
   const checked = loadChecks(set);
@@ -367,6 +386,7 @@ function render() {
   if (badge) badge.textContent = `점검 ${done}/${total}`;
   const setLabel = document.getElementById('comp-set-label');
   if (setLabel) setLabel.textContent = `· ${set.label} 기준`;
+  renderAuditLog();
 }
 
 /* =======================================================

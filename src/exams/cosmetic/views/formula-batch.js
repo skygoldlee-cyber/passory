@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula-batch.js — Formula OS 조제 기록(배치) 뷰 (Phase A)
-// @spec FO-16
+// @spec FO-16,FO-58,FO-61
 //
 // 목록 패널(formula-batch-panel) + 폼(formula-batch-form-panel) +
 // 상세(formula-batch-detail-panel) — formula.js의 showPanel/subNav 재사용.
@@ -23,10 +23,11 @@ import {
 } from '../batch-store.js';
 import { localDateTimeNow } from '../store-utils.js';
 import { DataLoader } from '../../../data-loader.js';
-import { daysUntilExpiry, findMaterialsByName } from '../material-ledger.js';
+import { daysUntilExpiry, findMaterialsByName, deductStock, stockStatus } from '../material-ledger.js';
 import { isPreservative } from '../formula-stability.js';
 import {
-  buildBatchRecordHtml, buildLabelHtml, buildGuideHtml, printHtml, batchQcSummary,
+  buildBatchRecordHtml, buildLabelHtml, buildGuideHtml, buildSalesRecordHtml,
+  printHtml, batchQcSummary,
 } from './formula-print.js';
 
 import { toCsv, downloadCsv } from '../../../csv-utils.js';
@@ -98,6 +99,9 @@ function renderFilterBar(batches) {
     </select>
     <button class="btn btn-secondary btn-sm" data-click="batchExportCsv" title="필터된 목록을 CSV로 저장">
       <i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSV
+    </button>
+    <button class="btn btn-secondary btn-sm" data-click="batchPrintSales" title="인도 완료 건을 판매내역서로 인쇄 (FO-58)">
+      <i class="fa-solid fa-receipt" aria-hidden="true"></i> 판매내역서
     </button>`;
   const bind = (id, key, evt) => {
     const el = getEl(id);
@@ -447,7 +451,9 @@ function renderLotFields(formula, b) {
       const opts = mats.map(m => {
         const days = daysUntilExpiry(m);
         const exp = m.expiryAt ? ` · 기한 ${m.expiryAt}${days != null && days < 0 ? ' (경과)' : days != null && days <= 30 ? ` (D-${days})` : ''}` : '';
-        return `<option value="${esc(m.id)}">${esc(m.lot || m.name)}${esc(exp)}${m.qty != null ? ` · 잔량 ${m.qty}${esc(m.unit || '')}` : ''}</option>`;
+        // 소진 LOT는 신규 선택 불가 — 다만 기존 배치가 이미 선택한 LOT면 복원을 위해 유지 (FO-61)
+        const out = stockStatus(m) === 'out' && saved.get(name) !== m.id;
+        return `<option value="${esc(m.id)}"${out ? ' disabled' : ''}>${esc(m.lot || m.name)}${esc(exp)}${m.qty != null ? ` · 잔량 ${m.qty}${esc(m.unit || '')}` : ''}${out ? ' · 소진' : ''}</option>`;
       }).join('');
       return `<div class="batch-qc-row">
         <span class="batch-qc-label">${esc(name)}</span>
@@ -691,6 +697,30 @@ export async function batchSave() {
     checkSnapshot: buildCheckSnapshot(formula),
   });
   if (!r.ok) { showStoreError(r, '조제 기록', showToast); return; }
+
+  // 재고 자동 차감 (FO-61) — 신규 배치에만 적용, 보정 모드는 감사 정합을 위해 미차감.
+  // 선택된 사용 LOT의 처방 소요량(총량 × 배합비)을 장부 잔량에서 차감한다.
+  const lots = /** @type {{name:string, materialId:string, lot:string}[]} */ (
+    Array.isArray(data.materialLots) ? data.materialLots.filter(Boolean) : []);
+  if (lots.length && data.targetVolume != null && !Number.isNaN(data.targetVolume)) {
+    const vol = data.targetVolume;
+    const usage = lots.map(lot => {
+      const ing = (formula.ingredients || []).find(i => (i && i.name || '').trim() === lot.name);
+      return {
+        materialId: lot.materialId, name: lot.name,
+        amount: ing && ing.concentration != null
+          ? Math.round(vol * ing.concentration) / 100 : 0,
+      };
+    });
+    const res = deductStock(usage);
+    if (!res.ok) showToast('재고 차감 저장에 실패했습니다 — 원료 장부를 확인하세요.', 'error');
+    if (res.shortages.length) {
+      showToast(`재고 부족: ${res.shortages.map(s => `${s.name} 잔량 ${s.had}`).join(' · ')} — 발주가 필요합니다.`, 'error');
+    } else if (res.deducted.length) {
+      showToast(`재고 차감: ${res.deducted.map(d => `${d.name} −${d.amount} (잔량 ${d.remain})`).join(' · ')}`, 'info');
+    }
+  }
+
   showToast(`${r.batch.batchNo} 조제 기록이 저장되었습니다.`, 'success');
   batchOpen(r.batch.id);
 }
@@ -767,3 +797,14 @@ function printBatch(id, builder, _emptyMsg) {
 export function batchPrintRecord(id) { printBatch(id, buildBatchRecordHtml); }
 export function batchPrintLabel(id) { printBatch(id, buildLabelHtml); }
 export function batchPrintGuide(id) { printBatch(id, buildGuideHtml); }
+
+/**
+ * 판매내역서 인쇄 (FO-58) — 인도일(deliveredAt)이 기록된 배치만 포함.
+ * 맞춤형화장품 판매내역 기록·보존 증적. deliveredAt 내림차순 정렬.
+ */
+export function batchPrintSales() {
+  const delivered = listBatches()
+    .filter(b => b.deliveredAt)
+    .sort((a, b) => String(b.deliveredAt).localeCompare(String(a.deliveredAt)));
+  printHtml(buildSalesRecordHtml(delivered));
+}

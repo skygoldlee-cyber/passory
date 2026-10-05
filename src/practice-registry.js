@@ -61,6 +61,7 @@ const formula = {
         material: _domainImport('views/formula-material.js'),
         compliance: _domainImport('views/formula-compliance.js'),
         audit: _domainImport('views/formula-audit.js'),
+        adverse: _domainImport('views/formula-adverse.js'),
         sales: _domainImport('views/formula-sales.js'),
         products: _domainImport('views/formula-products.js'),
         notice: _lazyImport(() => import('./notice-check.js')),
@@ -86,16 +87,20 @@ const formula = {
         ['batch', [
             'openBatchPanel', 'batchNew', 'batchEdit', 'batchSave', 'batchOpen', 'batchDelete',
             'batchFormulaChanged', 'batchCustChanged', 'batchPrintRecord', 'batchPrintLabel',
-            'batchPrintGuide', 'batchFilterReset', 'batchExportCsv',
+            'batchPrintGuide', 'batchFilterReset', 'batchExportCsv', 'batchPrintSales',
         ]],
         ['customer', [
             'openCustomerPanel', 'custNew', 'custEdit', 'custSave', 'custOpen', 'custDelete',
             'custLogAdd', 'custAllergyAdd', 'custAllergyRemove',
-            'custImportCsv', 'custExportCsv', 'custCsvTemplate',
+            'custImportCsv', 'custExportCsv', 'custCsvTemplate', 'custPrintConsent',
         ]],
         ['material', [
             'openMaterialPanel', 'matNew', 'matEdit', 'matSave', 'matDelete',
             'matImportCsv', 'matExportCsv', 'matCsvTemplate',
+            'matTrace', 'matTracePrint', 'matTraceClose',
+        ]],
+        ['adverse', [
+            'openAdversePanel', 'advSave', 'advEdit', 'advDelete', 'advCancel',
         ]],
         ['compliance', [
             'openCompliancePanel', 'compToggle', 'compReset', 'compOpenLaw',

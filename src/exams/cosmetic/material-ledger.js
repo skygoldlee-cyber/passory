@@ -162,6 +162,45 @@ export function expiringMaterials(now) {
 }
 
 /**
+ * 재고 상태 (FO-61) — 'none'(잔량 미기재) | 'out'(소진) | 'ok'
+ * 잔량이 0 이하이면 조제 LOT 선택에서 제외·소진 배지 대상.
+ */
+export function stockStatus(m) {
+  if (!m || m.qty == null) return 'none';
+  return m.qty <= 0 ? 'out' : 'ok';
+}
+
+/**
+ * 배치 생성 시 재고 자동 차감 (FO-61) — 선택된 사용 LOT의 잔량에서
+ * 처방 소요량을 뺀다. 잔량 미기재 항목은 건너뛰고, 부족분은 0에서
+ * 바닥내며 부족 목록으로 반환한다 (차단 아닌 경고 — 기록 저장은 완료).
+ * @param {Array<{materialId:string, name:string, amount:number}>} usage
+ *   [{materialId, name, amount}] — materialId는 장부 id, amount는 차감량(원료 단위)
+ * @returns {{ok:boolean, deducted:object[], shortages:object[], skipped:string[]}}
+ */
+export function deductStock(usage) {
+  /** @type {{ok:boolean, deducted:Array<{name:string,amount:number,remain:number}>, shortages:Array<{name:string,need:number,had:number}>, skipped:string[]}} */
+  const out = { ok: true, deducted: [], shortages: [], skipped: [] };
+  const all = loadAll();
+  let changed = false;
+  for (const u of usage || []) {
+    if (!u || typeof u !== 'object') continue;
+    const amt = numOrNull(u.amount);
+    const m = all.find(x => x.id === u.materialId);
+    if (!m || amt == null || amt <= 0) { if (u.name) out.skipped.push(u.name); continue; }
+    if (m.qty == null) { out.skipped.push(m.name); continue; }
+    const next = Math.round((m.qty - amt) * 100) / 100;
+    if (next < 0) out.shortages.push({ name: m.name, need: amt, had: m.qty });
+    m.qty = Math.max(0, next);
+    m.updatedAt = Date.now();
+    changed = true;
+    out.deducted.push({ name: m.name, amount: amt, remain: m.qty });
+  }
+  if (changed && !saveAll(all)) out.ok = false;
+  return out;
+}
+
+/**
  * 새 원료 항목 등록.
  * @returns {{ok:boolean, material?:object, error?:string}}
  */

@@ -1,11 +1,12 @@
 // Formula OS — 종합 규정 점검 보고서 수집기 (FO-56)
-// @spec FO-56
+// @spec FO-56,FO-59,FO-63
 // 사업 유형별 법규 점검 자산(체크리스트·표시사항·광고 점검·포뮬러 검증·
-// 조제 기록·원료 기한·고객 상담)을 출력 순간 라이브 수집해 fp-doc 보고서로 산출.
+// 조제 기록·원료 기한·고객 상담·이상사례)을 출력 순간 라이브 수집해 fp-doc 보고서로 산출.
 // 보고서 결과 자체는 저장하지 않는다 — 출력이 곧 스냅샷 (설계 DOC-DSN-14).
+// 단 출력 이력(FO-63)은 점수 요약 메타데이터만 FORMULA_AUDIT_LOG에 남긴다.
 // 섹션 범위는 BIZ_PANELS/bizVisible 게이트 재사용 — 유형에 안 맞는 섹션은 자동 제외.
 
-import { getJSON } from '../../../storage.js';
+import { getJSON, setJSON } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { getBizType, BIZ_TYPES, bizVisible, bizChecklistSet } from '../biz-profile.js';
 import { CHECKLIST_SETS, LAW_DOCS, loadChecks } from './formula-compliance.js';
@@ -14,6 +15,7 @@ import { listFormulas } from '../formula-store.js';
 import { listBatches } from '../batch-store.js';
 import { listMaterials, materialStatus } from '../material-ledger.js';
 import { listCustomers } from '../customer-store.js';
+import { listAdverse } from '../adverse-store.js';
 import { checkFormulaItems, countChangedStandards } from '../formula-check.js';
 import { evaluateStability, STAB } from '../formula-stability.js';
 import { getIndex } from './formula.js';
@@ -22,6 +24,8 @@ import { buildAuditReportHtml, printHtml, batchQcSummary } from './formula-print
 const RECENT_BATCH_MAX = 10;   // 최근 배치 목록 상한 — 판매내역 증적
 const CONSULT_RECENT_MAX = 3;  // 고객별 최근 상담 이력 상한 (설계 §9-4)
 const ADLINT_TEXT_MAX = 2000;  // 점검 대상 원문 상한 — 초과분 절단 표기 (설계 §9-1)
+const ADVERSE_RECENT_MAX = 5;  // 이상사례 최근 목록 상한 (FO-59)
+const AUDIT_LOG_MAX = 20;      // 보고서 출력 이력 상한 (FO-63)
 
 /* =======================================================
    섹션 수집기 — 각각 {id,title,summary,empty,...payload} 반환
@@ -193,6 +197,55 @@ function collectCustomers() {
   };
 }
 
+/** 소비자 이상사례 기록 (FO-59) — 전 유형 공통, 위해사례 대응 증적 */
+function collectAdverse() {
+  const items = listAdverse();
+  if (!items.length) {
+    return { id: 'adverse', title: '소비자 이상사례 기록', summary: '기록 없음 — 이상사례 접수 없음', empty: true };
+  }
+  const reported = items.filter(a => a.reportedAt).length;
+  return {
+    id: 'adverse', title: '소비자 이상사례 기록',
+    summary: `${items.length}건 기록 — 관계기관 보고 ${reported}건`,
+    empty: false, total: items.length, reported,
+    recent: items.slice(0, ADVERSE_RECENT_MAX).map(a => ({
+      occurredAt: a.occurredAt || '', customerName: a.customerName || '',
+      product: a.product || '', symptoms: a.symptoms || '',
+      action: a.action || '', reportedAt: a.reportedAt || '',
+    })),
+  };
+}
+
+/* =======================================================
+   보고서 출력 이력 (FO-63) — 출력 시점의 점수 요약만 보존.
+   본문(고객 개인정보)은 저장하지 않는다 — 메타데이터 최소화.
+   ======================================================= */
+
+/** 이력 조회 — 최신순, 컴플라이언스 패널 표시용 */
+export function listAuditLog() {
+  const log = getJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG);
+  return Array.isArray(log) ? log : [];
+}
+
+/**
+ * 출력 이력 1건 기록 — auditPrintReport가 수집 직후 호출.
+ * @param {object} d - collectAuditReportData() 반환값
+ */
+export function recordAuditLog(d) {
+  const checklist = d.sections.find(s => s.id === 'checklist');
+  const entry = {
+    at: d.generatedAt,
+    bizId: d.biz && d.biz.id, bizLabel: d.biz && d.biz.label,
+    setLabel: d.setLabel || '',
+    done: checklist ? checklist.done : 0,
+    total: checklist ? checklist.total : 0,
+    sections: d.sections.length,
+  };
+  const log = [entry, ...listAuditLog()].slice(0, AUDIT_LOG_MAX);
+  setJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG, log);
+  return entry;
+}
+
 /* =======================================================
    공개 API
    ======================================================= */
@@ -218,6 +271,7 @@ export function collectAuditReportData(now) {
   };
   // 순서 — 고객 정보가 맨 앞, 법규 준수 체크리스트가 맨 뒤 (실무 증적 → 준수 확인 결론)
   pushIf('customer', collectCustomers());
+  pushIf('adverse', collectAdverse());   // 미선언 패널 — 전 유형 공통 (FO-59)
   pushIf('label', collectLabel());
   pushIf('adlint', collectAdlint());
   pushIf('calc', collectFormulas());
@@ -234,7 +288,9 @@ export function collectAuditReportData(now) {
   };
 }
 
-/** 종합 보고서 출력 — 수집 → fp-doc 렌더 → print */
+/** 종합 보고서 출력 — 수집 → 이력 기록(FO-63) → fp-doc 렌더 → print */
 export function auditPrintReport() {
-  printHtml(buildAuditReportHtml(collectAuditReportData()));
+  const data = collectAuditReportData();
+  recordAuditLog(data);
+  printHtml(buildAuditReportHtml(data));
 }

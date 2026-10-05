@@ -105,6 +105,14 @@ export const STORAGE_KEYS = {
   // Formula OS — 광고 문구 점검 최근 실행 결과 (FO-56)
   // {text, hits:[{term,category,label,suggestion}], at} — 종합 보고서 근거, 작업 데이터로 백업·동기 포함
   FORMULA_ADLINT_STATE: 'formula_adlint_state',
+
+  // Formula OS — 소비자 이상사례(부작용) 기록 (FO-59)
+  // [{id:'adv_…', occurredAt, customerId, customerName, product, symptoms, action, reportedAt, notes}]
+  ADVERSE_ITEMS: 'formula_adverse_items',
+
+  // Formula OS — 종합 보고서 출력 이력 (FO-63) — 최근 20건
+  // [{at, bizId, bizLabel, setLabel, done, total, sections}]
+  FORMULA_AUDIT_LOG: 'formula_audit_log',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)
@@ -181,6 +189,8 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.FORMULA_GEMINI_MODEL, // 사진 인식 모델명 설정 — 환경설정 (FO-46)
   STORAGE_KEYS.FORMULA_VISION_HIRES, // 사진 고해상도 모드 — 환경설정 (FO-54)
   STORAGE_KEYS.FORMULA_ADLINT_STATE, // 광고 점검 최근 결과 — 종합 보고서 작업 데이터 (FO-56)
+  STORAGE_KEYS.ADVERSE_ITEMS,      // 소비자 이상사례 기록 — 법적 증적 (FO-59)
+  STORAGE_KEYS.FORMULA_AUDIT_LOG,  // 보고서 출력 이력 — 점검 진척 근거 (FO-63)
 ];
 
 // 전체 초기화(Reset Progress) 시 제거할 키 목록

@@ -44,11 +44,11 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         expect(el('formula-usage-badge').textContent).toContain('/5');
     });
 
-    it('openCustomerPanel — 고객 패널 표시 + 서브내비 6칩·고객 활성', () => {
+    it('openCustomerPanel — 고객 패널 표시 + 서브내비 8칩·고객 활성', () => {
         openCustomerPanel();
         onlyVisible('formula-customer-panel');
         const chips = el('formula-customer-subnav').querySelectorAll('.formula-subnav-chip');
-        expect(chips.length).toBe(7);
+        expect(chips.length).toBe(8);
         const active = el('formula-customer-subnav').querySelector('.is-active');
         expect(active.textContent).toBe('고객 관리');
         // 모든 칩이 실제 핸들러명을 data-click으로 가짐
@@ -69,11 +69,11 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         expect(active.textContent).toBe('법규 준수');
     });
 
-    it('openFormulaCalc — 배합 계산기 패널 + 서브내비 7칩·계산기 활성', () => {
+    it('openFormulaCalc — 배합 계산기 패널 + 서브내비 8칩·계산기 활성', () => {
         openFormulaCalc();
         onlyVisible('formula-calc-panel');
         const subnav = el('formula-calc-subnav');
-        expect(subnav.querySelectorAll('.formula-subnav-chip').length).toBe(7);
+        expect(subnav.querySelectorAll('.formula-subnav-chip').length).toBe(8);
         expect(subnav.querySelector('.is-active').textContent).toBe('배합 계산기');
     });
 
