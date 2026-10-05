@@ -273,7 +273,7 @@ const SALES_SECTIONS = [
 ];
 
 const CHECKLIST_SETS = {
-  custom: { label: '맞춤형화장품 조제', key: STORAGE_KEYS.COMPLIANCE_CHECKS, sections: SECTIONS },
+  custom: { label: '맞춤형화장품 판매업', key: STORAGE_KEYS.COMPLIANCE_CHECKS, sections: SECTIONS },
   mfg: { label: '화장품제조업 (CGMP)', key: STORAGE_KEYS.COMPLIANCE_CHECKS_MFG, sections: MFG_SECTIONS },
   sales: { label: '책임판매업', key: STORAGE_KEYS.COMPLIANCE_CHECKS_SALES, sections: SALES_SECTIONS },
 };

@@ -60,7 +60,7 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
 
         const html = printArea().innerHTML;
         expect(html).toContain('종합 점검 보고서');
-        expect(html).toContain('맞춤형화장품 조제');
+        expect(html).toContain('맞춤형화장품 판매업');
         expect(html).toContain('☑'); // 체크 항목
         expect(html).toContain('법규 준수 체크리스트');
         expect(html).toContain('점검자');

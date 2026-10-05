@@ -42,7 +42,7 @@ describe('Formula OS — 사업 유형 프로파일 (FO-33)', () => {
         vi.clearAllMocks();
     });
 
-    it('허브에 유형 칩 3개 렌더 — 기본 유형은 맞춤형조제 활성', () => {
+    it('허브에 유형 칩 3개 렌더 — 기본 유형은 맞춤형화장품 판매업 활성', () => {
         initFormulaView();
         const chips = document.querySelectorAll('#formula-biz-bar .formula-biz-chip');
         expect(chips.length).toBe(3);

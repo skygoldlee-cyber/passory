@@ -178,7 +178,7 @@ test('보고서 이력 — 출력 메타데이터 기록 + 20건 상한', () => 
   assert.equal(log.length, 20); // 상한
   const e = log[0];
   assert.equal(e.bizId, 'custom');
-  assert.equal(e.bizLabel, '맞춤형화장품 조제');
+  assert.equal(e.bizLabel, '맞춤형화장품 판매업');
   assert.equal(typeof e.done, 'number');
   assert.equal(typeof e.total, 'number');
   assert.equal(e.sections, 6); // custom: 고객·이상사례·포뮬러·배치·원료·체크리스트
