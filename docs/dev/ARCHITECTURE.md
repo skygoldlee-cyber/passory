@@ -260,7 +260,7 @@ passory/
 │   ├── reader-format.js        #   MD→HTML 변환, 링크 재작성, 키워드 자동링크
 │   ├── markdown-parser.js      #   범용 MD→HTML 파서
 │   ├── pdf-registry.js         #   참조자료 중앙 설정 — 시험별 테이블(_EXAM_TABLES) + getRefTables()
-│   ├── mermaid-render.js       #   Mermaid 지연 로딩·렌더링 공용 (reader/search/manual)
+│   ├── mermaid-render.js       #   Mermaid 지연 로딩·렌더링·확대 모달 공용 (reader/search/manual — 데스크탑 전용)
 │   ├── image-zoom.js           #   본문 이미지(.reader-img) 라이트박스 — 데스크탑 전용 (모바일은 핀치 줌)
 │   ├── pwa-manifest.js         #   시험별 동적 PWA 매니페스트 (클래식 스크립트)
 │   ├── html-viewer.js          #   참조자료 fetch+DOM 뷰어, 검색, 하이라이트

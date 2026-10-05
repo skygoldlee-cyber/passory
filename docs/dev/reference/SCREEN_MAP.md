@@ -58,7 +58,7 @@
 | 리더 TOC 드로어 | `#reader-toc` + 백드롭 | 모바일: 왼쪽 엣지 스와이프/목차 버튼 | ≤900px fixed 드로어, 데스크톱은 사이드바 | TR-22/23 |
 | 표 전체화면 모달 | ~~`#reader-table-modal`~~ | — | 제거됨 — 핀치 줌 대체 | TR-20 |
 | 이미지 라이트박스 | `#reader-img-zoom-modal` | `.reader-img` 클릭 (데스크탑 전용 — 모바일은 핀치 줌) | 확대·드래그 | TR-20 |
-| Mermaid 확대 모달 | ~~`#mermaid-zoom-modal`~~ | — | 제거됨 — 핀치 줌 대체 | TR-06 |
+| Mermaid 확대 모달 | `#mermaid-zoom-modal` | 본문 다이어그램 탭/확대 버튼 (데스크탑 전용 — 모바일은 핀치 줌) | 확대·팬 | TR-06 |
 | 오프라인 배너 | `#offline-banner` | `offline`/`online` 이벤트 자동 | 상단 고정 상태 배너 | §4.1~4.2 |
 | 용량 경고 배너 | `#storage-warning-banner` | 저장 용량 임계 | 대시보드 배너 | R-09 |
 | 식약처 고시 배너 | `#formula-notice-banner` | formula-view 진입 | 고시 확인·원문 링크 | §3.18 |

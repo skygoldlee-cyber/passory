@@ -286,7 +286,38 @@ pre.mermaid svg {
     height: auto;
 }
 
-/* 확대 모달 셸 + 툴바 — 이미지 라이트박스(image-zoom.js) 공용.
+/* 다이어그램 확대 버튼 — 데스크탑 전용 (coarse 포인터는 바인딩 자체가 안 됨) */
+.mermaid-expand-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: var(--z-raised);
+    background: var(--drawer-bg);
+    border: 1px solid var(--border-color);
+    color: var(--color-text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    font-size: var(--text-xs-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-base);
+}
+.mermaid-expand-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.mermaid-expand-btn:active {
+    transform: scale(0.92);
+    transition: transform 0.05s ease;
+}
+.reader-light-theme .mermaid-expand-btn {
+    background: var(--bg-card);
+}
+
+/* 확대 모달 셸 + 툴바 — 다이어그램·이미지 라이트박스 공용.
    매뉴얼/HTML 뷰어 오버레이(z-index 9999~10001) 위에서도 동작해야 하므로 최상위 부여.
    결합 셀렉터 필수: 이 파일은 reader.css 상단 @import로 확장되므로 단일 클래스면
    reader.css 뒤쪽의 .reader-table-modal(z-modal)에 캐스케이드 순서로 밀린다 */
@@ -343,6 +374,17 @@ pre.mermaid svg {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     text-align: center;
+}
+/* 모달 내 pre 복제본 — 인라인 스크롤 대신 모달 본문이 스크롤하도록 */
+.mermaid-zoom-stage {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    display: inline-block;
+    text-align: left;
+}
+.mermaid-zoom-stage svg {
+    display: block;
 }
 
 /* === Flowchart 전용 스타일 === */
@@ -558,7 +600,12 @@ pre.mermaid-other .labelBkg {
         margin-bottom: 0; /* 크롬 오버레이 카드가 간격을 담당 (TR-22) */
     }
 
-    /* 확대 모달 툴바 터치 영역 확대 */
+    /* 모바일 터치 영역 — 표 확장 버튼과 동일 기준 */
+    .mermaid-expand-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
     .mermaid-zoom-btn {
         min-width: 44px;
         min-height: 44px;

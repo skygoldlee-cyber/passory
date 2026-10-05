@@ -107,7 +107,7 @@ test.describe('교재리더 고급 기능', () => {
         await expect(chrome).not.toHaveClass(/reader-chrome-hidden/);
     });
 
-    test('본문 Mermaid 다이어그램이 인라인 렌더되고 확대 버튼·모달은 없다 (TR-06)', async ({ page }) => {
+    test('본문 Mermaid 다이어그램이 렌더되고 확대 모달이 동작한다 (TR-06 — 데스크탑 포인터)', async ({ page }) => {
         test.setTimeout(90_000);
         await openReader(page);
         const count = await page.evaluate(() =>
@@ -117,9 +117,14 @@ test.describe('교재리더 고급 기능', () => {
         await page.waitForFunction(() =>
             document.querySelector('#textbook-reader-container .mermaid svg, #textbook-reader-container pre.mermaid svg'),
             null, { timeout: 30_000 });
-        // 확대 수단은 제거됨 — 브라우저 핀치 줌이 대체 (TR-20/TR-06 제거 회귀)
-        await expect(page.locator('#textbook-reader-container .mermaid-expand-btn')).toHaveCount(0);
-        await expect(page.locator('#mermaid-zoom-modal')).toHaveCount(0);
+        // 데스크탑: 확대 버튼 → 모달 오픈 (모바일은 미바인딩 — 핀치 줌)
+        const btn = page.locator('#textbook-reader-container .mermaid-expand-btn').first();
+        await expect(btn).toHaveCount(1);
+        await btn.click();
+        const modal = page.locator('#mermaid-zoom-modal');
+        await expect(modal).not.toHaveClass(/is-hidden/, { timeout: 5_000 });
+        await page.keyboard.press('Escape');
+        await expect(modal).toHaveClass(/is-hidden/, { timeout: 5_000 });
     });
 
     test('기출문제 링크가 문제집 뷰어 오버레이를 연다 (TR-10)', async ({ page }) => {
@@ -143,8 +148,7 @@ test.describe('교재리더 고급 기능', () => {
         await expect(modal).not.toHaveClass(/is-hidden/, { timeout: 5_000 });
         await page.keyboard.press('Escape');
         await expect(modal).toHaveClass(/is-hidden/, { timeout: 5_000 });
-        // 표 확장·Mermaid 확대는 제거 유지 — 핀치 줌이 대체 (회귀 가드)
+        // 표 확장 모달만 제거 유지 — 핀치 줌이 대체 (회귀 가드)
         await expect(page.locator('#textbook-reader-container .reader-table-expand-btn')).toHaveCount(0);
-        await expect(page.locator('#textbook-reader-container .mermaid-expand-btn')).toHaveCount(0);
     });
 });

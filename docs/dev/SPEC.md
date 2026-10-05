@@ -195,7 +195,7 @@
 | TR-03 | 단원 간 이동 (이전/다음 챕터) | ✅ |
 | TR-04 | 스크롤 위치 기억/복원 (뷰 전환 시) | ✅ |
 | TR-05 | 기출 마커(🔖기출) 및 중요 마커(📌중요) 하이라이트 | ✅ |
-| TR-06 | Mermaid 다이어그램 렌더링 (mindmap + flowchart + sequence + gantt + pie + timeline + state + gitGraph + quadrant + class + er + sankey, 온디맨드 로드) — ~~확대 모달(탭/확대 버튼 → 전체화면·줌 컨트롤)~~ 2026-10 제거 (핀치 줌 대체) | ✅ |
+| TR-06 | Mermaid 다이어그램 렌더링 (mindmap + flowchart + sequence + gantt + pie + timeline + state + gitGraph + quadrant + class + er + sankey, 온디맨드 로드) + 확대 모달(탭/확대 버튼 → 전체화면·줌 컨트롤) — **데스크탑 전용** (`pointer: coarse`는 미바인딩, 핀치 줌 대체) | ✅ |
 | TR-07 | 다이어그램 타입별 개별 렌더링 (`mermaid-utils.js` 타입 감지, 하나 실패해도 나머지 정상) | ✅ |
 | TR-08 | 키워드 자동 링크 보호 (Mermaid 블록 내 용어집 링크 치환 방지) | ✅ |
 | TR-09 | 마크다운 링크 파싱 (`[text](url)` → `<a>` 변환) — URL 형태 필터: 스킴/`#`·`/`·`./`·`../` 시작, 경로 구분자 또는 파일 확장자가 있는 대상만 링크화 (IUPAC 화학명 등 우연한 `[]()` 패턴은 원문 유지) | ✅ |
