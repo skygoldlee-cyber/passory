@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261005-5ac2b7e",
+    "date": "2026-10-05",
+    "notes": [
+      "[수정·print] 브라우저 머리글·바닥글(제목·URL) 출력 방지 — @page margin:0"
+    ]
+  },
+  {
     "version": "v20261005-8859feb",
     "date": "2026-10-05",
     "notes": [
@@ -132,13 +139,6 @@
       "[정리] check_numbering @spec none 태그 + TRACE_MATRIX 재생성 [no-docs]",
       "[정리·trace] TRACE_MATRIX 재생성 [no-docs]",
       "[수정·content] 1과목 이야기형 서사 패치 헤딩 중복·번호 건너뜀 수정 + check:numbering 게이트"
-    ]
-  },
-  {
-    "version": "v20261005-e197d16",
-    "date": "2026-10-05",
-    "notes": [
-      "[수정·reader] 섹션 카드 순번 배지 제거 — 제목 번호와 불일치하는 오표기 해소"
     ]
   }
 ]
