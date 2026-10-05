@@ -277,7 +277,7 @@ export function buildAuditReportHtml(d) {
     return `<h3>${mark} ${esc(s.title)}</h3>${content}`;
   }).join('');
   return `<div class="fp-doc">
-    <h1>법규 준수 종합 점검 보고서</h1>
+    <h1>종합 점검 보고서</h1>
     <p class="fp-meta-line">사업 유형: ${esc(d.biz.label)} — ${esc(d.biz.desc)}</p>
     <p class="fp-meta-line">점검 기준: ${esc(d.setLabel)} · 발행일시: ${esc(auditFmtDateTime(d.generatedAt))}${d.appVersion ? ` · 앱 ${esc(d.appVersion)}` : ''}</p>
     <h3>점검 요약</h3>

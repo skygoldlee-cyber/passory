@@ -205,7 +205,7 @@ test('고객 — 행(이름·알레르기·건수·최근일) + 최근 상담 3�
 
 test('buildAuditReportHtml — 헤더·섹션 번호·서명·면책·개인정보 경고', () => {
   const html = buildAuditReportHtml(collectAuditReportData(NOW));
-  assert.ok(html.includes('법규 준수 종합 점검 보고서'));
+  assert.ok(html.includes('종합 점검 보고서'));
   assert.ok(html.includes('맞춤형화장품 조제'));
   assert.ok(html.includes('점검 요약'));
   assert.ok(html.includes('①'));
