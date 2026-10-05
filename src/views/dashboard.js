@@ -1,5 +1,5 @@
 // src/views/dashboard.js - 대시보드 뷰 로직 및 전역 통계 관리
-// @spec D-01~17,AN-01~09,PF-07,SC-04,SC-06,SC-07
+// @spec D-01~17,AN-01~09,PF-07,SC-04,SC-06,SC-07,SC-10
 import { state } from '../state.js';
 import { esc } from '../sanitize.js';
 import { DataLoader } from '../data-loader.js';
@@ -112,6 +112,8 @@ export function updateGlobalStats() {
     const ddayEl = document.getElementById('exam-dday-count');
     if (ddayEl) {
         const dday = getDDay();
+        // SC-10 시험일 미설정 — 학습 계획의 시작점이므로 카드 주의 강조
+        ddayEl.closest('.stat-card')?.classList.toggle('stat-card-attn', dday === null);
         if (dday === null) {
             ddayEl.textContent = '미설정';
         } else if (dday < 0) {
@@ -147,10 +149,13 @@ export function updateGlobalStats() {
     if (successRateEl) successRateEl.textContent = `${successRate}%`;
 }
 
-// D-17 D-day 카드 설명 — 계획 등급(tight: 병행 권장 / triage: 비중 큰 과목 우선) 분기
+// D-17·SC-10 D-day 카드 설명 — 미설정: 최우선 설정 안내 / 계획 등급(tight: 병행 권장 / triage: 비중 큰 과목 우선) 분기
 function _examPlanDescHtml(plan) {
     const openBtn = (label) => `<button type="button" class="dday-set-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear"></i> ${label}</button>`;
-    if (!plan || plan.suggested === null) return openBtn('시험일·목표 설정');
+    if (!plan) {
+        return `<span class="dday-guide">학습 계획의 시작점 — 시험일을 설정하면 역산 계획·주간 목표·스마트학습 배분이 생성됩니다.</span> ${openBtn('지금 설정')}`;
+    }
+    if (plan.suggested === null) return openBtn('시험일·목표 설정');
     const topName = plan.tier === 'triage' ? _topWeightSubjectName() : null;
     const advice = {
         tight: ' — 일일 목표 초과, 카드·퀴즈 병행 권장',

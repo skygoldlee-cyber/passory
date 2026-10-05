@@ -1,5 +1,5 @@
 // tests/dom/study-dashboard.dom.test.js — 대시보드 통계·추천 시나리오
-// @spec D-01~15,D-17,AN-01~03
+// @spec D-01~15,D-17,AN-01~03,SC-10
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 3)
 // 검증: 진도 0건 렌더(E), 시딩 진도→통계 반영(H/P), 과목 카드·히트맵(H),
 //       약점 과목 추천(H — 최소 3문 응시 조건·헷갈림 카드最多)
@@ -155,6 +155,21 @@ describe('대시보드 — 통계·과목 카드·약점 추천', () => {
         expect(rec).toContain('헷갈린 카드');
         expect(rec).toContain('과목1');
         expect(rec).toContain('1장');
+    });
+
+    it('시험일 미설정 — 최우선 설정 안내 + 카드 강조 (SC-10)', () => {
+        updateGlobalStats();
+        const card = el('exam-dday-count').closest('.stat-card');
+        const desc = el('exam-dday-count').closest('.stat-info').querySelector('.stat-desc');
+        expect(el('exam-dday-count').textContent).toBe('미설정');
+        expect(card.classList.contains('stat-card-attn')).toBe(true);
+        expect(desc.textContent).toContain('학습 계획의 시작점');
+        expect(desc.querySelector('.dday-set-btn').textContent).toContain('지금 설정');
+
+        // 시험일 설정 후 강조 해제
+        setExamDate(todayPlus(30));
+        updateGlobalStats();
+        expect(card.classList.contains('stat-card-attn')).toBe(false);
     });
 
     it('시험일 계획 등급 — tight·triage 시 역산 안내 문구 분기 (D-17)', () => {

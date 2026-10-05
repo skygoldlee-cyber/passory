@@ -1,6 +1,6 @@
 /* Dashboard: Stats Grid */
 
-/* @spec D-09,R-05,A-03 */
+/* @spec D-09,R-05,A-03,SC-10 */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -22,6 +22,19 @@
 .stat-card:hover {
     transform: translateY(-2px);
     border-color: var(--border-color-active);
+}
+
+/* SC-10 시험일 미설정 — 최우선 설정 안내 강조 */
+.stat-card.stat-card-attn {
+    border-color: var(--warning-tint-20, #fbbf24);
+    background: var(--warning-tint-10, rgba(251, 191, 36, 0.07));
+}
+.dday-guide {
+    display: block;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: var(--color-warning, #b45309);
+    margin-bottom: 0.2rem;
 }
 
 .stat-icon {
