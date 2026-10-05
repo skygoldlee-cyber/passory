@@ -1040,6 +1040,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .notice-check-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin: 0 0 12px;
 }
