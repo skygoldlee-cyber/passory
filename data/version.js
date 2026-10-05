@@ -1,3 +1,3 @@
 // data/version.js — 앱 버전 전역 (배포 시 tools/build/stamp_release_notes.js가 갱신)
 // sw.js CACHE_VERSION과 동일 값을 유지한다.
-window.APP_VERSION = 'v20261005-d7e95e7';
+window.APP_VERSION = 'v20261005-6d5e5a4';
