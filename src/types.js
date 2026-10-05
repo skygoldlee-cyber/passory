@@ -196,6 +196,8 @@
  * @property {number} [chapters]
  * @property {number} [questions]
  * @property {number} [count]
+ * @property {number} [targetCards]   은행 상한 적용 카드 수 (study-tracker SC-08/SC-13)
+ * @property {number} [targetQuizzes] 은행 상한 적용 퀴즈 수
  */
 
 /**
@@ -266,8 +268,12 @@
  * @property {Object}          [integratedExam] 통합 시험 규칙 (passAverage·subjectFailBelow 등)
  * @property {Object.<string, {title?: string, subtitle?: string}>} [uiText] 뷰별 UI 텍스트 오버라이드 (manifest.uiText 패스스루)
  * @property {Object.<string, string[]>} [synonyms] 주관식 채점 유사어 사전 (manifest.synonyms 패스스루 — checkShortAnswer)
- * @property {{wrongCauses?: Array<{key:string, label:string, advice?:string}>}} [analysis]
+ * @property {{wrongCauses?: Array<{key:string, label:string, advice?:string, autoPattern?:string}>}} [analysis]
  *                                            맞춤학습 도메인 분류 설정 (manifest.analysis 패스스루 — 오답 원인 분류표 등)
+ *                                            autoPattern: 자동 오답 분류 정규식 (estimateUntaggedCauses, AN-07)
+ * @property {{minExamLeadDays?:number, readThroughDays?:number}} [study]
+ *                                            학습 계획 설정 (manifest.study 패스스루 — D-17 리드타임·SC-15 일독 기간.
+ *                                            미선언 시 콘텐츠 규모 유도/기본값 — getMinExamLeadDays·getReadThroughDays)
  */
 
 /**

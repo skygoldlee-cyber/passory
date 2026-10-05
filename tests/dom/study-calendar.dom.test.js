@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,SC-11,SC-13,D-17
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,SC-11,SC-13,SC-15,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -200,7 +200,7 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
 
         // 목표 초과 페이스 → 등급 배지·권고 문구
         setStudyGoals({ dailyCards: 1 });
-        setExamDate(plus(2)); // 잔여 2장, 학습 가능 1일 → 일당 2장 > 목표 1 → tight
+        setExamDate(plus(1)); // 잔여 2장, 학습 가능 1일 → 일당 2장 > 목표 1 → tight
         renderStudyCalendar();
         const tight = el('study-calendar-content').querySelector('.study-plan-card');
         expect(tight.querySelector('.plan-tier-tight')).not.toBeNull();
@@ -217,6 +217,37 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         setExamDate('');
         renderStudyCalendar();
         expect(el('study-calendar-content').querySelector('.study-plan-card')).toBeNull();
+    });
+
+    it('교재 일독 반영 — 진척률이 남은 통독일을 차감·계획에 표기 (SC-15)', () => {
+        seedStudyData('subja', {
+            name: '과목1',
+            cards: [
+                { id: 'subja_card_1', term: 't1', definition: 'd' },
+                { id: 'subja_card_2', term: 't2', definition: 'd' },
+            ],
+        });
+        // STUDY_DATA 과목 1개, 진척 50% → readDaysLeft = ceil(0.5×10) = 5학습일 차감
+        safeSetItem(STORAGE_KEYS.READER_PROGRESS, JSON.stringify({ subja: { frac: 0.5, ts: Date.now() } }));
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        setExamDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        renderStudyCalendar();
+
+        const card = el('study-calendar-content').querySelector('.study-plan-card');
+        expect(card.textContent).toContain('교재 일독');
+        expect(card.textContent).toContain('통독');
+        // 1주차 배정 칸에 통독일 표기
+        const firstRow = card.querySelector('.plan-table:not(.plan-alloc-table) tbody tr');
+        expect(firstRow.textContent).toContain('통독');
+    });
+
+    it('읽기 전용일도 캘린더 학습일 마킹·툴팁에 읽기 분 표시 (SC-15)', () => {
+        recordStudyActivity({ readMin: 30 });
+        renderStudyCalendar();
+        const today = el('study-calendar-content').querySelector('.calendar-day.today');
+        expect(today.classList.contains('studied')).toBe(true);
+        expect(today.title).toContain('읽기 30분');
     });
 
     it('계획 대비 주간 진행률 — 최근 7일 실적 바·상태 표시 (SC-06)', () => {

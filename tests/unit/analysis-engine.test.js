@@ -256,3 +256,38 @@ test('D-16 computeMasteryLevels: 과목별 졸업 비율 → Lv 환산', async (
     assert.deepEqual(computeMasteryLevels({}), {});
     assert.deepEqual(computeMasteryLevels(null), {});
 });
+
+test('computeChapterWeakness: weak_sim 오답은 examIdToSubjectId로 과목 귀속', async () => {
+    const { computeChapterWeakness } = await import(ENGINE);
+    const prev = globalThis.window;
+    globalThis.window = { DATA_REGISTRY: { exams: [{ key: 'subject1', subject: 'subjA' }] } };
+    try {
+        const out = computeChapterWeakness({
+            quizResults: {}, weakCards: new Set(['weak_sim_subject1_q5']),
+            statementStats: {},
+            questionChapters: { 'subject1_q5': '2. 분류' },
+            chapterRanges: {}, resolveQuiz: () => null
+        });
+        // subjectKeyFromItemId로는 'subject1_q5'가 해석 불가 — exams 매핑으로 'subjA' 귀속돼야 함
+        assert.equal(out.length, 1);
+        assert.equal(out[0].subject, 'subjA');
+        assert.equal(out[0].chapter, '2. 분류');
+        assert.equal(out[0].wrongs, 1);
+    } finally { globalThis.window = prev; }
+});
+
+test('computePassGap: 최근 모의고사 subjectRates가 비어 있으면 퀴즈 폴백', async () => {
+    const { computePassGap } = await import(ENGINE);
+    const out = computePassGap({
+        estimate: null,
+        simHistory: [{ score: 70, subjectRates: {} }],
+        subjects: [{ key: 'law', name: '법령' }, { key: 'chem', name: '화학' }],
+        counts: {
+            law: { quizSolved: 10, quizCorrect: 5 },
+            chem: { quizSolved: 10, quizCorrect: 8 },
+        },
+        rules: { passAverage: 60, subjectFailBelow: 40 }
+    });
+    assert.equal(out.weakest.key, 'law');
+    assert.equal(out.weakest.reason, '퀴즈 정답률 최저 과목');
+});

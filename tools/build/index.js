@@ -460,6 +460,12 @@ function main() {
     registry.analysis = manifest.analysis;
   }
 
+  // 5a-5. 학습 계획 설정 (SC-15/D-17 — minExamLeadDays·readThroughDays.
+  //       미선언 시 registry 통계에서 유도/기본값 사용)
+  if (manifest.study) {
+    registry.study = manifest.study;
+  }
+
   // 5b. UI Text (뷰 제목/부제 — manifest에서 registry로 전달, 플레이스홀더 치환)
   if (manifest.uiText) {
     const totalQuestions = registry.exams.reduce((sum, e) =>

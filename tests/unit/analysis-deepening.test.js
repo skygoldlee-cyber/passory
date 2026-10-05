@@ -161,7 +161,8 @@ test('AN-07: 기본 분류 3종 + registry 선언이 병합된다', () => {
 
 test('AN-07: 자동 추정이 확장 분류(lawConfusion·numeric)를 사용한다', () => {
     window.DATA_REGISTRY = { analysis: { wrongCauses: [
-        { key: 'lawConfusion', label: '법령·조문 혼동' },
+        // 자동 분류 정규식은 manifest 선언 — 엔진은 선언된 패턴을 순회만 한다
+        { key: 'lawConfusion', label: '법령·조문 혼동', autoPattern: '제\\s*\\d+\\s*조|조문|법률|고시|규정|기준\\s*및\\s*규격' },
         { key: 'numeric', label: '수치·조건 착각' }
     ] } };
     const resolveQuiz = (id) => ({

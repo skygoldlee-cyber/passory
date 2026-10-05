@@ -127,7 +127,7 @@
 | D-14 | 실제 시험 결과 자가 보고 (`actual_exam_result`) — D-day 경과 시 진단 카드에 입력 폼, 기록 후 예상 대비 오차 표시. 예측 보정 데이터 수집 경로 | ✅ |
 | D-15 | 대시보드 추천 카드에서 "맞춤학습 보기" 버튼으로 `analysis-view` 연결 (퍼널) — 상세 분석(과목 카드·히트맵·모의고사 차트)은 맞춤학습 뷰로 분리됨 | ✅ |
 | D-16 | 과목별 마스터리 레벨 — 판정 진술 중 졸업(연속 정답 3회, DR-03) 비율을 과목별로 집계해 과목 카드에 Lv.1~5 표시 (`computeMasteryLevels`, 데이터 없으면 미표시) | ✅ |
-| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간(50일, `MIN_EXAM_LEAD_DAYS`) 미만 시험일을 인라인 권고(`getExamLeadStatus`). 50일 근거: 기본 목표(일 50장·주 5일)로 전체 카드 1회전이 ~23학습일≈D-33 하한, SM-2 반복 유지 마진과 문제은행 1회전(445문÷10/일≈45일) 고려한 상향치, 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
+| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간 미만 시험일을 인라인 권고(`getExamLeadStatus`). 기준 일수는 manifest `study.minExamLeadDays` 우선, 미선언 시 콘텐츠 규모에서 유도 — `max(총카드÷50×1.4×1.5, 총퀴즈÷10)` 달력일 환산, 레지스트리 없으면 기본 50일 (`getMinExamLeadDays`, cosmetic 선언값 50일 근거: 1,123장 1회전 ~23학습일≈D-33 하한 + SM-2 마진 + 문제은행 445문÷10/일≈45일). 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
 
 ### 3.1.5 맞춤학습 (Personal Analysis, `analysis-view`)
 
@@ -139,7 +139,7 @@
 | AN-04 | 진단 준비 온보딩 + 취약 단원 딥링크 — 최소 표본(퀴즈 10문 또는 모의고사 1회) 미충족 시 진행률 카드를 분석 그리드 최상단에 표시하고 충족 시 자동 제거 (`_renderAnalysisOnboarding`, `analysis-onboarding-hint`). 단원별 취약 행 클릭 → `openSubjectSection(과목, 단원)`으로 교재 해당 섹션 직행 (`data-click` 위임, `wc-subrow`) | ✅ |
 | AN-05 | 복합 예상 점수 + 개인 보정 — 모의고사 이력이 주 지표, 표본 부족(cold start) 시 마스터리 졸업률·퀴즈 정답률을 가중 병합(이력 3회부터 이력 100%). 실제 결과 자가 보고 시 보고 시점 예상값을 함께 저장하고, 차이를 ±15점 절단해 다음 추정에 개인 편향으로 적용 (`estimateCompositeScore`, `computeCalibrationBias`, `saveActualResult`의 `expectedAtReport`) | ✅ |
 | AN-06 | 추천 효과 추적 — "오늘의 합격 전략" 발행 시 대상 과목 정답률을 `rec_snapshot` 기준선으로 저장(동일 대상 6시간 내 재기록 방지). 12시간 경과·과목당 신규 표본 5문 이상이면 다음 방문에서 정답률 변화(▲▼%p)를 추천 카드 상단에 표시 (`snapshotRecommendations`/`evaluateRecommendationEffect`) | ✅ |
-| AN-07 | 오답 원인 분류 확장 — 기본 3종(암기/개념/계산)에 manifest `analysis.wrongCauses`(key·label·advice)가 레지스트리 경유로 병합되는 시험별 분류표 (`getWrongCauseTaxonomy`). 자동 추정(`estimateUntaggedCauses`)은 선언된 키만 사용 — 조문 참조 문항→법령 혼동, 비산술 수치→수치 착각 등. 미선언 시험은 기본 3종만 노출 | ✅ |
+| AN-07 | 오답 원인 분류 확장 — 기본 3종(암기/개념/계산)에 manifest `analysis.wrongCauses`(key·label·advice)가 레지스트리 경유로 병합되는 시험별 분류표 (`getWrongCauseTaxonomy`). 자동 추정(`estimateUntaggedCauses`)은 선언된 키만 사용 — 확장 원인의 자동 분류 규칙은 manifest `wrongCauses[].autoPattern`(정규식 문자열)으로 선언하고 엔진은 선언된 패턴을 순회만 함(도메인 정규식이 플랫폼 코드에 하드코딩되지 않음), 비산술 수치→수치 착각 등 내장 추정은 기본 키에 적용. 미선언 시험은 기본 3종만 노출 | ✅ |
 | AN-08 | 학습 패턴 분석 — `recordStudyActivity`가 활동별 시간대 버킷(캘린더 엔트리 `h`)을 기록하고 `computeStudyPattern`이 최다 시간대·요일·주말 비중을 집계해 학습 리듬 카드에 표시 (활동 4일·8회 미만이면 미표시) | ✅ |
 | AN-09 | 주간 리포트보내기 — 진단 요약 섹션의 "주간 리포트" 버튼이 `buildWeeklyReportText`로 평문 리포트(학습량·정답률 추이·예상 점수·합격 갭·취약 단원·패턴·주간 계획 대비 실적)를 생성, Web Share API 또는 클립보드로 출력 (`exportAnalysisReport`, `analysis_report` 액션 카운터). 계획 대비 실적은 SC-06 `computePlanAdherence` 요약을 `p.plan`으로, 과목별 실적/배정 행은 SC-09 배분 결과를 `p.planBySubject`로 전달 | ✅ |
 
@@ -472,6 +472,7 @@
 | SC-12 | 약점 신호 통합 — 오답 원인 자가 태깅(`wrongCauses` subjectId별 최근 30일)과 단원 취약(`computeSubjectWeakChapters` 과목별 취약 단원 수)을 약점 가중에 가산(`diagBoost` 최대 +0.5, 합계 상한 MAX_WEAK_WEIGHT 유지) — 퀴즈 표본 부족 과목의 콜드스타트 약점 반영 (`computeSubjectAllocation`의 `diagBySubject` 입력, STUDY_PLAN_PRO_DESIGN.md Rev 2) | ✅ |
 | SC-13 | 스마트학습 퀴즈 배분 + 복습 대기 수요 — ① 과목별 퀴즈 잔여(은행 문항 − 풀이 수)를 카드와 동일 수요 공식(잔여×출제비중×약점가중)으로 주차 배분, 주차 총량 = 학습일×일일 퀴즈 목표. 칩 `카드장·퀴즈문` 실적/배정 병기(캘린더 `quizBySubj` 과목별 퀴즈 증분 기록, `_prevQuizBySubj` 차분), 주차 매트릭스 셀 `카드장·퀴즈문` ② SM-2 기한 도래 복습 대기(`getDueCards` → `dueBySubject`)를 약점 가중에 가산 — 암기 카드 대비 기한초과 비율 `dueBoost` 최대 +0.5, 합계 상한 MAX_WEAK_WEIGHT 유지 (`computeSubjectAllocation`의 `quizBySubject`·`dueBySubject` 입력, STUDY_PLAN_PRO_DESIGN.md Rev 3) | ✅ |
 | SC-14 | 합격 갭→목표 상향 권고 — 합격 갭 분석 카드에서 예상 점수가 합격선 미만(`gap.gap` > 0)이면 일일 목표 상향 권고 문구 + 목표 설정 버튼(`openGoalSettings`) 표시. 계획 필요량(`plan.perStudyDay`)이 일일 카드 목표를 초과하면 필요량을 권장치로 제시, 아니면 일반 권고 문구 — 진단 결과가 계획 파라미터 조정 동선으로 연결되는 피드백 루프 (`_renderPassGapInsight`) | ✅ |
+| SC-15 | 교재 일독 반영 — ① 교재 읽기를 학습 활동으로 기록: 리더 스크롤 저장 시 경과 분을 `recordStudyActivity({readMin})`으로 누적(캡 15분/플러시), 카드·퀴즈 없는 일독일도 캘린더 학습일·주간 목표일·월간 학습일·시간대 패턴에 반영 ② 일독 진척 추적: 과목별 최대 스크롤 진척률 `reader_progress`(표준형·이야기형 동일 커버리지로 max)를 `getTextbookReadProgress`로 집계 ③ 일독 시작(`started`) 후 남은 통독 학습일 `⌈(1−진척)×readThroughDays⌉`(manifest `study.readThroughDays`, 미선언 시 기본 10)을 역산 학습일에서 주차 순차 차감 — 주차 행 `reading` 표기, 완료 시 자동 소멸. 미독 사용자(`started`=false)는 차감 없음 ④ 주차별 학습일을 Σmin(주간목표일, 주차 잔여일)로 합산해 말주 밀도를 정확화(기존 `⌊dday×주간일÷7⌋` 대체) (`computeStudyPlan`, `textbook-reader.js` saveReaderPosition) | ✅ |
 | RV-01 | 오답/중요 복습 뷰 — 헷갈림 카드·틀린 문제 통합 목록 (`review-view`) | ✅ |
 | ND-01 | 숫자 암기 드릴 — `number-drills/` JSON 기반 수치·기한·횟수 훈련 (훈련소 수치 훈련) | ✅ |
 | DR-01 | **O/X 판정 드릴** — 객관식 문항을 진위형으로 자동 변환 (3,700+문, `build_ox_drills.js` → `drills/ox_subject*.js`, `trainer-drills.js`) | ✅ |
@@ -674,7 +675,7 @@
 | UX-FB-02 | **`alert()`/`confirm()` 금지 → 커스텀 모달**: `showConfirm`(확인/취소), `showAlert`(확인만), `showToast`(비차단) | 네이티브 대화상자는 PWA 설치 흐름을 깨고 스타일 제어 불가. 커스텀 모달은 포커스 트랩 + Escape + 배경 클릭 닫기 포함 |
 | UX-FB-03 | **숨겨진 기능은 최초 1회 펄스로 알림**: 발견하기 어려운 핸들(엣지 탭 등)에 첫 표시 시 펄스 애니메이션 + `localStorage` 플래그로 1회 제한 | `animationend` 리스너로 클래스 해제 — `display:none` 상태에서는 애니메이션이 안 돌아 첫 실제 표시에 실행됨. `prefers-reduced-motion`에서는 자동으로 0.01ms 처리됨 |
 | UX-FB-04 | **로딩은 오버레이로 통일**: 데이터 fetch 구간은 `showGlobalLoading()` 전체화면 오버레이 | 부분 스켈레톤보다 구현 비용이 낮고 일관됨 |
-| UX-FB-05 | **첫 방문 시작 안내 모달**: 학습 데이터가 없는 최초 방문에서 1회 표시, 설정 메뉴 "시작 안내"로 재열람 (`onboarding.js`, `onboarding_seen_v1` 플래그) | 기존 사용자는 플래그만 기록해 방해하지 않음 — 재방문 강제 안내 금지 |
+| UX-FB-05 | **첫 방문 시작 안내 모달**: 학습 데이터가 없는 최초 방문에서 1회 표시, 설정 메뉴 "시작 안내"로 재열람 (`onboarding.js`, `onboarding_seen_v1` 플래그). 4단계 — ① 시험일 설정(대시보드 첫 카드) → ② 교재 1회독(표준형/이야기형 구조 파악) → ③ 카드·퀴즈 학습(스마트학습 배분) → ④ 복습·진단 루프(SM-2 + 맞춤학습) | 기존 사용자는 플래그만 기록해 방해하지 않음 — 재방문 강제 안내 금지 |
 | UX-FB-06 | **모달 카드는 뷰포트 상한 + 내부 스크롤 필수**: `role="dialog"`의 카드는 `max-height: ≤90dvh` + `overflow-y:auto` (또는 본문 스크롤 영역 + 헤더·푸터 `flex-shrink:0` 고정) — 내용이 뷰포트를 넘어도 액션 버튼이 화면 안에 남아야 함 | 자가 등록 모달(`.cing-*`)이 필드 5개로 `90dvh`를 넘겨 등록·취소 버튼이 잘린 실사례. 공용 `.app-confirm-dialog`(컨펌·의견·Pro·온보딩·통계 공유)와 `.auth-modal-card`·`.f-weigh-card`에 적용 — UX-SET-02(설정 패널)의 다이얼로그 일반화. E2E가 세로·가로 뷰포트에서 푸터 버튼 위치를 실측. 신규 카드는 공용 규약 클래스 `.dialog-card`(css/base.css — 90dvh 상한+스크롤) 사용, `check:mobilesafe`가 `role="dialog"` 마크업에 클래스 부재를 정적 검사 |
 
 #### 4.8.5 PWA 고유 UX

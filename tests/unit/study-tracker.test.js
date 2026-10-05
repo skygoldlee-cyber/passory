@@ -1,10 +1,12 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-12,SC-13,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-12,SC-13,SC-15,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
+import { safeSetItem } from '../../src/state.js';
+import { STORAGE_KEYS } from '../../src/storage-keys.js';
 
 const TRACKER = '../../src/study-tracker.js';
 
@@ -156,14 +158,14 @@ test('computeStudyPlan: 주간 학습일 반영 역산 + 주차별 마일스톤'
   tracker.setExamDate(todayPlus(30));
   tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
   const plan = tracker.computeStudyPlan(1123);
-  assert.equal(plan.studyDays, 21);    // floor(30 × 5/7)
-  assert.equal(plan.perStudyDay, 54);  // ceil(1123/21)
+  assert.equal(plan.studyDays, 22);    // 주차별 합산 Σmin(5, 남은일) = 5+5+5+5+2
+  assert.equal(plan.perStudyDay, 52);  // ceil(1123/22)
   assert.equal(plan.weeks.length, 5);  // ceil(30/7)
   const last = plan.weeks[4];
   assert.equal(last.studyDays, 2);     // 잔여 2일 → 학습일 상한 2
   assert.equal(last.cumulative, 1123); // 누적이 잔여량과 정확히 일치
   assert.equal(last.percent, 100);
-  // 학습일당 54장 ÷ 목표 50장 = 1.08 → tight
+  // 학습일당 52장 ÷ 목표 50장 = 1.04 → tight
   assert.equal(plan.tier, 'tight');
 });
 
@@ -524,4 +526,85 @@ test('recordStudyActivity: quizBySubj 과목별 퀴즈 증분 + 최근 7일 합�
   assert.deepEqual(cal[today].quizBySubj, { suba: 3, subb: 1 });
   assert.equal(cal[today].quizzes, 4);
   assert.deepEqual(tracker.sumRecentQuizzesBySubject(cal), { suba: 3, subb: 1 });
+});
+
+// --- SC-15 교재 일독 반영 ---
+
+const seedReadProgress = (map) => {
+  safeSetItem(STORAGE_KEYS.READER_PROGRESS, JSON.stringify(map));
+};
+
+test('recordStudyActivity: readMin 누적 + 읽기 전용 활동도 시간대 버킷 기록 (SC-15)', () => {
+  tracker.recordStudyActivity({ readMin: 25 });
+  const cal = tracker.getStudyCalendar();
+  const today = tracker.getTodayStr();
+  assert.equal(cal[today].readMin, 25);
+  assert.ok(cal[today].h); // 읽기만 있어도 시간대 버킷 기록
+  tracker.recordStudyActivity({ readMin: 10 });
+  assert.equal(tracker.getStudyCalendar()[today].readMin, 35);
+});
+
+test('읽기 전용일도 월간·주간 학습일로 인정 (SC-15)', () => {
+  tracker.recordStudyActivity({ readMin: 20 });
+  const now = new Date();
+  assert.equal(tracker.getMonthlyStudyDays(now.getFullYear(), now.getMonth()), 1);
+  assert.equal(tracker.getWeeklyGoalProgress().studyDays, 1);
+});
+
+test('getTextbookReadProgress: 과목별 진척 집계 + 전체 평균 (SC-15)', () => {
+  seedReadProgress({
+    law: { frac: 0.5, ts: 1 },
+    understanding: { frac: 0.8, ts: 1 },
+    bogus: 'not-an-object',
+  });
+  const p = tracker.getTextbookReadProgress();
+  assert.equal(p.started, true);
+  assert.equal(p.bySubject.law, 0.5);
+  // STUDY_DATA 미로드(노드 단위) → 분모는 진척 관측 과목 수(2)
+  assert.equal(p.overall, 0.65);
+});
+
+test('computeStudyPlan: 일독 진행 중 남은 통독 학습일 차감 + 주차 표기 (SC-15)', () => {
+  tracker.setExamDate(todayPlus(30));
+  tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
+  seedReadProgress({ law: { frac: 0.5, ts: 1 } });
+  // STUDY_DATA 없음 → 분모=관측 1과목 → overall 0.5 → readDaysLeft = ceil(0.5×10) = 5
+  const plan = tracker.computeStudyPlan(1123);
+  assert.equal(plan.readDaysLeft, 5);
+  assert.equal(plan.readProgress, 50);
+  assert.equal(plan.weeks[0].reading, 5);   // 1주차 학습일 5일 전량 통독
+  assert.equal(plan.weeks[0].studyDays, 0);
+  assert.equal(plan.studyDays, 17);          // 22 - 5
+  assert.equal(plan.perStudyDay, Math.ceil(1123 / 17)); // 67
+});
+
+test('computeStudyPlan: 일독 완료(진척 1.0)·미독이면 통독 차감 없음 (SC-15)', () => {
+  tracker.setExamDate(todayPlus(30));
+  tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
+  assert.equal(tracker.computeStudyPlan(1123).readDaysLeft, 0); // 미독 — 차감 없음
+  seedReadProgress({ law: { frac: 1, ts: 1 } });
+  assert.equal(tracker.computeStudyPlan(1123).readDaysLeft, 0); // 완독 — 자동 소멸
+});
+
+test('시험별 학습 설정 주입 — manifest study 블록 우선, 미선언 시 규모 유도 (D-17·SC-15)', () => {
+  const prev = globalThis.window;
+  try {
+    // manifest 선언 우선 — minExamLeadDays 30, readThroughDays 4
+    globalThis.window = { DATA_REGISTRY: { study: { minExamLeadDays: 30, readThroughDays: 4 } } };
+    assert.equal(tracker.getExamLeadStatus(todayPlus(35)).leadShort, false); // 기준 30
+    assert.equal(tracker.getExamLeadStatus(todayPlus(25)).leadShort, true);
+    tracker.setExamDate(todayPlus(30));
+    tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
+    seedReadProgress({ law: { frac: 0.5, ts: 1 } });
+    assert.equal(tracker.computeStudyPlan(1123).readDaysLeft, 2); // ceil(0.5×4)
+
+    // 미선언 시 registry 통계 유도 — 카드 500·퀴즈 200: max(10일 학습일→14달력×1.5=21, 20) = 21
+    globalThis.window = { DATA_REGISTRY: { subjects: [
+      { key: 'a', stats: { cards: 500, quizzes: 200 } },
+    ] } };
+    assert.equal(tracker.getExamLeadStatus(todayPlus(25)).leadShort, false);
+    assert.equal(tracker.getExamLeadStatus(todayPlus(20)).leadShort, true);
+  } finally {
+    if (prev === undefined) delete globalThis.window; else globalThis.window = prev;
+  }
 });

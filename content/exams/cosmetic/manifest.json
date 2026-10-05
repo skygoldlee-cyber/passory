@@ -104,9 +104,13 @@
     "passAverage": 60,
     "subjectFailBelow": 40
   },
+  "study": {
+    "minExamLeadDays": 50,
+    "readThroughDays": 10
+  },
   "analysis": {
     "wrongCauses": [
-      { "key": "lawConfusion", "label": "법령·조문 혼동", "advice": "비슷한 조문을 표로 대조해 보세요 — 참조자료의 법령 원문 비교가 효과적입니다." },
+      { "key": "lawConfusion", "label": "법령·조문 혼동", "advice": "비슷한 조문을 표로 대조해 보세요 — 참조자료의 법령 원문 비교가 효과적입니다.", "autoPattern": "제\\s*\\d+\\s*조|조문|법률|고시|규정|기준\\s*및\\s*규격" },
       { "key": "numeric", "label": "수치·조건 착각", "advice": "허가 기준치·함량·기간 등 수치를 암기표로 정리해 반복 확인하세요." }
     ]
   },

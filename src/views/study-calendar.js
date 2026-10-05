@@ -1,6 +1,7 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
 // @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject, sumRecentQuizzesBySubject, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, computeSubjectAllocInputs, sumRecentCardsBySubject, sumRecentQuizzesBySubject } from '../study-tracker.js';
+import { getMinExamLeadDays } from '../exam-context.js';
 import { computeSubjectWeakChapters } from '../analysis-engine.js';
 import { getAllStatementStats } from '../statement-tracker.js';
 import { proFeatureNotice, refreshProBadges } from '../pro-upgrade.js';
@@ -215,7 +216,7 @@ function _studyPlanHtml() {
         </div>` : '';
     const allocHtml = _subjectAllocHtml(plan);
     const rows = plan.weeks.slice(0, 12).map(w => `
-                <tr><td>${w.week}주차</td><td>${w.range}</td><td>${w.cards}장</td><td>${w.cumulative}장 (${w.percent}%)</td></tr>`).join('');
+                <tr><td>${w.week}주차</td><td>${w.range}</td><td>${w.cards}장${w.reading ? ` · 통독${esc(w.reading)}일` : ''}</td><td>${w.cumulative}장 (${w.percent}%)</td></tr>`).join('');
     const more = plan.weeks.length > 12
         ? `<tr><td colspan="4" class="plan-more">… 이후 ${plan.weeks.length - 12}주 동일 페이스 지속</td></tr>` : '';
     return `<div class="study-plan-card">
@@ -223,6 +224,7 @@ function _studyPlanHtml() {
         <div class="plan-summary">
             <div class="plan-summary-row"><span>남은 카드</span><strong>${plan.remaining}장</strong></div>
             <div class="plan-summary-row"><span>학습 가능일</span><strong>${plan.studyDays}일 (주 ${plan.goals.weeklyStudyDays}일)</strong></div>
+            ${plan.readDaysLeft > 0 ? `<div class="plan-summary-row"><span>교재 일독</span><strong>${esc(plan.readProgress)}% 읽음 · 통독 ${esc(plan.readDaysLeft)}일 반영</strong></div>` : ''}
             <div class="plan-summary-row"><span>학습일당 필요</span><strong>카드 ${plan.perStudyDay}장</strong></div>
             <div class="plan-summary-row"><span>설정 목표</span><strong>카드 ${plan.goals.dailyCards}장 · 퀴즈 ${plan.goals.dailyQuizzes}문/일</strong></div>
         </div>
@@ -324,14 +326,14 @@ function _renderCalendarDays() {
     for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = localDateKey(new Date(_currentYear, _currentMonth, d));
         const entry = cal[dateStr] || {};
-        const studied = (entry.cards > 0 || entry.quizzes > 0);
+        const studied = (entry.cards > 0 || entry.quizzes > 0 || (entry.readMin || 0) > 0);
         const isToday = dateStr === today;
         const classes = ['calendar-day'];
         if (studied) classes.push('studied');
         if (isToday) classes.push('today');
 
         const tooltip = studied
-            ? `카드 ${entry.cards || 0} · 퀴즈 ${entry.quizzes || 0} · 정답 ${entry.correct || 0}`
+            ? `카드 ${entry.cards || 0} · 퀴즈 ${entry.quizzes || 0} · 정답 ${entry.correct || 0}${entry.readMin ? ` · 읽기 ${esc(entry.readMin)}분` : ''}`
             : '';
 
         html += `
@@ -419,19 +421,20 @@ export function openGoalSettings() {
     updateHint();
 }
 
-/** 시험일 리드타임 권고 문구 — 최소 MIN_EXAM_LEAD_DAYS일 전 설정 권장 */
+/** 시험일 리드타임 권고 문구 — 최소 getMinExamLeadDays()일 전 설정 권장 */
 function _renderExamDateHint(hintEl, dateStr) {
     if (!hintEl) return;
     const st = getExamLeadStatus(dateStr);
+    const minDays = getMinExamLeadDays();
     const set = (text, color) => { hintEl.textContent = text; hintEl.style.color = color; };
     if (!st) {
-        set(`효율적인 학습을 위해 시험일은 최소 ${MIN_EXAM_LEAD_DAYS}일 전에 설정하는 것을 권장합니다.`, 'var(--color-text-muted)');
+        set(`효율적인 학습을 위해 시험일은 최소 ${minDays}일 전에 설정하는 것을 권장합니다.`, 'var(--color-text-muted)');
     } else if (st.past) {
         set('지난 시험일입니다 — 시험 결과 자가 보고에 사용됩니다.', 'var(--color-text-muted)');
     } else if (st.dday === 0) {
         set('시험 당일입니다.', 'var(--color-warning)');
     } else if (st.leadShort) {
-        set(`시험까지 D-${st.dday} — 권장 준비 기간(${MIN_EXAM_LEAD_DAYS}일) 미만입니다. 핵심 과목 우선 전략이 필요합니다.`, 'var(--color-warning)');
+        set(`시험까지 D-${st.dday} — 권장 준비 기간(${minDays}일) 미만입니다. 핵심 과목 우선 전략이 필요합니다.`, 'var(--color-warning)');
     } else {
         set(`시험까지 D-${st.dday} — 준비 기간이 충분합니다.`, 'var(--color-success)');
     }

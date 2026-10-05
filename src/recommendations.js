@@ -172,7 +172,8 @@ const BASE_WRONG_CAUSES = [
 
 /**
  * 활성 시험의 오답 원인 분류표 — 기본 3종 + manifest analysis.wrongCauses 병합.
- * @returns {Array<{key:string, label:string, advice:string}>}
+ * @returns {Array<{key:string, label:string, advice:string, autoPattern?:string}>}
+ *   autoPattern: manifest 선언 자동 분류 정규식 (estimateUntaggedCauses, AN-07)
  */
 export function getWrongCauseTaxonomy() {
     const merged = new Map(BASE_WRONG_CAUSES.map(c => [c.key, { ...c }]));
@@ -181,7 +182,9 @@ export function getWrongCauseTaxonomy() {
     extra.forEach(e => {
         if (e && typeof e.key === 'string' && typeof e.label === 'string') {
             const base = merged.get(e.key) || { key: e.key, label: e.label, advice: '' };
-            merged.set(e.key, { key: e.key, label: e.label, advice: e.advice || base.advice });
+            const m = { key: e.key, label: e.label, advice: e.advice || base.advice };
+            if (e.autoPattern) m.autoPattern = e.autoPattern; // 자동 분류 정규식 (AN-07)
+            merged.set(e.key, m);
         }
     });
     return [...merged.values()];

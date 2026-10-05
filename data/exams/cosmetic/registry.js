@@ -2,7 +2,7 @@
 var DATA_REGISTRY = {
   "schemaVersion": 1,
   "contentYear": "2027",
-  "generatedAt": "2026-10-05T01:26:44.801Z",
+  "generatedAt": "2026-10-05T10:30:58.284Z",
   "subjects": [
     {
       "key": "law",
@@ -439,7 +439,8 @@ var DATA_REGISTRY = {
       {
         "key": "lawConfusion",
         "label": "법령·조문 혼동",
-        "advice": "비슷한 조문을 표로 대조해 보세요 — 참조자료의 법령 원문 비교가 효과적입니다."
+        "advice": "비슷한 조문을 표로 대조해 보세요 — 참조자료의 법령 원문 비교가 효과적입니다.",
+        "autoPattern": "제\\s*\\d+\\s*조|조문|법률|고시|규정|기준\\s*및\\s*규격"
       },
       {
         "key": "numeric",
@@ -447,6 +448,10 @@ var DATA_REGISTRY = {
         "advice": "허가 기준치·함량·기간 등 수치를 암기표로 정리해 반복 확인하세요."
       }
     ]
+  },
+  "study": {
+    "minExamLeadDays": 50,
+    "readThroughDays": 10
   },
   "uiText": {
     "dashboard": {

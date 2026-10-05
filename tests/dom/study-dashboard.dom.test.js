@@ -268,9 +268,9 @@ describe('맞춤학습 뷰 — 진단 요약 카드', () => {
         localStorage.setItem(scopedKey(STORAGE_KEYS.SIM_RESULTS_HISTORY), JSON.stringify([
             { date: '2026-10-01', examId: 'x', rate: 40, subjectRates: { subja: 40, subjb: 40 } },
         ]));
-        // 잔여 4장 ÷ 학습일 1일(D-2, 주5일) = perStudyDay 4 > 일일 목표 1 → 권장치 제시
+        // 잔여 4장 ÷ 학습일 1일(D-1, 주5일) = perStudyDay 4 > 일일 목표 1 → 권장치 제시
         setStudyGoals({ dailyCards: 1 });
-        setExamDate(todayPlus(2));
+        setExamDate(todayPlus(1));
         renderAnalysisView();
 
         const card = el('analysis-pass-gap');

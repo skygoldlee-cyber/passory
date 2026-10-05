@@ -1,5 +1,5 @@
 // src/analysis-engine.js — 맞춤학습(analysis-view) 심층 분석 순수 로직
-// @spec AN-01,AN-02,AN-07,AN-08,AN-09,D-16
+// @spec AN-01,AN-02,AN-07,AN-08,AN-09,D-16,SC-15
 //
 // 모든 함수는 DOM 비의존·과목 무관 — 데이터를 주입받아 계산만 한다.
 // 과목 키/단원명은 manifest·question_chapters·statement_stats에서 동적으로 해석하므로
@@ -14,10 +14,25 @@
 //   chapterRanges    { subjKey: [[라인, "단원명"], ...] }  (CHAPTER_RANGES)
 
 import { parseWeakSimId, subjectKeyFromItemId, WEAK_QUIZ_PREFIX } from './weak-items.js';
-import { resolveLegacySubjectKey } from './exam-context.js';
+import { resolveLegacySubjectKey, examIdToSubjectId } from './exam-context.js';
 import { localDateKey } from './utils.js';
 import { WEAK_GRADUATE_STREAK } from './statement-tracker.js';
-import { getWrongCauseLabels } from './recommendations.js';
+import { getWrongCauseLabels, getWrongCauseTaxonomy } from './recommendations.js';
+
+/**
+ * manifest analysis.wrongCauses[].autoPattern → 컴파일된 자동 분류 패턴 목록.
+ * 잘못된 정규식은 건너뛰고, 패턴은 분류표 선언 순서를 따른다 (AN-07).
+ * @returns {Array<{key:string, re:RegExp}>}
+ */
+function _autoPatterns() {
+    /** @type {Array<{key:string, re:RegExp}>} */
+    const out = [];
+    getWrongCauseTaxonomy().forEach(c => {
+        if (typeof c.autoPattern !== 'string' || !c.autoPattern) return;
+        try { out.push({ key: c.key, re: new RegExp(c.autoPattern) }); } catch (e) { /* noop */ }
+    });
+    return out;
+}
 
 /**
  * sid("law_st_ab12cd") → 과목 키 ("law").
@@ -88,12 +103,12 @@ function _aggregateChapterWrongs(p) {
         const sim = parseWeakSimId(id);
         if (!sim) return;
         const chapter = p.questionChapters && p.questionChapters[`${sim.examId}_q${sim.qNum}`];
-        bump(subjectKeyFromItemId(id) || '', chapter);
+        bump(examIdToSubjectId(sim.examId) || '', chapter);
     });
 
     // (c) 진술 오판 → cid → chapterRanges
     Object.entries(p.statementStats || {}).forEach(([sid, v]) => {
-        if (!v || !(v.w > 0) || (v.streak || 0) >= 3) return; // 졸업 진술 제외 (WEAK_GRADUATE_STREAK)
+        if (!v || !(v.w > 0) || (v.streak || 0) >= WEAK_GRADUATE_STREAK) return; // 졸업 진술 제외
         const subj = subjectFromSid(sid);
         bump(subj, chapterFromCid(v.cid, subj, p.chapterRanges));
     });
@@ -157,7 +172,7 @@ function _rangeStats(calendar, fromOffset, toOffset) {
         const key = localDateKey(d);
         const e = calendar[key];
         if (!e) continue;
-        if (e.cards > 0 || e.quizzes > 0) days++;
+        if (e.cards > 0 || e.quizzes > 0 || (e.readMin || 0) > 0) days++;
         quizzes += e.quizzes || 0;
         correct += e.correct || 0;
         cards += e.cards || 0;
@@ -225,8 +240,9 @@ export function computePassGap(p) {
                     ? `과락선 ${rules.subjectFailBelow}점 미만`
                     : '최근 모의고사 최저 과목'
             };
+            return result;
         }
-        return result;
+        // subjectRates가 비어 있으면 퀴즈 정답률 폴백으로 계속 진행
     }
 
     // 모의고사 없음 → 퀴즈 정답률 최저 과목 (3문 이상)
@@ -258,7 +274,7 @@ export function computePassGap(p) {
 export function computeWeakConceptClusters(statementStats, chapterRanges, minSize = 2) {
     const groups = new Map(); // `${subj}|${cid}` → agg
     Object.entries(statementStats || {}).forEach(([sid, v]) => {
-        if (!v || !(v.w > 0) || (v.streak || 0) >= 3) return;
+        if (!v || !(v.w > 0) || (v.streak || 0) >= WEAK_GRADUATE_STREAK) return;
         if (!v.cid || String(v.cid).startsWith('q:')) return; // 교재 라인 cid만 의미 있음
         const subj = subjectFromSid(sid) || '';
         const key = `${subj}|${v.cid}`;
@@ -328,6 +344,7 @@ export function estimateUntaggedCauses(p) {
     Object.keys(labels).forEach(k => { counts[k] = 0; });
     let estimated = 0;
     const tagged = new Set(Object.keys(p.wrongCauses || {}));
+    const patterns = _autoPatterns(); // 루프 밖에서 1회 컴파일
     Object.entries(p.quizResults || {}).forEach(([id, r]) => {
         if (!r || r.correct) return;
         const weakKey = id.startsWith(WEAK_QUIZ_PREFIX) || id.includes('_card_') ? id : WEAK_QUIZ_PREFIX + id;
@@ -339,8 +356,9 @@ export function estimateUntaggedCauses(p) {
         const ans = String(q.answer ?? '').trim();
         const text = String(q.question || '') + String(q.context || '');
         const numeric = /^\d+(\.\d+)?\s*(%|ml|g|mg|배|회|일|개월|년|도|만원|원)?$/.test(ans);
-        // 시험별 확장 분류 — 분류표에 선언된 키만 사용 (미선언 시 기본 키로 귀속)
-        if (counts.lawConfusion !== undefined && /제\s*\d+\s*조|조문|법률|고시|규정|기준\s*및\s*규격/.test(text)) counts.lawConfusion++;
+        // 시험별 확장 분류 — manifest autoPattern 정규식을 선언된 키에만 적용 (미선언 시 내장 규칙으로 귀속)
+        const hit = patterns.find(pt => counts[pt.key] !== undefined && pt.re.test(text));
+        if (hit) counts[hit.key]++;
         else if (numeric && counts.numeric !== undefined && !/(계산|구하|얼마|몇)/.test(text)) counts.numeric++;
         else if (numeric) counts.calc++;
         else if (/(아닌|않는|틀린|잘못된|옳지)\s*(것|항목|설명)?/.test(text)) counts.concept++;
@@ -402,7 +420,7 @@ export function computeStudyPattern(calendar) {
     const dowCnt = new Array(7).fill(0);
     let activeDays = 0, actEvents = 0, hourEvents = 0, weekendEvents = 0;
     Object.entries(calendar || {}).forEach(([dateStr, e]) => {
-        if (!e || !(e.cards > 0 || e.quizzes > 0)) return;
+        if (!e || !(e.cards > 0 || e.quizzes > 0 || (e.readMin || 0) > 0)) return;
         activeDays++;
         const d = new Date(dateStr + 'T00:00:00');
         if (isNaN(d.getTime())) return;

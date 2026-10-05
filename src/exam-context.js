@@ -198,6 +198,45 @@ export function getExamRules() {
     };
 }
 
+/* =========================================================
+   📚 시험별 학습 계획 설정 (manifest study 블록 — D-17/SC-15)
+   ========================================================= */
+
+function _registryStudy() {
+    return (typeof window !== 'undefined' && window.DATA_REGISTRY && window.DATA_REGISTRY.study) || {};
+}
+
+function _registrySubjectTotals() {
+    const subjects = (typeof window !== 'undefined' && window.DATA_REGISTRY && window.DATA_REGISTRY.subjects) || [];
+    return subjects.reduce((t, s) => ({
+        cards: t.cards + (((s.stats && (s.stats.targetCards || s.stats.cards)) || 0)),
+        quizzes: t.quizzes + (((s.stats && (s.stats.targetQuizzes || s.stats.quizzes)) || 0)),
+    }), { cards: 0, quizzes: 0 });
+}
+
+/**
+ * 최소 권장 준비 기간(일) — manifest study.minExamLeadDays 우선 (D-17).
+ * 미선언 시 콘텐츠 규모로 유도: 카드 1회전 학습일(기본 일 50장·주 5일)을 달력일
+ * 환산해 SM-2 마진 1.5배, 문제은행 1회전(일 10문)과 큰 쪽. 레지스트리 없으면 50.
+ */
+export function getMinExamLeadDays() {
+    const s = _registryStudy();
+    if (typeof s.minExamLeadDays === 'number' && s.minExamLeadDays > 0) return s.minExamLeadDays;
+    const { cards, quizzes } = _registrySubjectTotals();
+    if (!cards && !quizzes) return 50;
+    const cardCalDays = Math.ceil(cards / 50) * (7 / 5);   // 학습일 → 달력일
+    return Math.ceil(Math.max(cardCalDays * 1.5, quizzes / 10));
+}
+
+/**
+ * 교재 일독 예상 기간(학습일) — manifest study.readThroughDays 우선 (SC-15).
+ * 미선언 시 기본 10일 (cosmetic 4과목 ≈1.3만 줄 ÷ 학습일당 ~1,300줄 기준).
+ */
+export function getReadThroughDays() {
+    const s = _registryStudy();
+    return (typeof s.readThroughDays === 'number' && s.readThroughDays > 0) ? s.readThroughDays : 10;
+}
+
 /**
  * 'subjectN' 형식 키 → 레지스트리의 과목 키로 매핑.
  * subjectN은 레거시가 아니라 문제은행(exams[])의 현행 키 규약이다 — 문항 id

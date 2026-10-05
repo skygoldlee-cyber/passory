@@ -1,10 +1,11 @@
 // src/study-tracker.js — 학습 캘린더/목표 추적 헬퍼
-// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,SC-09,SC-15,D-17
 // 학습 활동을 날짜별로 기록하고, 목표 달성률을 계산합니다.
 import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
 import { localDateKey } from './utils.js';
 import { subjectKeyFromItemId } from './weak-items.js';
+import { getMinExamLeadDays, getReadThroughDays } from './exam-context.js';
 
 /* =======================================================
    📅 학습 캘린더 (날짜별 학습 기록)
@@ -40,6 +41,7 @@ export function getStudyCalendar() {
 /**
  * 오늘 학습 활동 기록 (누적)
  * @param {Object} activity - { cards: 증가할 카드 수, quizzes: 증가할 퀴즈 수, correct: 정답 수,
+ *   readMin: 교재 읽기 분 — SC-15 일독일 학습일 인정용,
  *   bySubj: 과목별 카드 증분 {subjKey: n} — SC-09 스마트학습 과목별 주간 실적용,
  *   quizBySubj: 과목별 퀴즈 증분 {subjKey: n} — SC-13 스마트학습 퀴즈 주간 실적용 }
  */
@@ -47,6 +49,7 @@ export function recordStudyActivity(activity = {}) {
     const today = getTodayStr();
     const cal = getStudyCalendar();
     const entry = cal[today] || { cards: 0, quizzes: 0, correct: 0 };
+    if (activity.readMin) entry.readMin = (entry.readMin || 0) + activity.readMin;
     if (activity.cards) entry.cards += activity.cards;
     if (activity.quizzes) entry.quizzes += activity.quizzes;
     if (activity.correct) entry.correct += activity.correct;
@@ -62,7 +65,7 @@ export function recordStudyActivity(activity = {}) {
             if (n > 0) entry.quizBySubj[k] = (entry.quizBySubj[k] || 0) + n;
         });
     }
-    if (activity.cards || activity.quizzes) {
+    if (activity.cards || activity.quizzes || activity.readMin) {
         // 시간대 버킷 — 학습 패턴 분석(computeStudyPattern)용, 활동 호출당 1회
         const hr = new Date().getHours();
         entry.h = entry.h || {};
@@ -82,7 +85,7 @@ export function getMonthlyStudyDays(year, month) {
     Object.keys(cal).forEach(date => {
         if (date.startsWith(prefix)) {
             const e = cal[date];
-            if (e.cards > 0 || e.quizzes > 0) count++;
+            if (e.cards > 0 || e.quizzes > 0 || (e.readMin || 0) > 0) count++;
         }
     });
     return count;
@@ -161,7 +164,7 @@ export function getWeeklyGoalProgress() {
         d.setDate(monday.getDate() + i);
         if (d > today) break;
         const entry = cal[_localDateStr(d)];
-        if (entry && (entry.cards > 0 || entry.quizzes > 0)) studyDays++;
+        if (entry && (entry.cards > 0 || entry.quizzes > 0 || (entry.readMin || 0) > 0)) studyDays++;
     }
     const percent = goals.weeklyStudyDays > 0 ? Math.min(100, Math.round((studyDays / goals.weeklyStudyDays) * 100)) : 0;
     return {
@@ -221,13 +224,33 @@ export function getSuggestedDailyCount(remainingItems) {
     return Math.ceil(remainingItems / dday);
 }
 
+// 최소 권장 준비 기간·일독 예상 기간은 시험별 값 — manifest study 블록 또는
+// 콘텐츠 규모 유도로 결정 (exam-context.js의 getMinExamLeadDays/getReadThroughDays, D-17/SC-15)
+
 /**
- * 시험일 설정 권고 — 최소 권장 준비 기간(일).
- * 근거: 기본 목표(일 50장·주 5학습일)로 cosmetic 팩 전체 카드 1,123장 1회전에
- * 23학습일≈D-33이 수학적 하한이고, SM-2 반복 유지 마진(약 1.5배)과
- * 문제은행 1회전(445문÷일 10문≈45일)을 고려해 50일로 설정 (D-17).
+ * 교재 일독 진척률 — 리더가 저장하는 과목별 최대 스크롤 진척(reader_progress)을 집계 (SC-15).
+ * 표준형·이야기형은 동일 커버리지로 과목당 최대값만 인정한다.
+ * @returns {{bySubject:Object, overall:number, started:boolean}}
+ *   overall은 0~1. 진척 기록이 하나도 없으면 started=false (미독 사용자는 계획 차감 안 함)
  */
-export const MIN_EXAM_LEAD_DAYS = 50;
+export function getTextbookReadProgress() {
+    let map = {};
+    try { map = JSON.parse(safeGetItem(STORAGE_KEYS.READER_PROGRESS) || '{}'); } catch (e) { map = {}; }
+    const bySubject = {};
+    Object.entries(map).forEach(([k, v]) => {
+        const frac = (v && typeof v === 'object') ? v.frac : null;
+        if (typeof frac === 'number' && frac > 0) bySubject[k] = Math.min(1, frac);
+    });
+    const seen = Object.keys(bySubject);
+    // 분모 = 전체 과목 수 (레지스트리 우선 → 학습 데이터 → 관측 과목 수 순 완화)
+    const reg = (typeof globalThis !== 'undefined' && globalThis.DATA_REGISTRY) || null;
+    const data = (typeof globalThis !== 'undefined' && globalThis.STUDY_DATA) || null;
+    const total = (reg && reg.subjects && reg.subjects.length)
+        || (data && Object.keys(data).length)
+        || Math.max(1, seen.length);
+    const overall = seen.length ? seen.reduce((s, k) => s + bySubject[k], 0) / total : 0;
+    return { bySubject, overall, started: seen.length > 0 };
+}
 
 /**
  * 시험일 리드타임 평가 — 목표 설정 모달의 인라인 권고용.
@@ -240,7 +263,7 @@ export function getExamLeadStatus(dateStr, today = new Date()) {
     const [y, m, d] = dateStr.split('-').map(Number);
     const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const dday = Math.round((new Date(y, m - 1, d).getTime() - base.getTime()) / (1000 * 60 * 60 * 24));
-    return { dday, leadShort: dday >= 0 && dday < MIN_EXAM_LEAD_DAYS, past: dday < 0 };
+    return { dday, leadShort: dday >= 0 && dday < getMinExamLeadDays(), past: dday < 0 };
 }
 
 /**
@@ -271,34 +294,50 @@ export function getExamPlanStatus(remainingItems, dailyGoal) {
  * 학습 가능 일수 = ⌊dday × 주간 학습일 ÷ 7⌋ — 단순 달력 역산보다 실제 약속 기준.
  * @param {number} remainingItems 남은 학습 항목 수 (예: 미암기 카드)
  * @returns {Object|null} 시험일 미설정·경과면 null.
- *   { dday, studyDays, perStudyDay, weeklyCards, remaining, weeks, goals, tier }
- *   weeks[] = { week, range, studyDays, cards, cumulative, percent }
+ *   { dday, studyDays, perStudyDay, weeklyCards, remaining, weeks, goals, tier,
+ *     readDaysLeft, readProgress }
+ *   weeks[] = { week, range, studyDays, reading, cards, cumulative, percent }
  *   tier: 'done'(잔여 0) | 'normal' | 'tight' | 'triage' — perStudyDay÷일일 목표 비율
+ *   SC-15: 일독 시작 후 남은 통독 학습일(⌈(1−진척)×getReadThroughDays()⌉)을
+ *   앞쪽 주차 학습일에서 순차 차감 — 통독 기간의 카드 배정이 부풀지 않게 한다
  */
 export function computeStudyPlan(remainingItems) {
     const dday = getDDay();
     if (dday === null || dday <= 0) return null;
     const goals = getStudyGoals();
     const remaining = Math.max(0, Math.round(remainingItems));
-    const studyDays = Math.max(1, Math.floor(dday * goals.weeklyStudyDays / 7));
-    const perStudyDay = remaining > 0 ? Math.ceil(remaining / studyDays) : 0;
+    const read = getTextbookReadProgress();
+    let readDaysLeft = read.started ? Math.ceil((1 - read.overall) * getReadThroughDays()) : 0;
     const weekCount = Math.ceil(dday / 7);
     const weeks = [];
-    let covered = 0;
+    let studyDays = 0;
     for (let w = 0; w < weekCount; w++) {
         const daysInWeek = Math.min(7, dday - w * 7);
-        const studyDaysInWeek = Math.min(goals.weeklyStudyDays, daysInWeek);
-        const cards = Math.min(remaining - covered, perStudyDay * studyDaysInWeek);
-        covered += cards;
+        const base = Math.min(goals.weeklyStudyDays, daysInWeek);
+        const reading = Math.min(base, readDaysLeft);
+        readDaysLeft -= reading;
+        const studyDaysInWeek = base - reading;
+        studyDays += studyDaysInWeek;
         weeks.push({
             week: w + 1,
             range: `D-${dday - w * 7} ~ D-${Math.max(0, dday - (w + 1) * 7)}`,
             studyDays: studyDaysInWeek,
-            cards,
-            cumulative: covered,
-            percent: remaining > 0 ? Math.min(100, Math.round(covered / remaining * 100)) : 100
+            reading,
+            cards: 0,
+            cumulative: 0,
+            percent: 0
         });
     }
+    studyDays = Math.max(1, studyDays);
+    const perStudyDay = remaining > 0 ? Math.ceil(remaining / studyDays) : 0;
+    let covered = 0;
+    weeks.forEach(w => {
+        const cards = Math.min(remaining - covered, perStudyDay * w.studyDays);
+        w.cards = cards;
+        covered += cards;
+        w.cumulative = covered;
+        w.percent = remaining > 0 ? Math.min(100, Math.round(covered / remaining * 100)) : 100;
+    });
     const ratio = goals.dailyCards > 0 ? perStudyDay / goals.dailyCards : Infinity;
     const tier = remaining === 0 ? 'done' : (ratio <= 1 ? 'normal' : ratio <= 2 ? 'tight' : 'triage');
     return {
@@ -309,7 +348,9 @@ export function computeStudyPlan(remainingItems) {
         remaining,
         weeks,
         goals: { dailyCards: goals.dailyCards, dailyQuizzes: goals.dailyQuizzes, weeklyStudyDays: goals.weeklyStudyDays },
-        tier
+        tier,
+        readDaysLeft: read.started ? Math.ceil((1 - read.overall) * getReadThroughDays()) : 0,
+        readProgress: Math.round(read.overall * 100)
     };
 }
 

@@ -137,6 +137,7 @@ export const STORAGE_KEYS = {
   // 교재 리더
   EXAM_VIEW_POS: 'exam_view_pos_v1',   // 문제집 뷰어 이어보기 — 문서별 마지막 스크롤 위치 (exam-viewer.js)
   READER_LAST_POSITION: 'readerLastPosition',
+  READER_PROGRESS: 'readerProgress',        // 과목별 교재 일독 진척률 {subjKey: {frac, ts}} — SC-15
   READER_FONT_SCALE: 'readerFontScale',
   READER_LINE_HEIGHT: 'readerLineHeight',
   READER_BOOKMARKS: 'readerBookmarks',
@@ -178,6 +179,7 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.CALC_HISTORY,
   STORAGE_KEYS.FC_MIGRATED_V2,
   STORAGE_KEYS.STATEMENT_STATS,
+  STORAGE_KEYS.READER_PROGRESS,     // 교재 일독 진척 — 복원 누락 시 계획의 통독 차감 리셋 (SC-15)
   STORAGE_KEYS.FC_SPACED_REPETITION,  // SM-2 카드별 스케줄 — 복원 누락 시 복습 일정 리셋
   STORAGE_KEYS.FORMULA_ITEMS,
   STORAGE_KEYS.FORMULA_RULES,

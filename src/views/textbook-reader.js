@@ -41,6 +41,7 @@ export {
 import { DataLoader } from '../data-loader.js';
 import { hasFeature } from '../exam-context.js';
 import { safeGetItem, safeSetItem } from '../state.js';
+import { recordStudyActivity } from '../study-tracker.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
 import { PATHS } from '../paths.js';
 import { CACHE } from '../config/cache.js';
@@ -74,7 +75,38 @@ function saveReaderPosition() {
             ts: Date.now()
         };
         safeSetItem(READER_POSITION_KEY, JSON.stringify(pos));
+        _updateReadProgress(container, pos.subject);
+        _flushReadingMinutes();
     } catch (e) { /* noop */ }
+}
+
+// SC-15 과목별 일독 진척 — 스크롤 비율의 최대값을 과목별로 영속화.
+// 표준형·이야기형은 동일 커버리지로 모드와 무관하게 과목 키 하나에 합산한다.
+function _updateReadProgress(container, subject) {
+    if (!subject || !container) return;
+    const denom = container.scrollHeight - container.clientHeight;
+    if (denom <= 0) return;
+    const frac = Math.min(1, Math.max(0, container.scrollTop / denom));
+    let map = {};
+    try { map = JSON.parse(safeGetItem(STORAGE_KEYS.READER_PROGRESS) || '{}'); } catch (e) { map = {}; }
+    const prev = (map[subject] && typeof map[subject] === 'object') ? (map[subject].frac || 0) : 0;
+    if (frac > prev) {
+        map[subject] = { frac, ts: Date.now() };
+        safeSetItem(STORAGE_KEYS.READER_PROGRESS, JSON.stringify(map));
+    }
+}
+
+// SC-15 읽기 시간 기록 — 스크롤 저장(1초 디바운스)을 실제 읽기 활동의 프록시로 사용.
+// 플러시 간격은 방치 탭 부풀림 방지로 15분 상한.
+let _readFlushAt = 0;
+function _flushReadingMinutes() {
+    const now = Date.now();
+    if (!_readFlushAt) { _readFlushAt = now; return; }
+    const min = Math.floor((now - _readFlushAt) / 60000);
+    if (min >= 1) {
+        _readFlushAt = now;
+        recordStudyActivity({ readMin: Math.min(min, 15) });
+    }
 }
 
 function loadReaderPosition() {

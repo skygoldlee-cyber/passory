@@ -32,7 +32,7 @@ describe('UX-FB-05 첫 방문 시작 안내', () => {
         maybeShowOnboarding();
         expect(document.getElementById('onboarding-overlay')).toBeTruthy();
         expect(localStorage.getItem('onboarding_seen_v1')).toBe('1');
-        expect(document.querySelectorAll('.onboarding-step')).toHaveLength(3);
+        expect(document.querySelectorAll('.onboarding-step')).toHaveLength(4);
     });
 
     it('기존 사용자(학습 키 존재)는 플래그만 기록하고 모달을 띄우지 않는다', () => {
