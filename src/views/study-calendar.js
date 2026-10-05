@@ -1,6 +1,6 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
-// @spec SC-01,SC-02
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay } from '../study-tracker.js';
+// @spec SC-01,SC-02,D-17
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
 import { localDateKey } from '../utils.js';
 import { showToast } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
@@ -218,6 +218,7 @@ export function openGoalSettings() {
                     <div>
                         <label style="display:block;margin-bottom:0.5rem;font-weight:600;">시험일 (D-day 역산)</label>
                         <input type="date" id="goal-exam-date" class="form-input" value="${examDate}" style="width:100%;height:48px;">
+                        <p id="exam-date-hint" style="margin:0.5rem 0 0;font-size:0.85rem;line-height:1.4;"></p>
                     </div>
                 </div>
                 <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
@@ -228,6 +229,31 @@ export function openGoalSettings() {
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // D-17 시험일 리드타임 인라인 권고 — 날짜 변경 시 실시간 갱신
+    const dateInput = /** @type {HTMLInputElement} */ (document.getElementById('goal-exam-date'));
+    const hintEl = document.getElementById('exam-date-hint');
+    const updateHint = () => _renderExamDateHint(hintEl, dateInput ? dateInput.value : '');
+    if (dateInput) dateInput.addEventListener('input', updateHint);
+    updateHint();
+}
+
+/** 시험일 리드타임 권고 문구 — 최소 MIN_EXAM_LEAD_DAYS일 전 설정 권장 */
+function _renderExamDateHint(hintEl, dateStr) {
+    if (!hintEl) return;
+    const st = getExamLeadStatus(dateStr);
+    const set = (text, color) => { hintEl.textContent = text; hintEl.style.color = color; };
+    if (!st) {
+        set(`효율적인 학습을 위해 시험일은 최소 ${MIN_EXAM_LEAD_DAYS}일 전에 설정하는 것을 권장합니다.`, 'var(--color-text-muted)');
+    } else if (st.past) {
+        set('지난 시험일입니다 — 시험 결과 자가 보고에 사용됩니다.', 'var(--color-text-muted)');
+    } else if (st.dday === 0) {
+        set('시험 당일입니다.', 'var(--color-warning)');
+    } else if (st.leadShort) {
+        set(`시험까지 D-${st.dday} — 권장 준비 기간(${MIN_EXAM_LEAD_DAYS}일) 미만입니다. 핵심 과목 우선 전략이 필요합니다.`, 'var(--color-warning)');
+    } else {
+        set(`시험까지 D-${st.dday} — 준비 기간이 충분합니다.`, 'var(--color-success)');
+    }
 }
 
 export function closeGoalSettings() {

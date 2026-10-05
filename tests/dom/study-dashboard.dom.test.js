@@ -1,5 +1,5 @@
 // tests/dom/study-dashboard.dom.test.js — 대시보드 통계·추천 시나리오
-// @spec D-01~15,AN-01~03
+// @spec D-01~15,D-17,AN-01~03
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 3)
 // 검증: 진도 0건 렌더(E), 시딩 진도→통계 반영(H/P), 과목 카드·히트맵(H),
 //       약점 과목 추천(H — 최소 3문 응시 조건·헷갈림 카드最多)
@@ -20,7 +20,14 @@ import {
     seedStudyData, seedProgress, resetStudyState,
 } from './helpers.js';
 import { updateGlobalStats, renderDashboard, renderAnalysisView } from '../../src/views/dashboard.js';
+import { setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { state } from '../../src/state.js';
+
+const todayPlus = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 function seedTwoSubjects() {
     seedStudyData('subja', {
@@ -148,6 +155,25 @@ describe('대시보드 — 통계·과목 카드·약점 추천', () => {
         expect(rec).toContain('헷갈린 카드');
         expect(rec).toContain('과목1');
         expect(rec).toContain('1장');
+    });
+
+    it('시험일 계획 등급 — tight·triage 시 역산 안내 문구 분기 (D-17)', () => {
+        seedTwoSubjects(); // 카드 4장 전부 미암기
+        setStudyGoals({ dailyCards: 1 });
+
+        // D-2에 4장 남음 → 하루 2장 권장, 목표 1장 대비 ratio 2.0 → tight
+        setExamDate(todayPlus(2));
+        updateGlobalStats();
+        const desc = el('exam-dday-count').closest('.stat-info').querySelector('.stat-desc');
+        expect(el('exam-dday-count').textContent).toBe('D-2');
+        expect(desc.textContent).toContain('하루 카드 2장');
+        expect(desc.textContent).toContain('병행');
+
+        // D-1에 4장 남음 → 하루 4장 권장, ratio 4.0 → triage
+        setExamDate(todayPlus(1));
+        updateGlobalStats();
+        expect(desc.textContent).toContain('하루 카드 4장');
+        expect(desc.textContent).toContain('우선');
     });
 
     it('응시 3문 미만 → 정답률 추천 제외 (헷갈림 추천만)', () => {

@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02
+// @spec SC-01,SC-02,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -117,6 +117,37 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
 
         expect(el('goal-settings-modal')).toBeNull();
         expect(storedJson(STORAGE_KEYS.STUDY_GOALS)).toBeNull();
+    });
+
+    it('시험일 리드타임 인라인 권고 — 30일 미만 경고·30일 이상 안심 (D-17)', () => {
+        openGoalSettings();
+        const hint = el('exam-date-hint');
+        const dateInput = el('goal-exam-date');
+        const plus = (n) => {
+            const d = new Date();
+            d.setDate(d.getDate() + n);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+
+        // 상시 권고 문구 (미설정)
+        expect(hint.textContent).toContain('최소 30일 전');
+
+        // 30일 미만 → 권장 준비 기간 미만 경고
+        dateInput.value = plus(20);
+        dateInput.dispatchEvent(new Event('input'));
+        expect(hint.textContent).toContain('D-20');
+        expect(hint.textContent).toContain('미만');
+
+        // 30일 이상 → 충분 안내
+        dateInput.value = plus(45);
+        dateInput.dispatchEvent(new Event('input'));
+        expect(hint.textContent).toContain('D-45');
+        expect(hint.textContent).toContain('충분');
+
+        // 지난 시험일 → 결과 자가 보고 안내
+        dateInput.value = plus(-5);
+        dateInput.dispatchEvent(new Event('input'));
+        expect(hint.textContent).toContain('지난 시험일');
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

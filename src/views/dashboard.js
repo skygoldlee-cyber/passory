@@ -1,5 +1,5 @@
 // src/views/dashboard.js - 대시보드 뷰 로직 및 전역 통계 관리
-// @spec D-01~16,AN-01~09,PF-07,SC-04
+// @spec D-01~17,AN-01~09,PF-07,SC-04
 import { state } from '../state.js';
 import { esc } from '../sanitize.js';
 import { DataLoader } from '../data-loader.js';
@@ -14,7 +14,7 @@ import {
     getSimHistory, computeWrongCauseSummary, getWrongCauseLabels,
     snapshotRecommendations, evaluateRecommendationEffect
 } from '../recommendations.js';
-import { getDDay, getSuggestedDailyCount, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar } from '../study-tracker.js';
+import { getDDay, getExamPlanStatus, getTodayGoalProgress, getWeeklyGoalProgress, getStudyCalendar } from '../study-tracker.js';
 import { getWeakStatements, getDueStatementSids, getAnomalousStatements, getAllStatementStats } from '../statement-tracker.js';
 import {
     computeSubjectWeakChapters, computeWeeklyGrowth, computePassGap,
@@ -122,10 +122,7 @@ export function updateGlobalStats() {
         const descEl = ddayEl.closest('.stat-info')?.querySelector('.stat-desc');
         if (descEl) {
             const remaining = Math.max(0, totalCards - state.memorizedCards.size);
-            const suggested = getSuggestedDailyCount(remaining);
-            descEl.innerHTML = suggested !== null
-                ? `역산 권장: 하루 카드 ${suggested}장 · <button type="button" class="dday-set-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear"></i> 설정</button>`
-                : `<button type="button" class="dday-set-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear"></i> 시험일·목표 설정</button>`;
+            descEl.innerHTML = _examPlanDescHtml(getExamPlanStatus(remaining));
         }
     }
 
@@ -142,6 +139,30 @@ export function updateGlobalStats() {
 
     if (solvedQuizzesEl) solvedQuizzesEl.textContent = String(solvedCount);
     if (successRateEl) successRateEl.textContent = `${successRate}%`;
+}
+
+// D-17 D-day 카드 설명 — 계획 등급(tight: 병행 권장 / triage: 비중 큰 과목 우선) 분기
+function _examPlanDescHtml(plan) {
+    const openBtn = (label) => `<button type="button" class="dday-set-btn" data-click="openGoalSettings"><i class="fa-solid fa-gear"></i> ${label}</button>`;
+    if (!plan || plan.suggested === null) return openBtn('시험일·목표 설정');
+    const topName = plan.tier === 'triage' ? _topWeightSubjectName() : null;
+    const advice = {
+        tight: ' — 일일 목표 초과, 카드·퀴즈 병행 권장',
+        triage: ` — 전량 커버 어려움, ${topName ? esc(topName) + ' 등 ' : ''}비중 큰 과목 우선 권장`
+    }[plan.tier] || '';
+    return `역산 권장: 하루 카드 ${plan.suggested}장${advice} · ${openBtn('설정')}`;
+}
+
+// 출제 문항 수 합계가 가장 큰 과목명 (registry exams 기준 — 없으면 null)
+function _topWeightSubjectName() {
+    if (typeof DataLoader === 'undefined' || !DataLoader.registry) return null;
+    const weights = {};
+    (DataLoader.registry.exams || []).forEach(ex => {
+        if (ex && ex.subject) weights[ex.subject] = (weights[ex.subject] || 0) + ((ex.stats && ex.stats.questions) || 0);
+    });
+    const topKey = Object.keys(weights).sort((a, b) => weights[b] - weights[a])[0];
+    const subj = topKey && DataLoader.getSubjectList().find(s => s.key === topKey);
+    return subj ? (subj.shortName || subj.name) : null;
 }
 
 /**

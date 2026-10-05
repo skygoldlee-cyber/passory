@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03
+// @spec SC-03,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -97,4 +97,49 @@ test('getStudyGoals: 미설정 시 기본 목표를 반환하고 부분 저장�
   const merged = tracker.getStudyGoals();
   assert.equal(merged.dailyCards, 20);
   assert.equal(merged.dailyQuizzes, 10); // 미지정 항목은 기본값 유지
+});
+
+// --- D-17 시험일 리드타임 권고·계획 등급 ---
+
+const todayPlus = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+test('getExamLeadStatus: 미설정·무효 날짜 → null', () => {
+  assert.equal(tracker.getExamLeadStatus(''), null);
+  assert.equal(tracker.getExamLeadStatus(null), null);
+  assert.equal(tracker.getExamLeadStatus('2026-13-99'), null);
+});
+
+test('getExamLeadStatus: 30일 경계·당일·과거 판정', () => {
+  const today = new Date(2026, 9, 5); // 2026-10-05
+  assert.deepEqual(tracker.getExamLeadStatus('2026-11-04', today), { dday: 30, leadShort: false, past: false });
+  assert.deepEqual(tracker.getExamLeadStatus('2026-11-03', today), { dday: 29, leadShort: true, past: false });
+  assert.equal(tracker.getExamLeadStatus('2026-10-05', today).dday, 0);
+  assert.deepEqual(tracker.getExamLeadStatus('2026-10-04', today), { dday: -1, leadShort: false, past: true });
+});
+
+test('getExamPlanStatus: 미설정 → null, 경과 시험일 → past', () => {
+  assert.equal(tracker.getExamPlanStatus(100), null);
+  tracker.setExamDate(todayPlus(-3));
+  const st = tracker.getExamPlanStatus(100);
+  assert.equal(st.tier, 'past');
+  assert.equal(st.suggested, null);
+});
+
+test('getExamPlanStatus: 권장량÷일일 목표 비율로 normal/tight/triage 판정', () => {
+  tracker.setExamDate(todayPlus(10));
+  tracker.setStudyGoals({ dailyCards: 10 });
+  assert.equal(tracker.getExamPlanStatus(100).tier, 'normal'); // 10/10 = 1.0
+  assert.equal(tracker.getExamPlanStatus(150).tier, 'tight');  // 15/10 = 1.5
+  assert.equal(tracker.getExamPlanStatus(200).tier, 'tight');  // 20/10 = 2.0 경계
+  const triage = tracker.getExamPlanStatus(250);
+  assert.equal(triage.tier, 'triage');                       // 25/10 = 2.5
+  assert.equal(triage.suggested, 25);
+  // 일일 목표 인자 덮어쓰기 — 15/20 = 0.75 → normal
+  assert.equal(tracker.getExamPlanStatus(150, 20).tier, 'normal');
+  // 남은 항목 없음 → suggested null
+  assert.equal(tracker.getExamPlanStatus(0).suggested, null);
 });

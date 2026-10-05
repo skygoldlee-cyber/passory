@@ -1,5 +1,5 @@
 // src/study-tracker.js — 학습 캘린더/목표 추적 헬퍼
-// @spec SC-03
+// @spec SC-03,D-17
 // 학습 활동을 날짜별로 기록하고, 목표 달성률을 계산합니다.
 import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
@@ -204,4 +204,43 @@ export function getSuggestedDailyCount(remainingItems) {
     const dday = getDDay();
     if (dday === null || dday <= 0 || remainingItems <= 0) return null;
     return Math.ceil(remainingItems / dday);
+}
+
+/** 시험일 설정 권고 — 최소 권장 준비 기간(일) */
+export const MIN_EXAM_LEAD_DAYS = 30;
+
+/**
+ * 시험일 리드타임 평가 — 목표 설정 모달의 인라인 권고용.
+ * @param {string|null} dateStr YYYY-MM-DD
+ * @param {Date} [today] 기준일 (테스트 주입용)
+ * @returns {{dday:number, leadShort:boolean, past:boolean}|null} 유효하지 않은 날짜면 null
+ */
+export function getExamLeadStatus(dateStr, today = new Date()) {
+    if (typeof dateStr !== 'string' || !_isValidDateStr(dateStr)) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dday = Math.round((new Date(y, m - 1, d).getTime() - base.getTime()) / (1000 * 60 * 60 * 24));
+    return { dday, leadShort: dday >= 0 && dday < MIN_EXAM_LEAD_DAYS, past: dday < 0 };
+}
+
+/**
+ * D-day 계획 등급 — 역산 권장량 ÷ 일일 카드 목표 비율로 판정.
+ *   'normal' ≤1.0 여유 — 페이스 안내
+ *   'tight'  ≤2.0 압축 — 카드·퀴즈 병행 권장
+ *   'triage' >2.0 긴급 — 전량 커버 어려움, 과목 우선순위 필요
+ * @param {number} remainingItems 남은 학습 항목 수 (예: 미암기 카드)
+ * @param {number} [dailyGoal] 일일 카드 목표 (생략 시 저장된 목표)
+ * @returns {{dday:number, suggested:number|null, ratio:number|null, tier:string}|null}
+ *   시험일 미설정이면 null, 경과면 tier='past', 남은 항목이 없으면 suggested=null
+ */
+export function getExamPlanStatus(remainingItems, dailyGoal) {
+    const dday = getDDay();
+    if (dday === null) return null;
+    if (dday <= 0) return { dday, suggested: null, ratio: null, tier: 'past' };
+    const suggested = getSuggestedDailyCount(remainingItems);
+    if (suggested === null) return { dday, suggested: null, ratio: null, tier: 'normal' };
+    const goal = (typeof dailyGoal === 'number' && dailyGoal > 0) ? dailyGoal : getStudyGoals().dailyCards;
+    const ratio = goal > 0 ? suggested / goal : Infinity;
+    const tier = ratio <= 1 ? 'normal' : ratio <= 2 ? 'tight' : 'triage';
+    return { dday, suggested, ratio, tier };
 }
