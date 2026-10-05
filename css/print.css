@@ -195,6 +195,9 @@
         color: var(--print-fg);
         max-width: 720px;
         margin: 0 auto;
+        /* 공백 없는 긴 토큰(성분명·URL 등)이 표를 페이지 밖으로 밀어내는 것 방지 —
+           td의 min-content 축소로 표가 컨테이너 안에 머묾 (상속됨) */
+        overflow-wrap: anywhere;
     }
 
     #formula-print-area .fp-doc h1 {
