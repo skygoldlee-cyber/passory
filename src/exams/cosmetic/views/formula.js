@@ -30,7 +30,7 @@ import {
 } from './formula-recommend.js';
 import { findMaterialByName, materialStatus, daysUntilExpiry } from '../material-ledger.js';
 import { localDateTimeNow, fmtLocalDateTime } from '../store-utils.js';
-import { getJSON, setJSON } from '../../../storage.js';
+import { getItem, getJSON, setJSON } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { buildWorkOrderHtml, printHtml } from './formula-print.js';
 import {
@@ -216,6 +216,13 @@ function applyBizProfile() {
    ======================================================= */
 
 const COMPLIANCE_STALE_DAYS = 30;
+const BACKUP_STALE_DAYS = 30;   // FO-65 — 증적 백업 주기
+
+// FO-65 — 백업 대상이 되는 증적 자산 키. 하나라도 데이터가 있어야 '백업할 것이 있다'로 본다.
+const EVIDENCE_KEYS = [
+  STORAGE_KEYS.FORMULA_ITEMS, STORAGE_KEYS.BATCH_ITEMS, STORAGE_KEYS.CUSTOMER_ITEMS,
+  STORAGE_KEYS.MATERIAL_ITEMS, STORAGE_KEYS.ADVERSE_ITEMS, STORAGE_KEYS.FORMULA_AUDIT_LOG,
+];
 
 function complianceSetKey(biz) {
   return {
@@ -243,6 +250,35 @@ function renderComplianceReminder() {
   (desc || card).appendChild(badge);
 }
 
+/**
+ * FO-65 — 증적 백업 리마인더. 증적 데이터(포뮬러·배치·고객·원료·이상사례·출력 이력)가
+ * 있고 마지막 백업이 30일 경과했거나 한 번도 없으면 종합 보고서 카드에 배지 표시.
+ * 백업보내기(exportData)가 LAST_BACKUP_AT을 스탬프한다.
+ */
+function renderBackupReminder() {
+  const card = document.querySelector('#formula-menu-panel [data-click="auditPrintReport"]');
+  if (!card) return;
+  const prev = card.querySelector('.backup-reminder-badge');
+  if (prev) prev.remove();
+  // 백업할 증적이 없으면 알리지 않는다
+  const hasEvidence = EVIDENCE_KEYS.some(k => {
+    const v = getJSON(k);
+    return Array.isArray(v) ? v.length > 0 : (v && typeof v === 'object' && Object.keys(v).length > 0);
+  });
+  if (!hasEvidence) return;
+  const last = getItem(STORAGE_KEYS.LAST_BACKUP_AT);
+  const days = last ? Math.floor((Date.now() - new Date(last).getTime()) / 86400000) : Infinity;
+  if (days < BACKUP_STALE_DAYS) return;
+  const badge = document.createElement('span');
+  badge.className = 'f-check f-check-warn backup-reminder-badge';
+  badge.textContent = last
+    ? `증적 백업 권장 — 마지막 백업 ${days}일 전`
+    : '증적 백업 권장 — 백업 이력 없음 (대시보드 백업보내기)';
+  const desc = card.querySelector('p');
+  if (desc) desc.appendChild(document.createElement('br'));
+  (desc || card).appendChild(badge);
+}
+
 /** 사업 유형 변경 — 허브 재렌더 + 서브패널이면 메뉴로 복귀 (FO-33) */
 export function formulaSetBizType(type) {
   if (!setBizType(type)) return;
@@ -256,6 +292,7 @@ export function initFormulaView() {
   applyFormulaContrast();
   applyBizProfile();
   renderComplianceReminder();
+  renderBackupReminder();
   const usage = getFormulaUsage();
   const badge = getEl('formula-usage-badge');
   if (badge) badge.textContent = `저장 ${usage.count}/${usage.limit}`;

@@ -111,8 +111,11 @@ export const STORAGE_KEYS = {
   ADVERSE_ITEMS: 'formula_adverse_items',
 
   // Formula OS — 종합 보고서 출력 이력 (FO-63) — 최근 20건
-  // [{at, bizId, bizLabel, setLabel, done, total, sections}]
+  // [{at, bizId, bizLabel, setLabel, done, total, sections, id, hash, fresh}]
   FORMULA_AUDIT_LOG: 'formula_audit_log',
+
+  // 증적 백업 마지막보내기 시각 (backup.js 스탬프, FO-65) — 'YYYY-MM-DDTHH:MM' 로컬, 기기 로컬 마커
+  LAST_BACKUP_AT: 'last_backup_at',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)

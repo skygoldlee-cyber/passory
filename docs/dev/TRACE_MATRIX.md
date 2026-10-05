@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 232378952889df6b
-> 생성: 2026-10-05 · 원천: SPEC.md(441개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 32b7f953f2692120
+> 생성: 2026-10-05 · 원천: SPEC.md(446개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 441개 — 문서 연결 284 · 소스 연결 409 · 테스트 연결 429 · 보고서 연결 109
+**커버리지 요약**: 요구사항 446개 — 문서 연결 284 · 소스 연결 413 · 테스트 연결 434 · 보고서 연결 109
 
 ---
 
@@ -347,6 +347,11 @@
 | FO-61 | 구현 | 테스트 | DOC-DSN-15 | src/exams/cosmetic/views/formula-batch.js<br>src/exams/cosmetic/views/formula-material.js | tests/unit/exams/cosmetic/formula-practical.test.js | — | — |
 | FO-62 | 구현 | 테스트 | DOC-DSN-15 | src/exams/cosmetic/views/formula.js | tests/dom/exams/cosmetic/formula-practical.dom.test.js | — | — |
 | FO-63 | 구현 | 테스트 | DOC-DSN-15 | src/exams/cosmetic/views/formula-audit.js<br>src/exams/cosmetic/views/formula-compliance.js | tests/dom/exams/cosmetic/formula-practical.dom.test.js<br>tests/unit/exams/cosmetic/formula-practical.test.js | — | — |
+| FO-64 | 구현 | 테스트 | — | src/exams/cosmetic/views/formula-audit.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
+| FO-65 | 구현 | 테스트 | — | — | tests/dom/exams/cosmetic/formula-nav.dom.test.js | — | — |
+| FO-66 | 구현 | 테스트 | — | src/exams/cosmetic/views/formula-audit.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
+| FO-67 | 구현 | 테스트 | — | src/exams/cosmetic/views/formula-audit.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
+| FO-68 | 구현 | 테스트 | — | tools/check/check_adlint_coverage.js | tests/unit/exams/cosmetic/formula-sales.test.js | — | — |
 
 ## 3.19 계정·클라우드 동기화
 

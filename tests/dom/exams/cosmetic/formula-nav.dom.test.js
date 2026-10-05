@@ -1,5 +1,5 @@
 // tests/dom/formula-nav.dom.test.js — Formula OS 패널 전환·서브내비 시나리오
-// @spec FO-15,FO-24,FO-25,FO-38
+// @spec FO-15,FO-24,FO-25,FO-38,FO-65
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §4
 // 검증: 허브→서브패널 전환(is-hidden), 서브내비 칩·활성 상태, 나가기 복귀
 
@@ -11,6 +11,9 @@ vi.mock('../../../../src/ui-utils.js', () => ({
 }));
 
 import { loadIndexHtml, el, isVisible } from '../../helpers.js';
+import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
+import { setJSON, setItem } from '../../../../src/storage.js';
+import { localDateTime } from '../../../../src/utils.js';
 import { initFormulaView, exitFormulaSubView, openFormulaCalc } from '../../../../src/exams/cosmetic/views/formula.js';
 import { openCustomerPanel } from '../../../../src/exams/cosmetic/views/formula-customer.js';
 import { openMaterialPanel } from '../../../../src/exams/cosmetic/views/formula-material.js';
@@ -103,5 +106,27 @@ describe('Formula OS — 패널 전환·서브내비', () => {
         expect(note).toBeTruthy();
         expect(note.textContent).toContain('네거티브 리스트');
         expect(note.textContent).toContain('별표1');
+    });
+
+    it('FO-65: 증적 백업 리마인더 — 데이터 없으면 배지 없음, 30일 경과 시 표시', () => {
+        const badge = () => document.querySelector('#formula-menu-panel .backup-reminder-badge');
+        // 증적 데이터 없음 → 배지 없음 (백업할 것이 없다)
+        initFormulaView();
+        expect(badge()).toBeNull();
+        // 증적 데이터 존재 + 백업 이력 없음 → 배지
+        setJSON(STORAGE_KEYS.BATCH_ITEMS, [{ batchNo: 'B-1' }]);
+        initFormulaView();
+        expect(badge()?.textContent).toContain('증적 백업 권장');
+        expect(badge()?.textContent).toContain('백업 이력 없음');
+        // 31일 전 백업 → 경과 배지
+        setItem(STORAGE_KEYS.LAST_BACKUP_AT,
+            localDateTime(new Date(Date.now() - 31 * 86400000)));
+        initFormulaView();
+        expect(badge()?.textContent).toContain('일 전');
+        // 5일 전 백업 → 배지 없음
+        setItem(STORAGE_KEYS.LAST_BACKUP_AT,
+            localDateTime(new Date(Date.now() - 5 * 86400000)));
+        initFormulaView();
+        expect(badge()).toBeNull();
     });
 });

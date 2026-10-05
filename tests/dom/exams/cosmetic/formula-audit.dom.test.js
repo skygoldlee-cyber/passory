@@ -35,6 +35,9 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         window.INGREDIENTS_DATA = INGREDIENTS_STUB;
         window.print = vi.fn();
         invalidateIngredientIndex();
+        // FO-64 — auditPrintReport가 ensureNoticeStatus를 await하므로 네트워크 차단
+        // (실패 → 고시 스탬프 null → '확인 불가' 폴백 경로 검증)
+        vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))));
     });
 
     it('패널 헤더에 종합 보고서 버튼 존재', () => {
@@ -50,10 +53,10 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(card.textContent).toContain('보고서 인쇄');
     });
 
-    it('auditPrintReport — print-area 렌더 + window.print 호출', () => {
+    it('auditPrintReport — print-area 렌더 + window.print 호출', async () => {
         openCompliancePanel();
         compToggle(FIRST_ID);
-        auditPrintReport();
+        await auditPrintReport();
 
         const html = printArea().innerHTML;
         expect(html).toContain('종합 점검 보고서');
@@ -66,7 +69,7 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(window.print).toHaveBeenCalledTimes(1);
     });
 
-    it('광고 점검 — 실행 영속 → 보고서 반영 → 비우기 삭제 (mfg)', () => {
+    it('광고 점검 — 실행 영속 → 보고서 반영 → 비우기 삭제 (mfg)', async () => {
         setBizType('mfg');
         el('adlint-input').value = '피부 염증을 치료하는 기적의 크림';
         adlintRun();
@@ -75,7 +78,7 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(st).toBeTruthy();
         expect(st.hits.length).toBeGreaterThan(0);
 
-        auditPrintReport();
+        await auditPrintReport();
         const html = printArea().innerHTML;
         expect(html).toContain('광고 문구 점검');
         expect(html).toContain('치료');
@@ -85,13 +88,13 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(getJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE)).toBeNull();
     });
 
-    it('sales 유형 — 고객 상담 섹션 포함·포뮬러 섹션 제외', () => {
+    it('sales 유형 — 고객 상담 섹션 포함·포뮬러 섹션 제외', async () => {
         setBizType('sales');
         createCustomer({
             name: '홍길동', skinType: '건성', allergies: ['파라벤'],
             consultLog: [{ date: '2026-10-01', text: '알레르기 상담' }],
         });
-        auditPrintReport();
+        await auditPrintReport();
 
         const html = printArea().innerHTML;
         expect(html).toContain('고객 상담 기록');
@@ -101,8 +104,8 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(html).not.toContain('포뮬러 규정 검증'); // sales는 제조 안 함
     });
 
-    it('빈 데이터 — 기록 없음 섹션 표기 + 출력 가능', () => {
-        auditPrintReport();
+    it('빈 데이터 — 기록 없음 섹션 표기 + 출력 가능', async () => {
+        await auditPrintReport();
         const html = printArea().innerHTML;
         expect(html).toContain('기록 없음');
         expect(html).toContain('0/'); // 체크리스트 0/N

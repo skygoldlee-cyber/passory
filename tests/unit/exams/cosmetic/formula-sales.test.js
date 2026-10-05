@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/formula-sales.test.js
-// @spec FO-33,FO-34,FO-36
+// @spec FO-33,FO-34,FO-36,FO-68
 // biz-profile.js 사업 유형 프로파일 + ad-lint.js 광고 문구 린트 엔진.
 // 검증: 유형 영속·폴백, 패널 가시 테이블, 체크리스트 세트 매핑,
 //       금지 표현 매칭·위치·중첩 제거·카테고리 집계.
@@ -97,7 +97,7 @@ test('CHECKLIST_SETS — BIZ_CHECKLIST_SET 매핑이 실제 세트와 정합 (FO
   }
 });
 
-// ── 광고 문구 린트 (FO-36) ──
+// ── 광고 문구 린트 (FO-36·FO-68) ──
 
 test('lintAdCopy — 의약품 오인 표현 매칭·위치 (FO-36)', () => {
   const hits = lintAdCopy('이 크림은 아토피를 치료합니다.');
@@ -142,4 +142,14 @@ test('summarizeLint — 카테고리 집계 + 사전 카테고리 정합 (FO-36)
   for (const rule of AD_BANNED_TERMS) {
     assert.ok(AD_CATEGORIES[rule.category], `미선언 카테고리: ${rule.category} (${rule.term})`);
   }
+});
+
+test('lintAdCopy — 전문가 추천·절대 표현 카테고리 확장 (FO-68, 별표5 2.다·바)', () => {
+  const hits = lintAdCopy('피부과 전문의가 추천하는 최고의 크림');
+  const cats = hits.map(h => h.category);
+  assert.ok(cats.includes('endorsement'), '전문가 추천 오인 검출');
+  assert.ok(cats.includes('overclaim'), '최고 — 절대 표현 검출');
+  assert.equal(AD_CATEGORIES.endorsement.label, '전문가 추천 오인');
+  // 의료기관 암시 표현도 검출
+  assert.ok(lintAdCopy('병원 추천 세럼').some(h => h.category === 'endorsement'));
 });

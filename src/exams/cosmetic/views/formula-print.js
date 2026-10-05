@@ -278,7 +278,8 @@ const AUDIT_BODY = {
 
 /**
  * 종합 규정 점검 보고서 (FO-56) — collectAuditReportData() 뷰모델 → fp-doc.
- * @param {object} d - {generatedAt, appVersion, biz:{label,desc}, setLabel, sections:[]}
+ * @param {object} d - {generatedAt, appVersion, biz:{label,desc}, setLabel, sections:[],
+ *   id, hash, notice:{notice,ruleName,effectiveDate,checkedAt,isNewer}|null, printedBy}
  */
 export function buildAuditReportHtml(d) {
   const scoreRows = d.sections
@@ -291,10 +292,23 @@ export function buildAuditReportHtml(d) {
       : (render ? render(s) : '');
     return `<h3>${mark} ${esc(s.title)}</h3>${content}`;
   }).join('');
+  // FO-64 — 기준 고시 스탬프. 원격 상태 미로드(오프라인)면 '확인 불가'로 명시한다.
+  const n = d.notice;
+  const noticeLine = n
+    ? `기준 고시: ${esc(n.ruleName)} ${esc(n.notice)}`
+      + `${n.effectiveDate ? ` (시행 ${esc(n.effectiveDate)})` : ''}`
+      + ` · 고시 확인 ${n.checkedAt ? esc(n.checkedAt) : '미확인'}`
+      + `${n.isNewer ? ' — ⚠ 신규 고시 개정 확인 필요' : ''}`
+    : '기준 고시: 확인 불가 — 고시 상태를 불러오지 못했습니다 (오프라인·네트워크 확인)';
+  // FO-66 — 출력물↔이력 대조·변조 감지용 식별자/해시. FO-67 — 출력 기록(기기 흔적).
+  const idLine = `문서 번호: ${esc(d.id || '—')} · 내용 해시: ${esc(d.hash || '—')}`
+    + `${d.printedBy ? ` · 출력 환경: ${esc(d.printedBy)}` : ''}`;
   return `<div class="fp-doc">
     <h1>종합 점검 보고서</h1>
     <p class="fp-meta-line">사업 유형: ${esc(d.biz.label)} — ${esc(d.biz.desc)}</p>
     <p class="fp-meta-line">점검 기준: ${esc(d.setLabel)} · 발행일시: ${esc(auditFmtDateTime(d.generatedAt))}${d.appVersion ? ` · 앱 ${esc(d.appVersion)}` : ''}</p>
+    <p class="fp-meta-line">${noticeLine}</p>
+    <p class="fp-meta-line fp-doc-id">${idLine}</p>
     <h3>점검 요약</h3>
     <table class="fp-table"><tbody>${scoreRows}</tbody></table>
     ${body}
@@ -303,6 +317,7 @@ export function buildAuditReportHtml(d) {
       <span class="fp-sign">확인자: ______________</span>
       <span class="fp-sign">확인일: ________</span>
     </div>
+    <p class="fp-meta-line">서명 기록 — 출력일시 ${esc(auditFmtDateTime(d.generatedAt))} · 출력 환경 ${esc(d.printedBy || '—')} · 문서 ${esc(d.id || '—')}</p>
     <p class="fp-disclaimer">본 보고서는 자가점검용 참고 자료이며 법률 자문이 아닙니다. 실제 의무·기준의 판단은 법령 원문과 관할 지방식약청 안내를 따르세요.</p>
     <p class="fp-disclaimer">본 문서에는 고객 개인정보(이름·피부 정보·상담 내용)가 포함될 수 있습니다 — 출력물의 보관·폐기에 주의하세요.</p>
   </div>`;

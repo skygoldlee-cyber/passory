@@ -1,5 +1,5 @@
 // Formula OS — 종합 규정 점검 보고서 수집기 (FO-56)
-// @spec FO-56,FO-59,FO-63
+// @spec FO-56,FO-59,FO-63,FO-64,FO-66,FO-67
 // 사업 유형별 법규 점검 자산(체크리스트·표시사항·광고 점검·포뮬러 검증·
 // 조제 기록·원료 기한·고객 상담·이상사례)을 출력 순간 라이브 수집해 fp-doc 보고서로 산출.
 // 보고서 결과 자체는 저장하지 않는다 — 출력이 곧 스냅샷 (설계 DOC-DSN-14).
@@ -22,6 +22,8 @@ import { getIndex } from './formula.js';
 import { buildAuditReportHtml, printHtml, batchQcSummary } from './formula-print.js';
 import { showToast } from '../../../ui-utils.js';
 import { localDateTime, fmtLocalDateTime } from '../store-utils.js';
+import { fnv1aHex, deviceLabel } from '../../../utils.js';
+import { ensureNoticeStatus, getNoticeStamp } from '../../../notice-check.js';
 
 const RECENT_BATCH_MAX = 10;   // 최근 배치 목록 상한 — 판매내역 증적
 const CONSULT_RECENT_MAX = 3;  // 고객별 최근 상담 이력 상한 (설계 §9-4)
@@ -259,6 +261,8 @@ export function recordAuditLog(d) {
   const checklist = d.sections.find(s => s.id === 'checklist');
   const entry = {
     at: d.generatedAt,
+    id: d.id || '',            // FO-66 — 출력물↔이력 대조용 문서 식별자
+    hash: d.hash || '',        // FO-66 — 내용 무결성 해시 (FNV-1a, 비보안 결정 해시)
     bizId: d.biz && d.biz.id, bizLabel: d.biz && d.biz.label,
     setLabel: d.setLabel || '',
     done: checklist ? checklist.done : 0,
@@ -304,17 +308,34 @@ export function collectAuditReportData(now) {
   pushIf('material', collectMaterials());
   sections.push(collectChecklist(set, checked));
 
+  // ——— 문서 식별자 + 내용 해시 (FO-66) — 출력물↔이력 대조·변조 감지용.
+  // 해시 입력은 사람이 읽는 요약·판정 필드만 — 개인정보 원문과 무관한 결정적 문자열.
+  const generatedAt = localDateTime(now instanceof Date ? now : new Date());
+  const fingerprintSource = JSON.stringify({
+    biz: biz.id, set: set.key || set.label,
+    sections: sections.map(s => ({ id: s.id, summary: s.summary, empty: s.empty })),
+  });
+  const hash = fnv1aHex(fingerprintSource);
+  const seq = String(listAuditLog().length + 1).padStart(3, '0');
+  const id = `RPT-${generatedAt.slice(0, 10).replace(/-/g, '')}-${seq}-${hash.slice(0, 6)}`;
+
   return {
-    generatedAt: localDateTime(now instanceof Date ? now : new Date()),
+    id, hash,
+    generatedAt,
     appVersion: (typeof window !== 'undefined' && window.APP_VERSION) || '',
+    notice: getNoticeStamp(),  // FO-64 — 진입 시 채워진 고시 기준 스탬프 (미로드 시 null)
+    printedBy: deviceLabel(),  // FO-67 — 서명란 출력 기록 (브라우저·OS 요약)
     biz,
     setLabel: set.label,
     sections,
   };
 }
 
-/** 종합 보고서 출력 — 수집 → 이력 기록(FO-63) → fp-doc 렌더 → print */
-export function auditPrintReport() {
+/** 종합 보고서 출력 — 고시 상태 로드 → 수집 → 이력 기록(FO-63) → fp-doc 렌더 → print */
+export async function auditPrintReport() {
+  // FO-64 — 푸터의 '기준 고시'가 최신 캐시를 쓰도록 상태 로드를 먼저 기다린다.
+  // 오프라인·실패 시 _lastStatus는 null → 보고서는 '확인 불가' 폴백으로 정상 출력.
+  try { await ensureNoticeStatus(); } catch (_) { /* 오프라인 무시 */ }
   const data = collectAuditReportData();
   const entry = recordAuditLog(data);
   if (!entry.saved) showToast('보고서 출력 이력 저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error');

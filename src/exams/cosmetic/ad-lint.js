@@ -13,6 +13,7 @@ export const AD_CATEGORIES = {
   medicine: { id: 'medicine', label: '의약품 오인', desc: '질병 치료·예방 효능 표현 — 화장품은 의약품처럼 표시·광고할 수 없음' },
   overclaim: { id: 'overclaim', label: '과대·허위 표현', desc: '절대적·검증 불가 효능 표현' },
   functional: { id: 'functional', label: '기능성 범위 주의', desc: '기능성화장품 심사(보고) 제품만 쓸 수 있는 표현 — 일반 화장품에 사용 금지' },
+  endorsement: { id: 'endorsement', label: '전문가 추천 오인', desc: '의사·약사·의료기관 추천·공인 암시 — 시행규칙 별표5 2.다 금지' },
 };
 
 export const AD_BANNED_TERMS = [
@@ -60,6 +61,22 @@ export const AD_BANNED_TERMS = [
   { term: '세계 최초', category: 'overclaim', suggestion: '근거 있는 경우에만 — 검증 불가 시 삭제' },
   { term: '영구적', category: 'overclaim', suggestion: '표현 삭제' },
   { term: '반영구', category: 'overclaim', suggestion: '표현 삭제' },
+  // 시행규칙 별표5 2.바 — 배타성을 띤 절대적 표현 금지
+  { term: '최고', category: 'overclaim', suggestion: '절대 표현 — 비교 기준·근거 명시 없으면 삭제 (별표5 2.바)' },
+  { term: '최상', category: 'overclaim', suggestion: '절대 표현 — 비교 기준·근거 명시 없으면 삭제 (별표5 2.바)' },
+  { term: '1위', category: 'overclaim', suggestion: '절대 표현 — 객관적 근거·비교 기준 명시 필요' },
+  { term: '무해', category: 'overclaim', suggestion: '안전성은 개인차 — 절대 표현 삭제' },
+
+  // 전문가 추천 오인 — 시행규칙 별표5 2.다 (의사·약사·의료기관 추천·지정 표현 금지)
+  { term: '의사 추천', category: 'endorsement', suggestion: '표현 삭제 — 의료 전문가 추천 표현 금지' },
+  { term: '피부과 추천', category: 'endorsement', suggestion: '표현 삭제 — 의료기관 추천 암시 금지' },
+  { term: '피부과 전문의', category: 'endorsement', suggestion: '표현 삭제 — 전문가 추천 암시 금지' },
+  { term: '약사 추천', category: 'endorsement', suggestion: '표현 삭제 — 의료 전문가 추천 표현 금지' },
+  { term: '전문가 추천', category: 'endorsement', suggestion: '표현 삭제 — 전문가 추천 표현 금지' },
+  { term: '병원 추천', category: 'endorsement', suggestion: '표현 삭제 — 의료기관 추천 암시 금지' },
+  { term: '피부과 테스트', category: 'endorsement', suggestion: '실제 인체적용시험 결과의 정확한 인용 범위 내에서만 사용 가능' },
+  { term: '임상시험', category: 'endorsement', suggestion: '공인된 인체적용시험 문헌 인용만 가능 — 문헌명·발표일 명시 필요' },
+  { term: '임상 실험', category: 'endorsement', suggestion: '공인된 인체적용시험 문헌 인용만 가능 — 문헌명·발표일 명시 필요' },
 
   // 기능성 범위 — 일반 화장품에 사용 시 위반
   { term: '미백', category: 'functional', suggestion: '미백 기능성 심사 제품만 표기 가능' },

@@ -13,7 +13,7 @@ import { getActiveExamId } from './exam-context.js';
 import { html } from './sanitize.js';
 import { lawUrlFor } from './law-links.js';
 import { getRefTables } from './pdf-registry.js';
-import { todayKey } from './utils.js';
+import { todayKey, localDateTime } from './utils.js';
 
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const LAW_BASE = 'https://www.law.go.kr';
@@ -114,6 +114,27 @@ function renderBanner(latest, extraDocs) {
 // ——— 상태 파일 캐시 (다문서 docs[] — 참조 링크 '갱신 필요' 배지에 사용) ———
 let _lastStatus = null;
 let _statusPromise = null;
+
+/**
+ * 현재 고시 기준 스탬프 (FO-64) — 종합 보고서 푸터 '기준 고시' 표기용.
+ * _lastStatus는 진입 시 checkMfdsNotice/ensureNoticeStatus가 비동기로 채운다.
+ * 미로드 시 null — 호출부는 '확인 불가' 문구로 폴백한다.
+ * @returns {{notice:string, ruleName:string, effectiveDate:string, checkedAt:string, isNewer:boolean}|null}
+ */
+export function getNoticeStamp() {
+  const latest = _lastStatus?.latest || _lastStatus?.baseline;
+  if (!latest || !latest.notice) return null;
+  // 마지막 원격 조회 시각(epoch ms) → 표시용 날짜. 미조회면 시행일로 폴백.
+  const checkedMs = parseInt(getItem(STORAGE_KEYS.NOTICE_CHECKED_AT) || '0', 10);
+  const checkedAt = checkedMs ? localDateTime(new Date(checkedMs)).slice(0, 10) : '';
+  return {
+    notice: latest.notice,
+    ruleName: latest.ruleName || '참조 법령·고시',
+    effectiveDate: latest.effectiveDate || '',
+    checkedAt,
+    isNewer: isNewerNotice(_lastStatus),
+  };
+}
 
 /** notice_status.json 캐시 반환 — 원격 우선, 번들 폴백. 최초 1회만 fetch */
 export function ensureNoticeStatus() {

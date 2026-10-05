@@ -57,6 +57,39 @@ export function fmtLocalDateTime(v) {
     return v.slice(0, 16).replace('T', ' ');
 }
 
+/**
+ * FNV-1a 32비트 해시 → 8자리 hex — 내용 무결성 확인용 (보안 해시 아님).
+ * 같은 입력은 항상 같은 값 — 출력 증적의 변조 여부 대조용 결정적 해시.
+ */
+export function fnv1aHex(str) {
+    let h = 0x811c9dc5;
+    const s = String(str);
+    for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    return h.toString(16).padStart(8, '0');
+}
+
+/**
+ * navigator.userAgent → 'Chrome · Windows' 식의 짧은 환경 라벨.
+ * 인쇄 문서의 출력 기록(디바이스 흔적)에 사용 — UA 전문은 개인정보 과다라 요약만 남긴다.
+ */
+export function deviceLabel(ua) {
+    const s = typeof ua === 'string' ? ua
+        : (typeof navigator !== 'undefined' && navigator.userAgent) || '';
+    const os = /Windows/i.test(s) ? 'Windows'
+        : /Android/i.test(s) ? 'Android'
+        : /iPhone|iPad/i.test(s) ? 'iOS'
+        : /Mac OS X|Macintosh/i.test(s) ? 'macOS'
+        : /Linux/i.test(s) ? 'Linux' : '알 수 없는 OS';
+    const browser = /Edg\//i.test(s) ? 'Edge'
+        : /Chrome\//i.test(s) ? 'Chrome'
+        : /Firefox\//i.test(s) ? 'Firefox'
+        : /Safari\//i.test(s) ? 'Safari' : '알 수 없는 브라우저';
+    return `${browser} · ${os}`;
+}
+
 /** 정규식 특수문자 이스케이프 — 동적 RegExp 생성 시 필수 */
 export function escapeRegExp(string) {
     return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

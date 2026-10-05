@@ -6,8 +6,8 @@
 //   - 가져오기: 논리 키를 현재 시험 네임스페이스에 기록
 //   → 시험이 달라도 같은 백업 포맷이며, 복원은 항상 "현재 활성 시험"에 귀속된다.
 import { showToast } from '../ui-utils.js';
-import { todayKey } from '../utils.js';
-import { BACKUP_KEYS, isDailyCompletedKey } from '../storage-keys.js';
+import { todayKey, localDateTimeNow } from '../utils.js';
+import { BACKUP_KEYS, STORAGE_KEYS, isDailyCompletedKey } from '../storage-keys.js';
 import { safeGetItem, safeSetItem, listScopedKeys } from '../state.js';
 import { unscopedKey, getActiveExamId } from '../exam-context.js';
 
@@ -35,6 +35,10 @@ export function exportData() {
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+
+    // FO-65 — 증적 백업 리마인더의 기준 시각. 백업 키 자체는 백업 대상이 아니다
+    // (복원 시 파일의 과거 시각이 아니라 '이 기기에서 마지막으로 보낸 시각'이어야 하므로 로컬 전용).
+    safeSetItem(STORAGE_KEYS.LAST_BACKUP_AT, localDateTimeNow());
 
     showToast('학습 데이터 백업 파일 다운로드가 완료되었습니다!', 'success');
 }

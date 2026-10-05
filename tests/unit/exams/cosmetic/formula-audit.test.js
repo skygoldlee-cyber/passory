@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/formula-audit.test.js
-// @spec FO-56
+// @spec FO-56,FO-64,FO-66,FO-67
 // formula-audit.js — 종합 규정 점검 보고서 수집기.
 // 검증: 유형별 섹션 게이트(bizVisible 재사용), 빈 데이터 '기록 없음' 분기,
 //       체크리스트·라벨·광고·포뮬러·배치·원료·고객 수집, 뷰모델→빌더 마크업
@@ -17,6 +17,7 @@ import { createBatch } from '../../../../src/exams/cosmetic/batch-store.js';
 import { createFormula } from '../../../../src/exams/cosmetic/formula-store.js';
 import { COMPLIANCE_SECTIONS } from '../../../../src/exams/cosmetic/views/formula-compliance.js';
 import { fmtLocalDateTime, localDateTime } from '../../../../src/exams/cosmetic/store-utils.js';
+import { fnv1aHex, deviceLabel } from '../../../../src/utils.js';
 
 function createMockStorage() {
   const store = {};
@@ -276,4 +277,89 @@ test('recordAuditLog — naive 로컬 저장분은 fresh가 그대로 유지', (
   createBatch({ formulaName: '세럼', madeAt: '2026-10-01T10:00' });
   const entry = recordAuditLog(collectAuditReportData(NOW));
   assert.equal(entry.fresh.batches, '2026-10-01');
+});
+
+/* =======================================================
+   FO-66 — 보고서 문서 식별자 + 내용 해시
+   ======================================================= */
+
+test('collectAuditReportData — id 형식 RPT-YYYYMMDD-XXX-해시6 + 8자리 hex 해시', () => {
+  const d = collectAuditReportData(NOW);
+  const ymd = localDateTime(NOW).slice(0, 10).replace(/-/g, '');
+  assert.match(d.id, new RegExp(`^RPT-${ymd}-\\d{3}-[0-9a-f]{6}$`), `id='${d.id}'`);
+  assert.match(d.hash, /^[0-9a-f]{8}$/);
+});
+
+test('collectAuditReportData — 같은 입력은 같은 해시, 데이터 변화 시 해시 변경', () => {
+  const d1 = collectAuditReportData(NOW);
+  const d2 = collectAuditReportData(NOW);
+  assert.equal(d1.hash, d2.hash, '동일 데이터 → 동일 해시 (결정적)');
+  createCustomer({ name: '홍길동' });
+  const d3 = collectAuditReportData(NOW);
+  assert.notEqual(d1.hash, d3.hash, '고객 추가 → 요약이 달라 해시 변경');
+});
+
+test('fnv1aHex — 결정적 8자리 hex + 입력 민감', () => {
+  assert.equal(fnv1aHex('passory'), fnv1aHex('passory'));
+  assert.match(fnv1aHex('passory'), /^[0-9a-f]{8}$/);
+  assert.notEqual(fnv1aHex('a'), fnv1aHex('b'));
+});
+
+test('recordAuditLog — id·hash가 이력 엔트리에 보존 (출력물↔이력 대조)', () => {
+  const d = collectAuditReportData(NOW);
+  const entry = recordAuditLog(d);
+  assert.equal(entry.id, d.id);
+  assert.equal(entry.hash, d.hash);
+});
+
+test('buildAuditReportHtml — 푸터에 문서 번호·해시·출력 환경 표기 (FO-66·67)', () => {
+  const d = collectAuditReportData(NOW);
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes(`문서 번호: ${d.id}`));
+  assert.ok(html.includes(`내용 해시: ${d.hash}`));
+  assert.ok(html.includes('서명 기록'), '서명란 아래 출력 기록 줄');
+  assert.ok(html.includes('출력 환경'));
+});
+
+/* =======================================================
+   FO-64 — 기준 고시 스탬프 (고시 상태 미로드 폴백)
+   ======================================================= */
+
+test('buildAuditReportHtml — 고시 상태 미로드 시 확인 불가 폴백', () => {
+  // _lastStatus는 진입 시 비동기 로드 — 단위 테스트 환경에서는 null
+  const d = collectAuditReportData(NOW);
+  assert.equal(d.notice, null);
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes('기준 고시: 확인 불가'));
+});
+
+test('buildAuditReportHtml — notice 주입 시 고시명·시행일·확인일 렌더 + 개정 경고', () => {
+  const d = collectAuditReportData(NOW);
+  d.notice = {
+    notice: '제2026-19호', ruleName: '화장품 안전기준 등에 관한 규정',
+    effectiveDate: '2026-03-18', checkedAt: '2026-10-05', isNewer: false,
+  };
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes('화장품 안전기준 등에 관한 규정 제2026-19호'));
+  assert.ok(html.includes('시행 2026-03-18'));
+  assert.ok(html.includes('고시 확인 2026-10-05'));
+  assert.ok(!html.includes('개정 확인 필요'));
+  d.notice.isNewer = true;
+  assert.ok(buildAuditReportHtml(d).includes('개정 확인 필요'));
+});
+
+/* =======================================================
+   FO-67 — 출력 환경 라벨 (deviceLabel)
+   ======================================================= */
+
+test('deviceLabel — UA 문자열에서 브라우저·OS 요약', () => {
+  assert.equal(deviceLabel('Mozilla/5.0 (Windows NT 10.0) Chrome/120.0'), 'Chrome · Windows');
+  assert.equal(deviceLabel('Mozilla/5.0 (iPhone) Safari/604.1'), 'Safari · iOS');
+  assert.equal(deviceLabel('Mozilla/5.0 (Macintosh) Firefox/120.0'), 'Firefox · macOS');
+  assert.equal(deviceLabel(''), '알 수 없는 브라우저 · 알 수 없는 OS');
+});
+
+test('collectAuditReportData — printedBy 필드 존재 (node 환경 폴백)', () => {
+  const d = collectAuditReportData(NOW);
+  assert.ok(typeof d.printedBy === 'string' && d.printedBy.length > 0);
 });

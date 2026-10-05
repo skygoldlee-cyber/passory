@@ -37,6 +37,8 @@ describe('실무 도구 확장 — FO-57~63 시나리오', () => {
         loadIndexHtml();
         window.INGREDIENTS_DATA = INGREDIENTS_STUB;
         window.print = vi.fn();
+        // FO-64 — auditPrintReport가 ensureNoticeStatus를 await하므로 네트워크 차단
+        vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))));
     });
 
     /* ---------- FO-57 LOT 역추적 ---------- */
@@ -103,12 +105,12 @@ describe('실무 도구 확장 — FO-57~63 시나리오', () => {
         expect(el('adverse-list').textContent).toContain('기록된 이상사례가 없습니다');
     });
 
-    it('이상사례 — 보고서에 이상사례 섹션 포함', () => {
+    it('이상사례 — 보고서에 이상사례 섹션 포함', async () => {
         el('adv-occurred').value = '2026-10-04';
         el('adv-symptoms').value = '홍반';
         openAdversePanel();
         advSave();
-        auditPrintReport();
+        await auditPrintReport();
         expect(printArea().innerHTML).toContain('소비자 이상사례 기록');
     });
 
@@ -155,8 +157,8 @@ describe('실무 도구 확장 — FO-57~63 시나리오', () => {
 
     /* ---------- FO-63 보고서 출력 이력 ---------- */
 
-    it('보고서 이력 — 출력 시 기록 + 법규 준수 패널에 표시', () => {
-        auditPrintReport();
+    it('보고서 이력 — 출력 시 기록 + 법규 준수 패널에 표시', async () => {
+        await auditPrintReport();
         const log = getJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG);
         expect(log.length).toBe(1);
         expect(log[0].bizLabel).toContain('맞춤형화장품');
