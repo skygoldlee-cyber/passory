@@ -141,7 +141,7 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(storedJson(STORAGE_KEYS.STUDY_GOALS)).toBeNull();
     });
 
-    it('시험일 리드타임 인라인 권고 — 40일 미만 경고·40일 이상 안심 (D-17)', () => {
+    it('시험일 리드타임 인라인 권고 — 50일 미만 경고·50일 이상 안심 (D-17)', () => {
         openGoalSettings();
         const hint = el('exam-date-hint');
         const dateInput = el('goal-exam-date');
@@ -152,18 +152,18 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         };
 
         // 상시 권고 문구 (미설정)
-        expect(hint.textContent).toContain('최소 40일 전');
+        expect(hint.textContent).toContain('최소 50일 전');
 
-        // 40일 미만 → 권장 준비 기간 미만 경고
+        // 50일 미만 → 권장 준비 기간 미만 경고
         dateInput.value = plus(20);
         dateInput.dispatchEvent(new Event('input'));
         expect(hint.textContent).toContain('D-20');
         expect(hint.textContent).toContain('미만');
 
-        // 40일 이상 → 충분 안내
-        dateInput.value = plus(45);
+        // 50일 이상 → 충분 안내
+        dateInput.value = plus(55);
         dateInput.dispatchEvent(new Event('input'));
-        expect(hint.textContent).toContain('D-45');
+        expect(hint.textContent).toContain('D-55');
         expect(hint.textContent).toContain('충분');
 
         // 지난 시험일 → 결과 자가 보고 안내

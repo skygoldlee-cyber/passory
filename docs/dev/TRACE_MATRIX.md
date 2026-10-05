@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 3121c47623f5ec78
-> 생성: 2026-10-05 · 원천: SPEC.md(456개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 095cd448e1970f50
+> 생성: 2026-10-05 · 원천: SPEC.md(457개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 456개 — 문서 연결 293 · 소스 연결 421 · 테스트 연결 443 · 보고서 연결 109
+**커버리지 요약**: 요구사항 457개 — 문서 연결 293 · 소스 연결 421 · 테스트 연결 443 · 보고서 연결 109
 
 ---
 
@@ -41,6 +41,7 @@
 | D-15 | ✅ | 테스트 | — | src/views/dashboard.js | tests/dom/study-dashboard.dom.test.js | DOC-ARC-05<br>DOC-ARC-10 | — |
 | D-16 | ✅ | 테스트 | — | html/views/dashboard.html<br>index.html<br>src/analysis-engine.js<br>src/views/dashboard.js | tests/unit/analysis-engine.test.js | — | — |
 | D-17 | ✅ | 테스트 | DOC-DSN-16 | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/dom/study-dashboard.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| D-33 | — | — | — | — | — | — | — |
 
 ## 3.1.5 맞춤학습
 

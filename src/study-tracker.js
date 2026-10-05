@@ -214,8 +214,13 @@ export function getSuggestedDailyCount(remainingItems) {
     return Math.ceil(remainingItems / dday);
 }
 
-/** 시험일 설정 권고 — 최소 권장 준비 기간(일) */
-export const MIN_EXAM_LEAD_DAYS = 40;
+/**
+ * 시험일 설정 권고 — 최소 권장 준비 기간(일).
+ * 근거: 기본 목표(일 50장·주 5학습일)로 cosmetic 팩 전체 카드 1,123장 1회전에
+ * 23학습일≈D-33이 수학적 하한이고, SM-2 반복 유지 마진(약 1.5배)과
+ * 문제은행 1회전(445문÷일 10문≈45일)을 고려해 50일로 설정 (D-17).
+ */
+export const MIN_EXAM_LEAD_DAYS = 50;
 
 /**
  * 시험일 리드타임 평가 — 목표 설정 모달의 인라인 권고용.

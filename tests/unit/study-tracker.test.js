@@ -113,10 +113,10 @@ test('getExamLeadStatus: 미설정·무효 날짜 → null', () => {
   assert.equal(tracker.getExamLeadStatus('2026-13-99'), null);
 });
 
-test('getExamLeadStatus: 40일 경계·당일·과거 판정', () => {
+test('getExamLeadStatus: 50일 경계·당일·과거 판정', () => {
   const today = new Date(2026, 9, 5); // 2026-10-05
-  assert.deepEqual(tracker.getExamLeadStatus('2026-11-14', today), { dday: 40, leadShort: false, past: false });
-  assert.deepEqual(tracker.getExamLeadStatus('2026-11-13', today), { dday: 39, leadShort: true, past: false });
+  assert.deepEqual(tracker.getExamLeadStatus('2026-11-24', today), { dday: 50, leadShort: false, past: false });
+  assert.deepEqual(tracker.getExamLeadStatus('2026-11-23', today), { dday: 49, leadShort: true, past: false });
   assert.equal(tracker.getExamLeadStatus('2026-10-05', today).dday, 0);
   assert.deepEqual(tracker.getExamLeadStatus('2026-10-04', today), { dday: -1, leadShort: false, past: true });
 });
