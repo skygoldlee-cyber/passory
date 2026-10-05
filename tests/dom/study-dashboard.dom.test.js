@@ -162,6 +162,7 @@ describe('대시보드 — 통계·과목 카드·약점 추천', () => {
         const card = el('exam-dday-count').closest('.stat-card');
         const desc = el('exam-dday-count').closest('.stat-info').querySelector('.stat-desc');
         expect(el('exam-dday-count').textContent).toBe('미설정');
+        expect(card.closest('.stats-grid').querySelector('.stat-card')).toBe(card); // 통계 그리드 첫 카드
         expect(card.classList.contains('stat-card-attn')).toBe(true);
         expect(desc.textContent).toContain('학습 계획의 시작점');
         expect(desc.querySelector('.dday-set-btn').textContent).toContain('지금 설정');
