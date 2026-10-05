@@ -462,15 +462,79 @@ describe('이야기형 서사 태깅 — markStoryNarrative', () => {
     });
 });
 
-describe('이미지 확대 모달 — 제거 회귀 (핀치 줌 대체)', () => {
-    it('.reader-img 클릭 시 확대 모달이 생성되지 않는다', () => {
+import { attachImageZoomIn, openImageZoom, closeImageZoom } from '../../src/image-zoom.js';
+
+describe('이미지 확대 모달 — image-zoom (데스크탑 전용)', () => {
+    function buildContentWithImg() {
         document.body.innerHTML = `
             <div class="textbook-reader-section-content">
                 <p class="md-para"><img class="reader-img" src="./content/exams/cosmetic/교재/law/images/1과목_삽화.png" alt="삽화"></p>
+                <p class="md-para">본문 문단</p>
             </div>`;
-        const img = document.querySelector('img.reader-img');
+        return document.querySelector('.textbook-reader-section-content');
+    }
+
+    it('.reader-img 클릭 시 확대 모달이 열리고 클릭 원본 src/alt를 복제한다', () => {
+        const content = buildContentWithImg();
+        attachImageZoomIn(content);
+        const img = content.querySelector('img.reader-img');
         img.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        expect(document.getElementById('reader-img-zoom-modal')).toBeNull();
+
+        const modal = document.getElementById('reader-img-zoom-modal');
+        expect(modal).toBeTruthy();
+        expect(modal.classList.contains('is-hidden')).toBe(false);
+        const zoomed = modal.querySelector('.img-zoom-target');
+        expect(zoomed.src).toContain('images/1%');
+        expect(zoomed.alt).toBe('삽화');
+        expect(zoomed.classList.contains('reader-img')).toBe(false);
+        closeImageZoom();
+        expect(modal.classList.contains('is-hidden')).toBe(true);
+    });
+
+    it('본문 문단 클릭은 모달을 열지 않고, 재바인딩은 위임이라 중복되지 않는다', () => {
+        const content = buildContentWithImg();
+        attachImageZoomIn(content);
+        attachImageZoomIn(content); // 재렌더 재호출 방어
+        content.querySelectorAll('p.md-para')[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        const modal = document.getElementById('reader-img-zoom-modal');
+        expect(!modal || modal.classList.contains('is-hidden')).toBe(true);
+    });
+
+    it('닫기 버튼·배율 버튼이 동작한다', () => {
+        const content = buildContentWithImg();
+        openImageZoom(content.querySelector('img.reader-img'));
+        const modal = document.getElementById('reader-img-zoom-modal');
+        const level = () => parseInt(modal.querySelector('#img-zoom-level').textContent, 10);
+        const before = level();
+        modal.querySelector('#img-zoom-in').click();
+        expect(level()).toBeGreaterThan(before);
+        modal.querySelector('#img-zoom-out').click();
+        expect(level()).toBe(before);
+        modal.querySelector('#img-zoom-close').click();
+        expect(modal.classList.contains('is-hidden')).toBe(true);
+    });
+
+    it('주 포인터가 coarse(모바일)면 바인딩하지 않는다 — 핀치 줌이 대체', () => {
+        const origMM = window.matchMedia;
+        window.matchMedia = (q) => ({
+            matches: q === '(pointer: coarse)',
+            media: q,
+            addEventListener: () => {},
+            removeEventListener: () => {},
+            addListener: () => {},
+            removeListener: () => {},
+            onchange: null,
+            dispatchEvent: () => false,
+        });
+        try {
+            const content = buildContentWithImg();
+            attachImageZoomIn(content);
+            content.querySelector('img.reader-img')
+                .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            expect(document.getElementById('reader-img-zoom-modal')).toBeNull();
+        } finally {
+            window.matchMedia = origMM;
+        }
     });
 });
 

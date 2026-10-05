@@ -161,6 +161,23 @@ html.light-theme {
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-card-lift);
 }
+/* 이미지 라이트박스는 데스크탑(주 포인터 fine) 전용 — 모바일은 핀치 줌이 대체 */
+@media (pointer: fine) {
+    .textbook-reader-section-content .reader-img {
+        cursor: zoom-in;
+    }
+}
+
+/* 이미지 확대 모달 — reader-table-modal/mermaid-zoom 셸 재사용.
+   모달 내 이미지는 본문 .reader-img 스코프 밖이므로 전용 클래스로 스크롤 확대 */
+.img-zoom-target {
+    display: block;
+    margin: 0 auto;
+    height: auto;
+}
+.img-zoom-body {
+    padding-bottom: var(--space-3);
+}
 
 /* Reader table styles */
 .reader-table-wrapper {
@@ -267,6 +284,65 @@ pre.mermaid {
 pre.mermaid svg {
     max-width: 100%;
     height: auto;
+}
+
+/* 확대 모달 셸 + 툴바 — 이미지 라이트박스(image-zoom.js) 공용.
+   매뉴얼/HTML 뷰어 오버레이(z-index 9999~10001) 위에서도 동작해야 하므로 최상위 부여.
+   결합 셀렉터 필수: 이 파일은 reader.css 상단 @import로 확장되므로 단일 클래스면
+   reader.css 뒤쪽의 .reader-table-modal(z-modal)에 캐스케이드 순서로 밀린다 */
+.reader-table-modal.mermaid-zoom-modal {
+    z-index: calc(var(--z-html-viewer) + 1);
+}
+.mermaid-zoom-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.mermaid-zoom-content .reader-table-modal-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    float: none;
+}
+.mermaid-zoom-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 3rem 0.75rem 0;
+}
+.mermaid-zoom-btn {
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0.3rem 0.6rem;
+    background: var(--drawer-bg);
+    border: 1px solid var(--border-color);
+    color: var(--color-text-muted);
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    font-size: var(--text-sm-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: var(--transition-base);
+}
+.mermaid-zoom-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.mermaid-zoom-level {
+    min-width: 3.2rem;
+    text-align: center;
+    font-size: var(--text-sm-md);
+    color: var(--color-text-main);
+    font-variant-numeric: tabular-nums;
+}
+.mermaid-zoom-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    text-align: center;
 }
 
 /* === Flowchart 전용 스타일 === */
@@ -480,6 +556,12 @@ pre.mermaid-other .labelBkg {
     }
     #textbook-reader-view .textbook-reader-controls {
         margin-bottom: 0; /* 크롬 오버레이 카드가 간격을 담당 (TR-22) */
+    }
+
+    /* 확대 모달 툴바 터치 영역 확대 */
+    .mermaid-zoom-btn {
+        min-width: 44px;
+        min-height: 44px;
     }
 }
 

@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-06 이미지 라이트박스 데스크탑 전용 복원 (TR-20)
+
+- **문제**: 확대 모달 3종(표·이미지·다이어그램) 제거 배포 후 확인 — 모바일은 핀치 줌으로 대체되지만 데스크탑은 브라우저 줌만 가능해 단일 이미지를 화면 크게 보는 경로가 사라짐
+- **수정**: `image-zoom.js`를 git 이력에서 복원 + `attachImageZoomIn`에 `pointer: coarse` 가드 추가 — 주 포인터가 터치인 기기(모바일·태블릿)는 바인딩하지 않아 핀치 줌이 유일 경로 유지, 데스크탑(pointer:fine)만 라이트박스 동작. 호출부 3곳(리더·매뉴얼·검색)·모달 셸 CSS(`.reader-table-modal`·`.mermaid-zoom-*`)·`.img-zoom-*` 복원, `.reader-img` 커서는 `@media (pointer:fine)`로 한정. 표 확장 모달·Mermaid 확대 모달은 제거 상태 유지
+- **검증**: study-reader 4건(열림·위임·배율·coarse 미바인딩)·study-manual·onboarding-zoom 복원 — DOM 29+9+6건 · check:types·lint 통과
+
 ## 2026-10-06 리더 TOC 드로어 핀치 줌 허용
 
 - **문제**: 모바일 TOC 드로어(`≤900px`)의 `touch-action: pan-y`가 핀치 줌을 차단 — 드로어 열린 상태에서 그 위로 시작한 핀치 제스처가 무시됨 (닫힌 상태·본문은 정상). 표/이미지/다이어그램 확대 모달 제거로 핀치 줌이 유일한 확대 경로가 된 후 전 뷰 제스처 점검에서 발견

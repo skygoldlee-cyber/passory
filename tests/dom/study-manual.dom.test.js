@@ -108,15 +108,21 @@ describe('매뉴얼 뷰어 — 문서 열기·TOC·전환', () => {
         expect(el('manual-overlay-style').textContent).toContain('.reader-img');
     });
 
-    it('본문 이미지는 인라인 렌더만 — 클릭해도 확대 모달 미생성 (핀치 줌 대체)', async () => {
+    it('본문 이미지 클릭 → 확대 모달 오픈 (데스크탑 전용, H)', async () => {
         window.__DOC_MD__[PATHS.USER_MANUAL] = '# 문서\n\n![구조](map.svg)\n';
         await ManualViewer.openManual();
         await flushAsync(30);
 
-        const img = el('manual-article').querySelector('img.reader-img');
-        expect(img).not.toBeNull();
+        const article = el('manual-article');
+        expect(article.dataset.imgZoomBound).toBe('1');
+        const img = article.querySelector('img.reader-img');
+        img.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
         img.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        expect(document.getElementById('reader-img-zoom-modal')).toBeNull();
+
+        const modal = document.getElementById('reader-img-zoom-modal');
+        expect(modal).not.toBeNull();
+        expect(modal.classList.contains('is-hidden')).toBe(false);
+        expect(modal.querySelector('#img-zoom-body img.img-zoom-target')).not.toBeNull();
     });
 
     it('테이블 — 래퍼 렌더 + 가로 스크롤 CSS (width:100% 압축 회귀 방지)', async () => {

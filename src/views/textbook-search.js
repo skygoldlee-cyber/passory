@@ -3,6 +3,7 @@
 import { escapeHTML, esc } from '../sanitize.js';
 import { parseMarkdown } from '../markdown-parser.js';
 import { renderMermaidIn } from '../mermaid-render.js';
+import { attachImageZoomIn } from '../image-zoom.js';
 import { TIMING } from '../config/timing.js';
 import { DataLoader } from '../data-loader.js';
 import { hasFeature } from '../exam-context.js';
@@ -540,6 +541,7 @@ function performTextbookSearch() {
 
     // Mermaid 다이어그램 렌더링 (pre.mermaid 노드가 있을 때만 온디맨드 로드)
     renderMermaidIn(container, '[search]');
+    attachImageZoomIn(container);
 }
 
 export function toggleTextbookCard(cardId) {
