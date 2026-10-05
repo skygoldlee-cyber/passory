@@ -425,7 +425,9 @@ export function computeStudyPattern(calendar) {
         const d = new Date(dateStr + 'T00:00:00');
         if (isNaN(d.getTime())) return;
         const dow = d.getDay();
-        const dayEvents = (e.cards || 0) + (e.quizzes || 0);
+        // 읽기 전용일도 학습 세션 1건으로 집계 — SC-15에서 읽기는 학습 활동으로 인정되므로
+        // 요일·주말 집중도와 표본 게이트(actEvents)에서 배제되지 않아야 한다.
+        const dayEvents = (e.cards || 0) + (e.quizzes || 0) + ((e.readMin || 0) > 0 ? 1 : 0);
         dowCnt[dow] += dayEvents;
         actEvents += dayEvents;
         if (dow === 0 || dow === 6) weekendEvents += dayEvents;

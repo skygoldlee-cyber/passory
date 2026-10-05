@@ -5,7 +5,7 @@ import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
 import { localDateKey } from './utils.js';
 import { subjectKeyFromItemId } from './weak-items.js';
-import { getMinExamLeadDays, getReadThroughDays } from './exam-context.js';
+import { getMinExamLeadDays, getReadThroughDays, getReadDayShare, getActiveSubjectCount } from './exam-context.js';
 
 /* =======================================================
    📅 학습 캘린더 (날짜별 학습 기록)
@@ -242,12 +242,9 @@ export function getTextbookReadProgress() {
         if (typeof frac === 'number' && frac > 0) bySubject[k] = Math.min(1, frac);
     });
     const seen = Object.keys(bySubject);
-    // 분모 = 전체 과목 수 (레지스트리 우선 → 학습 데이터 → 관측 과목 수 순 완화)
-    const reg = (typeof globalThis !== 'undefined' && globalThis.DATA_REGISTRY) || null;
-    const data = (typeof globalThis !== 'undefined' && globalThis.STUDY_DATA) || null;
-    const total = (reg && reg.subjects && reg.subjects.length)
-        || (data && Object.keys(data).length)
-        || Math.max(1, seen.length);
+    // 분모 = 활성 시험 과목 수 (registry.subjects — exam-context 단일 진입점).
+    // 레지스트리 미로딩 시 관측 과목 수로 완화 (진척 맵에 있는 과목만큼은 존재한다는 최소 추정).
+    const total = getActiveSubjectCount() || Math.max(1, seen.length);
     const overall = seen.length ? seen.reduce((s, k) => s + bySubject[k], 0) / total : 0;
     return { bySubject, overall, started: seen.length > 0 };
 }
@@ -307,7 +304,9 @@ export function computeStudyPlan(remainingItems) {
     const goals = getStudyGoals();
     const remaining = Math.max(0, Math.round(remainingItems));
     const read = getTextbookReadProgress();
-    let readDaysLeft = read.started ? Math.ceil((1 - read.overall) * getReadThroughDays()) : 0;
+    // 남은 통독일 × readDayShare — 읽기·카드 병행을 인정하는 팩은 0~1 비율로 부분 차감 (기본 1=전일 대치)
+    const readDayCost = () => Math.ceil((1 - read.overall) * getReadThroughDays() * getReadDayShare());
+    let readDaysLeft = read.started ? readDayCost() : 0;
     const weekCount = Math.ceil(dday / 7);
     const weeks = [];
     let studyDays = 0;
@@ -349,7 +348,7 @@ export function computeStudyPlan(remainingItems) {
         weeks,
         goals: { dailyCards: goals.dailyCards, dailyQuizzes: goals.dailyQuizzes, weeklyStudyDays: goals.weeklyStudyDays },
         tier,
-        readDaysLeft: read.started ? Math.ceil((1 - read.overall) * getReadThroughDays()) : 0,
+        readDaysLeft: read.started ? readDayCost() : 0,
         readProgress: Math.round(read.overall * 100)
     };
 }

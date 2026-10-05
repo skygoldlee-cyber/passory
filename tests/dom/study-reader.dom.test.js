@@ -19,8 +19,9 @@ vi.mock('../../src/ui-utils.js', () => ({
 import {
     loadIndexHtml, el, flushAsync, stubRegistry, resetStudyState, storedJson,
 } from './helpers.js';
-import { renderTextbookReader, textbookReaderState } from '../../src/views/textbook-reader.js';
+import { renderTextbookReader, textbookReaderState, startReadingSession, stopReadingSession } from '../../src/views/textbook-reader.js';
 import { safeSetItem } from '../../src/state.js';
+import { getTodayStr } from '../../src/study-tracker.js';
 import { STORAGE_KEYS } from '../../src/storage-keys.js';
 
 const SUBJ = {
@@ -551,5 +552,75 @@ describe('이미지 확대 모달 — image-zoom', () => {
         expect(level()).toBe(before);
         modal.querySelector('#img-zoom-close').click();
         expect(modal.classList.contains('is-hidden')).toBe(true);
+    });
+});
+
+describe('SC-15 읽기 하트비트·청크 커버리지', () => {
+    beforeEach(() => {
+        localStorage.clear();
+        resetStudyState();
+        resetReaderState();
+        loadIndexHtml();
+        vi.clearAllMocks();
+    });
+
+    it('뷰 활성 동안 스크롤 없는 체류 시간도 readMin으로 누적된다', () => {
+        vi.useFakeTimers();
+        try {
+            stopReadingSession(); // 이전 테스트가 시작한 실타이머 제거
+            el('textbook-reader-view').classList.add('active');
+            startReadingSession();
+            vi.advanceTimersByTime(61000); // 15초 틱 × 4 → 누적 60초 경과 시 readMin 1
+            const cal = storedJson(STORAGE_KEYS.STUDY_CALENDAR) || {};
+            expect(cal[getTodayStr()].readMin).toBeGreaterThanOrEqual(1);
+        } finally {
+            stopReadingSession();
+            vi.useRealTimers();
+        }
+    });
+
+    it('뷰 비활성 동안은 누적되지 않고 누적분이 리셋된다', () => {
+        vi.useFakeTimers();
+        try {
+            stopReadingSession();
+            const view = el('textbook-reader-view');
+            view.classList.add('active');
+            startReadingSession();
+            vi.advanceTimersByTime(45000); // 3틱(45초) 누적 — 아직 1분 미달
+            view.classList.remove('active'); // 뷰 이탈
+            vi.advanceTimersByTime(120000); // 비활성 동안 틱은 no-op + 누적 리셋
+            const cal = storedJson(STORAGE_KEYS.STUDY_CALENDAR) || {};
+            expect(cal[getTodayStr()]?.readMin || 0).toBe(0);
+        } finally {
+            stopReadingSession();
+            vi.useRealTimers();
+        }
+    });
+
+    it('체류 청크만 커버리지에 누적 — 점프는 착지 청크 1개만 반영', () => {
+        vi.useFakeTimers();
+        try {
+            stopReadingSession();
+            el('textbook-reader-view').classList.add('active');
+            const cont = el('textbook-reader-container');
+            Object.defineProperty(cont, 'scrollHeight', { value: 1000, configurable: true });
+            Object.defineProperty(cont, 'clientHeight', { value: 100, configurable: true });
+            textbookReaderState.selectedSubject = 'subja';
+            cont.scrollTop = 500; // frac 0.55 → 청크 55
+            startReadingSession();
+            vi.advanceTimersByTime(15000); // 1틱
+            let prog = storedJson(STORAGE_KEYS.READER_PROGRESS) || {};
+            expect(prog.subja.chunks).toEqual([55]);
+            expect(prog.subja.frac).toBeCloseTo(0.01, 5);
+            // 이어하기/목차 점프 → 끝으로 이동해도 착지 청크 1개만 추가
+            cont.scrollTop = 895; // frac ≈0.994 → 청크 99
+            vi.advanceTimersByTime(15000);
+            prog = storedJson(STORAGE_KEYS.READER_PROGRESS) || {};
+            expect(prog.subja.chunks).toEqual([55, 99]);
+            expect(prog.subja.frac).toBeCloseTo(0.02, 5);
+        } finally {
+            stopReadingSession();
+            vi.useRealTimers();
+        }
     });
 });

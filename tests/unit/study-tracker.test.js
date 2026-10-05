@@ -608,3 +608,28 @@ test('시험별 학습 설정 주입 — manifest study 블록 우선, 미선언
     if (prev === undefined) delete globalThis.window; else globalThis.window = prev;
   }
 });
+
+test('computeStudyPlan: readDayShare <1이면 통독일을 부분 차감 (SC-15)', () => {
+  const prev = globalThis.window;
+  try {
+    // 통독 10일 × share 0.5 → 전량 대치 대비 절반만 차감 (읽기·카드 병행 인정 팩)
+    globalThis.window = { DATA_REGISTRY: {
+      study: { readThroughDays: 10, readDayShare: 0.5 },
+      subjects: [{ key: 'law' }, { key: 'b' }, { key: 'c' }, { key: 'd' }],
+    } };
+    tracker.setExamDate(todayPlus(30));
+    tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
+    seedReadProgress({ law: { frac: 0.4, ts: 1 } });
+    // overall = 0.4/4 = 0.1 → ceil(0.9 × 10 × 0.5) = ceil(4.5) = 5
+    const plan = tracker.computeStudyPlan(1123);
+    assert.equal(plan.readDaysLeft, 5);
+
+    // share 1(미선언 기본)이면 전일 대치 — ceil(0.9 × 10) = 9
+    globalThis.window = { DATA_REGISTRY: {
+      subjects: [{ key: 'law' }, { key: 'b' }, { key: 'c' }, { key: 'd' }],
+    } };
+    assert.equal(tracker.computeStudyPlan(1123).readDaysLeft, 9);
+  } finally {
+    if (prev === undefined) delete globalThis.window; else globalThis.window = prev;
+  }
+});

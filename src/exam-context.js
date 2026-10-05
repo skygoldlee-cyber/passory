@@ -238,6 +238,26 @@ export function getReadThroughDays() {
 }
 
 /**
+ * 일독 기간 중 통독 1일이 대치하는 카드 학습일 비율 (0~1) — manifest study.readDayShare.
+ * 1 = 통독일은 카드 학습 불가(보수적 기본), <1 = 읽기·카드 병행을 인정해 부분 차감.
+ * 미선언·범위 외 값이면 1.
+ */
+export function getReadDayShare() {
+    const s = _registryStudy();
+    return (typeof s.readDayShare === 'number' && s.readDayShare > 0 && s.readDayShare <= 1)
+        ? s.readDayShare : 1;
+}
+
+/**
+ * 활성 시험의 과목 수 — registry.subjects 길이. 레지스트리 미로딩 시 0.
+ * getTextbookReadProgress 분모 등 과목 수가 필요한 집계에서 사용 (SC-15).
+ */
+export function getActiveSubjectCount() {
+    const subjects = (typeof window !== 'undefined' && window.DATA_REGISTRY && window.DATA_REGISTRY.subjects) || [];
+    return subjects.length;
+}
+
+/**
  * 'subjectN' 형식 키 → 레지스트리의 과목 키로 매핑.
  * subjectN은 레거시가 아니라 문제은행(exams[])의 현행 키 규약이다 — 문항 id
  * (subject1_q3 등)·문제은행 번들·구버전 진도 키가 모두 이 규약을 공유하므로

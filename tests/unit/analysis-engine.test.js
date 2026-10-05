@@ -291,3 +291,18 @@ test('computePassGap: 최근 모의고사 subjectRates가 비어 있으면 퀴�
     assert.equal(out.weakest.key, 'law');
     assert.equal(out.weakest.reason, '퀴즈 정답률 최저 과목');
 });
+
+test('computeStudyPattern: 읽기 전용일도 세션 이벤트로 집계 (SC-15)', async () => {
+    const { computeStudyPattern } = await import(ENGINE);
+    const calendar = {};
+    for (let i = 1; i <= 8; i++) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        calendar[key] = { cards: 0, quizzes: 0, readMin: 20 }; // 읽기만 한 날
+    }
+    const out = computeStudyPattern(calendar);
+    // readMin 일수가 세션으로 집계돼 actEvents=8 → 표본 게이트 통과
+    assert.ok(out);
+    assert.equal(out.activeDays, 8);
+    assert.equal(out.events, 8);
+});
