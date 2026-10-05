@@ -2,7 +2,7 @@
 var DATA_REGISTRY = {
   "schemaVersion": 1,
   "contentYear": "2027",
-  "generatedAt": "2026-10-04T17:12:49.406Z",
+  "generatedAt": "2026-10-05T01:26:44.801Z",
   "subjects": [
     {
       "key": "law",
@@ -479,7 +479,7 @@ var DATA_REGISTRY = {
     },
     "textbook": {
       "title": "교재검색",
-      "subtitle": "교재의 모든 본문 내용을 실시간 키워드로 검색"
+      "subtitle": "교재 본문과 참조자료를 실시간 키워드로 검색"
     },
     "textbook-reader": {
       "title": "교재리더",
