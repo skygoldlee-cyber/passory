@@ -1,5 +1,5 @@
 // src/study-tracker.js — 학습 캘린더/목표 추적 헬퍼
-// @spec SC-03,D-17
+// @spec SC-03,SC-05,D-17
 // 학습 활동을 날짜별로 기록하고, 목표 달성률을 계산합니다.
 import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
@@ -243,4 +243,52 @@ export function getExamPlanStatus(remainingItems, dailyGoal) {
     const ratio = goal > 0 ? suggested / goal : Infinity;
     const tier = ratio <= 1 ? 'normal' : ratio <= 2 ? 'tight' : 'triage';
     return { dday, suggested, ratio, tier };
+}
+
+/**
+ * 시험일 역산 학습 계획 — 설정된 목표(주간 학습일 반영)와 잔여 학습량으로
+ * 학습 가능 일수·학습일당 필요량·주차별 마일스톤을 생성한다 (SC-05 계획 패널).
+ * 학습 가능 일수 = ⌊dday × 주간 학습일 ÷ 7⌋ — 단순 달력 역산보다 실제 약속 기준.
+ * @param {number} remainingItems 남은 학습 항목 수 (예: 미암기 카드)
+ * @returns {Object|null} 시험일 미설정·경과면 null.
+ *   { dday, studyDays, perStudyDay, weeklyCards, remaining, weeks, goals, tier }
+ *   weeks[] = { week, range, studyDays, cards, cumulative, percent }
+ *   tier: 'done'(잔여 0) | 'normal' | 'tight' | 'triage' — perStudyDay÷일일 목표 비율
+ */
+export function computeStudyPlan(remainingItems) {
+    const dday = getDDay();
+    if (dday === null || dday <= 0) return null;
+    const goals = getStudyGoals();
+    const remaining = Math.max(0, Math.round(remainingItems));
+    const studyDays = Math.max(1, Math.floor(dday * goals.weeklyStudyDays / 7));
+    const perStudyDay = remaining > 0 ? Math.ceil(remaining / studyDays) : 0;
+    const weekCount = Math.ceil(dday / 7);
+    const weeks = [];
+    let covered = 0;
+    for (let w = 0; w < weekCount; w++) {
+        const daysInWeek = Math.min(7, dday - w * 7);
+        const studyDaysInWeek = Math.min(goals.weeklyStudyDays, daysInWeek);
+        const cards = Math.min(remaining - covered, perStudyDay * studyDaysInWeek);
+        covered += cards;
+        weeks.push({
+            week: w + 1,
+            range: `D-${dday - w * 7} ~ D-${Math.max(0, dday - (w + 1) * 7)}`,
+            studyDays: studyDaysInWeek,
+            cards,
+            cumulative: covered,
+            percent: remaining > 0 ? Math.min(100, Math.round(covered / remaining * 100)) : 100
+        });
+    }
+    const ratio = goals.dailyCards > 0 ? perStudyDay / goals.dailyCards : Infinity;
+    const tier = remaining === 0 ? 'done' : (ratio <= 1 ? 'normal' : ratio <= 2 ? 'tight' : 'triage');
+    return {
+        dday,
+        studyDays,
+        perStudyDay,
+        weeklyCards: perStudyDay * goals.weeklyStudyDays,
+        remaining,
+        weeks,
+        goals: { dailyCards: goals.dailyCards, dailyQuizzes: goals.dailyQuizzes, weeklyStudyDays: goals.weeklyStudyDays },
+        tier
+    };
 }

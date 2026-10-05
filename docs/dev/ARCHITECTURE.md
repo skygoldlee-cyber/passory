@@ -2131,7 +2131,7 @@ SPEC.md의 기능/비기능 ID와 이 문서의 설명 위치·구현 모듈 대
 | `CQ-01~05` | §3.17 콘텐츠 감사 | `tools/` audit 스크립트 (`audit:cards`/`audit:combo`) |
 | `FO-01~23` | §3.18 Formula OS | `src/exams/cosmetic/formula-*.js` + `views/formula*.js` — 도메인 아키텍처 절 |
 | `AU-01~08` | §3.19 계정·동기화 | `src/supabase-*.js` + `sync.js` — 계정·클라우드 절 |
-| `SC-01~03` | §3.20 학습 캘린더 | `src/views/study-calendar.js` + `study-tracker.js` |
+| `SC-01~03, SC-05` | §3.20 학습 캘린더·학습 계획 | `src/views/study-calendar.js` + `study-tracker.js` |
 | `RV-01` | §3.20 복습 뷰 | `review-view` (quiz.js 렌더) |
 | `ND-01` | §3.20 숫자 드릴 | `content/…/number-drills/` + 훈련소 수치 훈련 |
 | `DR-01~07` | §3.20 드릴 | `src/views/trainer-drills.js` |

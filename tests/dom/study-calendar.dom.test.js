@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,D-17
+// @spec SC-01,SC-02,SC-05,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -17,13 +17,13 @@ vi.mock('../../src/ui-utils.js', () => ({
 
 import { showToast } from '../../src/ui-utils.js';
 import {
-    loadIndexHtml, el, resetStudyState, storedJson,
+    loadIndexHtml, el, resetStudyState, storedJson, seedStudyData,
 } from './helpers.js';
 import {
     renderStudyCalendar, prevCalendarMonth, nextCalendarMonth,
     openGoalSettings, saveGoalSettings, closeGoalSettings,
 } from '../../src/views/study-calendar.js';
-import { recordStudyActivity, getTodayStr } from '../../src/study-tracker.js';
+import { recordStudyActivity, getTodayStr, setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { safeSetItem } from '../../src/state.js';
 import { STORAGE_KEYS } from '../../src/storage-keys.js';
 
@@ -148,6 +148,53 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         dateInput.value = plus(-5);
         dateInput.dispatchEvent(new Event('input'));
         expect(hint.textContent).toContain('지난 시험일');
+    });
+
+    it('학습 계획 패널 — 시험일 설정 시 목표·잔여·주차 표 + 등급 배지 (SC-05)', () => {
+        seedStudyData('subja', {
+            name: '과목1',
+            cards: [
+                { id: 'subja_card_1', term: 't1', definition: 'd' },
+                { id: 'subja_card_2', term: 't2', definition: 'd' },
+            ],
+        });
+        const plus = (n) => {
+            const d = new Date();
+            d.setDate(d.getDate() + n);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+
+        // D-10, 주 5일 → 학습 가능 7일 → 일당 1장 vs 목표 50 → 여유
+        setExamDate(plus(10));
+        renderStudyCalendar();
+        const card = el('study-calendar-content').querySelector('.study-plan-card');
+        expect(card).not.toBeNull();
+        expect(card.textContent).toContain('학습 계획');
+        expect(card.textContent).toContain('D-10');
+        expect(card.textContent).toContain('남은 카드');
+        expect(card.textContent).toContain('2장');
+        expect(card.querySelector('.plan-tier-normal')).not.toBeNull();
+        expect(card.querySelectorAll('.plan-table tbody tr').length).toBe(2); // 2주차
+
+        // 목표 초과 페이스 → 등급 배지·권고 문구
+        setStudyGoals({ dailyCards: 1 });
+        setExamDate(plus(2)); // 잔여 2장, 학습 가능 1일 → 일당 2장 > 목표 1 → tight
+        renderStudyCalendar();
+        const tight = el('study-calendar-content').querySelector('.study-plan-card');
+        expect(tight.querySelector('.plan-tier-tight')).not.toBeNull();
+        expect(tight.textContent).toContain('병행');
+
+        // 경과 시험일 → 표 없이 결과 보고 안내
+        setExamDate(plus(-5));
+        renderStudyCalendar();
+        const past = el('study-calendar-content').querySelector('.study-plan-card');
+        expect(past.textContent).toContain('시험일이 지났습니다');
+        expect(past.querySelector('.plan-table')).toBeNull();
+
+        // 미설정 → 패널 없음
+        setExamDate('');
+        renderStudyCalendar();
+        expect(el('study-calendar-content').querySelector('.study-plan-card')).toBeNull();
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

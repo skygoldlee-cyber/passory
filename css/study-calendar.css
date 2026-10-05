@@ -1,6 +1,6 @@
 /* css/study-calendar.css — 학습 캘린더/목표 스타일 */
 
-/* @spec SC-01 */
+/* @spec SC-01,SC-05 */
 
 /* === 목표 요약 카드 === */
 .study-goals-summary {
@@ -214,6 +214,119 @@
 }
 .legend-empty {
     background: var(--bg-card);
+}
+
+/* === 학습 계획 패널 (SC-05) === */
+.study-plan-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.plan-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.plan-header h4 i {
+    color: var(--color-primary);
+}
+.plan-dday {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+.plan-tier-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-pill);
+    vertical-align: middle;
+}
+.plan-tier-normal {
+    background: var(--primary-tint-10);
+    color: var(--color-primary);
+}
+.plan-tier-tight {
+    background: var(--warning-tint-10, rgba(245, 158, 11, 0.12));
+    color: var(--color-warning);
+}
+.plan-tier-triage {
+    background: var(--danger-tint-10, rgba(239, 68, 68, 0.1));
+    color: var(--color-danger);
+}
+.plan-tier-done {
+    background: var(--success-tint-10, rgba(16, 185, 129, 0.1));
+    color: var(--color-success);
+}
+.plan-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 0.75rem;
+}
+@media (max-width: 480px) {
+    .plan-summary {
+        grid-template-columns: 1fr;
+    }
+}
+.plan-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+.plan-summary-row span {
+    color: var(--color-text-muted);
+}
+.plan-summary-row strong {
+    color: var(--color-text-main);
+}
+.plan-note {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    margin: 0.5rem 0;
+}
+.plan-warn {
+    color: var(--color-warning);
+}
+.plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+.plan-table th {
+    text-align: left;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.plan-table td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--color-text-main);
+}
+.plan-table tr:last-child td {
+    border-bottom: none;
+}
+.plan-more {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
 }
 
 /* === 목표 설정 모달 === */

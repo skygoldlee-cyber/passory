@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,D-17
+// @spec SC-03,SC-05,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -142,4 +142,36 @@ test('getExamPlanStatus: 권장량÷일일 목표 비율로 normal/tight/triage 
   assert.equal(tracker.getExamPlanStatus(150, 20).tier, 'normal');
   // 남은 항목 없음 → suggested null
   assert.equal(tracker.getExamPlanStatus(0).suggested, null);
+});
+
+// --- SC-05 학습 계획 (주간 학습일 반영) ---
+
+test('computeStudyPlan: 미설정·경과 시험일 → null', () => {
+  assert.equal(tracker.computeStudyPlan(100), null);
+  tracker.setExamDate(todayPlus(-1));
+  assert.equal(tracker.computeStudyPlan(100), null);
+});
+
+test('computeStudyPlan: 주간 학습일 반영 역산 + 주차별 마일스톤', () => {
+  tracker.setExamDate(todayPlus(30));
+  tracker.setStudyGoals({ dailyCards: 50, weeklyStudyDays: 5 });
+  const plan = tracker.computeStudyPlan(1123);
+  assert.equal(plan.studyDays, 21);    // floor(30 × 5/7)
+  assert.equal(plan.perStudyDay, 54);  // ceil(1123/21)
+  assert.equal(plan.weeks.length, 5);  // ceil(30/7)
+  const last = plan.weeks[4];
+  assert.equal(last.studyDays, 2);     // 잔여 2일 → 학습일 상한 2
+  assert.equal(last.cumulative, 1123); // 누적이 잔여량과 정확히 일치
+  assert.equal(last.percent, 100);
+  // 학습일당 54장 ÷ 목표 50장 = 1.08 → tight
+  assert.equal(plan.tier, 'tight');
+});
+
+test('computeStudyPlan: 잔여 0 → done, 목표 이내 → normal, 초과 → triage', () => {
+  tracker.setExamDate(todayPlus(30));
+  assert.equal(tracker.computeStudyPlan(0).tier, 'done');
+  tracker.setStudyGoals({ dailyCards: 50 });
+  assert.equal(tracker.computeStudyPlan(200).tier, 'normal'); // 10장/일 vs 50
+  tracker.setStudyGoals({ dailyCards: 1 });
+  assert.equal(tracker.computeStudyPlan(100).tier, 'triage'); // 5장/일 vs 1 → ratio 5
 });

@@ -1,10 +1,11 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
-// @spec SC-01,SC-02,D-17
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+// @spec SC-01,SC-02,SC-05,D-17
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
 import { localDateKey } from '../utils.js';
 import { showToast } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
-import { safeGetItem } from '../state.js';
+import { safeGetItem, state } from '../state.js';
+import { DataLoader } from '../data-loader.js';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const MONTH_NAMES = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
@@ -23,6 +24,7 @@ export function renderStudyCalendar() {
     const weeklyProgress = getWeeklyGoalProgress();
     const monthlyDays = getMonthlyStudyDays(_currentYear, _currentMonth);
     const daysInMonth = new Date(_currentYear, _currentMonth + 1, 0).getDate();
+    const planHtml = _studyPlanHtml();
 
     container.innerHTML = `
         <div class="study-calendar-wrapper">
@@ -87,6 +89,9 @@ export function renderStudyCalendar() {
                 ${_ddayChipHtml()}
             </div>
 
+            <!-- SC-05 학습 계획 패널 (시험일 설정 시) -->
+            ${planHtml}
+
             <!-- 월별 캘린더 -->
             <div class="calendar-nav">
                 <button class="btn btn-secondary btn-sm" data-click="prevCalendarMonth" title="이전 달" aria-label="이전 달">
@@ -125,6 +130,65 @@ function _ddayChipHtml() {
     const label = dday === 0 ? 'D-Day' : (dday < 0 ? `D+${-dday}` : `D-${dday}`);
     const cls = dday <= 7 ? 'dday-chip dday-urgent' : 'dday-chip';
     return `<span class="${cls}" title="시험일 ${getExamDate()}"><i class="fa-solid fa-calendar-day"></i> 시험까지 ${label}</span>`;
+}
+
+/** 미암기 카드 수 — registry 목표치 상한 적용 (dashboard.js와 동일 산식) */
+function _remainingCards() {
+    let total = 0;
+    if (typeof DataLoader !== 'undefined' && DataLoader.registry) {
+        DataLoader.getSubjectList().forEach(subj => {
+            const stats = /** @type {any} */ ((subj && subj.stats) || {});
+            total += (stats.targetCards > 0) ? Math.min(stats.cards || 0, stats.targetCards) : (stats.cards || 0);
+        });
+    } else if (typeof window !== 'undefined' && window.STUDY_DATA) {
+        const sd = window.STUDY_DATA;
+        Object.keys(sd).forEach(k => { total += sd[k].cards.length; });
+    }
+    const mem = state.memorizedCards ? state.memorizedCards.size : 0;
+    return Math.max(0, total - mem);
+}
+
+/** SC-05 학습 계획 패널 — 시험일 설정 시 목표·잔여·주차별 마일스톤 표시 */
+function _studyPlanHtml() {
+    const examDate = getExamDate();
+    if (!examDate) return '';
+    const plan = computeStudyPlan(_remainingCards());
+    const dday = getDDay();
+    const ddayLabel = dday === null || dday === 0 ? 'D-Day' : (dday < 0 ? `D+${-dday}` : `D-${dday}`);
+    const header = (badge) => `
+        <div class="plan-header">
+            <h4><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i> 학습 계획 ${badge || ''}</h4>
+            <span class="plan-dday">시험일 ${examDate} · ${ddayLabel}</span>
+        </div>`;
+    if (!plan) {
+        return `<div class="study-plan-card">${header('')}
+            <p class="plan-note">시험일이 지났습니다 — 대시보드에서 실제 결과를 자가 보고할 수 있습니다.</p>
+        </div>`;
+    }
+    const tierLabel = { done: '완료', normal: '여유', tight: '압축', triage: '긴급' }[plan.tier];
+    const advice = {
+        tight: '설정 목표를 초과하는 페이스입니다 — 카드·퀴즈 병행 학습을 권장합니다.',
+        triage: '현재 페이스로는 전량 커버가 어렵습니다 — 출제 비중이 큰 과목부터 우선하거나 목표를 조정하세요.'
+    }[plan.tier] || '';
+    const rows = plan.weeks.slice(0, 12).map(w => `
+                <tr><td>${w.week}주차</td><td>${w.range}</td><td>${w.cards}장</td><td>${w.cumulative}장 (${w.percent}%)</td></tr>`).join('');
+    const more = plan.weeks.length > 12
+        ? `<tr><td colspan="4" class="plan-more">… 이후 ${plan.weeks.length - 12}주 동일 페이스 지속</td></tr>` : '';
+    return `<div class="study-plan-card">
+        ${header(`<span class="plan-tier-badge plan-tier-${plan.tier}">${tierLabel}</span>`)}
+        <div class="plan-summary">
+            <div class="plan-summary-row"><span>남은 카드</span><strong>${plan.remaining}장</strong></div>
+            <div class="plan-summary-row"><span>학습 가능일</span><strong>${plan.studyDays}일 (주 ${plan.goals.weeklyStudyDays}일)</strong></div>
+            <div class="plan-summary-row"><span>학습일당 필요</span><strong>카드 ${plan.perStudyDay}장</strong></div>
+            <div class="plan-summary-row"><span>설정 목표</span><strong>카드 ${plan.goals.dailyCards}장 · 퀴즈 ${plan.goals.dailyQuizzes}문/일</strong></div>
+        </div>
+        ${advice ? `<p class="plan-note plan-warn">${advice}</p>` : ''}
+        ${plan.tier === 'done' ? '<p class="plan-note">남은 카드가 없습니다 — 복습과 모의고사로 실력을 유지하세요.</p>' : `
+        <table class="plan-table">
+            <thead><tr><th>주차</th><th>기간</th><th>배정</th><th>누적</th></tr></thead>
+            <tbody>${rows}${more}</tbody>
+        </table>`}
+    </div>`;
 }
 
 function _renderCalendarDays() {
