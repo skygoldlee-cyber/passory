@@ -9,7 +9,7 @@
 import { getJSON, setJSON } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { getBizType, BIZ_TYPES, bizVisible, bizChecklistSet, getInspectorName } from '../biz-profile.js';
-import { CHECKLIST_SETS, LAW_DOCS, loadChecks } from './formula-compliance.js';
+import { CHECKLIST_SETS, LAW_DOCS, loadChecks, refreshAuditLog } from './formula-compliance.js';
 import { summarizeLabelDraft } from './formula-sales.js';
 import { listFormulas } from '../formula-store.js';
 import { listBatches } from '../batch-store.js';
@@ -341,4 +341,5 @@ export async function auditPrintReport() {
   const entry = recordAuditLog(data);
   if (!entry.saved) showToast('보고서 출력 이력 저장에 실패했습니다 — 저장 공간을 확인하세요.', 'error');
   printHtml(buildAuditReportHtml(data));
+  refreshAuditLog();  // 패널이 열려 있으면 이력 목록 즉시 갱신 (FO-63)
 }

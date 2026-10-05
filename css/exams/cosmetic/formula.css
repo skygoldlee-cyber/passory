@@ -875,6 +875,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     font-weight: 600;
     color: var(--color-text-muted);
 }
+/* 보고서 출력 이력 섹션 헤더의 이력 삭제 버튼 — 제목과 우측 정렬 */
+.comp-log-clear {
+    margin-left: auto;
+    font-weight: 400;
+}
 .comp-list {
     list-style: none;
     margin: 0;

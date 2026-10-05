@@ -103,7 +103,7 @@ const formula = {
             'openAdversePanel', 'advSave', 'advEdit', 'advDelete', 'advCancel',
         ]],
         ['compliance', [
-            'openCompliancePanel', 'compToggle', 'compReset', 'compOpenLaw',
+            'openCompliancePanel', 'compToggle', 'compReset', 'compOpenLaw', 'compAuditLogClear',
         ]],
         ['audit', [
             'auditPrintReport',

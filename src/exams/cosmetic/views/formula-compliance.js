@@ -10,7 +10,7 @@
 
 import { esc } from '../../../sanitize.js';
 import { showToast, showConfirm } from '../../../ui-utils.js';
-import { safeGetItem, safeSetItem } from '../../../state.js';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../../../state.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { contentPath } from '../../../exam-context.js';
 import { lawUrlFor } from '../../../law-links.js';
@@ -356,6 +356,9 @@ function renderSections(sections, checked) {
   }).join('');
 }
 
+/** 패널이 열린 상태에서 출력 이력 목록만 갱신 — auditPrintReport가 출력 직후 호출 (FO-63) */
+export function refreshAuditLog() { renderAuditLog(); }
+
 /** 보고서 출력 이력 (FO-63) — formula-audit.js가 출력 시점에 기록한 최근 5건 표시 */
 function renderAuditLog() {
   const box = document.getElementById('comp-audit-log');
@@ -441,6 +444,23 @@ export function compReset() {
     if (!saveChecks({})) { showToast('초기화 저장에 실패했습니다.', 'error'); return; }
     render();
     showToast('체크리스트를 초기화했습니다.');
+  }).catch(() => {});
+}
+
+/** 보고서 출력 이력 전체 삭제 (FO-63) — 문서 번호·해시 대조 수단이 사라지므로 경고 확인 */
+export function compAuditLogClear() {
+  let has = false;
+  try {
+    const raw = safeGetItem(STORAGE_KEYS.FORMULA_AUDIT_LOG);
+    const parsed = raw ? JSON.parse(raw) : null;
+    has = Array.isArray(parsed) && parsed.length > 0;
+  } catch (e) { has = false; }
+  if (!has) { showToast('삭제할 출력 이력이 없습니다.', 'info'); return; }
+  showConfirm('보고서 출력 이력을 모두 삭제할까요? 이미 출력한 문서의 번호·해시와 대조할 수 없게 됩니다.').then(ok => {
+    if (!ok) return;
+    safeRemoveItem(STORAGE_KEYS.FORMULA_AUDIT_LOG);
+    renderAuditLog();
+    showToast('보고서 출력 이력을 삭제했습니다.');
   }).catch(() => {});
 }
 

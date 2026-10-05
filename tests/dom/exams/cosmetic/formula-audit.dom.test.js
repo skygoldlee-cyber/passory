@@ -14,7 +14,7 @@ vi.mock('../../../../src/ui-utils.js', () => ({
 import { loadIndexHtml, el } from '../../helpers.js';
 import { getJSON } from '../../../../src/storage.js';
 import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
-import { openCompliancePanel, compToggle, COMPLIANCE_SECTIONS } from '../../../../src/exams/cosmetic/views/formula-compliance.js';
+import { openCompliancePanel, compToggle, compAuditLogClear, COMPLIANCE_SECTIONS } from '../../../../src/exams/cosmetic/views/formula-compliance.js';
 import { auditPrintReport } from '../../../../src/exams/cosmetic/views/formula-audit.js';
 import { adlintRun, adlintClear } from '../../../../src/exams/cosmetic/views/formula-sales.js';
 import { setBizType } from '../../../../src/exams/cosmetic/biz-profile.js';
@@ -129,6 +129,23 @@ describe('종합 규정 점검 보고서 — 출력·영속 시나리오', () =>
         expect(getJSON(STORAGE_KEYS.FORMULA_INSPECTOR_NAME)).toBeNull();
         await auditPrintReport();
         expect(printArea().innerHTML).toContain('점검자(조제관리사/책임판매관리자): ______________');
+    });
+
+    it('출력 이력 삭제 — 확인 후 전체 비움 + 빈 상태 안내 (FO-63)', async () => {
+        openCompliancePanel();
+        await auditPrintReport();
+        expect(getJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG)).toHaveLength(1);
+        // 출력 직후 열린 패널의 이력 목록이 즉시 갱신됨 (refreshAuditLog)
+        expect(el('comp-audit-log').textContent).toContain('맞춤형화장품 판매업');
+
+        compAuditLogClear();
+        await new Promise(r => setTimeout(r, 0)); // showConfirm 해결 + then 체인 실행
+        expect(getJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG)).toBeNull();
+        expect(el('comp-audit-log').textContent).toContain('출력 이력이 없습니다');
+
+        // 빈 상태에서 재클릭 — 에러 없이 안내 토스트
+        compAuditLogClear();
+        expect(getJSON(STORAGE_KEYS.FORMULA_AUDIT_LOG)).toBeNull();
     });
 
     it('빈 데이터 — 기록 없음 섹션 표기 + 출력 가능', async () => {
