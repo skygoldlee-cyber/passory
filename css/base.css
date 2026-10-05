@@ -45,6 +45,8 @@
     --color-danger-darkest: #991b1b;
     --color-danger-light: #f87171;
     --color-warning: #f59e0b;      /* Amber Gold */
+    --color-caution: #eab308;      /* 노랑 — 히트맵 표준 그래디언트 (60-79%) */
+    --color-orange: #f97316;       /* 주황 — 히트맵 표준 그래디언트 (40-59%) */
     --color-warning-dark: #d97706;
     --color-warning-darker: #92400e;
     --color-warning-light: #fde68a;

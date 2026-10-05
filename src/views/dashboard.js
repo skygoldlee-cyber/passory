@@ -308,8 +308,8 @@ function _renderSubjectHeatmap(subjects) {
     const colors = {
         none: _c('--color-text-muted'),
         high: _c('--color-success'),
-        mid: _c('--color-warning'),
-        low: _c('--color-danger'),
+        mid: _c('--color-caution'),
+        low: _c('--color-orange'),
         vlow: _c('--color-danger-dark')
     };
 

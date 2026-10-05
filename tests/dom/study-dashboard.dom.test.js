@@ -133,6 +133,36 @@ describe('대시보드 — 통계·과목 카드·약점 추천', () => {
         expect(cells[1].querySelector('.heatmap-value').textContent).toBe('미응시');
     });
 
+    it('히트맵 색상 — 표준 그래디언트 토큰 매핑 (노랑 60-79 · 주황 40-59 · 빨강 <40, D-09)', () => {
+        seedTwoSubjects();
+        seedProgress({
+            quizResults: {
+                // 과목1: 4문 중 3正 = 75% → 노랑(--color-caution)
+                subja_quiz_1: { solved: true, correct: true },
+                subja_quiz_2: { solved: true, correct: true },
+                subja_quiz_3: { solved: true, correct: true },
+                subja_quiz_4: { solved: true, correct: false },
+                // 과목2: 4문 중 2正 = 50% → 주황(--color-orange)
+                subjb_quiz_1: { solved: true, correct: true },
+                subjb_quiz_2: { solved: true, correct: true },
+                subjb_quiz_3: { solved: true, correct: false },
+                subjb_quiz_4: { solved: true, correct: false },
+            },
+        });
+        const root = document.documentElement;
+        root.style.setProperty('--color-caution', '#c0ffee');
+        root.style.setProperty('--color-orange', '#0bad01');
+        try {
+            renderDashboard();
+            const cells = el('subject-heatmap').querySelectorAll('.heatmap-cell');
+            expect(cells[0].getAttribute('style')).toContain('#c0ffee');
+            expect(cells[1].getAttribute('style')).toContain('#0bad01');
+        } finally {
+            root.style.removeProperty('--color-caution');
+            root.style.removeProperty('--color-orange');
+        }
+    });
+
     it('약점 과목 추천 → 3문 이상 응시 과목 중 최저 정답률 + 헷갈림 最多', () => {
         seedTwoSubjects();
         seedProgress({
