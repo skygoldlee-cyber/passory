@@ -11,7 +11,7 @@
 - **FO-64 기준 고시 스탬프**: `notice-check.js`에 `getNoticeStamp()` 동기 접근자 추가 — `auditPrintReport`가 `ensureNoticeStatus()`를 선행(await)해 보고서 푸터에 '기준 고시: 규정명+고시번호(시행일)·고시 확인일' 표기. `isNewer` 시 개정 경고 병기, 미로드·오프라인 시 '확인 불가' 폴백
 - **FO-65 증적 백업 리마인더**: `exportData`가 `LAST_BACKUP_AT`을 로컬 시각으로 스탬프(기기 로컬 마커 — 백업·동기 제외). 허브 진입 시 증적 자산 6종 키 중 하나라도 데이터가 있고 30일 경과·미실시면 종합 보고서 카드에 배지
 - **FO-66 보고서 ID·해시**: `collectAuditReportData`가 `RPT-YYYYMMDD-NNN-해시6` 문서 번호와 섹션 요약의 `fnv1aHex` 해시를 발급 — 푸터 표기 + `FORMULA_AUDIT_LOG` 엔트리의 id·hash로 출력물↔이력 대조
-- **FO-67 서명란 출력 기록**: 서명란 아래 '서명 기록 — 출력일시·출력 환경·문서 번호' 자동 기입. `deviceLabel()`이 UA를 'Chrome · Windows' 수준으로 요약 (전문 미기록 — 개인정보 최소화)
+- **FO-67 서명란 출력 기록**: 서명란 아래 '서명 기록 — 출력일시·출력 환경·문서 번호' 자동 기입. `deviceLabel()`이 UA를 'Chrome · Windows' 수준으로 요약 (전문 미기록 — 개인정보 최소화). `fp-sign-record` 클래스 — 서명란과 한 줄 간격(margin-top 10pt) + 페이지 넘김 분리 방지
 - **FO-68 광고 사전 커버리지 감사**: `check:adlint`(check_adlint_coverage.js) — 별표5 2항 가~카 호별 대표 표현 커버리지·term 품질(중복·미선언 카테고리·자기 검출 회귀) 정량 보고. 사전 확장: `endorsement`(전문가 추천 오인) 카테고리 신설 9 terms + 절대 표현 4 terms ('최고'·'최상'·'1위'·'무해')
 - **검증**: 유닛 +11건·DOM +2건 전부 통과 — `auditPrintReport` async 전환으로 호출부 `await` 갱신
 

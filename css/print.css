@@ -334,6 +334,12 @@
         color: var(--print-text);
         letter-spacing: 0.02em;
     }
+    /* FO-67 — 서명 기록 줄: 서명란과 한 줄 띄우고, 페이지 넘김 시 서명란과 분리되지 않게 함 */
+    #formula-print-area .fp-sign-record {
+        margin-top: 10pt;
+        page-break-before: avoid;
+        break-before: avoid;
+    }
 
     /* 배치 QC 셀 표시 */
     #formula-print-area .fp-qc-ok { color: var(--print-text); }

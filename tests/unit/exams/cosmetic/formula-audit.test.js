@@ -319,6 +319,8 @@ test('buildAuditReportHtml — 푸터에 문서 번호·해시·출력 환경 �
   assert.ok(html.includes(`내용 해시: ${d.hash}`));
   assert.ok(html.includes('서명 기록'), '서명란 아래 출력 기록 줄');
   assert.ok(html.includes('출력 환경'));
+  // fp-sign-record 클래스 — 서명란과 한 줄 간격 + 페이지 넘김 분리 방지 (print.css)
+  assert.ok(html.includes('fp-sign-record'));
 });
 
 /* =======================================================

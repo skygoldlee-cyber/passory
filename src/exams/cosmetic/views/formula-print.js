@@ -317,7 +317,7 @@ export function buildAuditReportHtml(d) {
       <span class="fp-sign">확인자: ______________</span>
       <span class="fp-sign">확인일: ________</span>
     </div>
-    <p class="fp-meta-line">서명 기록 — 출력일시 ${esc(auditFmtDateTime(d.generatedAt))} · 출력 환경 ${esc(d.printedBy || '—')} · 문서 ${esc(d.id || '—')}</p>
+    <p class="fp-meta-line fp-sign-record">서명 기록 — 출력일시 ${esc(auditFmtDateTime(d.generatedAt))} · 출력 환경 ${esc(d.printedBy || '—')} · 문서 ${esc(d.id || '—')}</p>
     <p class="fp-disclaimer">본 보고서는 자가점검용 참고 자료이며 법률 자문이 아닙니다. 실제 의무·기준의 판단은 법령 원문과 관할 지방식약청 안내를 따르세요.</p>
     <p class="fp-disclaimer">본 문서에는 고객 개인정보(이름·피부 정보·상담 내용)가 포함될 수 있습니다 — 출력물의 보관·폐기에 주의하세요.</p>
   </div>`;
