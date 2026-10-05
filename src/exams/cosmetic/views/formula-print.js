@@ -1,5 +1,5 @@
 // src/exams/cosmetic/views/formula-print.js — Formula OS 인쇄 산출물 빌더 (Phase A)
-// @spec FO-14,FO-21,FO-29
+// @spec FO-14,FO-21,FO-29,FO-56
 //
 // 조제 기록지(배치)·제품 라벨·사용 안내문·작업지시서 HTML 생성 + 공용 인쇄 트리거.
 // 기존 formula.js의 조제 기록지와 같은 #formula-print-area + body.formula-printing
@@ -147,6 +147,143 @@ export function buildWorkOrderHtml(f) {
       </div>
       <p class="fp-disclaimer">배합률은 작업자 입력값이며 검증 결과는 법정 한도 기준입니다. 계량 후 체크란에 표시하고 사용 원료의 LOT를 기입하세요.</p>
     </div>`;
+}
+
+/* =======================================================
+   종합 규정 점검 보고서 (FO-56) — 수집 뷰모델 → fp-doc A4 문서
+   섹션은 수집기(formula-audit.js)가 bizVisible 게이트를 적용해
+   이미 걸러진 상태로 온다. 설계: docs/dev/design/AUDIT_REPORT_DESIGN.md
+   ======================================================= */
+
+const AUDIT_SECTION_MARK = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
+
+function auditFmtDateTime(v) {
+  return typeof v === 'string' && v ? v.slice(0, 16).replace('T', ' ') : '—';
+}
+
+function auditChecklistBody(s) {
+  const rows = s.groups.map(g => {
+    const doneN = g.items.filter(i => i.done).length;
+    const items = g.items.map(it => `<tr>
+      <td class="fp-check-cell">${it.done ? '☑' : '☐'}</td>
+      <td>${esc(it.text)}${it.note ? `<br><span class="fp-meta-line">${esc(it.note)}</span>` : ''}${it.refs && it.refs.length ? `<br><span class="fp-meta-line">근거: ${esc(it.refs.join(' · '))}</span>` : ''}</td>
+      <td class="fp-num">${it.done ? esc(it.doneAt || '') : '미점검'}</td>
+    </tr>`).join('');
+    return `<tr><td colspan="3" class="fp-phase-head">${esc(g.title)} (${doneN}/${g.items.length})</td></tr>${items}`;
+  }).join('');
+  return `<table class="fp-table"><tbody>${rows}</tbody></table>`;
+}
+
+function auditLabelBody(s) {
+  const rows = s.checks.map(c => `<tr>
+    <td class="fp-check-cell">${c.ok ? '☑' : '☐'}</td>
+    <td>${esc(c.label)}${c.manual ? ' (수동 확인)' : (c.optional ? ' (해당 시)' : '')}</td>
+  </tr>`).join('');
+  return `<table class="fp-table"><tbody>${rows}</tbody></table>`;
+}
+
+function auditAdlintBody(s) {
+  const hitRows = s.hits.map(h => `<tr>
+    <td>${esc(h.label || h.category)}</td><td>"${esc(h.term)}"</td><td>${esc(h.suggestion || '—')}</td>
+  </tr>`).join('');
+  return `${s.hits.length
+    ? `<table class="fp-table"><thead><tr><th>분류</th><th>적발 표현</th><th>수정 가이드</th></tr></thead><tbody>${hitRows}</tbody></table>`
+    : '<p class="fp-meta-line">금지 표현이 적발되지 않았습니다.</p>'}
+    ${s.text ? `<h3>점검 대상 원문</h3><p class="fp-notes">${esc(s.text)}${s.truncated ? ' …(이하 생략)' : ''}</p>` : ''}`;
+}
+
+function auditFormulasBody(s) {
+  const rows = s.items.map(it => `<tr>
+    <td>${esc(it.name)}</td>
+    <td class="fp-num">${it.summary.banned || '—'}</td>
+    <td class="fp-num">${it.summary.warn || '—'}</td>
+    <td class="fp-num">${it.summary.unknown || '—'}</td>
+    <td class="fp-num">${it.summary.ok || '—'}</td>
+    <td class="fp-num">${it.changed || '—'}</td>
+    <td class="fp-num">${it.stabWarns || '—'}</td>
+  </tr>`).join('');
+  return `<table class="fp-table">
+    <thead><tr><th>포뮬러</th><th class="fp-num">금지</th><th class="fp-num">초과</th><th class="fp-num">확인</th><th class="fp-num">정상</th><th class="fp-num">기준변경</th><th class="fp-num">안정성</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <p class="fp-meta-line">기준변경 = 저장 후 고시 기준이 바뀐 원료 수 · 안정성 = 제형 안정성 경고 수</p>`;
+}
+
+function auditBatchesBody(s) {
+  const rows = s.recent.map(b => `<tr>
+    <td>${esc(b.batchNo || '—')}</td><td>${esc(b.formulaName || '—')}</td>
+    <td>${esc(b.customerName || '—')}</td><td>${esc(auditFmtDateTime(b.madeAt))}</td>
+  </tr>`).join('');
+  return `<p class="fp-meta-line">최근 배치일: ${esc(auditFmtDateTime(s.latestAt))} · QC 이상 ${s.qcBad}건 · 위생 미완료 ${s.hygIncomplete}건</p>
+    <table class="fp-table">
+    <thead><tr><th>배치번호</th><th>처방</th><th>고객</th><th>조제 일시</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    ${s.total > s.recent.length ? `<p class="fp-meta-line">최근 ${s.recent.length}건만 표시 — 전체 ${s.total}건</p>` : ''}`;
+}
+
+function auditMaterialsBody(s) {
+  return `<table class="fp-table"><tbody>
+    <tr><td>등록 원료</td><td class="fp-num">${s.total}종</td></tr>
+    <tr><td>기한 경과</td><td class="fp-num">${s.counts.expired}종</td></tr>
+    <tr><td>기한 임박 (30일 이내)</td><td class="fp-num">${s.counts.soon}종</td></tr>
+    <tr><td>정상</td><td class="fp-num">${s.counts.ok}종</td></tr>
+    <tr><td>기한 미기재</td><td class="fp-num">${s.counts.none}종</td></tr>
+  </tbody></table>`;
+}
+
+function auditCustomersBody(s) {
+  const rows = s.rows.map(r => `<tr>
+    <td>${esc(r.name)}</td><td>${esc(r.skinType || '—')}</td>
+    <td>${esc(r.allergies.length ? r.allergies.join(', ') : '—')}</td>
+    <td class="fp-num">${r.logCount}</td><td>${esc(r.lastDate || '—')}</td>
+  </tr>`).join('');
+  const logs = s.rows.flatMap(r =>
+    r.recent.map(l => `<li>${esc(r.name)} — ${esc(l.date)} · ${esc(l.text)}</li>`)).join('');
+  return `<table class="fp-table">
+    <thead><tr><th>고객</th><th>피부타입</th><th>알레르기</th><th class="fp-num">상담</th><th>최근 상담일</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    ${logs ? `<h3>최근 상담 이력 (고객별 최대 3건)</h3><ul class="fp-steps">${logs}</ul>` : ''}`;
+}
+
+const AUDIT_BODY = {
+  checklist: auditChecklistBody,
+  label: auditLabelBody,
+  adlint: auditAdlintBody,
+  formulas: auditFormulasBody,
+  batches: auditBatchesBody,
+  materials: auditMaterialsBody,
+  customers: auditCustomersBody,
+};
+
+/**
+ * 종합 규정 점검 보고서 (FO-56) — collectAuditReportData() 뷰모델 → fp-doc.
+ * @param {object} d - {generatedAt, appVersion, biz:{label,desc}, setLabel, sections:[]}
+ */
+export function buildAuditReportHtml(d) {
+  const scoreRows = d.sections
+    .map(s => `<tr><td>${esc(s.title)}</td><td>${esc(s.summary)}</td></tr>`).join('');
+  const body = d.sections.map((s, i) => {
+    const mark = AUDIT_SECTION_MARK[i] || '·';
+    const render = AUDIT_BODY[s.id];
+    const content = s.empty
+      ? `<p class="fp-meta-line">${esc(s.summary)}</p>`
+      : (render ? render(s) : '');
+    return `<h3>${mark} ${esc(s.title)}</h3>${content}`;
+  }).join('');
+  return `<div class="fp-doc">
+    <h1>법규 준수 종합 점검 보고서</h1>
+    <p class="fp-meta-line">사업 유형: ${esc(d.biz.label)} — ${esc(d.biz.desc)}</p>
+    <p class="fp-meta-line">점검 기준: ${esc(d.setLabel)} · 발행일시: ${esc(auditFmtDateTime(d.generatedAt))}${d.appVersion ? ` · 앱 ${esc(d.appVersion)}` : ''}</p>
+    <h3>점검 요약</h3>
+    <table class="fp-table"><tbody>${scoreRows}</tbody></table>
+    ${body}
+    <div class="fp-sign-row">
+      <span class="fp-sign">점검자(조제관리사/책임판매관리자): ______________</span>
+      <span class="fp-sign">확인자: ______________</span>
+      <span class="fp-sign">확인일: ________</span>
+    </div>
+    <p class="fp-disclaimer">본 보고서는 자가점검용 참고 자료이며 법률 자문이 아닙니다. 실제 의무·기준의 판단은 법령 원문과 관할 지방식약청 안내를 따르세요.</p>
+    <p class="fp-disclaimer">본 문서에는 고객 개인정보(이름·피부 정보·상담 내용)가 포함될 수 있습니다 — 출력물의 보관·폐기에 주의하세요.</p>
+  </div>`;
 }
 
 /** 공용 인쇄 트리거 — 전용 영역에 렌더 후 window.print() */

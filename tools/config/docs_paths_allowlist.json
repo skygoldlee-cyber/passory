@@ -1,5 +1,15 @@
 [
   {
+    "file": "docs/dev/design/AUDIT_REPORT_DESIGN.md",
+    "ref": "tests/unit/exams/cosmetic/formula-audit.test.js",
+    "reason": "설계안 제안 경로 — 보고서 수집기 유닛 테스트 (미구현)"
+  },
+  {
+    "file": "docs/dev/design/AUDIT_REPORT_DESIGN.md",
+    "ref": "tests/dom/exams/cosmetic/formula-audit.dom.test.js",
+    "reason": "설계안 제안 경로 — 보고서 출력 DOM 테스트 (미구현)"
+  },
+  {
     "file": "docs/dev/ARCHITECTURE.md",
     "ref": "src/concept-map.js",
     "reason": "변경 이력 섹션의 과거 파일 언급 (삭제 이력 서술)"

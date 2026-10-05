@@ -101,6 +101,10 @@ export const STORAGE_KEYS = {
   // Formula OS — 사진 인식 고해상도 모드 (product-vision.js, FO-54)
   // '1'이면 리사이즈 장변 2048 — 환경설정값, 백업·동기 포함
   FORMULA_VISION_HIRES: 'formula_vision_hires',
+
+  // Formula OS — 광고 문구 점검 최근 실행 결과 (FO-56)
+  // {text, hits:[{term,category,label,suggestion}], at} — 종합 보고서 근거, 작업 데이터로 백업·동기 포함
+  FORMULA_ADLINT_STATE: 'formula_adlint_state',
   /* ── domain:cosmetic 계약 키 끝 ── */
 
   // Pro 기능 안내 표시 이력 — 기능별 1회 안내 (pro-upgrade.js)
@@ -176,6 +180,7 @@ export const BACKUP_KEYS = [
   STORAGE_KEYS.PRODUCT_ITEMS,     // 기성품 전성분 DB — 백업·동기 대상 (FO-37)
   STORAGE_KEYS.FORMULA_GEMINI_MODEL, // 사진 인식 모델명 설정 — 환경설정 (FO-46)
   STORAGE_KEYS.FORMULA_VISION_HIRES, // 사진 고해상도 모드 — 환경설정 (FO-54)
+  STORAGE_KEYS.FORMULA_ADLINT_STATE, // 광고 점검 최근 결과 — 종합 보고서 작업 데이터 (FO-56)
 ];
 
 // 전체 초기화(Reset Progress) 시 제거할 키 목록

@@ -287,7 +287,8 @@ function activeSet() {
    세트별 분리 키 (FO-34) — 유형 전환 시 점검 이력이 섞이지 않는다.
    ======================================================= */
 
-function loadChecks(set) {
+/** 체크 상태 로드 — 종합 보고서 수집기(FO-56)도 이 함수로 같은 파싱을 공유한다 */
+export function loadChecks(set) {
   const s = set || activeSet();
   try {
     const raw = safeGetItem(s.key);

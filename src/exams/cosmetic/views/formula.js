@@ -16,7 +16,7 @@ import { showStoreError } from '../../../pro-upgrade.js';
 import { switchView, resetMainScroll } from '../../../views/navigation.js';
 import { getActiveExamId } from '../../../exam-context.js';
 import {
-  CHECK, buildIngredientIndex, checkFormulaItems,
+  CHECK, buildIngredientIndex, checkFormulaItems, countChangedStandards,
 } from '../formula-check.js';
 import { STAB, evaluateStability } from '../formula-stability.js';
 import {
@@ -270,24 +270,6 @@ const CHECK_BADGE = {
   [CHECK.BANNED]: { cls: 'f-check-banned', label: '금지 원료' },
   [CHECK.UNKNOWN]: { cls: 'f-check-unknown', label: '확인 필요' },
 };
-
-/**
- * 저장 시점 스냅샷(ingredients[].snapshot)과 현재 원료 DB를 비교해
- * 고시 개정으로 기준(type/limit)이 바뀐 원료 수를 반환한다.
- */
-function countChangedStandards(formula, index) {
-  let changed = 0;
-  (formula.ingredients || []).forEach(item => {
-    if (!item || !item.snapshot || !item.name) return;
-    const cur = index && typeof index.get === 'function' ? index.get(item.name) : null;
-    if (!cur) return; // 현재 DB 미등록은 unknown 판정이 이미 커버
-    if ((item.snapshot.type || '') !== (cur.type || '')
-      || (item.snapshot.limit || '') !== (cur.limit || '')) {
-      changed++;
-    }
-  });
-  return changed;
-}
 
 function checkSummaryHtml(formula) {
   const index = getIndex();

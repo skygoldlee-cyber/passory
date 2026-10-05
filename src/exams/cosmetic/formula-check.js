@@ -1,5 +1,5 @@
 // src/exams/cosmetic/formula-check.js — Formula OS 규정 Check 엔진 (Phase 5-A)
-// @spec FO-02,FO-50,FO-55,DI-07
+// @spec FO-02,FO-50,FO-55,FO-56,DI-07
 //
 // 원료 + 배합 농도(%) → 법정 한도 검증. 배합을 "생성"하지 않고 공식 고시
 // 데이터로 "검증"만 수행한다 (생성·검증 분리 원칙).
@@ -346,6 +346,28 @@ export function suspectOcrSubstitutions(names, index) {
     if (best) out.push({ input: n, suggestion: best });
   }
   return out;
+}
+
+/**
+ * 저장 시점 스냅샷(ingredients[].snapshot)과 현재 원료 DB를 비교해
+ * 고시 개정으로 기준(type/limit)이 바뀐 원료 수를 반환한다.
+ * My 포뮬러 카드 배지와 종합 점검 보고서(FO-56)가 공용한다.
+ * @param {object} formula - {ingredients: [{name, snapshot?}]}
+ * @param {Map<string,object>} index - buildIngredientIndex() 결과
+ * @returns {number}
+ */
+export function countChangedStandards(formula, index) {
+  let changed = 0;
+  ((formula && formula.ingredients) || []).forEach(item => {
+    if (!item || !item.snapshot || !item.name) return;
+    const cur = index && typeof index.get === 'function' ? index.get(item.name) : null;
+    if (!cur) return; // 현재 DB 미등록은 unknown 판정이 이미 커버
+    if ((item.snapshot.type || '') !== (cur.type || '')
+      || (item.snapshot.limit || '') !== (cur.limit || '')) {
+      changed++;
+    }
+  });
+  return changed;
 }
 
 /**

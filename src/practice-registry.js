@@ -60,6 +60,7 @@ const formula = {
         customer: _domainImport('views/formula-customer.js'),
         material: _domainImport('views/formula-material.js'),
         compliance: _domainImport('views/formula-compliance.js'),
+        audit: _domainImport('views/formula-audit.js'),
         sales: _domainImport('views/formula-sales.js'),
         products: _domainImport('views/formula-products.js'),
         notice: _lazyImport(() => import('./notice-check.js')),
@@ -98,6 +99,9 @@ const formula = {
         ]],
         ['compliance', [
             'openCompliancePanel', 'compToggle', 'compReset', 'compOpenLaw',
+        ]],
+        ['audit', [
+            'auditPrintReport',
         ]],
         ['sales', [
             'openLabelPanel', 'labelFormulaImport', 'labelPrintSheet',

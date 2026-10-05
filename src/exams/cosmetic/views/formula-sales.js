@@ -1,5 +1,5 @@
 // Formula OS — 표시사항 검토 + 광고 문구 점검 패널 (FO-35·36)
-// @spec FO-33,FO-35,FO-36
+// @spec FO-33,FO-35,FO-36,FO-56
 // 화장품법 제10조 표시사항 자가점검(라벨 시트 인쇄 포함)과
 // 제13조 기반 광고 문구 금지 표현 린트를 제공한다.
 // 제조업·책임판매업 유형에서 서브내비·허브 카드로 노출 (biz-profile BIZ_PANELS).
@@ -7,7 +7,7 @@
 
 import { esc } from '../../../sanitize.js';
 import { showToast } from '../../../ui-utils.js';
-import { getJSON, setJSON } from '../../../storage.js';
+import { getJSON, setJSON, removeItem } from '../../../storage.js';
 import { STORAGE_KEYS } from '../../../storage-keys.js';
 import { lawUrlFor } from '../../../law-links.js';
 import { showPanel, formulaSubNav } from './formula.js';
@@ -60,8 +60,12 @@ function saveLabelDraft() {
   setJSON(STORAGE_KEYS.FORMULA_LABEL_DRAFT, readLabelForm());
 }
 
-/** 필수 기재 체크 — 제10조 요건별 적합/보완 표시 HTML */
-function labelChecklistHtml(d) {
+/**
+ * 라벨 드래프트 → 필수 기재 요약 (순수 — 패널 표시·종합 보고서(FO-56) 공용).
+ * @param {Record<string,string>} d - FORMULA_LABEL_DRAFT 값 (readLabelForm 결과 형태)
+ * @returns {{checks: Array<{label:string, ok:boolean, need:boolean, optional:boolean, manual?:boolean}>, missing: number}}
+ */
+export function summarizeLabelDraft(d) {
   const fn = d['label-functional'] === '1';
   const imported = d['label-country'] && d['label-country'].trim();
   /** @type {Array<{label:string, ok:boolean, need:boolean, optional:boolean, manual?:boolean}>} */
@@ -74,12 +78,18 @@ function labelChecklistHtml(d) {
     label: '기능성화장품 표기 확인 — "기능성화장품" 문구·심사(보고) 여부 표기',
     ok: false, need: false, manual: true, optional: false,
   });
+  const missing = checks.filter(c => c.need && !c.ok).length;
+  return { checks, missing };
+}
+
+/** 필수 기재 체크 — 제10조 요건별 적합/보완 표시 HTML */
+function labelChecklistHtml(d) {
+  const { checks, missing } = summarizeLabelDraft(d);
   const li = checks.map(c => {
     const state = c.ok ? 'ok' : (c.need || c.manual ? 'warn' : 'skip');
     const mark = c.ok ? '✓' : (c.need || c.manual ? '!' : '–');
     return `<li class="label-check-item label-check-${state}"><span class="label-check-mark">${mark}</span> ${esc(c.label)}${c.manual ? ' <span class="label-check-opt">(수동 확인)</span>' : (c.optional && !c.ok ? ' <span class="label-check-opt">(해당 시)</span>' : '')}</li>`;
   }).join('');
-  const missing = checks.filter(c => c.need && !c.ok).length;
   return `<ul class="label-check-list">${li}</ul>
     <p class="label-check-summary">${missing ? `필수 ${missing}항목 미기재 — 확인 후 보완하세요.` : '필수 표시사항이 모두 기재됐습니다.'}</p>`;
 }
@@ -154,7 +164,8 @@ export function openAdLintPanel() {
   if (subnav) subnav.innerHTML = formulaSubNav('adlint');
 }
 
-/** 점검 실행 — 입력 문구를 금지 표현 사전과 대조해 하이라이트·가이드 출력 */
+/** 점검 실행 — 입력 문구를 금지 표현 사전과 대조해 하이라이트·가이드 출력.
+ *  결과를 FORMULA_ADLINT_STATE에 최근 1건으로 영속한다 (FO-56 종합 보고서 근거). */
 export function adlintRun() {
   const ta = /** @type {HTMLTextAreaElement} */(document.getElementById('adlint-input'));
   const box = document.getElementById('adlint-result');
@@ -162,6 +173,9 @@ export function adlintRun() {
   const text = ta.value;
   if (!text.trim()) { showToast('점검할 문구를 입력하세요.', 'error'); return; }
   const hits = lintAdCopy(text);
+  setJSON(STORAGE_KEYS.FORMULA_ADLINT_STATE, {
+    text, hits, at: new Date().toISOString(),
+  });
 
   // 본문 하이라이트 — 위치 기준 <mark> 삽입
   let html = '';
@@ -197,4 +211,5 @@ export function adlintClear() {
   const box = document.getElementById('adlint-result');
   if (ta) ta.value = '';
   if (box) box.innerHTML = '';
+  removeItem(STORAGE_KEYS.FORMULA_ADLINT_STATE); // 명시적 비움 — 보고서 근거도 삭제 (FO-56)
 }
