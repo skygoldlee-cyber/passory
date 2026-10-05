@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: aabd7287d642e3c5
-> 생성: 2026-10-05 · 원천: SPEC.md(451개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 29dfc116fcdb3cc9
+> 생성: 2026-10-05 · 원천: SPEC.md(452개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 451개 — 문서 연결 289 · 소스 연결 417 · 테스트 연결 438 · 보고서 연결 109
+**커버리지 요약**: 요구사항 452개 — 문서 연결 293 · 소스 연결 418 · 테스트 연결 439 · 보고서 연결 109
 
 ---
 
@@ -40,7 +40,7 @@
 | D-14 | ✅ | 테스트 | — | src/views/dashboard.js | tests/dom/study-dashboard.dom.test.js | DOC-ARC-05<br>DOC-ARC-10 | — |
 | D-15 | ✅ | 테스트 | — | src/views/dashboard.js | tests/dom/study-dashboard.dom.test.js | DOC-ARC-05<br>DOC-ARC-10 | — |
 | D-16 | ✅ | 테스트 | — | html/views/dashboard.html<br>index.html<br>src/analysis-engine.js<br>src/views/dashboard.js | tests/unit/analysis-engine.test.js | — | — |
-| D-17 | ✅ | 테스트 | — | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/dom/study-dashboard.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| D-17 | ✅ | 테스트 | DOC-DSN-16 | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/dom/study-dashboard.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 
 ## 3.1.5 맞춤학습
 
@@ -386,8 +386,9 @@
 | SC-03 | ✅ | 테스트 | — | src/study-tracker.js | tests/unit/study-tracker.test.js<br>tests/unit/utils.test.js | DOC-ARC-05 | — |
 | SC-04 | ✅ | 테스트 | — | html/views/dashboard.html<br>index.html<br>src/views/daily-challenge.js<br>src/views/dashboard.js | tests/dom/study-challenge.dom.test.js | — | — |
 | SC-05 | ✅ | 테스트 | — | css/study-calendar.css<br>src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
-| SC-06 | ✅ | 테스트 | — | css/study-calendar.css<br>src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
-| SC-07 | ✅ | 테스트 | — | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| SC-06 | ✅ | 테스트 | DOC-DSN-16 | css/study-calendar.css<br>src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| SC-07 | ✅ | 테스트 | DOC-DSN-16 | src/study-tracker.js<br>src/views/dashboard.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
+| SC-08 | ✅ | 테스트 | DOC-DSN-16 | css/study-calendar.css<br>src/study-tracker.js<br>src/views/study-calendar.js | tests/dom/study-calendar.dom.test.js<br>tests/unit/study-tracker.test.js | — | — |
 
 ## 3.21 UI 모드 전환
 
@@ -719,6 +720,7 @@
 | DOC-DSN-13 | docs/dev/design/PRODUCT_VISION_DESIGN.md | FO-32, FO-41, FO-42, FO-43, FO-46, FO-54, FO-55 |
 | DOC-DSN-14 | docs/dev/design/AUDIT_REPORT_DESIGN.md | FO-14, FO-24, FO-34, FO-35, FO-36, FO-56, FO-63, FO-64, FO-65, FO-66, FO-67, FO-68 |
 | DOC-DSN-15 | docs/dev/design/PRACTICAL_TOOLS_DESIGN.md | FO-16, FO-18, FO-33, FO-34, FO-57, FO-58, FO-59, FO-60, FO-61, FO-62, FO-63 |
+| DOC-DSN-16 | docs/dev/design/STUDY_PLAN_PRO_DESIGN.md | D-17, SC-06, SC-07, SC-08 |
 | DOC-IDX-01 | docs/README.md | — |
 | DOC-PPL-01 | ref-pipeline/README.md | AO-01, AO-02, AO-03, AO-04, AO-05, BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10 |
 | DOC-PPL-02 | ref-pipeline/audiobook/README.md | AO-01, AO-02, AO-03, AO-04, AO-05 |

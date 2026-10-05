@@ -1,6 +1,6 @@
 /* css/study-calendar.css — 학습 캘린더/목표 스타일 */
 
-/* @spec SC-01,SC-05,SC-06 */
+/* @spec SC-01,SC-05,SC-06,SC-08 */
 
 /* === 목표 요약 카드 === */
 .study-goals-summary {
@@ -332,6 +332,59 @@
 }
 .plan-adh-behind .plan-adh-msg {
     color: var(--color-warning);
+}
+
+/* === 과목별 가중 배분 (SC-08 — study_plan_pro) === */
+.plan-alloc {
+    margin: 0.25rem 0 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--primary-tint-10);
+}
+.plan-alloc-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 0.5rem;
+}
+.plan-alloc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.alloc-chip {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--color-primary);
+}
+.alloc-chip.alloc-done {
+    color: var(--color-success);
+    border-color: var(--success-tint-20, var(--color-success));
+}
+.plan-alloc-basis {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin: 0.5rem 0 0;
+}
+.plan-alloc-detail {
+    margin-top: 0.5rem;
+}
+.plan-alloc-detail summary {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    cursor: pointer;
+}
+.plan-alloc-table td:not(:first-child),
+.plan-alloc-table th:not(:first-child) {
+    text-align: center;
 }
 .plan-note {
     font-size: 0.82rem;

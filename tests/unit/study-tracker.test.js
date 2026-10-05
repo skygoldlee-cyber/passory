@@ -1,5 +1,5 @@
 // tests/unit/study-tracker.test.js — 학습 활동 자동 기록·목표 추적
-// @spec SC-03,SC-05,SC-06,SC-07,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,D-17
 // recordStudyActivity가 카드·퀴즈 활동을 날짜별 캘린더에 누적하고,
 // 목표 달성률 계산이 저장된 활동을 반영하는지 고정한다.
 
@@ -243,4 +243,81 @@ test('checkStudyMilestones: 저장소 seen 갱신 + limit으로 분할 안내', 
   const next = tracker.checkStudyMilestones({ remaining: 50, total: 100, limit: 2 });
   assert.deepEqual(next.map(m => m.id), ['d30', 'p50']);
   assert.equal(tracker.checkStudyMilestones({ remaining: 50, total: 100 }).length, 0);
+});
+
+// --- SC-08 과목별 가중 배분 ---
+
+const mkPlan = (...cards) => ({ weeks: cards.map((c, i) => ({ week: i + 1, range: `D-x`, cards: c })) });
+const mkSubjects = (list) => list.map(([key, cards]) => ({ key, name: key, stats: { cards } }));
+const allocOf = (res, weekIdx, key) => res.weeks[weekIdx].alloc.find(a => a.key === key).cards;
+
+test('computeSubjectAllocation: 출제 비중 비례 배분 + 총량 보존', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    weightBySubject: { suba: 1, subb: 3 }
+  });
+  const a = allocOf(res, 0, 'suba');
+  const b = allocOf(res, 0, 'subb');
+  assert.equal(a + b, 50);           // 총량 보존
+  assert.ok(b >= a * 2);             // 비중 3:1 → subb가 압도적
+  assert.equal(res.hasWeights, true);
+});
+
+test('computeSubjectAllocation: 잔여 상한 워터필링 + 주차 순차 재배분', () => {
+  const plan = mkPlan(50, 50);
+  const subjects = mkSubjects([['suba', 40], ['subb', 90]]);
+  const res = tracker.computeSubjectAllocation(plan, subjects, {
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  // week1: suba는 잔여 40 상한 — 40 미만 배정 후 week2에 잔여 이월
+  assert.ok(allocOf(res, 0, 'suba') <= 40);
+  assert.equal(allocOf(res, 0, 'suba') + allocOf(res, 0, 'subb'), 50);
+  // week1에서 suba가 일부 소진 → week2는 subb 비중이 상대적으로 증가
+  assert.ok(allocOf(res, 1, 'subb') >= allocOf(res, 1, 'suba'));
+  // 전 주차 합계는 잔여 총량(130)과 주차 총량(100) 중 작은 값
+  const total = res.weeks.reduce((s, w) => s + w.alloc.reduce((x, a) => x + a.cards, 0), 0);
+  assert.equal(total, 100);
+});
+
+test('computeSubjectAllocation: 약점 가중 표본 게이트 (MIN_ALLOC_SAMPLE)', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  // 표본 미만(19문) → 중립 가중 → 균등 분할
+  const small = tracker.computeSubjectAllocation(plan, subjects, {
+    quizBySubject: { suba: { solved: 19, correct: 0 } },
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  assert.equal(allocOf(small, 0, 'suba'), allocOf(small, 0, 'subb'));
+  // 표본 충족 + 정답률 20% → 가중 1.8 → suba 배정 증가
+  const weak = tracker.computeSubjectAllocation(plan, subjects, {
+    quizBySubject: { suba: { solved: 25, correct: 5 } },
+    weightBySubject: { suba: 1, subb: 1 }
+  });
+  assert.ok(allocOf(weak, 0, 'suba') > allocOf(weak, 0, 'subb'));
+});
+
+test('computeSubjectAllocation: 비중 미선언 → 균등 폴백, 비중 전부 0 → 잔여 비례', () => {
+  const plan = mkPlan(50);
+  const subjects = mkSubjects([['suba', 100], ['subb', 100]]);
+  const noW = tracker.computeSubjectAllocation(plan, subjects, {});
+  assert.equal(noW.hasWeights, false);
+  assert.equal(allocOf(noW, 0, 'suba'), allocOf(noW, 0, 'subb'));
+  // 비중 선언됐으나 전부 0 → 잔여 비례 폴백으로 총량 보존
+  const zeroW = tracker.computeSubjectAllocation(plan, subjects, {
+    weightBySubject: { suba: 0, subb: 0 }
+  });
+  assert.equal(allocOf(zeroW, 0, 'suba') + allocOf(zeroW, 0, 'subb'), 50);
+  // 암기 완료 과목은 배정 0 — 나머지 과목이 전량 흡수
+  const done = tracker.computeSubjectAllocation(plan, subjects, {
+    memBySubject: { suba: 100 }, weightBySubject: { suba: 1, subb: 1 }
+  });
+  assert.equal(allocOf(done, 0, 'suba'), 0);
+  assert.equal(allocOf(done, 0, 'subb'), 50);
+});
+
+test('computeSubjectAllocation: plan·과목 없음 → null', () => {
+  assert.equal(tracker.computeSubjectAllocation(null, mkSubjects([['suba', 10]])), null);
+  assert.equal(tracker.computeSubjectAllocation(mkPlan(10), []), null);
+  assert.equal(tracker.computeSubjectAllocation({ weeks: [] }, mkSubjects([['suba', 10]])), null);
 });

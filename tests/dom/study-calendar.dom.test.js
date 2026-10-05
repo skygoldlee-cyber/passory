@@ -1,5 +1,5 @@
 // tests/dom/study-calendar.dom.test.js — 학습 캘린더·목표 시나리오
-// @spec SC-01,SC-02,SC-05,SC-06,SC-07,D-17
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,D-17
 // 설계: docs/dev/design/DOM_TEST_DESIGN.md §5.2 (Phase 4)
 // 검증: 캘린더 렌더(H) · 활동 기록→학습일 반영·목표 달성률(H/P) · 월 이동(H)
 //       · 목표 설정 저장→달성률 재계산(B/P) · 빈 달력(E)
@@ -20,16 +20,22 @@ vi.mock('../../src/views/navigation.js', async (importOriginal) => {
     return { ...actual, switchView: vi.fn() };
 });
 
+vi.mock('../../src/pro-upgrade.js', () => ({
+    proFeatureNotice: vi.fn(),
+    refreshProBadges: vi.fn(),
+}));
+
 import { showToast } from '../../src/ui-utils.js';
 import { switchView } from '../../src/views/navigation.js';
 import {
-    loadIndexHtml, el, resetStudyState, storedJson, seedStudyData,
+    loadIndexHtml, el, resetStudyState, storedJson, seedStudyData, stubRegistry,
 } from './helpers.js';
 import {
     renderStudyCalendar, prevCalendarMonth, nextCalendarMonth,
     openGoalSettings, saveGoalSettings, closeGoalSettings,
 } from '../../src/views/study-calendar.js';
 import { recordStudyActivity, getTodayStr, setExamDate, setStudyGoals } from '../../src/study-tracker.js';
+import { DataLoader } from '../../src/data-loader.js';
 import { safeSetItem } from '../../src/state.js';
 import { STORAGE_KEYS } from '../../src/storage-keys.js';
 
@@ -190,7 +196,7 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(card.textContent).toContain('남은 카드');
         expect(card.textContent).toContain('2장');
         expect(card.querySelector('.plan-tier-normal')).not.toBeNull();
-        expect(card.querySelectorAll('.plan-table tbody tr').length).toBe(2); // 2주차
+        expect(card.querySelectorAll('.plan-table:not(.plan-alloc-table) tbody tr').length).toBe(2); // 2주차
 
         // 목표 초과 페이스 → 등급 배지·권고 문구
         setStudyGoals({ dailyCards: 1 });
@@ -251,6 +257,35 @@ describe('학습 캘린더 — 렌더·기록·목표', () => {
         expect(again.length).toBe(0);
         // 나머지 마일스톤(d30)은 다음 렌더에 표시될 수 있음
         expect(showToast.mock.calls.length).toBeLessThanOrEqual(2);
+    });
+
+    it('과목별 가중 배분 — 이번 주 칩 + PRO 배지 + 주차 매트릭스 (SC-08)', () => {
+        stubRegistry([
+            { key: 'suba', name: '과목A', cards: Array.from({ length: 40 }, (_, i) => ({ id: `suba_card_${i}` })) },
+            { key: 'subb', name: '과목B', cards: Array.from({ length: 40 }, (_, i) => ({ id: `subb_card_${i}` })) },
+        ]);
+        DataLoader.registry.exams = [
+            { subject: 'suba', stats: { questions: 100 } },
+            { subject: 'subb', stats: { questions: 300 } },
+        ];
+        const d = new Date();
+        d.setDate(d.getDate() + 14);
+        setExamDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+        renderStudyCalendar();
+
+        const alloc = el('study-calendar-content').querySelector('.plan-alloc');
+        expect(alloc).not.toBeNull();
+        expect(alloc.textContent).toContain('이번 주 과목별 목표');
+        // 비중 1:3 → 과목B 배정이 과목A보다 큼
+        const chips = [...alloc.querySelectorAll('.alloc-chip')].map(c => c.textContent);
+        expect(chips.some(t => t.includes('과목A'))).toBe(true);
+        expect(chips.some(t => t.includes('과목B'))).toBe(true);
+        const num = (t) => parseInt(t.replace(/\D/g, ''), 10);
+        expect(num(chips.find(t => t.includes('과목B')))).toBeGreaterThan(num(chips.find(t => t.includes('과목A'))));
+        // PRO 배지 + 매트릭스
+        expect(alloc.querySelector('[data-pro-feature="study_plan_pro"]')).not.toBeNull();
+        expect(alloc.querySelector('.plan-alloc-detail')).not.toBeNull();
+        expect(alloc.querySelectorAll('.plan-alloc-table tbody tr').length).toBe(2); // D-14 → 2주차
     });
 
     it('목표 설정 모달 — 모바일 잘림 계약 (role=dialog + dialog-card + 실측 높이)', () => {

@@ -1,5 +1,5 @@
 // src/study-tracker.js — 학습 캘린더/목표 추적 헬퍼
-// @spec SC-03,SC-05,SC-06,SC-07,D-17
+// @spec SC-03,SC-05,SC-06,SC-07,SC-08,D-17
 // 학습 활동을 날짜별로 기록하고, 목표 달성률을 계산합니다.
 import { safeGetItem, safeSetItem } from './state.js';
 import { STORAGE_KEYS } from './storage-keys.js';
@@ -409,4 +409,97 @@ export function checkStudyMilestones({ remaining = 0, total = 0, limit = 2 } = {
             JSON.stringify(seen.concat(shown.map(m => m.id)).slice(-100)));
     }
     return shown;
+}
+
+/* =======================================================
+   📚 과목별 가중 배분 (SC-08 — study_plan_pro)
+   ======================================================= */
+
+/** 약점 가중 최소 퀴즈 표본 — 미만이면 중립 가중 1.0 (가짜 정밀도 방지) */
+export const MIN_ALLOC_SAMPLE = 20;
+
+/**
+ * 한 주 총량을 과목별 수요 비례로 배분 — 워터필링(잔여 상한 + 초과 재배분).
+ * @param {Array} rows {remaining, weakW, weight} 과목 행
+ * @param {Array<number>} remNow 주차 누적 기준 현재 잔여 (in-place 감소)
+ * @param {number} total 이번 주 배정 총량
+ */
+function _allocWeek(rows, remNow, total) {
+    const alloc = rows.map(() => 0);
+    let pool = Math.max(0, total);
+    for (let iter = 0; iter < rows.length && pool > 0; iter++) {
+        const cand = rows.map((r, i) => {
+            const cap = remNow[i] - alloc[i];
+            return { i, cap, demand: cap > 0 ? cap * r.weight * r.weakW : 0 };
+        }).filter(c => c.cap > 0);
+        if (!cand.length) break;
+        let dsum = cand.reduce((s, c) => s + c.demand, 0);
+        // 수요가 전부 0(비중 미선언·잔여만 존재)이면 잔여 비례로 폴백
+        if (dsum === 0) { cand.forEach(c => { c.demand = c.cap; }); dsum = cand.reduce((s, c) => s + c.demand, 0); }
+        let consumed = 0;
+        cand.forEach(c => {
+            const give = Math.min(c.cap, Math.floor(pool * c.demand / dsum));
+            alloc[c.i] += give;
+            consumed += give;
+        });
+        pool -= consumed;
+        if (consumed === 0) {
+            // 모든 몫이 0이면 pool < 후보 수 — 잔량을 순환 배분해 교착 해소
+            for (const c of cand) {
+                if (pool <= 0) break;
+                alloc[c.i] += 1;
+                pool -= 1;
+            }
+        }
+    }
+    return alloc;
+}
+
+/**
+ * 과목별 가중 배분 계획 (SC-08) — 주차 총량을
+ *   수요_i = 잔여_i × 출제비중_i × 약점가중_i   비례로 배분한다.
+ * 약점가중 = 퀴즈 표본 ≥ MIN_ALLOC_SAMPLE 이면 (2 − 정답률) [1.0~2.0], 미만이면 1.0.
+ * 주차를 순차 배정해 과목 조기 완료가 다음 주 배분에 자동 반영된다.
+ * @param {Object|null} plan computeStudyPlan() 결과
+ * @param {Array} subjects 과목 메타 — [{key, name, stats:{cards, targetCards?}}]
+ * @param {Object} [opts]
+ * @param {Object} [opts.memBySubject] {key: 암기 카드 수}
+ * @param {Object} [opts.quizBySubject] {key: {solved, correct}}
+ * @param {Object} [opts.weightBySubject] {key: 출제 문항 수} — 미선언 시 균등
+ * @returns {Object|null}
+ *   { weeks:[{week, range, total, alloc:[{key, name, cards, remaining}]}],
+ *     thisWeek, hasWeights }
+ */
+export function computeSubjectAllocation(plan, subjects, opts = {}) {
+    if (!plan || !plan.weeks || !plan.weeks.length) return null;
+    const list = (subjects || []).filter(s => s && s.key);
+    if (!list.length) return null;
+    const mem = opts.memBySubject || {};
+    const quiz = opts.quizBySubject || {};
+    const wBySubj = opts.weightBySubject || {};
+    const hasWeights = Object.keys(wBySubj).length > 0;
+    const rows = list.map(s => {
+        const stats = (s && s.stats) || {};
+        const total = stats.targetCards > 0 ? Math.min(stats.cards || 0, stats.targetCards) : (stats.cards || 0);
+        const q = quiz[s.key] || { solved: 0, correct: 0 };
+        return {
+            key: s.key,
+            name: s.name || s.key,
+            remaining: Math.max(0, total - (mem[s.key] || 0)),
+            weight: hasWeights ? (wBySubj[s.key] || 0) : 1,
+            weakW: (q.solved >= MIN_ALLOC_SAMPLE && q.solved > 0) ? Math.max(0.1, 2 - q.correct / q.solved) : 1.0
+        };
+    });
+    const remNow = rows.map(r => r.remaining);
+    const weeks = plan.weeks.map(w => {
+        const counts = _allocWeek(rows, remNow, w.cards);
+        counts.forEach((c, i) => { remNow[i] -= c; });
+        return {
+            week: w.week,
+            range: w.range,
+            total: w.cards,
+            alloc: rows.map((r, i) => ({ key: r.key, name: r.name, cards: counts[i], remaining: r.remaining }))
+        };
+    });
+    return { weeks, thisWeek: weeks[0], hasWeights };
 }

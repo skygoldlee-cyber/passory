@@ -1,6 +1,8 @@
 // src/views/study-calendar.js — 학습 캘린더/목표 뷰
-// @spec SC-01,SC-02,SC-05,SC-06,SC-07,D-17
-import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+// @spec SC-01,SC-02,SC-05,SC-06,SC-07,SC-08,D-17
+import { getStudyCalendar, getStudyGoals, setStudyGoals, getTodayGoalProgress, getWeeklyGoalProgress, getMonthlyStudyDays, getTodayStr, getExamDate, setExamDate, getDDay, getExamLeadStatus, computeStudyPlan, computePlanAdherence, checkStudyMilestones, computeSubjectAllocation, MIN_EXAM_LEAD_DAYS } from '../study-tracker.js';
+import { proFeatureNotice, refreshProBadges } from '../pro-upgrade.js';
+import { trackAction } from '../usage-stats.js';
 import { localDateKey } from '../utils.js';
 import { showToast } from '../ui-utils.js';
 import { STORAGE_KEYS } from '../storage-keys.js';
@@ -124,6 +126,18 @@ export function renderStudyCalendar() {
         </div>
     `;
 
+    // SC-08 과목별 배분 — Pro 표기 배지·1회 안내 + 매트릭스 사용 계측
+    const allocDetail = /** @type {HTMLDetailsElement|null} */ (container.querySelector('.plan-alloc-detail'));
+    if (container.querySelector('.plan-alloc')) {
+        refreshProBadges(container);
+        proFeatureNotice('study_plan_pro', '과목별 학습 계획');
+    }
+    if (allocDetail) {
+        allocDetail.addEventListener('toggle', () => {
+            if (allocDetail.open) trackAction('study_plan_pro');
+        });
+    }
+
     // SC-07 학습 마일스톤 — 새로 도달한 임계점을 1회성 토스트로 안내
     _showStudyMilestones();
 }
@@ -194,6 +208,7 @@ function _studyPlanHtml() {
             <div class="plan-adh-bar"><span style="width:${Math.min(100, adh.percent)}%"></span></div>
             <div class="plan-adh-msg">${adhMsg}</div>
         </div>` : '';
+    const allocHtml = _subjectAllocHtml(plan);
     const rows = plan.weeks.slice(0, 12).map(w => `
                 <tr><td>${w.week}주차</td><td>${w.range}</td><td>${w.cards}장</td><td>${w.cumulative}장 (${w.percent}%)</td></tr>`).join('');
     const more = plan.weeks.length > 12
@@ -207,6 +222,7 @@ function _studyPlanHtml() {
             <div class="plan-summary-row"><span>설정 목표</span><strong>카드 ${plan.goals.dailyCards}장 · 퀴즈 ${plan.goals.dailyQuizzes}문/일</strong></div>
         </div>
         ${adhHtml}
+        ${allocHtml}
         ${advice ? `<p class="plan-note plan-warn">${advice}</p>` : ''}
         ${plan.tier === 'done' ? '<p class="plan-note">남은 카드가 없습니다 — 복습과 모의고사로 실력을 유지하세요.</p>' : `
         <table class="plan-table">
@@ -214,6 +230,69 @@ function _studyPlanHtml() {
             <tbody>${rows}${more}</tbody>
         </table>`}
     </div>`;
+}
+
+/** SC-08 이번 주 과목별 목표 — 잔여×출제 비중×약점 가중 배분 (study_plan_pro 표기) */
+function _subjectAllocHtml(plan) {
+    if (!plan || plan.tier === 'done') return '';
+    let subjects = [];
+    if (typeof DataLoader !== 'undefined' && DataLoader.registry) {
+        subjects = DataLoader.getSubjectList();
+    } else if (typeof window !== 'undefined' && window.STUDY_DATA) {
+        const sd = window.STUDY_DATA;
+        subjects = Object.keys(sd).map(k => ({
+            key: k,
+            name: (sd[k] && sd[k].name) || k,
+            stats: { cards: (sd[k].cards || []).length }
+        }));
+    }
+    const mem = {};
+    const quiz = {};
+    const weights = {};
+    (state.memorizedCards || []).forEach(id => {
+        const m = id.match(/^([a-z]+)_card_/);
+        if (m) mem[m[1]] = (mem[m[1]] || 0) + 1;
+    });
+    Object.keys(state.quizResults || {}).forEach(id => {
+        const m = id.match(/^([a-z]+)_quiz_/);
+        if (m) {
+            quiz[m[1]] = quiz[m[1]] || { solved: 0, correct: 0 };
+            quiz[m[1]].solved++;
+            if (state.quizResults[id].correct) quiz[m[1]].correct++;
+        }
+    });
+    if (typeof DataLoader !== 'undefined' && DataLoader.registry) {
+        (DataLoader.registry.exams || []).forEach(ex => {
+            if (ex && ex.subject) weights[ex.subject] = (weights[ex.subject] || 0) + ((ex.stats && ex.stats.questions) || 0);
+        });
+    }
+    const alloc = computeSubjectAllocation(plan, subjects,
+        { memBySubject: mem, quizBySubject: quiz, weightBySubject: weights });
+    if (!alloc) return '';
+    const chips = alloc.thisWeek.alloc.map(a => a.remaining === 0
+        ? `<span class="alloc-chip alloc-done">${a.name} 완료</span>`
+        : `<span class="alloc-chip">${a.name} ${a.cards}장</span>`).join('');
+    const cols = alloc.thisWeek.alloc.map(a => `<th>${a.name}</th>`).join('');
+    const mrows = alloc.weeks.slice(0, 12).map(w =>
+        `<tr><td>${w.week}주차</td>${w.alloc.map(a => `<td>${a.cards}</td>`).join('')}</tr>`).join('');
+    const more = alloc.weeks.length > 12
+        ? `<tr><td colspan="${alloc.thisWeek.alloc.length + 1}" class="plan-more">… 이후 ${alloc.weeks.length - 12}주</td></tr>` : '';
+    return `
+        <div class="plan-alloc">
+            <div class="plan-alloc-head">
+                <span>이번 주 과목별 목표</span>
+                <span class="pro-badge" data-pro-feature="study_plan_pro">PRO</span>
+            </div>
+            <div class="plan-alloc-chips">${chips}</div>
+            <p class="plan-alloc-basis">${alloc.hasWeights ? '배정 근거: 잔여량 × 출제 비중 × 약점 정답률 가중' : '배정 근거: 잔여량 × 약점 정답률 가중 (출제 비중 미선언 — 균등 배분)'}</p>
+            <details class="plan-alloc-detail">
+                <summary>주차별 배분 표 펼치기</summary>
+                <table class="plan-table plan-alloc-table">
+                    <thead><tr><th>주차</th>${cols}</tr></thead>
+                    <tbody>${mrows}${more}</tbody>
+                </table>
+            </details>
+        </div>`;
 }
 
 function _renderCalendarDays() {
