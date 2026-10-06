@@ -221,7 +221,7 @@
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) rotate(-30deg);
+        transform: translate(-50%, -50%) rotate(-45deg);
         font-size: 32pt;
         font-weight: 800;
         letter-spacing: 0.06em;
