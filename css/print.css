@@ -241,7 +241,6 @@
         border-collapse: separate;
         border-spacing: 0;
         border-top: 1px solid var(--print-border-strong);
-        border-left: 1px solid var(--print-border-strong);
         /* clone: 페이지 분할 시 상단선이 첫 조각에만 그려지는 것 방지 —
            각 페이지 조각의 표 상단에 테두리 박스를 복제해 "열린 표" 방지 */
         box-decoration-break: clone;
@@ -270,6 +269,15 @@
         padding: 4pt 6pt;
         text-align: left;
         vertical-align: top;
+    }
+
+    /* 왼쪽 세로선은 표 박스가 아니라 각 행의 첫 셀이 그림 — 표 박스의
+       border-left는 clone으로 조각 끝까지 그려져 분할 페이지에서 마지막 행
+       아래로 꼬리가 삐져나옴 (오른쪽 선이 마지막 셀 border-right로 그려지는
+       것과 같은 원리 — border-spacing:0이라 행별 선이 연속 세로선 형성) */
+    #formula-print-area .fp-table th:first-child,
+    #formula-print-area .fp-table td:first-child {
+        border-left: 1px solid var(--print-border-strong);
     }
 
     #formula-print-area .fp-table th {

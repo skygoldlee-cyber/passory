@@ -417,3 +417,14 @@ test('print.css — fp-doc 페이지 여백이 매뉴얼과 동일 규약 (10mm 
   // clone: 패딩을 페이지 조각마다 반복해 연속 페이지 상하 여백 유지
   assert.match(css, /\.fp-doc\s*\{[^}]*box-decoration-break:\s*clone/, '페이지 조각별 여백 반복');
 });
+
+test('print.css — fp-table 좌측선은 첫 셀 경계로 그림 (조각 꼬리 방지)', () => {
+  const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+  const css = readFileSync(join(ROOT, 'css', 'print.css'), 'utf-8');
+  const tableRule = css.match(/\.fp-table\s*\{([^}]*)\}/);
+  assert.ok(tableRule, 'fp-table 규칙 존재');
+  // 표 박스 border-left는 clone 조각 끝까지 그려져 마지막 행 아래로 꼬리가 생김 → 금지
+  assert.ok(!/border-left/.test(tableRule[1]), 'fp-table에 border-left 없음');
+  // 좌측선은 각 행의 첫 셀이 그려 행 단위로 끝남 (페이지 조각과 무관)
+  assert.match(css, /\.fp-table\s+(?:th|td):first-child/, '첫 셀 border-left 규칙 존재');
+});

@@ -6,6 +6,12 @@
 > **문서 ID**: DOC-DEV-03
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-06 인쇄 표 페이지 분할 시 좌측 세로선 꼬리 수정
+
+- **문제**: 종합 보고서 등 `.fp-table`이 페이지를 넘길 때 좌측 세로선이 마지막 행보다 아래로 삐져나와 출력 — 표 박스의 `border-left`가 `box-decoration-break: clone`으로 각 조각 끝까지 그려지는데, 조각 끝이 마지막 행 하단보다 아래에 잡혀 6.7pt(≈2.4mm) 꼬리 발생 (우측선은 셀 `border-right`라 행과 정확히 일치 → 좌우 비대칭)
+- **수정**: `print.css` — `.fp-table`의 `border-left` 제거, 대신 `th:first-child`·`td:first-child`에 `border-left` 부여 (우측선과 같은 행 단위 그리기 — `border-spacing:0`이라 행별 선이 연속 세로선 형성). 상단선은 표 `border-top`+clone 유지
+- **검증**: 실제 종합 보고서 `collectAuditReportData`→`buildAuditReportHtml` 경로로 Playwright PDF 생성 후 pdfplumber 실측 — 수정 전 1p 좌측선 하단 814.5pt(표 하단 +6.7pt 꼬리) → 수정 후 807.7pt로 우측선·마지막 행과 일치. 회귀 테스트 +1건 (fp-table border-left 부재·첫 셀 규칙 존재 정적 검증)
+
 ## 2026-10-06 실무 출력물 좌우 여백 매뉴얼과 통일
 
 - **문제**: 종합 점검 보고서 등 `.fp-doc` 계열 출력물의 좌우 여백이 `max-width:96%`로 약 4.2mm — 매뉴얼 인쇄(8mm)와 불일치
