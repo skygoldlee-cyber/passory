@@ -9,7 +9,7 @@
 
 import { STORAGE_KEYS } from './storage-keys.js';
 import { safeGetItem, safeSetItem } from './state.js';
-import { esc } from './sanitize.js';
+import { html, raw } from './sanitize.js';
 import { trapFocus } from './ui-utils.js';
 import { todayKey, localDateTime } from './utils.js';
 
@@ -127,9 +127,9 @@ export async function showUsageStats() {
     } catch (e) { titles = {}; }
 
     const viewRows = Object.entries(d.views).sort((a, b) => b[1] - a[1])
-        .map(([id, n]) => `<tr><td>${esc((titles[id] && titles[id].title) || id)}</td><td class="usage-num">${n}회</td></tr>`).join('');
+        .map(([id, n]) => html`<tr><td>${(titles[id] && titles[id].title) || id}</td><td class="usage-num">${n}회</td></tr>`);
     const actionRows = Object.entries(d.actions).sort((a, b) => b[1] - a[1])
-        .map(([k, n]) => `<tr><td>${esc(ACTION_LABELS[k] || k)}</td><td class="usage-num">${n}회</td></tr>`).join('');
+        .map(([k, n]) => html`<tr><td>${ACTION_LABELS[k] || k}</td><td class="usage-num">${n}회</td></tr>`);
     const totalActions = Object.values(d.actions).reduce((s, n) => s + n, 0);
     const valueTotal = Object.entries(d.actions)
         .filter(([k]) => VALUE_ACTIONS.has(k)).reduce((s, [, n]) => s + n, 0);
@@ -140,19 +140,19 @@ export async function showUsageStats() {
     const overlay = document.createElement('div');
     overlay.id = 'usage-stats-overlay';
     overlay.className = 'app-confirm-overlay';
-    overlay.innerHTML = `
+    overlay.innerHTML = html`
         <div class="app-confirm-dialog dialog-card pro-upgrade-dialog" role="alertdialog" aria-modal="true" aria-labelledby="usage-stats-title">
             <h3 id="usage-stats-title">📊 내 사용 통계</h3>
             <div class="pro-upgrade-benefits">
                 <ul>
                     <li>첫 사용: <strong>${_fmtDate(d.firstUse)}</strong> · 최근 사용: <strong>${_fmtDate(d.lastUse)}</strong></li>
                     <li>학습 활동 일수: <strong>${activeDays}일</strong> · 기능 사용 합계: <strong>${totalActions}회</strong></li>
-                    <li>Pro 후보 기능 사용: <strong>${valueTotal}/${PRO_VALUE_THRESHOLD}회</strong>${valueTotal >= PRO_VALUE_THRESHOLD ? ' — 유료가치 판정 <strong>충족</strong>' : ''}</li>
+                    <li>Pro 후보 기능 사용: <strong>${valueTotal}/${PRO_VALUE_THRESHOLD}회</strong>${valueTotal >= PRO_VALUE_THRESHOLD ? raw(' — 유료가치 판정 <strong>충족</strong>') : ''}</li>
                 </ul>
             </div>
-            ${viewRows ? `<h4 class="usage-stats-sub">화면별 사용</h4><table class="usage-stats-table">${viewRows}</table>` : ''}
-            ${actionRows ? `<h4 class="usage-stats-sub">기능별 사용</h4><table class="usage-stats-table">${actionRows}</table>` : ''}
-            ${!viewRows && !actionRows ? '<p>아직 기록된 사용 데이터가 없습니다.</p>' : ''}
+            ${viewRows.length ? html`<h4 class="usage-stats-sub">화면별 사용</h4><table class="usage-stats-table">${viewRows}</table>` : ''}
+            ${actionRows.length ? html`<h4 class="usage-stats-sub">기능별 사용</h4><table class="usage-stats-table">${actionRows}</table>` : ''}
+            ${!viewRows.length && !actionRows.length ? html`<p>아직 기록된 사용 데이터가 없습니다.</p>` : ''}
             <p class="usage-stats-note">이 데이터는 이 기기에만 저장되며 외부로 전송되지 않습니다.</p>
             <div class="app-confirm-btns">
                 <button type="button" class="btn btn-secondary app-confirm-cancel" data-reset-usage>초기화</button>

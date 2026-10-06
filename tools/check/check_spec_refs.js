@@ -29,6 +29,7 @@
  *     ※ SPEC 상태가 '미구현'/'보류'인 ID는 로드맵 항목으로 공백에서 제외 —
  *        구현 시작 시 상태를 바꾸면 자동으로 커버리지 추적 대상이 된다
  */
+
 const fs = require('fs');
 const path = require('path');
 const T = require('../lib/trace_scan');
@@ -46,6 +47,16 @@ const TEST_GAP_BASELINE = 0;
 // e2e @spec을 추가해 갭을 줄였다면 이 수치를 함께 낮춘다.
 const UIUX_PREFIX_RE = /^(?:UX-|TR-|R-|TH-|A-)/;
 const UIUX_E2E_GAP_BASELINE = 1; // UX-VFY-06 (정적 체커 규약형 — e2e 실측 대상 아님)
+
+// 절차·규약형 요구사항 — 코드 참조 지점이 존재하지 않아 커버리지 공백 경고에서 제외.
+// 각 ID의 강제 지점(문서·절차·자기 구현)을 사유와 함께 명시한다.
+//   UX-VFY-01 (SPEC 선행)   — AGENTS.md "Docs-First" 절 + check:testfirst 기계 강제
+//   UX-VFY-03 (E2E 회귀 금지) — 본 스크립트의 UIUX_E2E_GAP_BASELINE 게이트가 구현체
+//                             (자기 스캔 제외 EXCLUDE_FILES — 태그 스캔은 불가)
+//   UX-VFY-04 (실측 기록)   — UIUX_VERIFY_RUNBOOK 절차 + CHANGES.md 기록 관행
+//   UX-VFY-05 (실기기 확인) — UIUX_VERIFY_RUNBOOK·배포 절차로 강제
+//   PF-17 (CWV 목표)        — 랩 측정(Lighthouse) 목표·조건 선언 — 코드 게이트 아님
+const PROCESS_ONLY_IDS = new Set(['UX-VFY-01', 'UX-VFY-03', 'UX-VFY-04', 'UX-VFY-05', 'PF-17']);
 
 // @spec 태그 강제 디렉터리 — 이 아래 모든 스캔 대상 파일에 최소 1개 @spec 태그 필요
 // (`@spec none`으로 의도적 미커버 명시 가능). tools/_archive·ref-pipeline은
@@ -120,7 +131,7 @@ function main() {
   const PLANNED_RE = /미구현|보류/;
   const unreferenced = [...specIds].filter((id) => !refs.has(id));
   const planned = unreferenced.filter((id) => PLANNED_RE.test(specStatus.get(id) || '')).sort();
-  const uncovered = unreferenced.filter((id) => !PLANNED_RE.test(specStatus.get(id) || '')).sort();
+  const uncovered = unreferenced.filter((id) => !PLANNED_RE.test(specStatus.get(id) || '') && !PROCESS_ONLY_IDS.has(id)).sort();
 
   console.log('SPEC ID 추적 검증');
   console.log(`  SPEC.md 선언 ID: ${specIds.size}개`);

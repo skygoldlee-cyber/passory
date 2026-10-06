@@ -19,7 +19,8 @@ import {
     loadIndexHtml, el,
     seedStudyData, seedProgress, resetStudyState, flushAsync,
 } from './helpers.js';
-import { updateGlobalStats, renderDashboard, renderAnalysisView, gotoSubjectAnalysis } from '../../src/views/dashboard.js';
+import { updateGlobalStats, renderDashboard } from '../../src/views/dashboard.js';
+import { renderAnalysisView, gotoSubjectAnalysis } from '../../src/views/analysis-view.js';
 import { setExamDate, setStudyGoals } from '../../src/study-tracker.js';
 import { state } from '../../src/state.js';
 import { STORAGE_KEYS } from '../../src/storage-keys.js';

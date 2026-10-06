@@ -60,6 +60,7 @@ npm.cmd run check:adlint                # 광고 문구 사전 커버리지 감�
 # 전체 점검 (단일 진입점 — lint·types·html·docs + check:content 전 단계)
 npm.cmd run check:all                    # 저장소 전체 검증 일괄 실행
 npm.cmd run check:all:quick              # DOM 테스트 생략 빠른 점검 (check:all -- --quick 은 플래그 미전달로 동작 안 함)
+npm.cmd run check:all:e2e                # 전체 점검 + E2E 실브라우저 (배포 전 완전 검증 — serve 자동 기동, 시간 소요)
 npm.cmd run check:ci                     # CI 게이트 로컬 재현 — lint·types·imports·docs·docsync·specrefs·trace·html·content-only·unit·assets·parser (coverage·E2E·audit는 CI 전용)
 
 # 콘텐츠 통합 검증 (교재 교체 등 대규모 콘텐츠 변경 후)
@@ -244,7 +245,7 @@ src/                    # ES Modules
         formula-audit.js    # 종합 규정 점검 보고서 수집기 (FO-56, 유형별 게이트)
         formula-print.js    # 인쇄 빌더 (조제 기록지·라벨·안내문·종합 보고서)
         trainer-ingredients.js # 원료 배합 챌린지 (features.ingredients)
-  views/                # 뷰 컨트롤러 (33개)
+  views/                # 뷰 컨트롤러 (36개)
     navigation.js       # 뷰 전환 유틸 (switchView)
     textbook-reader.js  # 교재 리더 (본문 + 참조자료)
     reader-ref-links.js # 참조자료 링크 생성·프리뷰·클릭 위임 (textbook-reader.js에서 분리)
@@ -255,7 +256,10 @@ src/                    # ES Modules
     quiz-wrong-cause.js # 오답 원인 태깅·재학습 액션 (quiz.js에서 분리)
     flashcard.js        # 3D 플래시카드
     daily-challenge.js  # 데일리 챌린지
-    dashboard.js        # 대시보드 + 맞춤학습 뷰 (통계·히트맵·개인화 진단 카드)
+    dashboard.js        # 대시보드 뷰 (과목 카드·통계·히트맵·추천)
+    analysis-view.js    # 맞춤학습 뷰 (개인화 진단 카드·주간 리포트, dashboard.js에서 분리)
+    score-estimate.js   # 복합 예상 점수·실제 결과 기록 (dashboard.js에서 분리)
+    subject-stats.js    # 과목별 진행 통계 집계 공용 헬퍼 (dashboard.js에서 분리)
     trainer.js          # 스마트 훈련소 허브 (재수출)
     trainer-calc-practice.js  # 계산 연습기
     trainer-drills.js   # O/X 드릴 + 드릴 공통 오케스트레이션

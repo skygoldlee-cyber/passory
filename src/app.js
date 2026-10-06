@@ -22,17 +22,21 @@ import { setupModalBackHandler } from './modal-back.js';
 import {
     updateGlobalStats,
     refreshDashboardStatsInBackground,
-    renderDashboard,
+    renderDashboard
+} from './views/dashboard.js';
+import {
     renderAnalysisView,
     startSubjectStudy,
     startSubjectQuiz,
     startSubjectReader,
     startDueReview,
-    saveActualExamResult,
-    editActualExamResult,
     exportAnalysisReport,
     gotoSubjectAnalysis
-} from './views/dashboard.js';
+} from './views/analysis-view.js';
+import {
+    saveActualExamResult,
+    editActualExamResult
+} from './views/score-estimate.js';
 import {
     loadFlashcards,
 } from './views/flashcard.js';

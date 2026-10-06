@@ -31,7 +31,7 @@ const SRC_DIR = path.join(ROOT, 'src');
 
 // 기존 수작업 esc() 사이트의 승계 상한 — 신규 위반 유입 시 초과로 실패.
 // html`` 이관으로 줄이면 이 수치도 함께 낮춘다.
-const ESCAPE_GAP_BASELINE = 86;
+const ESCAPE_GAP_BASELINE = 78;
 
 // 보간 식이 안전한 것으로 인정되는 시작 패턴
 const SAFE_START_RE = /^\s*(?:esc|escapeHTML|safeTextWithBreaks|stripTags|raw)\s*\(|^html\s*`/;

@@ -208,7 +208,7 @@ export function computeWeeklyGrowth(calendar) {
  * @param {{expected:number}|null} p.estimate estimateExpectedScore 결과 (없으면 갭 계산 생략)
  * @param {Array} p.simHistory 모의고사 이력 (subjectRates 보유)
  * @param {Array<{key:string,name:string}>} p.subjects 과목 메타
- * @param {Object} p.counts 과목별 학습 카운트 (_getSubjCounts 결과)
+ * @param {Object} p.counts 과목별 학습 카운트 (getSubjCounts 결과)
  * @param {{passAverage:number,subjectFailBelow:number}} p.rules getExamRules()
  * @returns {{gap:number|null, passLine:number, weakest:{key:string,name:string,rate:number,reason:string}|null}|null}
  */

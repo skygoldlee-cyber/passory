@@ -6,7 +6,7 @@ import { switchView } from './navigation.js';
 import { getWrongCauseLabels, getWrongCauseAdvice } from '../recommendations.js';
 import { weakItemKey, resolveWrongQuiz, subjectForWeakItem } from '../weak-items.js';
 import { trackAction } from '../usage-stats.js';
-import { startSubjectReader } from './dashboard.js';
+import { startSubjectReader } from './analysis-view.js';
 import { shuffle } from '../utils.js';
 import { showToast } from '../ui-utils.js';
 import { _beginQuizRun, renderQuizResult } from './quiz.js';

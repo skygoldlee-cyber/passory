@@ -29,7 +29,7 @@ vi.mock('../../../../src/exams/cosmetic/product-vision.js', async (importActual)
 
 import { showToast, showConfirm } from '../../../../src/ui-utils.js';
 import {
-    loadIndexHtml, el, isVisible, selectFile, flushAsync, lastToast, spyAnchorDownload,
+    loadIndexHtml, el, isVisible, selectFile, flushAsync, waitFor, lastToast, spyAnchorDownload,
 } from '../../helpers.js';
 import { invalidateIngredientIndex } from '../../../../src/exams/cosmetic/views/formula.js';
 import {
@@ -328,7 +328,8 @@ describe('기성품 DB — 목록·등록·상세 분석', () => {
             product: { name: '가져온크림', brand: 'B사', ingredients: ['정제수', '살리실산'] },
         });
         selectFile('product-file-input', new File([payload], 'p.json', { type: 'application/json' }));
-        await flushAsync();
+        // FileReader onload 완료 시점은 부하에 따라 변동 — 고정 ms 대신 결과 조건을 폴링
+        await waitFor(() => listProducts().length === 1);
 
         expect(listProducts().length).toBe(1);
         expect(listProducts()[0].name).toBe('가져온크림');

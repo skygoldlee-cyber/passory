@@ -105,6 +105,9 @@ const SHELL_ASSETS = [
   './src/whats-new.js',
   './src/feedback.js',
   './src/views/dashboard.js',
+  './src/views/analysis-view.js',
+  './src/views/score-estimate.js',
+  './src/views/subject-stats.js',
   './src/views/flashcard.js',
   './src/views/quiz.js',
   './src/views/trainer.js',
@@ -163,8 +166,10 @@ const SHELL_ASSETS = [
   './vendor/fonts/outfit-400.woff2',
   './vendor/fonts/outfit-600.woff2',
   './vendor/fonts/outfit-800.woff2',
-  // Noto Color Emoji (이모지 렌더링 통일: PC/모바일 동일)
-  './vendor/fonts/noto-color-emoji-400.woff2',
+  // Noto Color Emoji (이모지 렌더링 통일) — 5.4MB 단일 파일이라 프리캐시에서 제외.
+  //   font-display: swap + CSS가 필요 시점에만 요청하므로 설치 페이로드를 절반으로 줄인다.
+  //   최초 요청 시 fetch 규칙 6(SWR)이 SHELL_CACHE에 저장 → 이후 오프라인에서도 사용 가능.
+  //   캐시 전 첫 방문·오프라인 시 신기기는 시스템 이모지로 폴백 (기능 영향 없음).
   // Mermaid(3.3MB) — 매뉴얼/교재 리더의 다이어그램 렌더링에 필요.
   //   온디맨드 로드이지만 PWA 오프라인 환경에서도 다이어그램이 표시되도록 프리캐시에 포함.
   './vendor/mermaid/mermaid.min.js'

@@ -127,7 +127,7 @@
 | D-14 | 실제 시험 결과 자가 보고 (`actual_exam_result`) — D-day 경과 시 진단 카드에 입력 폼, 기록 후 예상 대비 오차 표시. 예측 보정 데이터 수집 경로 | ✅ |
 | D-15 | 대시보드 추천 카드에서 "맞춤학습 보기" 버튼으로 `analysis-view` 연결 (퍼널) — 상세 분석(과목 카드·히트맵·모의고사 차트)은 맞춤학습 뷰로 분리됨 | ✅ |
 | D-16 | 과목별 마스터리 레벨 — 판정 진술 중 졸업(연속 정답 3회, DR-03) 비율을 과목별로 집계해 과목 카드에 Lv.1~5 표시 (`computeMasteryLevels`, 데이터 없으면 미표시) | ✅ |
-| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간 미만 시험일을 인라인 권고(`getExamLeadStatus`). 기준 일수는 manifest `study.minExamLeadDays` 우선, 미선언 시 콘텐츠 규모에서 유도 — `max(총카드÷50×1.4×1.5, 총퀴즈÷10)` 달력일 환산, 레지스트리 없으면 기본 50일 (`getMinExamLeadDays`, cosmetic 선언값 50일 근거: 1,123장 1회전 ~23학습일≈D-33 하한 + SM-2 마진 + 문제은행 445문÷10/일≈45일). 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
+| D-17 | 시험일 리드타임 권고 + 계획 등급 — 목표 설정 모달에서 최소 권장 준비 기간 미만 시험일을 인라인 권고(`getExamLeadStatus`). 기준 일수는 manifest `study.minExamLeadDays` 우선, 미선언 시 콘텐츠 규모에서 유도 — `max(총카드÷50×1.4×1.5, 총퀴즈÷10)` 달력일 환산, 레지스트리 없으면 기본 50일 (`getMinExamLeadDays`, cosmetic 선언값 50일 근거: 1,123장 1회전 ~23학습일≈시험 전 33일 하한 + SM-2 마진 + 문제은행 445문÷10/일≈45일). 역산 권장량÷일일 카드 목표 비율로 normal(≤1.0)/tight(≤2.0)/triage(>2.0) 판정해 대시보드 안내 분기(`getExamPlanStatus` — tight는 카드·퀴즈 병행 권장, triage는 출제 비중 최상위 과목 우선 권고) | ✅ |
 
 ### 3.1.5 맞춤학습 (Personal Analysis, `analysis-view`)
 
@@ -466,7 +466,7 @@
 | SC-04 | 스트릭 복구권 — 7일 연속 학습마다 1장 획득(최대 2장), 1일 결손 감지 시 자동 소비로 스트릭 유지 + 데일리 카드에 보유 수·이번 주 학습일 칩 표시 (`daily-challenge.js`) | ✅ |
 | SC-05 | 학습 계획 패널 — 시험일 설정 시 캘린더 뷰에 설정된 목표·잔여 카드·학습 가능 일수(주간 학습일 반영)·학습일당 필요량·주차별 마일스톤 표 + 계획 등급 배지(tight·triage 시 전략 권고) (`computeStudyPlan`, `study-calendar.js`) | ✅ |
 | SC-06 | 계획 대비 주간 진행률 — 주간 필요 카드량 대비 최근 7일 카드 실적 비율을 계획 패널에 진행률 바·상태 문구로 표시 (met/ontrack/behind, 부족 시 보충·목표 조정 권고) (`computePlanAdherence`) | ✅ |
-| SC-07 | 학습 마일스톤 인앱 안내 — D-30/14/7/1/0 진입·주간 계획 달성(주차 id)·전체 진도 50%/75% 도달 시 1회성 토스트, 표시 이력 `study_milestones_seen` 로컬 저장 (`evalStudyMilestones`·`checkStudyMilestones`) | ✅ |
+| SC-07 | 학습 마일스톤 인앱 안내 — 시험 전 30/14/7/1/0일 진입·주간 계획 달성(주차 id)·전체 진도 50%/75% 도달 시 1회성 토스트, 표시 이력 `study_milestones_seen` 로컬 저장 (`evalStudyMilestones`·`checkStudyMilestones`) | ✅ |
 | SC-08 | 스마트학습 — 과목별 가중 배분 계획: 주차 총량을 잔여 카드×출제 비중×약점 가중(퀴즈 표본 ≥20문 게이트, 미만 중립)으로 과목 배분, 워터필링 잔여 상한·재배분. 계획 패널에 이번 주 과목별 목표 칩 + 주차×과목 매트릭스 + `study_plan_pro` Pro 표기 (`computeSubjectAllocation`, STUDY_PLAN_PRO_DESIGN.md) | ✅ |
 | SC-09 | 스마트학습 보강 — ① 과목 칩에 주간 실적 표시(`N/배정`장, 캘린더 `bySubj` 과목별 카드 기록) ② 칩 클릭 시 해당 과목 카드 학습 바로가기(`startSubjectStudy`) ③ 약점 집중·출제 비중 근거 배지 ④ 약점 가중 확장: 최근 퀴즈 표본(`recentQuizBySubject`, 과목당 최근 60문) 우선 + 취약 카드 비율 가산(최대 +0.5, 상한 2.5) ⑤ 과목 키 해석을 `subjectKeyFromItemId`로 견고화 | ✅ |
 | SC-10 | 시험일 최우선 설정 안내 — 대시보드 통계 그리드 첫 카드로 D-day 카드를 배치하고, 시험일 미설정 시 `stat-card-attn`으로 강조 + "학습 계획의 시작점" 안내 + `지금 설정` 버튼을 표시 (`_examPlanDescHtml` 미설정 분기) | ✅ |

@@ -74,11 +74,12 @@ test('PF-06: span 제거가 수집 후 일괄 처리 + 부모당 normalize 1회�
 // ---------- PF-07: 대시보드 통계 O(1) ----------
 
 test('PF-07: 대시보드가 과목 카운트 맵을 캐시해 과목당 O(1) 조회한다', () => {
+  const s = read('src/views/subject-stats.js');
   const d = read('src/views/dashboard.js');
-  assert.ok(/_subjCountCache/.test(d), '카운트 맵 캐시');
-  assert.ok(/_subjCountCacheKey/.test(d), '캐시 키 무효화');
+  assert.ok(/_subjCountCache/.test(s), '카운트 맵 캐시');
+  assert.ok(/_subjCountCacheKey/.test(s), '캐시 키 무효화');
   // 과목 루프 내 재계산이 아닌 캐시 맵 조회
-  assert.ok(/const subjCounts = _getSubjCounts\(\)/.test(d), '캐시된 맵 조회');
+  assert.ok(/const subjCounts = getSubjCounts\(\)/.test(d), '캐시된 맵 조회');
 });
 
 // ---------- PF-08: 검색 인덱스 사전 구축 ----------

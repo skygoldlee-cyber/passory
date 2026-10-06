@@ -85,6 +85,21 @@ export async function flushAsync(ms = 10) {
     await new Promise(r => setTimeout(r, 0));
 }
 
+/**
+ * 조건이 충족될 때까지 폴링 대기 — FileReader 등 완료 시점이 불확실한 비동기에 사용.
+ * flushAsync의 고정 대기는 부하 상태에서 레이스를 유발하므로 결과 조건으로 대기한다.
+ * @param {() => boolean} predicate 충족 조건
+ * @param {number} [timeoutMs=2000]
+ * @param {number} [intervalMs=10]
+ */
+export async function waitFor(predicate, timeoutMs = 2000, intervalMs = 10) {
+    const deadline = Date.now() + timeoutMs;
+    while (!predicate()) {
+        if (Date.now() >= deadline) return;
+        await new Promise(r => setTimeout(r, intervalMs));
+    }
+}
+
 /** 모킹된 showToast의 마지막 호출 인자 [message, type] */
 export function lastToast() {
     const calls = vi.mocked(showToast).mock.calls;

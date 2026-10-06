@@ -1,5 +1,5 @@
 // tests/e2e/mobile-overflow.spec.js — 뷰포트 오버플로·클릭 차단 스윕 (잘림 게이트)
-// @spec UX-NAV-05,UX-NAV-10,UX-NAV-11,UX-FB-06,UX-SET-03
+// @spec UX-NAV-05,UX-NAV-10,UX-NAV-11,UX-FB-06,UX-SET-03,UX-VFY-02
 // 수평 오버플로·스크롤 불가 내부 클립·모달 액션 버튼 잘림·오버레이 가림은
 // 실제 레이아웃 계산이 필요해 jsdom 불가 — 실브라우저 계측으로만 검증한다 (UX-VFY-02).
 //
