@@ -13,14 +13,18 @@
 
 ### ① 프로젝트 전체를 처음 이해하는 경우 (신규 기여자)
 
+> **비개발자·기획자**는 먼저 [docs/dev/reference/PROJECT_STRUCTURE_TOUR.md](dev/reference/PROJECT_STRUCTURE_TOUR.md) — 그림 중심 입문 자료.
+> **초보 개발자**는 투어 다음에 [docs/dev/reference/CODE_READING_GUIDE.md](dev/reference/CODE_READING_GUIDE.md) — 부팅 시퀀스·위임 패턴·첫 변경 레시피.
+
 ```
 1. README.md (루트)          — 프로젝트 소개·기능·기술 스택·폴더 구조
 2. AGENTS.md (루트)          — 명령어·코드 규칙·검증 체크리스트 (작업 전 필수)
-3. docs/dev/ARCHITECTURE.md  — Local-First·ESM·DataLoader·SW 캐시·동기화 등 설계 결정
-4. docs/dev/SPEC.md          — 구현 완료된 기능의 요구사양 명세
-5. docs/dev/runbooks/CONTENT_WORKFLOW.md — 콘텐츠=SSOT, 빌드 파이프라인 개요
-6. docs/dev/reference/TESTING.md       — 유닛 687 + DOM 388 + E2E 16 테스트 구조
-7. docs/dev/CHANGES.md       — 변경 이력 (왜 바뀌었는지의 맥락)
+3. docs/dev/reference/CODE_READING_GUIDE.md — 앱이 켜지는 순서·클릭 위임·데이터 흐름·첫 변경 레시피
+4. docs/dev/ARCHITECTURE.md  — Local-First·ESM·DataLoader·SW 캐시·동기화 등 설계 결정
+5. docs/dev/SPEC.md          — 구현 완료된 기능의 요구사양 명세
+6. docs/dev/runbooks/CONTENT_WORKFLOW.md — 콘텐츠=SSOT, 빌드 파이프라인 개요
+7. docs/dev/reference/TESTING.md       — 유닛 687 + DOM 388 + E2E 16 테스트 구조
+8. docs/dev/CHANGES.md       — 변경 이력 (왜 바뀌었는지의 맥락)
 ```
 
 ### ② 교재·문제은행·참조자료 콘텐츠를 편집하는 경우
@@ -84,12 +88,13 @@ user/user_manual.md → 학습안내서(앱 내) → user/exam_strategy.md → u
 docs/
 ├── README.md                    ← 본 파일 (문서 인덱스 + 읽기 순서)
 ├── business/                    ← 사업 기획·시장 조사·마케팅 문서 (5개)
-├── dev/                         ← 개발 문서 (30개)
+├── dev/                         ← 개발 문서 (49개)
 │   ├── ARCHITECTURE.md·SPEC.md·CHANGES.md  ← 수위 문서 (아키텍처·명세·이력)
-│   ├── runbooks/              ← 실행 절차·운영 런북 (11개)
-│   ├── design/                ← 설계·계획·평가 문서 (11개)
-│   └── reference/             ← 명세·로직·참조 문서 (10개)
-├── user/                        ← 사용자/학습자 문서 (7개)
+│   ├── adr/                   ← 아키텍처 결정 기록 (4개 — README + ADR 3건)
+│   ├── runbooks/              ← 실행 절차·운영 런북 (13개)
+│   ├── design/                ← 설계·계획·평가 문서 (16개)
+│   └── reference/             ← 명세·로직·참조 문서 (13개)
+├── user/                        ← 사용자/학습자 문서 (5개)
 └── report_archive/              ← 분석 보고서 + 대체된 전략 문서 아카이브 (11개)
 ```
 
@@ -103,6 +108,9 @@ docs/
 |------|------|
 | [ARCHITECTURE.md](dev/ARCHITECTURE.md) | 시스템 아키텍처·설계 철학 — Local-First + 선택적 클라우드, ESM 구조, 데이터 흐름, PWA/SW 전략, 계정·동기화, UI 모드, Formula OS, 배포 파이프라인, 구현 레시피, 강건성 가이드라인 |
 | [SPEC.md](dev/SPEC.md) | 요구사양 명세서 — 구현된 기능을 역공학해 정리 (현행 기준서) |
+| [PROJECT_STRUCTURE_TOUR.md](dev/reference/PROJECT_STRUCTURE_TOUR.md) | 프로젝트 구조 투어 — 비개발자·기획자용 그림 중심 입문 (폴더 지도·데이터 파이프라인·멀티시험·품질 관문·용어 풀이) |
+| [CODE_READING_GUIDE.md](dev/reference/CODE_READING_GUIDE.md) | 코드 읽기 가이드 — 초보 개발자용 부팅 시퀀스·data-click 위임·저장소 2계층·첫 변경 레시피·게이트 치트시트 |
+| [FEATURE_MAP.md](dev/reference/FEATURE_MAP.md) | 기능→소스 지도 — "이 기능을 바꾸려면 어느 파일" 조회표 (도메인별 핵심 소스·관련 테스트·SPEC 접두사) |
 
 ### UI/UX 명세·검증
 
@@ -160,6 +168,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | [VERIFY_DEPLOY_PIPELINE.md](dev/runbooks/VERIFY_DEPLOY_PIPELINE.md) | 전체구조 점검→배포 게이트 파이프라인 — check:all/ci 구성, 생성물 신선도 게이트, 실패 복구 표 |
 | [MULTI_MACHINE_SETUP.md](dev/runbooks/MULTI_MACHINE_SETUP.md) | 다중 머신 개발 환경 — GitHub SSH, Vercel CLI 인증, Actions 자동 배포 |
 | [AUDIO_HOSTING_GUIDE.md](dev/runbooks/AUDIO_HOSTING_GUIDE.md) | 오디오북 호스팅·청취 아키텍처 — GitHub Releases 연동, 모바일 청취 동작 |
+| [REF_PDF_EXTERNALIZATION.md](dev/runbooks/REF_PDF_EXTERNALIZATION.md) | 참조자료 PDF(73MB) 외부 호스팅 이전 계획 — Releases + sha256 다운로더, 절차·주의사항 |
 | [Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md](dev/runbooks/Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md) | Supabase 운영 런북 — Custom SMTP(Gmail 앱 비밀번호)·Magic Link/OTP 템플릿·체크리스트 |
 | [CHANGES.md](dev/CHANGES.md) | 코드 변경 이력 (Changelog) — 변경의 이유와 맥락 |
 
@@ -253,6 +262,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | `DOC-DSN` | 설계·계획 | docs/dev/design/ |
 | `DOC-REF` | 명세·로직 참조 | docs/dev/reference/ |
 | `DOC-RBK` | 운영 런북·절차 | docs/dev/runbooks/ |
+| `DOC-ADR` | 아키텍처 결정 기록 | docs/dev/adr/ |
 | `DOC-USR` | 사용자 문서 | docs/user/ |
 | `DOC-BIZ` | 사업 문서 | docs/business/ |
 | `DOC-ARC` | 아카이브 | docs/report_archive/ |
@@ -283,6 +293,9 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-DSN-11 | `docs/dev/design/USER_FLOW.md` |
 | DOC-DSN-12 | `docs/dev/design/PRODUCT_DB_DESIGN.md` |
 | DOC-DSN-13 | `docs/dev/design/PRODUCT_VISION_DESIGN.md` |
+| DOC-DSN-14 | `docs/dev/design/AUDIT_REPORT_DESIGN.md` |
+| DOC-DSN-15 | `docs/dev/design/PRACTICAL_TOOLS_DESIGN.md` |
+| DOC-DSN-16 | `docs/dev/design/STUDY_PLAN_PRO_DESIGN.md` |
 | DOC-REF-01 | `docs/dev/reference/COMBO_STUDY_STRATEGY.md` |
 | DOC-REF-02 | `docs/dev/reference/DEV_ENVIRONMENT.md` |
 | DOC-REF-03 | `docs/dev/reference/FLASHCARD_LOGIC.md` |
@@ -293,6 +306,9 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-REF-08 | `docs/dev/reference/ENGINEERING_PRACTICES.md` |
 | DOC-REF-09 | `docs/dev/reference/SCREEN_MAP.md` |
 | DOC-REF-10 | `docs/dev/reference/SOFTWARE_ENGINEERING_TECHNIQUES.md` |
+| DOC-REF-11 | `docs/dev/reference/PROJECT_STRUCTURE_TOUR.md` |
+| DOC-REF-12 | `docs/dev/reference/CODE_READING_GUIDE.md` |
+| DOC-REF-13 | `docs/dev/reference/FEATURE_MAP.md` |
 | DOC-RBK-01 | `docs/dev/runbooks/AUDIO_HOSTING_GUIDE.md` |
 | DOC-RBK-02 | `docs/dev/runbooks/COMBO_GENERATION_GUIDE.md` |
 | DOC-RBK-03 | `docs/dev/runbooks/CONTENT_WORKFLOW.md` |
@@ -304,6 +320,11 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-RBK-09 | `docs/dev/runbooks/VERIFY_DEPLOY_PIPELINE.md` |
 | DOC-RBK-10 | `docs/dev/runbooks/NEW_EXAM_RUNBOOK.md` |
 | DOC-RBK-11 | `docs/dev/runbooks/UIUX_VERIFY_RUNBOOK.md` |
+| DOC-RBK-12 | `docs/dev/runbooks/REF_PDF_EXTERNALIZATION.md` |
+| DOC-ADR-00 | `docs/dev/adr/README.md` |
+| DOC-ADR-01 | `docs/dev/adr/0001-exam-data-boot-document-write.md` |
+| DOC-ADR-02 | `docs/dev/adr/0002-domain-asset-convention-paths.md` |
+| DOC-ADR-03 | `docs/dev/adr/0003-localstorage-first-storage.md` |
 | DOC-USR-01 | `docs/user/exam_strategy.md` |
 | DOC-USR-02 | `content/exams/cosmetic/docs/formula_manual.md` |
 | DOC-USR-03 | `docs/user/subject1_numbers.md` |

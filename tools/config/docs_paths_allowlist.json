@@ -25,6 +25,11 @@
     "reason": "가이드에서 신규 작성을 지시하는 계획 스크립트"
   },
   {
+    "file": "docs/dev/runbooks/REF_PDF_EXTERNALIZATION.md",
+    "ref": "tools/sync/fetch_ref_pdfs.js",
+    "reason": "이전 계획에서 신규 작성을 지시하는 계획 스크립트 (미구현)"
+  },
+  {
     "file": "docs/dev/design/DOM_TEST_DESIGN.md",
     "ref": "tests/e2e/",
     "reason": "로드맵상 계획 디렉터리 (E2E 도입 전)"
