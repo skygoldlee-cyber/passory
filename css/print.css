@@ -225,7 +225,7 @@
         font-size: 32pt;
         font-weight: 800;
         letter-spacing: 0.06em;
-        color: rgba(0, 0, 0, 0.08);
+        color: rgba(0, 0, 0, 0.15);
         white-space: nowrap;
         z-index: 9999;
     }
