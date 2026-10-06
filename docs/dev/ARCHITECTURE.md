@@ -1430,6 +1430,15 @@ app-fallback.js 폴링 시작 (400ms 간격, 15s 데드라인)
 4. **스크롤 위치 규칙**: 내비 전환 시 `saveScrollPosition()`/`restoreScrollPosition()`으로 이전 위치 복원 — 단 **액션 딥링크는 `switchView(target, { scrollTop: true })`로 맨 위 오픈** (UX-NAV-07, `pendingTop` 플래그). 교재 리더는 `#textbook-reader-container` 자체 스크롤로 별도 위치 복원
 5. **터치 타겟**: 최소 44×44px 터치 영역 확보
 6. **그리드 종열 전환**: 데스크톱 다열 그리드(성적 분석 3열 등) → 모바일 세로보기에서 `1fr` 단일 열로 자동 전환
+7. **터치 기기 확대 = 브라우저 핀치 줌 (차단 금지 규약)**: 핀치 줌은 터치 기기의 기본 제스처이며
+   이 앱은 이를 의도적으로 열어 둔다 — 뷰포트 메타(`index.template.html`)에 `user-scalable=no`·
+   `maximum-scale` 추가 금지. `touch-action` 제약은 `.calc-scratchpad-canvas`(그리기, `none`)·
+   `.reader-toc-edge-hint`(엣지 띠, `none`) 2곳만 허용하고, 모바일 TOC 드로어는 `pan-y pinch-zoom`으로
+   줌을 명시 허용, `touch-action: manipulation`도 핀치 줌을 포함한다. 이 규약이 TR-06(다이어그램)·
+   TR-20(이미지) 확대 모달이 데스크탑 전용(`pointer: coarse` 미바인딩)인 근거 — `(pointer: coarse)`는
+   기기의 **주 입력** 기준이라 마우스 연결 태블릿도 coarse로 판정되고, 트랙패드가 주 입력인 크롬북·
+   서피스는 fine이라 모달이 적용된다. 단 핀치 줌은 페이지 전체 확대 방식이라 모달과 달리 확대 중엔
+   화면 밖 콘텐츠를 드래그로 이동해야 한다 (PWA standalone에서도 동일 동작)
 
 ### CSS 설계 원칙
 - **CSS 변수 기반 디자인 토큰**: 컬러·타이포·간격·반경·z-index·transition 전 영역이 `css/base.css` `:root`의 `--*` 토큰으로 중앙화 — **하드코딩 색상·px·z-index 금지, 토큰 우선**. 토큰 카탈로그·z-index 레이어 맵·상태 규약은 **SPEC §4.9** 참조. `var(--x, #fff)` 같은 상시 폴백 금지 (테마 파괴 사고, SPEC §4.8.7)
