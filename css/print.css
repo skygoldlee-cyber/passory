@@ -211,6 +211,25 @@
         overflow-wrap: anywhere;
     }
 
+    /* 증적 문서 워터마크 (FO-70) — position:fixed는 인쇄 매체에서 페이지 박스 기준
+       모든 페이지에 반복 배치되므로 "페이지 중앙 대각선"이 각 장마다 재현됨.
+       본문 위 저농도 오버레이: th·fp-phase-head의 exact 배경 위에서도 보이도록
+       최상단 스태킹 + 알파 색상 (배경 그래픽 설정과 무관하게 색은 항상 출력).
+       ⚠ 조상(.fp-doc 등)에 transform·filter·contain·perspective 추가 금지 —
+       fixed의 함체가 되어 페이지 기준이 아닌 요소 기준 위치로 바뀐다 */
+    #formula-print-area .fp-watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 32pt;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: rgba(0, 0, 0, 0.08);
+        white-space: nowrap;
+        z-index: 9999;
+    }
+
     #formula-print-area .fp-doc h1 {
         font-size: 16pt;
         border-bottom: 2px solid var(--print-fg);

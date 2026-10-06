@@ -1,12 +1,12 @@
 // src/exams/cosmetic/views/formula-print.js — Formula OS 인쇄 산출물 빌더 (Phase A)
-// @spec FO-14,FO-21,FO-29,FO-56,FO-57,FO-58,FO-60,FO-69
+// @spec FO-14,FO-21,FO-29,FO-56,FO-57,FO-58,FO-60,FO-69,FO-70
 //
 // 조제 기록지(배치)·제품 라벨·사용 안내문·작업지시서 HTML 생성 + 공용 인쇄 트리거.
 // 기존 formula.js의 조제 기록지와 같은 #formula-print-area + body.formula-printing
 // 메커니즘을 재사용한다 (print.css의 fp-* 규칙 + fp-label 신설).
 
 import { esc } from '../../../sanitize.js';
-import { todayKey } from '../../../utils.js';
+import { todayKey, fnv1aHex } from '../../../utils.js';
 import { QC_FIELDS, HYGIENE_FIELDS } from '../batch-store.js';
 import { PHASE_OPTIONS } from '../formula-store.js';
 import { buildUsageGuideFromBatch } from '../usage-guide.js';
@@ -20,6 +20,16 @@ function fmtDateTime(v) {
 
 function fmtDate(v) {
   return typeof v === 'string' && v ? v : '—';
+}
+
+/** 인쇄 워터마크 — fixed 요소라 인쇄 시 모든 페이지에 중앙 반복 출력 (print.css .fp-watermark, FO-70) */
+function fpWatermark(text) {
+  return text ? `<div class="fp-watermark" aria-hidden="true">${esc(text)}</div>` : '';
+}
+
+/** 증적 문서 번호 — FO-66 RPT 형식을 따라 유형 접두어 + 발행일 + 내용 해시6 (동일 내용 → 동일 번호) */
+function fpDocStamp(prefix, seed) {
+  return `${prefix}-${todayKey().replace(/-/g, '')}-${fnv1aHex(JSON.stringify(seed)).slice(0, 6)}`;
 }
 
 /** 배치 QC·위생 요약 텍스트 — 카드·인쇄 공용 */
@@ -304,6 +314,7 @@ export function buildAuditReportHtml(d) {
   const idLine = `문서 번호: ${esc(d.id || '—')} · 내용 해시: ${esc(d.hash || '—')}`
     + `${d.printedBy ? ` · 출력 환경: ${esc(d.printedBy)}` : ''}`;
   return `<div class="fp-doc">
+    ${fpWatermark(d.id)}
     <h1>종합 점검 보고서</h1>
     <p class="fp-meta-line">사업 유형: ${esc(d.biz.label)} — ${esc(d.biz.desc)}</p>
     <p class="fp-meta-line">점검 기준: ${esc(d.setLabel)} · 발행일시: ${esc(auditFmtDateTime(d.generatedAt))}${d.appVersion ? ` · 앱 ${esc(d.appVersion)}` : ''}</p>
@@ -340,9 +351,11 @@ export function buildRecallListHtml(q) {
     <td>${esc(b.customerName || '—')}</td><td>${esc(auditFmtDateTime(b.madeAt))}</td>
     <td>${esc(b.deliveredAt || '미인도')}</td>
   </tr>`).join('');
+  const stamp = fpDocStamp('LOT', [m.name, m.lot, batches.map(b => b.batchNo)]);
   return `<div class="fp-doc">
+    ${fpWatermark(stamp)}
     <h1>원료 LOT 사용 추적</h1>
-    <p class="fp-meta-line">원료: ${esc(m.name || '—')}${m.lot ? ` · LOT ${esc(m.lot)}` : ''} · 조회일: ${esc(todayKey())} · 대상 배치 ${batches.length}건</p>
+    <p class="fp-meta-line">원료: ${esc(m.name || '—')}${m.lot ? ` · LOT ${esc(m.lot)}` : ''} · 조회일: ${esc(todayKey())} · 대상 배치 ${batches.length}건 · 문서 ${esc(stamp)}</p>
     ${batches.length ? `<table class="fp-table">
       <thead><tr><th>배치번호</th><th>처방·제품</th><th>인도 고객</th><th>조제 일시</th><th>인도일</th></tr></thead>
       <tbody>${rows}</tbody></table>
@@ -367,9 +380,11 @@ export function buildSalesRecordHtml(batches) {
   </tr>`).join('');
   const period = list.length
     ? `${list[list.length - 1].deliveredAt} ~ ${list[0].deliveredAt}` : '—';
+  const stamp = fpDocStamp('SALES', list.map(b => [b.batchNo, b.deliveredAt, b.customerName]));
   return `<div class="fp-doc">
+    ${fpWatermark(stamp)}
     <h1>판매내역서</h1>
-    <p class="fp-meta-line">기간: ${esc(period)} · 발행일: ${esc(todayKey())} · 인도 완료 ${list.length}건</p>
+    <p class="fp-meta-line">기간: ${esc(period)} · 발행일: ${esc(todayKey())} · 인도 완료 ${list.length}건 · 문서 ${esc(stamp)}</p>
     ${list.length ? `<table class="fp-table">
       <thead><tr><th>인도일</th><th>배치번호</th><th>제품·처방</th><th>고객</th><th class="fp-num">내용량</th><th>비고</th></tr></thead>
       <tbody>${rows}</tbody></table>`
@@ -392,9 +407,11 @@ export function buildConsentHtml(d) {
   const p = d.product || {};
   const allergyLine = c.allergies && c.allergies.length
     ? esc(c.allergies.join(', ')) : '보고된 알레르기 없음';
+  const stamp = fpDocStamp('CONSENT', [c.name, c.skinType, p.formulaName, p.batchNo]);
   return `<div class="fp-doc">
+    ${fpWatermark(stamp)}
     <h1>맞춤형화장품 사용 안내·동의서</h1>
-    <p class="fp-meta-line">고객: ${esc(c.name || '—')}${c.skinType ? ` · 피부타입 ${esc(c.skinType)}` : ''} · 발행일: ${esc(todayKey())}</p>
+    <p class="fp-meta-line">고객: ${esc(c.name || '—')}${c.skinType ? ` · 피부타입 ${esc(c.skinType)}` : ''} · 발행일: ${esc(todayKey())} · 문서 ${esc(stamp)}</p>
     ${p.formulaName || p.batchNo ? `<p class="fp-meta-line">대상 제품: ${esc(p.formulaName || '—')}${p.batchNo ? ` (배치 ${esc(p.batchNo)})` : ''}</p>` : ''}
     <h3>고객 알레르기 이력</h3>
     <p class="fp-notes">${allergyLine}</p>

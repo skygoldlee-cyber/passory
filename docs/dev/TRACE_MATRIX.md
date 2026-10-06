@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 5025c829f4a30932
-> 생성: 2026-10-05 · 원천: SPEC.md(461개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 0ff64b8ee7af456b
+> 생성: 2026-10-06 · 원천: SPEC.md(462개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -16,7 +16,7 @@
 | 보고서 | 분석·결과 보고서 | report_archive 헤더 |
 | 출처 | 요구사항의 기원 (법령·시험 규정·사업 문서) | SPEC 부록 "요구사항 출처" 표 |
 
-**커버리지 요약**: 요구사항 461개 — 문서 연결 293 · 소스 연결 423 · 테스트 연결 447 · 보고서 연결 109
+**커버리지 요약**: 요구사항 462개 — 문서 연결 293 · 소스 연결 424 · 테스트 연결 448 · 보고서 연결 109
 
 ---
 
@@ -354,6 +354,8 @@
 | FO-66 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-14 | src/exams/cosmetic/views/formula-audit.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
 | FO-67 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-14 | src/exams/cosmetic/views/formula-audit.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
 | FO-68 | 구현 | 테스트 | DOC-BIZ-02<br>DOC-DSN-14 | tools/check/check_adlint_coverage.js | tests/unit/exams/cosmetic/formula-sales.test.js | — | — |
+| FO-69 | — | 테스트 | — | src/exams/cosmetic/biz-profile.js<br>src/exams/cosmetic/views/formula-audit.js<br>src/exams/cosmetic/views/formula-compliance.js<br>src/exams/cosmetic/views/formula-print.js | tests/dom/exams/cosmetic/formula-audit.dom.test.js<br>tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
+| FO-70 | 구현 | 테스트 | — | src/exams/cosmetic/views/formula-print.js | tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
 
 ## 3.19 계정·클라우드 동기화
 
@@ -679,12 +681,6 @@
 | ROAD-L3 | 미구현 | — | — | — | — | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
 | ROAD-L4 | 미구현 | — | — | — | — | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
 | ROAD-L5 | ✅ 카운터 구현 (판정 데이터 수집 중) | 테스트 | — | src/usage-stats.js | tests/dom/usage-stats.dom.test.js | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
-
-## 3.0 지원 기능 요약
-
-| ID | 상태 | 검증 수단 | 문서 | 소스 | 테스트 | 보고서 | 출처 |
-|----|------|-----------|------|------|--------|--------|------|
-| FO-69 | — | 테스트 | — | src/exams/cosmetic/biz-profile.js<br>src/exams/cosmetic/views/formula-audit.js<br>src/exams/cosmetic/views/formula-compliance.js<br>src/exams/cosmetic/views/formula-print.js | tests/dom/exams/cosmetic/formula-audit.dom.test.js<br>tests/unit/exams/cosmetic/formula-audit.test.js | — | — |
 
 ---
 

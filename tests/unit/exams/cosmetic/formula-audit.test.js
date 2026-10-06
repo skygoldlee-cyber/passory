@@ -1,5 +1,5 @@
 // tests/unit/exams/cosmetic/formula-audit.test.js
-// @spec FO-56,FO-64,FO-66,FO-67,FO-69
+// @spec FO-56,FO-64,FO-66,FO-67,FO-69,FO-70
 // formula-audit.js — 종합 규정 점검 보고서 수집기.
 // 검증: 유형별 섹션 게이트(bizVisible 재사용), 빈 데이터 '기록 없음' 분기,
 //       체크리스트·라벨·광고·포뮬러·배치·원료·고객 수집, 뷰모델→빌더 마크업
@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { collectAuditReportData, recordAuditLog } from '../../../../src/exams/cosmetic/views/formula-audit.js';
-import { buildAuditReportHtml } from '../../../../src/exams/cosmetic/views/formula-print.js';
+import { buildAuditReportHtml, buildRecallListHtml, buildSalesRecordHtml, buildConsentHtml, buildLabelHtml } from '../../../../src/exams/cosmetic/views/formula-print.js';
 import { STORAGE_KEYS } from '../../../../src/storage-keys.js';
 import { getJSON, setJSON } from '../../../../src/storage.js';
 import { setBizType, setInspectorName } from '../../../../src/exams/cosmetic/biz-profile.js';
@@ -427,4 +427,40 @@ test('print.css — fp-table 좌측선은 첫 셀 경계로 그림 (조각 꼬�
   assert.ok(!/border-left/.test(tableRule[1]), 'fp-table에 border-left 없음');
   // 좌측선은 각 행의 첫 셀이 그려 행 단위로 끝남 (페이지 조각과 무관)
   assert.match(css, /\.fp-table\s+(?:th|td):first-child/, '첫 셀 border-left 규칙 존재');
+});
+
+/* =======================================================
+   FO-70 — 증적 문서 워터마크 (페이지 중앙 대각선 문서 번호)
+   ======================================================= */
+
+test('워터마크 — 보고서는 RPT 문서 번호, 증적 문서는 발행 번호 (FO-70)', () => {
+  const d = collectAuditReportData(NOW);
+  const html = buildAuditReportHtml(d);
+  assert.ok(html.includes(`<div class="fp-watermark" aria-hidden="true">${d.id}</div>`));
+
+  const recall = buildRecallListHtml({ material: { name: '글리세린', lot: 'L1' }, batches: [{ batchNo: 'B-1' }] });
+  assert.match(recall, /fp-watermark" aria-hidden="true">LOT-\d{8}-[0-9a-f]{6}/);
+  assert.ok(recall.includes('문서 LOT-'), '메타 줄에 문서 번호 표기');
+
+  const sales = buildSalesRecordHtml([{ batchNo: 'B-1', deliveredAt: '2026-10-01' }]);
+  assert.match(sales, /fp-watermark" aria-hidden="true">SALES-\d{8}-[0-9a-f]{6}/);
+  assert.ok(sales.includes('문서 SALES-'));
+
+  const consent = buildConsentHtml({ customer: { name: '김OO' }, product: { formulaName: '세럼', batchNo: 'B-1' } });
+  assert.match(consent, /fp-watermark" aria-hidden="true">CONSENT-\d{8}-[0-9a-f]{6}/);
+  assert.ok(consent.includes('문서 CONSENT-'));
+});
+
+test('워터마크 문서 번호 — 동일 내용은 동일 번호, 내용 변경 시 번호 변경 (FO-70)', () => {
+  const a = buildSalesRecordHtml([{ batchNo: 'B-1', deliveredAt: '2026-10-01' }]);
+  const b = buildSalesRecordHtml([{ batchNo: 'B-1', deliveredAt: '2026-10-01' }]);
+  const c = buildSalesRecordHtml([{ batchNo: 'B-2', deliveredAt: '2026-10-01' }]);
+  const stamp = h => h.match(/SALES-\d{8}-[0-9a-f]{6}/)[0];
+  assert.equal(stamp(a), stamp(b));
+  assert.notEqual(stamp(a), stamp(c));
+});
+
+test('워터마크 — 비증적 산출물(라벨)은 미적용 (FO-70)', () => {
+  const label = buildLabelHtml({ formulaName: '세럼' });
+  assert.ok(!label.includes('fp-watermark'));
 });
