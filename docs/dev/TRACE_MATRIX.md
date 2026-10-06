@@ -3,7 +3,7 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: be433dd7edef38b8
+> 입력 해시: e0edae25aa317a23
 > 생성: 2026-10-06 · 원천: SPEC.md(460개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -756,6 +756,8 @@
 | DOC-REF-09 | docs/dev/reference/SCREEN_MAP.md | UM-01, UM-02, UM-03, UM-04, UM-05, UX-NAV-01, UX-NAV-08 |
 | DOC-REF-10 | docs/dev/reference/SOFTWARE_ENGINEERING_TECHNIQUES.md | — |
 | DOC-REF-11 | docs/dev/reference/PROJECT_STRUCTURE_TOUR.md | — |
+| DOC-REF-12 | docs/dev/reference/CODE_READING_GUIDE.md | — |
+| DOC-REF-13 | docs/dev/reference/FEATURE_MAP.md | — |
 | DOC-ROOT-01 | README.md | — |
 | DOC-ROOT-02 | AGENTS.md | — |
 | DOC-USR-01 | docs/user/exam_strategy.md | — |
