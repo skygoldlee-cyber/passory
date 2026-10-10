@@ -34,9 +34,14 @@ function normalizeArticle(body) {
     return t;
 }
 
+/** 유예본 판별 — 본문이 '[시행일: …] 제N조' 마커로 끝나면 그 본문은 시행 예정 개정본 */
+const DEFERRED_TAIL = /\[시행일[^\]]*\]\s*제\d+조(?:의\d+)?\s*$/;
+
 /**
  * md 텍스트 → { '제N조(의M)': 정규화 본문 }. 조문 헤딩이 하나도 없으면 null 반환.
- * 목차/본문 중복 조문은 본문(가장 긴 후보)을 채택한다.
+ * 조문이 여러 번 나오는 경우: 목차 중복·현행본/유예본 공존이므로
+ * 시행일 마커로 끝나지 않는(=현행) 본문 중 가장 긴 것을 채택한다.
+ * 유예본만 채택하면 이미 개정된 미래 텍스트가 '변경 없음'으로 잘못 판정된다.
  */
 function splitArticles(text) {
     const parts = splitMain(text).split(/^(제\d+조(?:의\d+)?)/m);
@@ -47,7 +52,9 @@ function splitArticles(text) {
     }
     const out = {};
     for (const [k, v] of Object.entries(arts)) {
-        out[k] = normalizeArticle(v.reduce((a, b) => (b.length > a.length ? b : a), ''));
+        const current = v.filter(b => !DEFERRED_TAIL.test(b.trim()));
+        const cands = current.length ? current : v;
+        out[k] = normalizeArticle(cands.reduce((a, b) => (b.length > a.length ? b : a), ''));
     }
     return out;
 }

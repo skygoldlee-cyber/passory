@@ -83,6 +83,13 @@ describe('diffDocs', () => {
         const newClean = '제1조 (목적) 이 법은 A를 규정한다.';
         assert.deepEqual(diffDocs(oldNoisy, newClean).changed, []);
     });
+
+    test('현행본/유예본 공존 조문은 현행본을 비교한다 — 유예본이 개정을 가리면 안 됨', () => {
+        const old = '제1조 (목적) 목적.\n제2조 (결격) 1. 파산선고를 받은 자 2. 기타\n제2조 (결격) 1. 미성년자 2. 기타 [시행일: 2027. 1. 1.] 제2조';
+        const now = '제1조 (목적) 목적.\n제2조 (결격) 1. 미성년자 2. 기타';
+        const d = diffDocs(old, now);
+        assert.deepEqual(d.changed, ['제2조'], '현행본(파산선고 포함)과 신본의 차이를 검출해야 함');
+    });
 });
 
 describe('parseDocName', () => {
@@ -108,8 +115,10 @@ describe('buildExamDiff (실데이터)', () => {
         assert.equal(law.to.notice, '제21525호');
         assert.ok(law.added.includes('제2조의4'), '신설 제2조의4 검출');
         assert.ok(law.added.includes('제2조의5'), '신설 제2조의5 검출');
-        // 시행유예 주석([시행일 …] 제N조) 잔여 토큰은 개정으로 오분류되면 안 됨
-        assert.ok(!law.changed.includes('제3조의3'), '시행일 마커 아티팩트 오탐 방지');
+        // 제21525호의 실질 개정 — 결격사유에서 파산선고 제거 (유예본 마스킹 방지 회귀)
+        assert.ok(law.changed.includes('제3조의3'), '실제 개정 제3조의3 검출');
+        assert.ok(law.details['제3조의3'].old.includes('파산선고'), '구본에 파산선고 결격사유 포함');
+        assert.ok(!law.details['제3조의3'].new.includes('파산선고'), '신본에서 파산선고 제거');
         // 신설 조문은 알림창 표시용 본문 요지를 포함해야 함
         assert.ok(law.details['제2조의5'].text.includes('협의회'));
     });
