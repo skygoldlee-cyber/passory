@@ -7,6 +7,14 @@
 > **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-10 교재 판본 선언·신선도 게이트·개정 안내 배너 (P-14)
+
+- **배경**: 교재의존성 분리 마이그레이션(범위·판본 헤더 + docs/exams/<id>/) 후속 — 헤더가 "교재 종속"을 선언할 뿐 실제 갱신 여부는 추적되지 않았고, "현재 교재가 몇 판인가"의 선언 앵커가 없었음
+- **판본 선언**: `manifest.textbookEdition` 신설 (registry 패스스루) — 교재가 있는 시험은 `check:manifest`가 필수 검증, `scaffold:exam` 골격 포함. 교재 교체 런북 0단계에서 갱신
+- **신선도 게이트**: `check:textbookdocs` — git 이력으로 교재(`content/exams/<id>/교재/`) 마지막 커밋 이후 미갱신 `판본: textbook` 문서(docs/exams/<id>/·content/exams/<id>/docs/)를 게이트, check:docs·check:content 체인 편입
+- **개정 안내**: P-14 — 대시보드 배너가 registry.textbookEdition vs 기기 로컬 `textbook_edition_seen`(시험 스코프·백업 제외) 비교로 개정 후 첫 부팅에만 표시
+- **범위 게이트 확장**: check_doc_ids가 `content/exams/*/docs/`(앱 내 문서)도 ID·범위 헤더 검증 — ref_md·교재 본문은 판본이 파일명·파이프라인에 내재화돼 대상 제외 규약 명시
+
 ## 2026-10-06 증적 문서 페이지 워터마크 (FO-70)
 
 - **요청**: PDF 출력 시 페이지 중앙 기준 대각선 워터마크

@@ -190,6 +190,7 @@ function main() {
   const registry = {
     schemaVersion: 1,
     contentYear: manifest.contentYear,
+    textbookEdition: manifest.textbookEdition || null,
     generatedAt: new Date().toISOString(),
     subjects: [],
     exams: []

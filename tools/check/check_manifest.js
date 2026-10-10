@@ -178,6 +178,11 @@ function checkTarget(target) {
   const subjects = m.subjects || [];
   const exams = m.exams || [];
 
+  // 교재 판본 선언 — 판본: textbook 문서·개정 안내 배너의 앵커 (교재가 있는 시험은 필수)
+  if (subjects.some(s => s.dir) && (typeof m.textbookEdition !== 'string' || !m.textbookEdition.trim())) {
+    err(scope, 'textbookEdition 없음 — 교재 판본 라벨 필수 (manifest.json 상단, 교재 교체 런북 0단계에서 갱신)');
+  }
+
   // key/order 유일성
   const seenKey = new Set(), seenOrder = new Set();
   for (const s of subjects) {

@@ -257,6 +257,7 @@
  * @typedef {Object} DataRegistry
  * @property {number}          schemaVersion
  * @property {string}          contentYear
+ * @property {string}          [textbookEdition] 교재 판본 라벨 (manifest 패스스루 — P-14 개정 안내 배너·교재 교체 런북 앵커)
  * @property {string}          generatedAt
  * @property {SubjectMeta[]}   subjects
  * @property {ExamMeta[]}      exams

@@ -97,6 +97,7 @@
         "src/supabase-client.js",
         "src/supabase-config.js",
         "src/sync.js",
+        "src/textbook-edition.js",
         "src/textbook-parser.js",
         "src/theme-init.js",
         "src/theme-toggle.js",

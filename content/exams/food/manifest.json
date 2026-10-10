@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "contentYear": "2027",
+  "textbookEdition": "2026",
   "_pilot": "Phase C 파일럿 — 1과목(식품위생학) 축소본. 나머지 과목(식품화학/가공/미생물/분석)은 후속 콘텐츠 확보 시 subjects에 추가.",
   "subjects": [
     {

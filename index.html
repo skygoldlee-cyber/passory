@@ -218,6 +218,21 @@
                     </div>
                 </div>
 
+                <!-- @spec P-14 -->
+                <!-- Textbook Edition Banner (교재 개정 감지 — registry.textbookEdition vs textbook_edition_seen) -->
+                <div id="textbook-edition-banner" class="is-hidden draft-banner">
+                    <div class="flex-center gap-3">
+                        <i class="fa-solid fa-book-open draft-banner-icon" aria-hidden="true"></i>
+                        <div class="text-left">
+                            <h3 class="draft-banner-title">교재가 갱신됐습니다</h3>
+                            <p class="draft-banner-desc" id="textbook-edition-desc"></p>
+                        </div>
+                    </div>
+                    <div class="flex-row flex-wrap gap-2">
+                        <button class="btn btn-secondary badge-pill" id="textbook-edition-dismiss"><i class="fa-solid fa-check" aria-hidden="true"></i> 확인</button>
+                    </div>
+                </div>
+
                 <!-- Daily Challenge & Streak and Data Management Row — 오늘 할 일 CTA가 최상단 -->
                 <div class="dashboard-widgets-row daily-challenge-grid">
                     <!-- 1. Daily 5-Min Challenge Card -->

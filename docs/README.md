@@ -86,7 +86,7 @@ user_manual.md(앱 내) → 학습안내서(앱 내) → exams/cosmetic/user/exa
 
 ## 📂 문서 구조
 
-> **범위 체계**: `docs/dev/`는 플랫폼 공통(범위 `platform`), `docs/exams/<id>/`는 시험 종속(범위 `exam:<id>`)이다. 각 문서 헤더의 `> **범위**: … · 판본: …`가 기계 검증되는 선언 — `판본: textbook`이면 교재 교체 시 갱신 대상, `판본: refmat`이면 참조자료(법령·고시) 판본 변경 시 갱신 대상. 교재 교체 런북이 이 선언으로 영향 문서를 자동 조회한다 (`docs/dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md`).
+> **범위 체계**: `docs/dev/`는 플랫폼 공통(범위 `platform`), `docs/exams/<id>/`는 시험 종속(범위 `exam:<id>`)이다. 각 문서 헤더의 `> **범위**: … · 판본: …`가 기계 검증되는 선언 — `판본: textbook`이면 교재 교체 시 갱신 대상, `판본: refmat`이면 참조자료(법령·고시) 판본 변경 시 갱신 대상. 교재 교체 런북이 이 선언으로 영향 문서를 자동 조회하고(`docs/dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md`), `check:textbookdocs`가 교재 커밋 이후 미갱신 `판본: textbook` 문서를 게이트한다. 기준 판본 라벨은 `content/exams/<id>/manifest.json`의 `textbookEdition`이 선언(check:manifest 필수, 앱 개정 안내 배너 P-14의 트리거). `content/exams/<id>/docs/` 앱 내 문서도 같은 헤더 대상이며, `ref_md/`·`교재/*.md`는 판본이 파일명·변환 파이프라인에 내재화돼 헤더 대상에서 제외된다.
 
 ```
 docs/

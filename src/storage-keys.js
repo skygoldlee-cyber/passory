@@ -33,6 +33,9 @@ export const STORAGE_KEYS = {
   // 학습 캘린더 (날짜별 학습 여부)
   STUDY_CALENDAR: 'study_calendar',  // { "2026-09-12": { cards: 5, quizzes: 3, correct: 2 } }
 
+  // 교재 개정 안내
+  TEXTBOOK_EDITION_SEEN: 'textbook_edition_seen', // 마지막 확인 교재 판본 (기기 로컬·백업 제외 — P-14)
+
   // 학습 목표
   STUDY_GOALS: 'study_goals',  // { dailyCards: 50, dailyQuizzes: 10, weeklyStudyDays: 5 }
   EXAM_DATE: 'exam_date',      // 'YYYY-MM-DD' — 시험일 (D-day 역산)

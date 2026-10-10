@@ -66,6 +66,8 @@ const STEPS = [
     '카드', '카드 품질 감사 (짧은 설명·중복·참조 링크)', true],
   ['node', ['tools/build/build_doc_bundles.js', '--check'], false,
     '문서번들', 'docs_md 번들 ↔ 원본 문서 신선도 (build_doc_bundles 필요 감지)', true],
+  ['node', ['tools/check/check_textbook_docs.js'], false,
+    '문서신선도', '교재 갱신 ↔ 판본:textbook 문서 (교재 교체 후 방치 문서 감지)', true],
   ['node', ['tools/check/check_docs_paths.js'], false,
     '문서', 'README·AGENTS·docs/*.md 경로 참조 존재 검증 (스테일 탐지)', false],
   ['node', ['tools/check/check_spec_refs.js'], false,

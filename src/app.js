@@ -133,6 +133,7 @@ import {
     triggerImport,
     setupImportListener
 } from './views/backup.js';
+import { checkTextbookEditionBanner } from './textbook-edition.js';
 import {
     renderTextbookSearch,
     setTextbookFilter,
@@ -250,6 +251,7 @@ function initApp() {
     step('updateGlobalStats', updateGlobalStats);
     step('refreshDashboardStatsInBackground', refreshDashboardStatsInBackground);
     step('checkExamDraft', checkExamDraft);
+    step('checkTextbookEditionBanner', checkTextbookEditionBanner);
     // app-fallback.js가 정상 초기화를 감지할 수 있도록 마커 설정
     // setupNavigation이 실패하면 마커를 설정하지 않아 폴백이 복구를 시도하게 함
     if (navOk) {

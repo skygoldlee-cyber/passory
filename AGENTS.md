@@ -80,6 +80,7 @@ npm.cmd run check:answers               # 문제 정답 ↔ 인용 근거 구절
 npm.cmd run fix:quotes                  # 부실 인용문 자동 보강 — 원문이 정답을 지지하는데 내장 구절이 절단된 경우 인용 라인 이후로 확장·블록 내 지지 라인으로 교체 (--check=보고만)
 npm.cmd run fix:citations               # 정답 미지지 문항 인용 위치 자동 교정 — 인용 파일→시험 코퍼스(교재→참조자료) 순으로 실제 지지 위치를 탐색해 링크·인용문 재지정 (--check=보고만, --annotate=미검증 인용에 ⚠️ 마커 표기·해제)
 npm.cmd run check:docbundles           # docs_md 번들 ↔ 원본 문서 신선도 (check:content에 포함)
+npm.cmd run check:textbookdocs         # 교재 갱신 ↔ `판본: textbook` 문서 신선도 — git 이력으로 교재 커밋 이후 미갱신 교재 종속 문서 게이트 (check:docs·check:content에 포함)
 npm.cmd run check:datafresh            # data/·생성물 ↔ 원본 신선도 — 빌드 체인 실행 후 git diff 비교·자동 원복 (생성물 경로가 clean이어야 실행 가능)
 npm.cmd run check:docs                  # README·AGENTS·docs/*.md 내 경로 참조 존재 검증 + 문서 ID 누락·중복 검증 + 디렉토리 구조 정합 (check_inventory) + npm 명령 정합 (check_npm_commands) + 플랜 키 정합 (check_plan_features) + 도메인 기능 플래그 정합 (check_feature_flags) + 저장소 접근 탐지 (check_storage_access) + 릴리스 노트 정합 (check_release_notes) + CI 패리티 (check_ci_parity)
 npm.cmd run check:inventory             # AGENTS.md 디렉토리 구조 트리 ↔ 실제 파일시스템 정합 (전 트리 존재성 + src/ 전수·css 목록 양방향 + N개 개수 표기) + ARCHITECTURE.md box 트리(├──/└──) 존재성
@@ -178,6 +179,7 @@ src/                    # ES Modules
   reader-format.js      # 교재 본문 포맷터
   reader-toc.js         # 리더 목차 추출 순수 헬퍼 (메타 섹션 필터·계층 판정·하위 헤딩)
   textbook-parser.js    # 교재 MD 파서
+  textbook-edition.js   # 교재 개정 감지 배너 — registry.textbookEdition vs textbook_edition_seen (P-14)
   markdown-parser.js    # 공통 MD 파서
   mermaid-utils.js       # Mermaid 다이어그램 설정
   mermaid-render.js      # Mermaid 지연 로딩 + 컨테이너 렌더링 + 다이어그램 확대 모달 (reader/search/manual 공용 — 데스크탑 전용, 모바일은 핀치 줌)
@@ -289,7 +291,7 @@ content/                # 시험 콘텐츠 컨테이너
   exams.json            # 시험 레지스트리 (멀티시험 엔트리 — 멀티시험 구조 섹션 참조)
   lawdb.json            # 공용 법령DB — law.go.kr 메타데이터 SSOT (id·slug·type·matchKeys·watch). 시험별 사용 목록은 references.json.lawRefs가 지정 → build:pdf-registry가 src/law-links.js 생성
   exams/cosmetic/       # 기본 시험 콘텐츠 루트 (contentRoot)
-    manifest.json       # 과목/교재/문제은행 선언 + knowledge(사전 뷰 엔티티 스키마)
+    manifest.json       # 과목/교재/문제은행 선언 + textbookEdition(교재 판본 라벨 — check:manifest 필수, 교체 시 런북 0d에서 갱신) + knowledge(사전 뷰 엔티티 스키마)
     references.json     # 참조자료 매핑 설정 + lawRefs(법령 링크 대상) + noticeCore(고시 감시 기준 문서)
     law_verified.json   # check_laws.py 수동 검증값 {"문서명": ["번호","시행일","판정"]}
     교재/                # 4과목 MD 파일 (표준형 4 + 이야기형 4 = 8파일, 총 19챕터 — 과목별 2·5·5·7)
@@ -372,9 +374,10 @@ docs/                   # 문서 (인덱스: docs/README.md)
 
 ## 문서 ID 체계 (DOC ID)
 
-- 모든 마크다운 문서(`docs/`, `ref-pipeline/`, 루트 `README.md`·`AGENTS.md`)는 상단에 `> **문서 ID**: DOC-XX-NN` 헤더를 갖는다.
+- 모든 마크다운 문서(`docs/`, `ref-pipeline/`, `content/exams/<id>/docs/`(앱 내 문서), 루트 `README.md`·`AGENTS.md`)는 상단에 `> **문서 ID**: DOC-XX-NN` 헤더를 갖는다.
+- **대상 제외**: `content/exams/<id>/참조자료/ref_md/`·`교재/*.md` — 판본이 파일명(제N호·시행일)과 변환 파이프라인(pdf_hashes·고시 감지)에 내재화된 자동 변환물이라 헤더를 부여하지 않는다.
 - 접두사는 문서 종류별 구분 — `DOC-ROOT`(루트) · `DOC-IDX`(인덱스) · `DOC-DEV`(수위 문서) · `DOC-DSN`(design/) · `DOC-REF`(reference/) · `DOC-RBK`(runbooks/) · `DOC-USR`(사용자 문서) · `DOC-BIZ`(사업 문서) · `DOC-ARC`(아카이브) · `DOC-PPL`(ref-pipeline/). 시험 종속 문서도 같은 종류 접두사를 쓰되 위치는 `docs/exams/<id>/` 또는 `content/exams/<id>/docs/`다.
-- 모든 문서는 `> **범위**: platform | exam:<id>` + `· 판본: none | textbook | refmat` 헤더로 시험·판본 종속성을 선언한다 — `check:docs`가 누락·위치 불일치를 검증. `판본: textbook`은 교재 교체 시, `판본: refmat`은 법령·고시 등 참조자료 판본 변경 시 갱신 대상.
+- 모든 문서는 `> **범위**: platform | exam:<id>` + `· 판본: none | textbook | refmat` 헤더로 시험·판본 종속성을 선언한다 — `check:docs`가 누락·위치 불일치를 검증. `판본: textbook`은 교재 교체 시, `판본: refmat`은 법령·고시 등 참조자료 판본 변경 시 갱신 대상. 기준 판본 라벨은 `manifest.json`의 `textbookEdition`이 선언한다(check:manifest 필수).
 - ID → 파일 매핑 레지스트리는 `docs/README.md` "문서 ID 레지스트리" 절 — 신규 문서는 해당 영역 다음 번호를 채번해 표에 등록한다.
 - `npm.cmd run check:docs`(check_doc_ids.js 포함)가 헤더 누락·형식 오류·ID 중복을 검증한다.
 

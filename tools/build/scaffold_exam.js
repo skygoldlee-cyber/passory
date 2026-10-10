@@ -68,6 +68,7 @@ function manifestTemplate(id, name, year) {
     return {
         schemaVersion: 1,
         contentYear: String(year),
+        textbookEdition: String(year),
         subjects: [{
             key: 'subject1',
             order: 1,

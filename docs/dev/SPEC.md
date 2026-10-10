@@ -1,7 +1,7 @@
 # 📋 요구사양 명세서 (Software Requirements Specification)
 
 > **프로젝트**: Passory — 멀티시험 스마트 학습 플랫폼 (첫 콘텐츠 팩: 맞춤형화장품 조제관리사 = 앱명 Passmula)
-> **버전**: 1.13 (2026-10-03 기준 — DA-13 시험 도메인 모듈 격리 + 플랫폼 브랜드 passory 반영)
+> **버전**: 1.14 (2026-10-10 기준 — P-14 교재 개정 안내 배너 + manifest.textbookEdition 판본 선언)
 > **버전 규약**: 본문 요구사항의 추가·변경·제거 시 마이너 버전을 갱신하고 변경 내역은 `CHANGES.md`에 기록한다 — 기준선은 커밋 해시로 확정한다
 > **문서 성격**: 구현 완료된 기능을 역공학하여 체계적으로 정리한 요구사양 명세서
 > **문서 ID**: DOC-DEV-01
@@ -543,6 +543,7 @@
 | P-11 | 자가 복구 메커니즘 (`app-fallback.js`, 단계적 복구: SW update → 하드 리셋 → 수동 복구) | ✅ |
 | P-12 | CI 검증 (`verify_shell_assets.js`, 배포 전 프리캐시 파일 존재 확인) | ✅ |
 | P-13 | **새 버전 변경 이력 알림** (`src/whats-new.js`) — `APP_VERSION`(data/version.js, 배포 스탬프) vs `last_seen_version` 비교 → 업데이트 후 첫 부팅에 변경 이력 모달 + 설정 메뉴 "변경 이력" 재열람. 전용 `whats-new-overlay`로 다른 모달과 공존, 복귀 사용자는 학습 데이터 키로 판별, 노트 소스는 `data/release-notes.json`(진실 소스, 커밋 subject 자동 초안 → 수동 편집, 파싱 오류 시 배포 차단) → `release-notes.js` 래퍼 자동 생성 | ✅ |
+| P-14 | **교재 개정 안내 배너** (`src/textbook-edition.js`) — `manifest.textbookEdition`(check:manifest 필수 선언)이 `registry.textbookEdition`으로 전파, 기기 로컬 `textbook_edition_seen`(scopedKey 시험별 격리·백업 제외)과 비교 → 개정 후 첫 부팅에 대시보드 배너 표시, '확인' 시 현 판본 기록으로 억제 | ✅ |
 
 ### 4.2 오프라인 감지
 
