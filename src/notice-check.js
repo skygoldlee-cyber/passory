@@ -452,8 +452,17 @@ async function renderDiffList(el) {
   if (!diff.docs?.length) return;
   const blocks = diff.docs.map(d => {
     const seen = diffSeenMap()[d.key] === d.to?.doc;
+    const artItem = (a) => {
+      const det = d.details?.[a];
+      if (det?.kind === 'changed' && (det.old || det.new)) {
+        return html`<div class="notice-diff-art"><strong>${a}</strong>
+          <div class="notice-diff-cmp"><span class="notice-diff-tag">구</span> ${det.old}</div>
+          <div class="notice-diff-cmp"><span class="notice-diff-tag">신</span> ${det.new}</div></div>`;
+      }
+      return html`<div class="notice-diff-art"><strong>${a}</strong>${det?.text ? html` — <span class="notice-diff-text">${det.text}</span>` : ''}</div>`;
+    };
     const line = (label, list) => list?.length
-      ? html`<div class="notice-diff-line"><strong>${label}</strong> ${list.join(' · ')}</div>` : '';
+      ? html`<div class="notice-diff-line"><div class="notice-diff-label">${label}</div>${list.map(artItem)}</div>` : '';
     return html`
       <div class="notice-diff-entry">
         <div class="notice-diff-head">📋 ${d.name} 개정 내역 — ${d.from.notice}(${d.from.effectiveDate}) → ${d.to.notice}(${d.to.effectiveDate})${seen ? ' <span class="notice-diff-seen">확인됨</span>' : ''}</div>

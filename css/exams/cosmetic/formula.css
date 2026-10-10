@@ -1115,6 +1115,30 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     padding-left: 1em;
     line-height: 1.6;
 }
+.notice-diff-label {
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.notice-diff-art {
+    padding: 4px 0 4px 0.6em;
+    line-height: 1.6;
+}
+.notice-diff-text {
+    color: var(--color-text-main);
+    font-size: 0.8rem;
+}
+.notice-diff-cmp {
+    padding: 2px 0 2px 0.8em;
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    line-height: 1.5;
+}
+.notice-diff-tag {
+    display: inline-block;
+    min-width: 1.4em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
 .notice-diff-note {
     padding-left: 1em;
     color: var(--color-text-muted);

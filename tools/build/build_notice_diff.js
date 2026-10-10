@@ -59,8 +59,36 @@ function artKey(a) {
 }
 const artSort = (a, b) => artKey(a)[0] - artKey(b)[0] || artKey(a)[1] - artKey(b)[1];
 
+const SNIPPET_LEN = 320;   // 조문 본문 요약 최대 길이 (알림창 표시용)
+const DIFF_CTX = { pre: 60, post: 240 }; // 개정 조문 첫 차이 지점 전후 표시 구간
+
+function snippet(t, len = SNIPPET_LEN) {
+    t = String(t || '').trim();
+    return t.length > len ? t.slice(0, len) + '…' : t;
+}
+
+/** 두 본문의 첫 차이 지점 인덱스 */
+function firstDiffAt(a, b) {
+    const n = Math.min(a.length, b.length);
+    let i = 0;
+    while (i < n && a[i] === b[i]) i++;
+    return i;
+}
+
+/** 개정 조문의 구/신 차이 발췌 — 첫 차이점 주변 구간만 추출 */
+function diffExcerpt(oldBody, newBody) {
+    const i = firstDiffAt(oldBody, newBody);
+    const pre = i > DIFF_CTX.pre ? '…' : '';
+    const s = Math.max(0, i - DIFF_CTX.pre);
+    return {
+        old: pre + snippet(oldBody.slice(s, i + DIFF_CTX.post)),
+        new: pre + snippet(newBody.slice(s, i + DIFF_CTX.post)),
+    };
+}
+
 /**
- * 구본/신본 md 텍스트 diff → { added, removed, changed, unstructured }.
+ * 구본/신본 md 텍스트 diff → { added, removed, changed, unstructured, details }.
+ * details[조문] = {kind, text} 또는 {kind:'changed', old, new} — 알림창에 변경 내용 표시용.
  * 조문 단위 비교가 불가하면 unstructured=true로 전체 본문 비교 폴백.
  */
 function diffDocs(oldText, newText) {
@@ -68,15 +96,27 @@ function diffDocs(oldText, newText) {
     const newArts = splitArticles(newText);
     if (!oldArts || !newArts) {
         const same = normalizeArticle(splitMain(oldText)) === normalizeArticle(splitMain(newText));
-        return { added: [], removed: [], changed: same ? [] : ['(전체 문서)'], unstructured: true };
+        return same
+            ? { added: [], removed: [], changed: [], unstructured: true, details: {} }
+            : { added: [], removed: [], changed: ['(전체 문서)'], unstructured: true,
+                details: { '(전체 문서)': { kind: 'changed', ...diffExcerpt(normalizeArticle(splitMain(oldText)), normalizeArticle(splitMain(newText))) } } };
     }
-    const added = [], removed = [], changed = [];
-    for (const k of Object.keys(newArts)) if (!(k in oldArts)) added.push(k);
-    for (const k of Object.keys(oldArts)) if (!(k in newArts)) removed.push(k);
+    const added = [], removed = [], changed = [], details = {};
+    for (const k of Object.keys(newArts)) if (!(k in oldArts)) {
+        added.push(k);
+        details[k] = { kind: 'added', text: snippet(newArts[k]) };
+    }
+    for (const k of Object.keys(oldArts)) if (!(k in newArts)) {
+        removed.push(k);
+        details[k] = { kind: 'removed', text: snippet(oldArts[k]) };
+    }
     for (const k of Object.keys(newArts)) {
-        if (k in oldArts && oldArts[k] !== newArts[k]) changed.push(k);
+        if (k in oldArts && oldArts[k] !== newArts[k]) {
+            changed.push(k);
+            details[k] = { kind: 'changed', ...diffExcerpt(oldArts[k], newArts[k]) };
+        }
     }
-    return { added: added.sort(artSort), removed: removed.sort(artSort), changed: changed.sort(artSort), unstructured: false };
+    return { added: added.sort(artSort), removed: removed.sort(artSort), changed: changed.sort(artSort), details, unstructured: false };
 }
 
 /** 파일명 → { name, issuer, notice, effectiveDate } — '화장품법(법률)(제21525호)(20261008).md' */
@@ -134,6 +174,7 @@ function buildExamDiff(contentRoot) {
             from: { doc: arch.meta.doc, notice: arch.meta.notice, effectiveDate: arch.meta.effectiveDate },
             to: { doc: meta.doc, notice: meta.notice, effectiveDate: meta.effectiveDate },
             added: d.added, removed: d.removed, changed: d.changed,
+            details: d.details,
             unstructured: !!d.unstructured,
         });
     }

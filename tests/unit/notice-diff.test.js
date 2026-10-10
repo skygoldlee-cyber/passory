@@ -54,6 +54,17 @@ describe('diffDocs', () => {
         assert.equal(d.unstructured, false);
     });
 
+    test('details에 조문별 변경 내용을 담는다 — 알림창 표시용', () => {
+        const d = diffDocs(OLD, NEW);
+        assert.equal(d.details['제2조의2'].kind, 'added');
+        assert.ok(d.details['제2조의2'].text.includes('새 조문'));
+        assert.equal(d.details['제2조'].kind, 'removed');
+        assert.ok(d.details['제2조'].text.includes('기존 정의'));
+        assert.equal(d.details['제3조'].kind, 'changed');
+        assert.ok(d.details['제3조'].new.includes('바뀐 의무'));
+        assert.notEqual(d.details['제3조'].old, d.details['제3조'].new);
+    });
+
     test('부칙 이후 텍스트는 비교 대상에서 제외한다', () => {
         const withAdd = OLD + '\n부칙 <법률 제1호> 이 법은 공포 후 시행한다.';
         const d = diffDocs(OLD, withAdd);
