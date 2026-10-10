@@ -108,6 +108,10 @@ describe('buildExamDiff (실데이터)', () => {
         assert.equal(law.to.notice, '제21525호');
         assert.ok(law.added.includes('제2조의4'), '신설 제2조의4 검출');
         assert.ok(law.added.includes('제2조의5'), '신설 제2조의5 검출');
+        // 시행유예 주석([시행일 …] 제N조) 잔여 토큰은 개정으로 오분류되면 안 됨
+        assert.ok(!law.changed.includes('제3조의3'), '시행일 마커 아티팩트 오탐 방지');
+        // 신설 조문은 알림창 표시용 본문 요지를 포함해야 함
+        assert.ok(law.details['제2조의5'].text.includes('협의회'));
     });
 });
 
