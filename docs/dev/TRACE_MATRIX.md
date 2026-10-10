@@ -3,8 +3,8 @@
 > **문서 ID**: DOC-DEV-04
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: e0edae25aa317a23
-> 생성: 2026-10-06 · 원천: SPEC.md(460개 ID) + @spec 태그 + 문서 헤더
+> 입력 해시: 989bc4dfa80c2564
+> 생성: 2026-10-10 · 원천: SPEC.md(460개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
 |----|------|------|
@@ -189,7 +189,7 @@
 | TS-07 | ✅ | 테스트 | — | src/mermaid-render.js<br>src/views/textbook-search.js | tests/dom/study-search.dom.test.js | — | — |
 | TS-08 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/dom/study-search.dom.test.js | — | — |
 | TS-09 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/dom/study-search.dom.test.js | — | — |
-| TS-10 | ✅ | 테스트 | DOC-DEV-41 | src/views/textbook-search.js | tests/dom/story-search.dom.test.js | — | — |
+| TS-10 | ✅ | 테스트 | DOC-RBK-13 | src/views/textbook-search.js | tests/dom/story-search.dom.test.js | — | — |
 | TS-11 | ✅ | 테스트 | — | src/views/textbook-search.js | tests/unit/textbook-search-ref.test.js | — | — |
 
 ## 3.10 성분 사전
@@ -619,9 +619,9 @@
 | BP-07 | ✅ | 테스트 | DOC-PPL-01<br>DOC-RBK-02<br>DOC-RBK-03<br>DOC-RBK-08<br>…외 2개 | tools/build/stamp_release_notes.js<br>tools/build/stamp_sw_version.js<br>tools/deploy/deploy.js | tests/unit/build-pipeline.test.js | — | — |
 | BP-08 | ✅ | 테스트 | DOC-PPL-01<br>DOC-RBK-02<br>DOC-RBK-03<br>DOC-RBK-08<br>…외 2개 | tools/check/audit_card_quality.js | tests/unit/build-pipeline.test.js | — | — |
 | BP-09 | ✅ | 테스트 | DOC-RBK-02<br>DOC-RBK-10 | tools/build/build_doc_bundles.js | tests/unit/multi-exam-gates.test.js | — | — |
-| BP-10 | ✅ | 테스트 | DOC-DEV-41<br>DOC-RBK-02 | tools/build/build_story_textbooks.js | tests/unit/reader-analysis-gates.test.js | — | — |
-| BP-11 | ✅ | 테스트 | DOC-DEV-41<br>DOC-RBK-02 | tools/build/build_story_textbooks.js | tests/unit/story-merge.test.js | — | — |
-| BP-12 | ✅ | 테스트 | DOC-DEV-41<br>DOC-RBK-02 | tools/build/build_story_textbooks.js | tests/unit/story-merge.test.js | — | — |
+| BP-10 | ✅ | 테스트 | DOC-RBK-02<br>DOC-RBK-13 | tools/build/build_story_textbooks.js | tests/unit/reader-analysis-gates.test.js | — | — |
+| BP-11 | ✅ | 테스트 | DOC-RBK-02<br>DOC-RBK-13 | tools/build/build_story_textbooks.js | tests/unit/story-merge.test.js | — | — |
+| BP-12 | ✅ | 테스트 | DOC-RBK-02<br>DOC-RBK-13 | tools/build/build_story_textbooks.js | tests/unit/story-merge.test.js | — | — |
 
 ## 5.4 콘텐츠 구조
 
@@ -652,13 +652,13 @@
 
 | ID | 상태 | 검증 수단 | 문서 | 소스 | 테스트 | 보고서 | 출처 |
 |----|------|-----------|------|------|--------|--------|------|
-| ST-01 | ✅ | 테스트 | DOC-ADR-03<br>DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-02 | ✅ | 테스트 | DOC-ADR-03<br>DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-03 | ✅ | 테스트 | DOC-ADR-03<br>DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-04 | ✅ | 테스트 | DOC-ADR-03<br>DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-05 | ✅ | 테스트 | DOC-ADR-03<br>DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-06 | ✅ | 테스트 | DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
-| ST-07 | ✅ | 테스트 | DOC-DEV-41<br>DOC-RBK-07 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-01 | ✅ | 테스트 | DOC-ADR-03<br>DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-02 | ✅ | 테스트 | DOC-ADR-03<br>DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-03 | ✅ | 테스트 | DOC-ADR-03<br>DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-04 | ✅ | 테스트 | DOC-ADR-03<br>DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-05 | ✅ | 테스트 | DOC-ADR-03<br>DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-06 | ✅ | 테스트 | DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
+| ST-07 | ✅ | 테스트 | DOC-RBK-07<br>DOC-RBK-13 | src/views/textbook-reader.js | tests/unit/story-textbook.test.js | — | — |
 
 ## 7.2 유료화 인프라
 
@@ -712,7 +712,6 @@
 | DOC-DEV-04 | docs/dev/TRACE_MATRIX.md | — |
 | DOC-DEV-05 | docs/dev/ingredients_audit_제2026-19호.md | DI-05, FO-05, FO-24, RR-19 |
 | DOC-DEV-07 | docs/dev/UIUX_외주전달_패키지.md | — |
-| DOC-DEV-41 | docs/dev/runbooks/STORY_PATCH_GUIDE.md | BP-10, BP-11, BP-12, ST-01, ST-02, ST-03, ST-04, ST-05, ST-06, ST-07, TS-10 |
 | DOC-DSN-01 | docs/dev/design/DOM_TEST_DESIGN.md | A-01, A-02, A-03, A-04, A-05, A-06, A-07, R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09, TH-01, TH-02, TH-03, TH-04, TH-05, TH-06, UM-01, UM-02, UM-03, UM-04, UM-05, UX-NAV-01, UX-NAV-02, UX-NAV-03, UX-NAV-04, UX-NAV-05, UX-NAV-06, UX-NAV-07 |
 | DOC-DSN-02 | docs/dev/design/FORMULA_OS_WORKFLOW_DESIGN.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, UM-01, UM-02, UM-03, UM-04, UM-05 |
 | DOC-DSN-03 | docs/dev/design/LEARNING_PREMIUM_PLAN.md | AN-01, AN-02, AN-03, ROAD-P0 |
@@ -745,6 +744,7 @@
 | DOC-RBK-10 | docs/dev/runbooks/NEW_EXAM_RUNBOOK.md | BP-09, DA-11, DA-12, ES-01 |
 | DOC-RBK-11 | docs/dev/runbooks/UIUX_VERIFY_RUNBOOK.md | UX-VFY-01, UX-VFY-02, UX-VFY-03, UX-VFY-04, UX-VFY-05 |
 | DOC-RBK-12 | docs/dev/runbooks/REF_PDF_EXTERNALIZATION.md | RR-13 |
+| DOC-RBK-13 | docs/dev/runbooks/STORY_PATCH_GUIDE.md | BP-10, BP-11, BP-12, ST-01, ST-02, ST-03, ST-04, ST-05, ST-06, ST-07, TS-10 |
 | DOC-REF-01 | docs/dev/reference/COMBO_STUDY_STRATEGY.md | DR-02, DR-03, DR-04, DR-05, DR-06, DR-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
 | DOC-REF-02 | docs/dev/reference/DEV_ENVIRONMENT.md | — |
 | DOC-REF-03 | docs/dev/reference/FLASHCARD_LOGIC.md | F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, ID-01, ID-02, ID-03, ID-04, TR-01 |

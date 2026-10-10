@@ -1,7 +1,7 @@
 # 📚 문서 인덱스 (Documentation Index)
 
 > **Cosmetic Pass Master / Passmula** — 맞춤형화장품 조제관리사 스마트 학습 + 실무(Formula OS) 플랫폼
-> 최종 갱신: 2026-09-24
+> 최종 갱신: 2026-10-10
 > **문서 ID**: DOC-IDX-01
 > **관련 SPEC ID**: 해당 없음 (문서 인덱스·ID 레지스트리)
 
@@ -36,6 +36,7 @@
 4. QUESTION_SCHEMA_DESIGN.md     — 문항 스키마 (단일/복수정답·OX·단답)
 5. COMBO_GENERATION_GUIDE.md     — 복수정답형 드릴 문항 생성 도구 절차
 6. TEXTBOOK_REFERENCE_MAPPING.md — 교재↔참조자료 매핑 규칙
+7. STORY_PATCH_GUIDE.md         — 이야기형 교재 서사 패치 작성 (build:story)
 ```
 
 ### ③ Formula OS(실무 기능)를 이해·확장하는 경우
@@ -88,8 +89,8 @@ user/user_manual.md → 학습안내서(앱 내) → user/exam_strategy.md → u
 docs/
 ├── README.md                    ← 본 파일 (문서 인덱스 + 읽기 순서)
 ├── business/                    ← 사업 기획·시장 조사·마케팅 문서 (5개)
-├── dev/                         ← 개발 문서 (49개)
-│   ├── ARCHITECTURE.md·SPEC.md·CHANGES.md  ← 수위 문서 (아키텍처·명세·이력)
+├── dev/                         ← 개발 문서 (52개)
+│   ├── 수위 문서 (6개)         ← ARCHITECTURE·SPEC·CHANGES·TRACE_MATRIX·UIUX_외주전달_패키지·ingredients_audit_제2026-19호
 │   ├── adr/                   ← 아키텍처 결정 기록 (4개 — README + ADR 3건)
 │   ├── runbooks/              ← 실행 절차·운영 런북 (13개)
 │   ├── design/                ← 설계·계획·평가 문서 (16개)
@@ -108,6 +109,9 @@ docs/
 |------|------|
 | [ARCHITECTURE.md](dev/ARCHITECTURE.md) | 시스템 아키텍처·설계 철학 — Local-First + 선택적 클라우드, ESM 구조, 데이터 흐름, PWA/SW 전략, 계정·동기화, UI 모드, Formula OS, 배포 파이프라인, 구현 레시피, 강건성 가이드라인 |
 | [SPEC.md](dev/SPEC.md) | 요구사양 명세서 — 구현된 기능을 역공학해 정리 (현행 기준서) |
+| [TRACE_MATRIX.md](dev/TRACE_MATRIX.md) | SPEC↔코드 추적 매트릭스 — 요구사항별 @spec 태그·테스트·문서 매핑 (자동 생성 — `npm run build:trace`) |
+| [adr/](dev/adr/README.md) | 아키텍처 결정 기록 — 대안 검토·트레이드오프 등 결정의 "왜" 보존 (색인 README + ADR 3건) |
+| [MULTI_EXAM_DB_DESIGN.md](dev/design/MULTI_EXAM_DB_DESIGN.md) | 멀티시험 확장 설계 — 법령DB·지식DB의 시험 비종속 일반화 (Phase A~C 구현 완료) |
 | [PROJECT_STRUCTURE_TOUR.md](dev/reference/PROJECT_STRUCTURE_TOUR.md) | 프로젝트 구조 투어 — 비개발자·기획자용 그림 중심 입문 (폴더 지도·데이터 파이프라인·멀티시험·품질 관문·용어 풀이) |
 | [CODE_READING_GUIDE.md](dev/reference/CODE_READING_GUIDE.md) | 코드 읽기 가이드 — 초보 개발자용 부팅 시퀀스·data-click 위임·저장소 2계층·첫 변경 레시피·게이트 치트시트 |
 | [FEATURE_MAP.md](dev/reference/FEATURE_MAP.md) | 기능→소스 지도 — "이 기능을 바꾸려면 어느 파일" 조회표 (도메인별 핵심 소스·관련 테스트·SPEC 접두사) |
@@ -138,6 +142,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | [TEXTBOOK_REPLACEMENT_RUNBOOK.md](dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md) | 교재 교체 작업 순서도 — 준비→교체→빌드→인용→이관→파생물→배포·롤백 단일 런북 |
 | [ref-pipeline/README.md](../ref-pipeline/README.md) | 교재·참조자료 변환 도구 — PDF→MD, MD→HTML, 오디오북 TTS, 법령 검증 (독립 실행) |
 | [TEXTBOOK_AUTHORING_GUIDE.md](dev/runbooks/TEXTBOOK_AUTHORING_GUIDE.md) | 교재 Markdown 작성 지침 — 카드/퀴즈 추출 규칙, manifest.json, 빌드 검증 |
+| [STORY_PATCH_GUIDE.md](dev/runbooks/STORY_PATCH_GUIDE.md) | 이야기형 교재 서사 패치 작성 — 슬롯 마커·지시어 문법 (`*_이야기형.md`는 `build:story` 생성물, 직접 편집 금지) |
 | [NUMBERING_SYSTEM.md](dev/reference/NUMBERING_SYSTEM.md) | 교재 챕터/섹션 십진 번호체계 |
 | [QUESTION_SCHEMA_DESIGN.md](dev/design/QUESTION_SCHEMA_DESIGN.md) | 문항 데이터 스키마 — 복수정답형의 "진술 단위 O/X → 조합 도출" 구조 |
 | [COMBO_GENERATION_GUIDE.md](dev/runbooks/COMBO_GENERATION_GUIDE.md) | 복수정답형 드릴 생성 도구 — `build_combo_drills.js` + `ref_statements.js` |
@@ -152,6 +157,10 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | 문서 | 설명 |
 |------|------|
 | [FORMULA_OS_WORKFLOW_DESIGN.md](dev/design/FORMULA_OS_WORKFLOW_DESIGN.md) | 조제관리사 9개 업무 전체 커버리지 — 고객·배치·원료장부·법규 (Phase A~D 구현 완료). Phase 5-A 기본 설계는 `report_archive/FORMULA_OS_DESIGN.md` |
+| [PRODUCT_DB_DESIGN.md](dev/design/PRODUCT_DB_DESIGN.md) | 기성품 전성분 DB 설계 — 개인 기성품 DB 구축·교차 분석 (FO-37~40 + 보완, 구현 완료) |
+| [PRODUCT_VISION_DESIGN.md](dev/design/PRODUCT_VISION_DESIGN.md) | 기성품 사진 인식 등록 — Gemini Flash BYOK·멀티샷 전성분 추출 (FO-41~43, 구현 완료) |
+| [AUDIT_REPORT_DESIGN.md](dev/design/AUDIT_REPORT_DESIGN.md) | 종합 규정 점검 보고서 — 체크리스트·표시사항·광고 점검·포뮬러 검증 통합 출력 (FO-56, 구현 완료) |
+| [PRACTICAL_TOOLS_DESIGN.md](dev/design/PRACTICAL_TOOLS_DESIGN.md) | 실무 도구 확장 — LOT 역추적·판매내역서·이상사례·동의서·재고 차감·리마인더 (FO-57~63) |
 
 ### 테스트·품질
 
@@ -177,6 +186,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | 문서 | 설명 |
 |------|------|
 | [LEARNING_PREMIUM_PLAN.md](dev/design/LEARNING_PREMIUM_PLAN.md) | Learning Pro 구현 과제 — 우선순위·공수·전제 조건 |
+| [STUDY_PLAN_PRO_DESIGN.md](dev/design/STUDY_PLAN_PRO_DESIGN.md) | 스마트학습 과목별 가중 계획 — 출제 비중·약점 정답률 가중 주차별 배분표 (SC-08, 구현 완료) |
 | [USER_FEEDBACK_DESIGN.md](dev/design/USER_FEEDBACK_DESIGN.md) | 사용자 피드백 수신 — YouTube 유입 추적 + 앱 내 의견 제출 (구현됨: `src/feedback.js`, `feedback` 테이블은 Supabase SQL Editor 수동 실행 필요) |
 | [READER_FEEDBACK_DESIGN.md](dev/design/READER_FEEDBACK_DESIGN.md) | 독자 피드백 공유 기능 설계 제안 (미구현) |
 | [SUBSCRIPTION_ROADMAP.md](dev/design/SUBSCRIPTION_ROADMAP.md) | 월 구독 서비스 전환 로드맵 |
@@ -321,6 +331,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-RBK-10 | `docs/dev/runbooks/NEW_EXAM_RUNBOOK.md` |
 | DOC-RBK-11 | `docs/dev/runbooks/UIUX_VERIFY_RUNBOOK.md` |
 | DOC-RBK-12 | `docs/dev/runbooks/REF_PDF_EXTERNALIZATION.md` |
+| DOC-RBK-13 | `docs/dev/runbooks/STORY_PATCH_GUIDE.md` |
 | DOC-ADR-00 | `docs/dev/adr/README.md` |
 | DOC-ADR-01 | `docs/dev/adr/0001-exam-data-boot-document-write.md` |
 | DOC-ADR-02 | `docs/dev/adr/0002-domain-asset-convention-paths.md` |
