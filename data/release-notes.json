@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261011-464db92",
+    "date": "2026-10-11",
+    "notes": [
+      "개정 고시 원문 자동 다운로드 (fetch_revision.py)"
+    ]
+  },
+  {
     "version": "v20261010-b5b1a25",
     "date": "2026-10-10",
     "notes": [
@@ -135,13 +142,6 @@
     "notes": [
       "[기능·reader] 다이어그램 확대 모달 복원 — 데스크탑 전용(pointer:fine)",
       "[기능·reader] 이미지 라이트박스 복원 — 데스크탑 전용(pointer:fine)"
-    ]
-  },
-  {
-    "version": "v20261006-c332685",
-    "date": "2026-10-06",
-    "notes": [
-      "[수정·reader] TOC 드로어 터치 제스처에 pinch-zoom 허용"
     ]
   }
 ]
