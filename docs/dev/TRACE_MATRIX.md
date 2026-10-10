@@ -4,7 +4,7 @@
 > **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 656968494f581c90
+> 입력 해시: c08615cb80f31ef4
 > 생성: 2026-10-10 · 원천: SPEC.md(461개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -450,7 +450,7 @@
 | P-11 | ✅ | E2E 테스트 | DOC-RBK-01<br>DOC-RBK-04 | src/app-fallback.js | tests/e2e/app.spec.js<br>tests/unit/pwa-sw.test.js | — | — |
 | P-12 | ✅ | 테스트 | DOC-RBK-01<br>DOC-RBK-04 | tools/check/verify_shell_assets.js | tests/unit/pwa-sw.test.js | — | — |
 | P-13 | ✅ | 테스트 | DOC-RBK-01<br>DOC-RBK-04<br>DOC-RBK-09 | src/app-version.js<br>src/whats-new.js<br>tools/build/stamp_release_notes.js | tests/dom/whats-new.dom.test.js<br>tests/unit/whats-new.test.js | — | — |
-| P-14 | ✅ | 테스트 | DOC-RBK-01 | html/views/dashboard.html<br>index.html<br>src/textbook-edition.js | tests/unit/textbook-edition.test.js | — | — |
+| P-14 | ✅ | 테스트 | DOC-RBK-01<br>DOC-RBK-08 | html/views/dashboard.html<br>index.html<br>src/textbook-edition.js | tests/unit/textbook-edition.test.js | — | — |
 
 ## 4.2 오프라인 감지
 
@@ -742,7 +742,7 @@
 | DOC-RBK-05 | docs/dev/runbooks/MULTI_MACHINE_SETUP.md | — |
 | DOC-RBK-06 | docs/dev/runbooks/Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md | AU-02, AU-03, AU-04 |
 | DOC-RBK-07 | docs/dev/runbooks/TEXTBOOK_AUTHORING_GUIDE.md | CE-01, CE-02, CE-03, CE-04, CE-05, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, ST-01, ST-02, ST-03, ST-04, ST-05, ST-06, ST-07, TR-01, TR-02, TR-03, TR-04, TR-05, TR-06, TR-07, TR-08, TR-09, TR-10, TR-11, TR-12, TR-13, TR-14, TR-15, TR-16, TR-16a, TR-17, TR-18, TR-19, TR-20, TR-21, TR-22, TR-23 |
-| DOC-RBK-08 | docs/dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md | BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, DA-01, ID-01, ID-02, ID-03, ID-04 |
+| DOC-RBK-08 | docs/dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md | BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, DA-01, ID-01, ID-02, ID-03, ID-04, P-14 |
 | DOC-RBK-09 | docs/dev/runbooks/VERIFY_DEPLOY_PIPELINE.md | BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, P-13 |
 | DOC-RBK-10 | docs/dev/runbooks/NEW_EXAM_RUNBOOK.md | BP-09, DA-11, DA-12, ES-01 |
 | DOC-RBK-11 | docs/dev/runbooks/UIUX_VERIFY_RUNBOOK.md | UX-VFY-01, UX-VFY-02, UX-VFY-03, UX-VFY-04, UX-VFY-05 |

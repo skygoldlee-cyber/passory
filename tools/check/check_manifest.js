@@ -41,6 +41,62 @@ function loadLawDb() {
   return _lawdb;
 }
 
+const EXAMS_JSON = path.join(ROOT, 'content', 'exams.json');
+let _examsEntries = undefined;
+function examsEntryFor(id) {
+  if (_examsEntries === undefined) {
+    _examsEntries = fs.existsSync(EXAMS_JSON)
+      ? (JSON.parse(fs.readFileSync(EXAMS_JSON, 'utf-8')).exams || [])
+      : [];
+  }
+  return _examsEntries.find(e => e.id === id);
+}
+
+/** 문제은행 파일의 실제 문항 수 — `### Q\d.` 헤딩 개수 (빌드 무관 실측) */
+function questionCountIn(target, file) {
+  const p = path.join(ROOT, target.contentRoot, '문제은행', file);
+  if (!fs.existsSync(p)) return null;
+  return (fs.readFileSync(p, 'utf-8').match(/^###\s*Q\d+/gm) || []).length;
+}
+
+/**
+ * 표시 문구의 하드코딩 수치 ↔ 실제 구성 대조.
+ * exams.json desc(시험 선택 카드 문구)와 manifest exams[].title은 게이트가
+ * 없으면 교재 교체 시 조용히 stale 되므로, N과목/N문/N제 숫자가 있으면 실측과 검증한다.
+ */
+function checkDisplayCounts(target) {
+  const scope = target.id;
+  const subjects = (target.manifest.subjects || []).length;
+
+  const entry = examsEntryFor(scope);
+  if (entry && typeof entry.desc === 'string') {
+    const subjM = entry.desc.match(/(\d[\d,]*)\s*과목/);
+    if (subjM && Number(subjM[1].replace(/,/g, '')) !== subjects) {
+      err(scope, `exams.json desc "${subjM[1]}과목" 불일치 — manifest subjects ${subjects}개 (교체 시 desc 갱신)`);
+    }
+    const qM = entry.desc.match(/([\d,]+)\s*문/);
+    if (qM) {
+      const files = (target.manifest.exams || []).map(e => e.file).filter(Boolean);
+      const counts = files.map(f => questionCountIn(target, f));
+      if (files.length && counts.every(c => c !== null)) {
+        const total = counts.reduce((a, b) => a + b, 0);
+        if (Number(qM[1].replace(/,/g, '')) !== total) {
+          err(scope, `exams.json desc "${qM[1]}문" 불일치 — 문제은행 실제 합계 ${total}문 (교체 시 desc 갱신)`);
+        }
+      }
+    }
+  }
+
+  for (const e of target.manifest.exams || []) {
+    const m = (e.title || '').match(/\((\d[\d,]*)\s*제\)/);
+    if (!m || !e.file) continue;
+    const n = questionCountIn(target, e.file);
+    if (n !== null && Number(m[1].replace(/,/g, '')) !== n) {
+      err(scope, `exams[].title "${e.title}" — 선언 제수와 실제 문항 ${n}문 불일치`);
+    }
+  }
+}
+
 /**
  * 지식DB 아이템의 lawRef는 사전 "근거" 표시용 문자열이지만,
  * 표기가 이 시험이 참조하는 법령(lawRefs의 matchKeys)과 어긋나면
@@ -200,6 +256,7 @@ function checkTarget(target) {
   const subjectKeys = new Set(subjects.map(s => s.key));
   for (const s of subjects) checkSubject(target, s);
   for (const e of exams) checkExam(target, e, subjectKeys);
+  checkDisplayCounts(target);
 
   // 통합 모의고사 출제 비중 키 정합
   const qps = (m.integratedExam || {}).questionsPerSubject || {};

@@ -1,23 +1,111 @@
 # 교재 교체 작업 순서도 (Runbook)
 
 > **대상**: 과목 교재를 통째로 교체하거나 교재 전면 개정을 반영할 때의 **시간 순서 작업 절차**.
+> **이 문서만으로 완결 가능** — 신참자가 처음부터 끝까지 수행할 수 있도록 배경·용어·정상 출력·실패 대응까지 담았다.
 > 상세 근거는 `docs/dev/runbooks/CONTENT_WORKFLOW.md` §3.1-1(8계층)과 `ref-pipeline/README.md` 시나리오 A/B를 따른다.
-> **관련 SPEC ID**: `DA-01` (manifest SSOT) · `CS-01~10` · `BP-01~08` · `ID-01~04`
+> **관련 SPEC ID**: `DA-01` (manifest SSOT) · `CS-01~10` · `BP-01~08` · `ID-01~04` · `P-14`
 > **문서 ID**: DOC-RBK-08
 > **범위**: platform · 판본: none
 
+## 이 런북이 다루는 것 / 다루지 않는 것
+
+| 하려는 작업 | 읽을 문서 |
+|---|---|
+| **기존 시험의 교재 파일을 교체·전면 개정** | ← 이 문서 |
+| 교재 Markdown 작성 규칙 (표·마커·챕터·인용 형식) | `TEXTBOOK_AUTHORING_GUIDE.md` |
+| **새 시험**을 플랫폼에 추가 (교재 교체가 아님) | `NEW_EXAM_RUNBOOK.md` (`scaffold:exam`) |
+| 참조자료(법령·고시) PDF 추가·개정만 | `ref-pipeline/README.md` 시나리오 A |
+| 이야기형 서사(스토리) 패치 작성·수정 | `STORY_PATCH_GUIDE.md` |
+| 교재 문장·오타 소규모 수정 | 아래 "부분 변경 시 생략 가능 단계" |
+
+## 작업 전 준비
+
+### 환경 체크
+
 ```powershell
-# 작업 시작 전 — 대상 시험 지정 (cosmetic이 기본값, 다른 시험은 명시)
-$env:EXAM_CONTENT_ROOT = "content/exams/cosmetic"   # 또는 다른 시험 경로
+node -v           # Node.js — 버전 요구사항은 docs/dev/reference/DEV_ENVIRONMENT.md
+python --version  # Python 3 — ⑧ 파생물·ref-pipeline에 필요
+git status        # clean 상태에서 시작 (미커밋 변경이 있으면 먼저 정리)
+npm.cmd run check:all:quick   # 시작 전 저장소가 건강한지 1회 확인
 ```
+
+> **주의**: Windows PowerShell에서 `npm`/`npx`가 실행 정책으로 차단되므로 **항상 `npm.cmd`/`npx.cmd`**를 쓴다.
+
+### 대상 시험 지정
+
+```powershell
+# cosmetic이 기본값. 다른 시험은 contentRoot를 명시
+$env:EXAM_CONTENT_ROOT = "content/exams/cosmetic"
+# food 파일럿이면: $env:EXAM_CONTENT_ROOT = "content/exams/food"
+```
+
+### 용어 사전 — 이 문서에서만 쓰는 말
+
+| 용어 | 뜻 |
+|---|---|
+| `contentRoot` | 시험 콘텐츠 루트 `content/exams/<id>/` — **사람이 편집하는 진실(SSOT)** |
+| `dataRoot` | 빌드 산출물 루트 `data/exams/<id>/` — **직접 편집 금지**, `build:data`가 재생성 |
+| 표준형 / 이야기형 | 같은 교재의 두 본문 — 표준형(번호·표 중심) / 이야기형(서사 내러티브, `교재/*/story/*_서사.md` 패치 → `build:story` 생성물) |
+| `manifest.json` | 과목·교재 파일·문제은행·`textbookEdition`을 선언하는 시험의 SSOT |
+| `ref_md` | 참조자료 PDF를 라인번호 인용 가능하도록 변환한 MD (`참조자료/ref_md/과목N/{문서}/{문서}.md`) — 판본은 폴더명의 `제N호·시행일`에 내재화 |
+| `#L###` | 교재/참조자료 라인번호 인용 (문제은행 → 교재의 근거 링크) |
+| `textbookEdition` | manifest에 선언하는 **현재 교재 판본 라벨** — 개정 안내 배너(P-14)·문서 신선도 게이트의 앵커 |
+| 범위·판본 헤더 | 문서 상단 `> **범위**: exam:<id> · 판본: textbook` — "이 문서는 교재에 종속"의 기계 선언 |
+| ID 이관 | 교재 교체로 바뀐 카드/퀴즈 ID를 구ID→신ID로 매핑해 **사용자 학습 진도를 보존** (`id_migration.js`) |
+| 스냅샷 | `card_terms_snapshot.json` — 직전 배포의 ID 집합. 이관 맵 생성의 비교 기준 (커밋 대상) |
+| 게이트 | `check:*` 검증 스크립트 — 실패 시 커밋·푸시·배포가 차단된다 |
+
+## 한눈에 보는 구조 — 교재가 앱에 도달하기까지
+
+```mermaid
+flowchart LR
+    subgraph SRC["사람이 편집 — content/exams/&lt;id&gt;/ (contentRoot)"]
+        direction TB
+        TB["📕 교재/<br/>과목별 표준형·이야기형 .md"]
+        QB["📝 문제은행/<br/>정답 + 교재 인용 #L"]
+        MF["⚙️ manifest.json<br/>과목 선언 · textbookEdition"]
+        RF["📎 참조자료/<br/>PDF + ref_md/"]
+        DC["📄 docs/<br/>학습안내서 등 앱 내 문서"]
+    end
+
+    subgraph BLD["npm run build:data — 생성물 (직접 편집 금지)"]
+        direction TB
+        RG["registry.js<br/>과목 메타·통계·판본"]
+        BD["subjects/ · exams/ · study_md/<br/>카드·퀴즈·교재 번들"]
+        IM["id_migration.js<br/>구ID→신ID 진도 이관"]
+        DB["docs_md/<br/>앱 내 문서 번들"]
+    end
+
+    subgraph RUN["앱 런타임"]
+        SW["sw.js<br/>MD_ASSETS 프리캐시"]
+        APP["src/ 렌더링<br/>(교재명 하드코딩 없음)"]
+        LS["사용자 진도<br/>localStorage — 카드/퀴즈 ID 키"]
+    end
+
+    TB & QB & MF --> BLD
+    DC -->|"build_doc_bundles"| DB
+    RF -.->|"인용 대상 (LNN 마커)"| QB
+    BLD --> RUN
+    RG -->|"textbookEdition → 개정 배너 P-14"| APP
+    IM -->|"구 진도 키 재매핑"| LS
+    SW -.-> APP
+```
+
+**핵심 원리 3줄:**
+
+1. `src/` 앱 코드에는 과목명·교재명이 하드코딩되어 있지 않다 — **교재 변경은 `content/`와 `sw.js`만 건드리면 된다**.
+2. `data/`는 전부 생성물 — **직접 수정하면 다음 `build:data`에 덮어씌워진다**.
+3. 사용자 진도는 카드/퀴즈 ID에 매달린다 — 교재가 바뀌면 ID도 바뀌므로 **⑦ ID 이관이 진도 손실의 안전망**이다.
 
 ## 전체 흐름
 
 ```mermaid
 flowchart TD
     subgraph P0["⓪ 준비 — 교체 전"]
-        A0a["법령 현행성 점검<br/>check_laws.py (교체 트리거 확인)"]
-        A0b["새 교재 MD 작성<br/>파서 계약 충족"]
+        A0a["0a 법령 현행성 점검<br/>check_laws.py (교체 트리거 확인)"]
+        A0b["0b 새 교재 MD 작성<br/>파서 계약 (AUTHORING_GUIDE)"]
+        A0c["0c 영향 문서 목록<br/>git grep '판본: textbook'"]
+        A0d["0d textbookEdition<br/>신판 라벨로 갱신"]
     end
 
     subgraph P1["①~③ 교체·등록·백업"]
@@ -79,6 +167,52 @@ flowchart TD
 | 8 | 파생물 (병렬 가능) | 8a `python ref-pipeline/batch_convert.py` → `html/`<br/>8b `python ref-pipeline/audiobook/run_pipeline.py --subject {키} --tts` → `mp3/` → **CDN 업로드 + `AUDIO_BASE_URL` 확인** (MP3는 Vercel 배포 불가)<br/>8c `python ref-pipeline/check_laws.py` → `report/` | 변환 성공 + `build:audio-manifest` + CDN URL 유효 | ref-pipeline README 시나리오 B |
 | 8' | 참조자료 (조건부 병행 트랙) | 법령 개정 동반 시: `convert:refs` → `verify:refs` → 수동 승격 → `check:reffresh --update` → **④부터 재수행** | verify 누락 0 | ref-pipeline README 시나리오 A |
 | 9 | 회귀·배포·안내 | `npm.cmd test` + `npm.cmd run test:dom` (+`test:e2e` 선택) → 0c 목록의 `판본: textbook` 문서 갱신 포함해 커밋 (check:textbookdocs가 미갱신 문서를 게이트) → `npm.cmd run deploy` → 설치형 PWA 사용자에게 **완전 종료 후 1~2회 재실행** 안내 (sw 캐시 전파 지연; 재실행 시 대시보드에 교재 개정 배너 P-14 표시) | 687+/388+ 통과, clean tree, 교재 종속 문서 갱신 | AGENTS.md 배포 절차 |
+
+## 각 단계의 정상 출력 — 처음이라면 이렇게 나와야 한다
+
+| 단계 | 명령 | 정상 출력 | 비정상 신호 |
+|---|---|---|---|
+| ② | `node tools/sync/sync_textbook_files.js --check` | `✅ 드리프트 없음` | 불일치 목록 + exit 1 → `--check` 없이 실행해 동기화 |
+| ④ | `npm.cmd run check:content -- --build` | 각 계층 `✅ 통과` → `🎉 전 단계 통과` | 실패 단계명이 헤더에 표시됨 — 아래 "자주 실패하는 지점" 참조 |
+| ⑤ | `node tools/sync/sync_citation_lines.js --check` | **미발견 0건** | 미발견 문항 목록 → 인용 라인 수동 지정 |
+| ⑦ | `npm.cmd run build:id-migration` | 이관 N건 · 신규 M건 · **lost 0건** | lost > 0이면 삭제 용어의 진도 손실 — 의도 확인 후 사용자 안내 |
+| ⑨ (커밋 전) | `npm.cmd run check:textbookdocs` | `✅ 모든 교재 종속 문서가 최신 교재 이후 갱신됨` | stale 문서 목록 → 0c 목록 문서 갱신 후 재커밋 |
+| ⑨ | `npm.cmd run deploy` | `✅ 프로덕션 스모크 통과` | 배포 가드(clean tree·동기화) 실패면 커밋/푸시부터 정리 |
+
+## 자주 실패하는 지점 — 증상 → 원인 → 조치
+
+| 증상 | 원인 | 조치 |
+|---|---|---|
+| `[선언]` 챕터 헤딩 없음 | 교재에 `## N.` 형식 아닌 헤딩 사용 | AUTHORING_GUIDE 헤딩 규칙으로 `## 1. 제목` 형태로 수정 |
+| 카드/퀴즈가 0개 생성 | `\| 용어 \| 설명 \|` 표 또는 `🔖/📌/★` 마커 부재 | 파서 계약 표(아래 ①-1) 대조 — 헤더·라벨 라인의 마커는 생성 대상 아님 |
+| `[구조]` 드리프트 | 교재 파일 추가·이름 변경 후 sync 미실행 | `node tools/sync/sync_textbook_files.js` |
+| `[선언]` "manifest 미등록 .md" 경고 | 디스크에만 있고 chapters[].file에 미등록 | manifest에 등록하거나 불필요 파일 삭제 |
+| `[인용]` 미발견 | 교재 본문 재작성으로 인용문 지문 매칭 실패 | 해당 문항의 `[교재: LNNN]` 링크를 새 라인으로 수동 수정 |
+| `[ID이관]` lost 대량 | 용어 대량 삭제·개명 — 진도 손실 | 의도한 변경인지 재확인 → 손실 안내 여부 결정 (되돌리려면 ③ 백업으로 롤백) |
+| `check:textbookdocs` 실패 | `판본: textbook` 문서가 교재보다 오래됨 | 문서 갱신 후 커밋 (검토만 완료한 문서는 갱신일·내용 확인 후 터치) |
+| `check:manifest` "textbookEdition 없음" | 0d 누락 | manifest 상단에 `"textbookEdition": "<신판 라벨>"` 추가 |
+| `[문서번들]` 실패 | `content/exams/<id>/docs/*.md` 수정 후 번들 미갱신 | `node tools/build/build_doc_bundles.js` |
+| `[데이터신선도]` 실패 | content 변경 후 `build:data` 누락 | `npm.cmd run build:data` 재실행 |
+| `[신선도]` (참조자료) 실패 | ref_md보다 PDF가 최신 — PDF 교체·개정 | `convert:refs` → `verify:refs` → 승격 → `check:reffresh -- --update` (⑧' 트랙) |
+| 배포 후 앱에 반영 안 됨 | 설치형 PWA의 sw 캐시 | 완전 종료 후 1~2회 재실행 (정상 지연 — 버그 아님) |
+| 배포 후 개정 배너가 안 뜸 | `textbookEdition` 미갱신 또는 이전과 동일 값 | manifest 확인 — 동일 라벨이면 변경 없음으로 억제되는 정상 동작 |
+
+## 완료 체크리스트
+
+- [ ] ⓪ `check_laws.py`로 교체 트리거(법령 개정 여부) 확인
+- [ ] ⓪ 새 교재 MD가 AUTHORING_GUIDE 파서 계약 충족 (헤딩·표·마커)
+- [ ] ⓪ `git grep -l "판본: textbook"` 목록 확보 + 문서별 갱신 범위 수립
+- [ ] ⓪ manifest `textbookEdition`을 신판 라벨로 갱신
+- [ ] ① 파일 배치 완료 (이름 변경이면 `--rename` 사용 — 수동 이동 금지)
+- [ ] ② `sync_textbook_files.js --check` → 드리프트 0
+- [ ] ③ 스냅샷+이관 맵 백업 사본 확보
+- [ ] ④ `check:content --build` 전 계층 통과
+- [ ] ⑤ 인용 미발견 0건
+- [ ] ⑥ ref_md 귀속이 교체 전 기준선 이내
+- [ ] ⑦ `id_migration.js` 생성 + lost 항목 검토·안내 결정
+- [ ] ⑧ 필요 파생물(html/mp3/report) 생성 — mp3는 **CDN 업로드**까지
+- [ ] ⑨ test + test:dom 통과, `판본: textbook` 문서 갱신 포함 커밋
+- [ ] ⑨ `deploy` 스모크 통과 + PWA 재실행 안내 + 대시보드 개정 배너 육안 확인
 
 ## 교재 변경 시 소스코드 수정 지점
 
@@ -217,9 +351,12 @@ const MD_ASSETS = [
 | 파일 | 조건 |
 |---|---|
 | `content/exams/{id}/docs/학습안내서.md` | 챕터·과목 구성 변경 시 — `node tools/build/build_doc_bundles.js`로 앱 내 번들 재생성 |
+| `content/exams.json` 엔트리의 `desc` | 과목명·문항 수가 하드코딩된 표시 문구 ("4과목 · 문제은행 1,000문") — 시험 선택 카드에 노출되므로 **구성 변경 시 수동 갱신**. `N과목`·`N문` 수치는 `check:manifest`가 manifest 과목 수·`### Q` 실측 문항 수와 대조해 오류로 차단 (과목명 등 문구 자체는 수동). `manifest.exams[].title`의 `(N제)`도 동일 검증 |
+| `content/exams/{id}/combo_blocklist.json` | `approved`/`derivedFromPrefixes`가 구 교재의 과목 프리픽스 ID를 참조 — 남겨둬도 무해(미매칭 시 no-op)이나 **복수정답 검수 큐는 신 교재 기준으로 다시 쌓임** |
 | `참조자료/*.pdf` + `ref_md/` | 법령 개정 동반 — `convert:refs` → `verify:refs` → `ref_md_v2`→`ref_md` 승격 → `check:reffresh -- --update` |
-| `content/exams.json` | 시험 자체 추가·제거 시만 — 교재 변경에는 무관 |
+| `content/exams.json` | 시험 자체 추가·제거 시만 — 위 `desc` 표시 문구 외에는 교재 변경에 무관 |
 | `sw.js` `CACHE_VERSION` | `stamp:sw`가 커밋 해시로 자동 스탬프 — 수동 편집 금지 |
+| `tests/` (구조 단정) | 픽스처 테스트는 무방하나 **실데이터를 읽는 구조 테스트**(`build-pipeline`의 subjects 수, `content-structure`의 과목별 자산 존재, e2e의 과목 의존 흐름)는 신 교재 구조에 맞춰 갱신 — `check:content`·`test` 실패로 표면화됨 |
 
 ### `src/`를 수정해야 하는 유일한 경우
 
@@ -288,3 +425,16 @@ npm.cmd run deploy                                     # 재배포
 - ④ `check:content --build` — 수 분 (전 계층 일괄 검증)
 - ⑧a/b/c — 상호 독립, 병렬 터미널 실행 가능 (⑧b TTS는 챕터당 수 분 + API 레이트리밋)
 - 이 시간들은 `LEARNING_PREMIUM_PLAN.md`의 **콘텐츠 제작시간 KPI** 측정 단위이기도 하다 — 두 번째 시험 추가 시 단계별 실측 기록 권장
+
+## 참고 문서 맵 — 상황별 다음 읽을 문서
+
+| 상황 | 문서 |
+|---|---|
+| 교재 MD 작성 규칙 전체 (표·마커·챕터·인용) | `TEXTBOOK_AUTHORING_GUIDE.md` (DOC-RBK-07) |
+| 이야기형 서사 패치 (슬롯 마커·지시어) | `STORY_PATCH_GUIDE.md` (DOC-RBK-13) |
+| 콘텐츠 파이프라인 8계층 전체 설계 | `CONTENT_WORKFLOW.md` |
+| 참조자료 PDF → ref_md 변환·승격 | `ref-pipeline/README.md` (시나리오 A/B) |
+| 새 시험 온보딩 (이 런북이 아닌 경우) | `NEW_EXAM_RUNBOOK.md` |
+| 문서 범위·판본 체계 (0c 목록의 의미) | `docs/README.md` "범위 체계" |
+| 오디오 CDN 업로드 절차 | `AUDIO_HOSTING_GUIDE.md` |
+| 배포 절차·릴리스 노트 | `DEPLOYMENT_GUIDE.md` · AGENTS.md 배포 절 |
