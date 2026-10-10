@@ -129,6 +129,13 @@ python ref-pipeline/check_mfds_notice.py --update   # 키: LAW_OC_KEY 환경변�
 npm.cmd run build:noticediff           # ref_md 현행본 ↔ _archive 구본 조문 단위 diff → data/exams/<id>/notice_diff.json
 #   (build:data 체인에 포함 — 문서명 '이름(기관)(제N호)(날짜)' 규약으로 자동 쌍지음. 신설·개정·삭제 조문을
 #    Formula OS 개정 배너 + '고시 정보 보기' 패널에 표시 — 사용자 확인 시 notice_diff_seen 기록으로 억제)
+
+# 개정 원문 자동 확보 — 감지 다음 단계 (check_mfds_notice의 신규 판정분을 대상으로)
+python ref-pipeline/fetch_revision.py [--doc <이름>] [--apply]
+#   고시(admrul): lawService 상세 '첨부파일'의 전문 PDF를 자동 다운로드 → 법령고시/{이름}({기관})({제N호})({날짜}).pdf
+#   + .src.json 출처 메타(URL·sha256·serial) 병기. --apply: 구본 _archive 이동 + references.json 파일명 일괄 치환
+#   법령(target=law): DRF가 문서 파일 미제공(type=PDF/HWP/DOC 모두 오류) — 다운로드 페이지 URL·저장 파일명·개정문 요지 안내만
+#   이후 convert:refs → verify:refs → ref_md 승격 → check:reflines → check:reffresh --update 순서는 동일
 # ※ Actions 크론(주1회 자동)은 선택사항 — 저장소 Settings → Secrets에 LAW_OC_KEY 등록 시 활성화.
 #   미등록이면 수동 실행만 가능. 앱 내 실시간 버튼이 확인을 커버하나, 크론은 이슈 자동 생성 안전망 역할
 # ※ 대조 절차: docs/exams/cosmetic/ingredients_audit_제2026-19호.md

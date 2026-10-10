@@ -7,6 +7,12 @@
 > **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
+## 2026-10-10 개정 고시 원문 자동 다운로드 (FO-24 연장)
+
+- **배경**: "고시 갱신 시 파일을 수동 다운로드해야 하나?" — check_mfds_notice는 신판 감지까지만 하고 원문 확보는 수동이었음. DRF 응답 조사 결과: 행정규칙 상세(`lawService.do?target=admrul`)에 `첨부파일` 링크(flDownload.do, 실제 바이너리 반환)가 있어 전문 PDF 자동 확보가 가능하고, 법령(target=law)은 파일 다운로드를 제공하지 않음(type=PDF/HWP/DOC 모두 HTML 오류 페이지 — 확인됨)
+- **구현**: `ref-pipeline/fetch_revision.py` — referenceLaw 감시 문서의 신규본을 조회해 ① 고시: 첨부 목록에서 '전문' .pdf 우선 선택·다운로드·%PDF 매직 검증 → `참조자료/법령고시/`에 규약 파일명 배치 + `.src.json` 출처 메타(URL·sha256·serial·시각) 병기, `--apply` 시 구본 _archive 이동 + references.json 파일명 일괄 치환 ② 법령: 다운로드 불가를 명시하고 lsInfoP 페이지 URL·저장 파일명·제개정이유 요지 안내. 이후 convert:refs→verify→승격→check:reflines 절차는 동일
+- **검증**: pytest 17건 (첨부 선택 우선순위·파일명 규약·치환·비PDF 응답 거부·첨부 없음·serial 없음) + 실 API로 화장품 안전기준 고시 전문 PDF(1.6MB) 다운로드·매직 확인
+
 ## 2026-10-10 참조 문서 개정 조문 diff 알림 (FO-24 연장)
 
 - **배경**: 고시 감지 배너는 "신판이 있다"만 알리고 무엇이 바뀌었는지는 공식 원문을 직접 대조해야 알 수 있었음. 화장품법 제21525호 교체 시 계기로 조문 단위 자동 비교 도입
