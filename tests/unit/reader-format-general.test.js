@@ -59,14 +59,14 @@ test('참조자료 ref_md 링크 → source-link + law.go.kr 원문 병기', () 
 });
 
 test('스냅샷 배지는 📚 참조 자료 섹션에만 — 본문 인라인 출처는 배지 없음', () => {
-    const file = '화장품법(법률)(제20901호)(20260402).md';
-    const path = '../참조자료/ref_md/과목1/화장품법%28법률%29%28제20901호%29%2820260402%29/화장품법%28법률%29%28제20901호%29%2820260402%29.md';
+    const file = '화장품법(법률)(제21525호)(20261008).md';
+    const path = '../참조자료/ref_md/과목1/화장품법%28법률%29%28제21525호%29%2820261008%29/화장품법%28법률%29%28제21525호%29%2820261008%29.md';
     const inline = formatSectionContentForReader(`본문 📌 출처: [${file}](${path})`);
     assert.ok(!inline.includes('ref-snapshot'), '인라인 출처는 배지 없음');
     const section = formatSectionContentForReader(`## 📚 참조 자료 (법령 원문)\n• [${file}](${path})`);
     assert.ok(section.includes('ref-snapshot'), '참조 자료 섹션은 배지 있음');
-    assert.ok(section.includes('제20901호'), '배지에 고시 번호');
-    assert.ok(section.includes('2026-04-02'), '배지에 시행일');
+    assert.ok(section.includes('제21525호'), '배지에 고시 번호');
+    assert.ok(section.includes('2026-10-08'), '배지에 시행일');
 });
 
 test('참조자료 ref_md 링크 — 매칭 없는 문서는 원문 링크 없음', () => {
@@ -102,7 +102,7 @@ test('출처 링크: "출처: `../참조자료/...md`" → data-ref-md', () => {
 });
 
 test('출처 링크: "출처: `xxx.pdf`" → data-ref-html', () => {
-    const md = '출처: `화장품법(법률)(제20901호)(20260402).pdf`';
+    const md = '출처: `화장품법(법률)(제21525호)(20261008).pdf`';
     const html = formatSectionContentForReader(md);
     assert.ok(html.includes('data-ref-html'), 'data-ref-html 속성');
     assert.ok(html.includes('source-link'), 'source-link 클래스');

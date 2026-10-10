@@ -12,17 +12,17 @@ const TABLES = {
     contentRoot: 'content/exams/cosmetic',
     SUBJECT_DIR_MAP: { law: '과목1', manufacturing: '과목2', safety: '과목3' },
     REF_MD_SUBJECTS: {
-        '화장품법(법률)(제20901호)(20260402).pdf': '과목1',
+        '화장품법(법률)(제21525호)(20261008).pdf': '과목1',
         'KFCC_별표1_통칙.pdf': '과목2',
         '무귀속문서.pdf': '과목9'
     },
     REF_FILE_TO_PATH: {
-        '화장품법(법률)(제20901호)(20260402).pdf': 'content/exams/cosmetic/참조자료/ref_md/과목1/화장품법(법률)(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md',
+        '화장품법(법률)(제21525호)(20261008).pdf': 'content/exams/cosmetic/참조자료/ref_md/과목1/화장품법(법률)(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md',
         'KFCC_별표1_통칙.pdf': 'content/exams/cosmetic/참조자료/ref_md/과목2/KFCC_별표1_통칙/KFCC_별표1_통칙.md',
         '무귀속문서.pdf': 'content/exams/cosmetic/참조자료/ref_md/과목9/x/x.md'
     },
     REFERENCE_LAW: [
-        { name: '화장품법', file: '화장품법(법률)(제20901호)(20260402).pdf', type: 'pdf', dir: '법령고시' }
+        { name: '화장품법', file: '화장품법(법률)(제21525호)(20261008).pdf', type: 'pdf', dir: '법령고시' }
     ],
     REFERENCE_FILES: {
         manufacturing: [{ name: 'KFCC 별표1 통칙', file: 'KFCC_별표1_통칙.pdf', type: 'pdf' }]

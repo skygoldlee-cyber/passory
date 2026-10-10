@@ -1,5 +1,5 @@
 // 자동 생성된 복수정답형 드릴 데이터입니다. 수정하지 마십시오. (tools/build/build_combo_drills.js)
-// 원본: data/exams/cosmetic/exams/subject3.fb63ea42.js — mode: fact(명제 조합) 23문 / answer(정답 조합) 226문
+// 원본: data/exams/cosmetic/exams/subject3.b4849b23.js — mode: fact(명제 조합) 23문 / answer(정답 조합) 226문
 var COMBO_DRILLS_subject3 = [
  {
   "id": "safety_combo_86b500",
@@ -19754,35 +19754,35 @@ var COMBO_DRILLS_subject3 = [
    {
     "id": "ㄱ",
     "sid": "safety_st_c1c500",
-    "conceptId": "L384",
+    "conceptId": "L314",
     "text": "강화",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "safety_st_d4a9ad",
-    "conceptId": "L384",
+    "conceptId": "L314",
     "text": "연기",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "safety_st_8e0da4",
-    "conceptId": "L384",
+    "conceptId": "L314",
     "text": "축소",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "safety_st_256a02",
-    "conceptId": "L384",
+    "conceptId": "L314",
     "text": "취소",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "safety_st_598a17",
-    "conceptId": "L384",
+    "conceptId": "L314",
     "text": "면제",
     "truth": true
    }
@@ -19835,7 +19835,7 @@ var COMBO_DRILLS_subject3 = [
    "처분기준"
   ],
   "derivedFrom": "subject3_q214",
-  "explain": "📖 법령 근거 (L384(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md#L384>)):\n③ 식품의약품안전처장은 제1항에 따른 회수 또는 회수에 필요한 조치를 성실하게 이행한 영업자가 해당 화장품으로 인하여 받게 되는 제24조에 따른 행정처분을 총리령으로 정하는 바에 따라 감경 또는 면제할 수 있다.",
+  "explain": "📖 법령 근거 (L314(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md#L314>)):\n③ 식품의약품안전처장은 제1항에 따른 회수 또는 회수에 필요한 조치를 성실하게 이행한 영업자가 해당 화장품으로 인하여 받게 되는 제24조에 따른 행정처분을 총리령으로 정하는 바에 따라 감경 또는 면제할 수 있다.",
   "source": "유통화장품 안전관리 (250제)",
   "answer": "5"
  },

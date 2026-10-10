@@ -14,16 +14,16 @@
     {
       "name": "화장품법",
       "target": "law",
-      "file": "화장품법(법률)(제20901호)(20260402).pdf",
+      "file": "화장품법(법률)(제21525호)(20261008).pdf",
       "url": "https://www.law.go.kr/법령/화장품법",
-      "baselineNotice": "제20901호",
-      "baselineDate": "2026-04-02",
-      "latestNotice": "제20901호",
-      "latestDate": "2026-04-02",
-      "serial": "270323",
-      "currentSerial": "270323",
-      "currentDate": "2026-04-02",
-      "currentUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=270323&efYd=20260402",
+      "baselineNotice": "제21525호",
+      "baselineDate": "2026-10-08",
+      "latestNotice": "제21525호",
+      "latestDate": "2026-10-08",
+      "serial": "285353",
+      "currentSerial": "285353",
+      "currentDate": "2026-10-08",
+      "currentUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285353&efYd=20261008",
       "pending": false,
       "newer": false
     },
@@ -140,6 +140,6 @@
       "newer": false
     }
   ],
-  "checkedAt": "2026-09-28T16:04:59+00:00",
+  "checkedAt": "2026-10-10T14:03:18+00:00",
   "newerFound": false
 }

@@ -1,5 +1,5 @@
 // 자동 생성된 복수정답형 드릴 데이터입니다. 수정하지 마십시오. (tools/build/build_combo_drills.js)
-// 원본: data/exams/cosmetic/exams/subject4.217a4726.js — mode: fact(명제 조합) 18문 / answer(정답 조합) 257문
+// 원본: data/exams/cosmetic/exams/subject4.ed0a3f16.js — mode: fact(명제 조합) 18문 / answer(정답 조합) 257문
 var COMBO_DRILLS_subject4 = [
  {
   "id": "understanding_combo_8317ff",
@@ -4544,35 +4544,35 @@ var COMBO_DRILLS_subject4 = [
    {
     "id": "ㄱ",
     "sid": "understanding_st_109a24",
-    "conceptId": "L218",
+    "conceptId": "L148",
     "text": "4.95g ~ 5.05g",
     "truth": true
    },
    {
     "id": "ㄴ",
     "sid": "understanding_st_a39203",
-    "conceptId": "L218",
+    "conceptId": "L148",
     "text": "4.9g ~ 5.1g",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "understanding_st_2415dd",
-    "conceptId": "L218",
+    "conceptId": "L148",
     "text": "4.5g ~ 5.5g",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "understanding_st_1673d3",
-    "conceptId": "L218",
+    "conceptId": "L148",
     "text": "4.0g ~ 6.0g",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "understanding_st_15cc59",
-    "conceptId": "L218",
+    "conceptId": "L148",
     "text": "4.99g ~ 5.01g",
     "truth": false
    }
@@ -4621,7 +4621,7 @@ var COMBO_DRILLS_subject4 = [
    "수치"
   ],
   "derivedFrom": "subject4_q50",
-  "explain": "📖 법령 근거 (L218(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md#L218>)):\n① 맞춤형화장품조제관리사가 되려는 사람은 화장품과 원료 등에 대하여 식품의약품안전처장이 실시하는 자격시험에 합격하여야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
+  "explain": "📖 법령 근거 (L148(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md#L148>)):\n① 맞춤형화장품조제관리사가 되려는 사람은 화장품과 원료 등에 대하여 식품의약품안전처장이 실시하는 자격시험에 합격하여야 한다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "맞춤형화장품의 이해 (400제)",
   "answer": "5"
  },
@@ -16884,35 +16884,35 @@ var COMBO_DRILLS_subject4 = [
    {
     "id": "ㄱ",
     "sid": "understanding_st_fa6d03",
-    "conceptId": "q:subject4_q184",
+    "conceptId": "L147",
     "text": "소독→세척→건조",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "understanding_st_fa25f5",
-    "conceptId": "q:subject4_q184",
+    "conceptId": "L147",
     "text": "건조→세척→소독",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "understanding_st_318d63",
-    "conceptId": "q:subject4_q184",
+    "conceptId": "L147",
     "text": "세척→소독→건조",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "understanding_st_357235",
-    "conceptId": "q:subject4_q184",
+    "conceptId": "L147",
     "text": "세척→건조→소독",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "understanding_st_a2e630",
-    "conceptId": "q:subject4_q184",
+    "conceptId": "L147",
     "text": "소독→건조→세척",
     "truth": false
    }
@@ -16961,7 +16961,7 @@ var COMBO_DRILLS_subject4 = [
    "절차"
   ],
   "derivedFrom": "subject4_q184",
-  "explain": "📖 법령 근거 (L17(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md#L17>)):\n- 제3조의4(맞춤형화장품조제관리사 자격시험)\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
+  "explain": "📖 법령 근거 (L147(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md#L147>)):\n- 제3조의4(맞춤형화장품조제관리사 자격시험)\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "맞춤형화장품의 이해 (400제)",
   "answer": "1"
  },
@@ -19998,35 +19998,35 @@ var COMBO_DRILLS_subject4 = [
    {
     "id": "ㄱ",
     "sid": "understanding_st_1b4a4f",
-    "conceptId": "L1051",
+    "conceptId": "L918",
     "text": "건성: 보습제 강화",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "understanding_st_edde5d",
-    "conceptId": "L1051",
+    "conceptId": "L918",
     "text": "지성: 유분 조절",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "understanding_st_d2c5ff",
-    "conceptId": "L1051",
+    "conceptId": "L918",
     "text": "민감성: 저자극 원료",
     "truth": false
    },
    {
     "id": "ㄹ",
     "sid": "understanding_st_2dd441",
-    "conceptId": "L1051",
+    "conceptId": "L918",
     "text": "아토피: 의약품 첨가",
     "truth": true
    },
    {
     "id": "ㅁ",
     "sid": "understanding_st_2bc74a",
-    "conceptId": "L1051",
+    "conceptId": "L918",
     "text": "노화: 항산화제 강화",
     "truth": false
    }
@@ -20073,7 +20073,7 @@ var COMBO_DRILLS_subject4 = [
    "정답판정"
   ],
   "derivedFrom": "subject4_q218",
-  "explain": "📖 법령 근거 (L1051(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md#L1051>)):\n① 화장품책임판매업자 및 맞춤형화장품판매업자는 「실험동물에 관한 법률」 제2조제1호에 따른 동물실험(이하 이 조에서 “동물실험”이라 한다)을 실시한 화장품 또는 동물실험을 실시한 화장품 원료를 사용하여 제조(위탁제조를 포함한다) 또는 수입한 화장품을 유통ㆍ판매하여서는 아니 된다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
+  "explain": "📖 법령 근거 (L918(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md#L918>)):\n① 화장품책임판매업자 및 맞춤형화장품판매업자는 「실험동물에 관한 법률」 제2조제1호에 따른 동물실험(이하 이 조에서 “동물실험”이라 한다)을 실시한 화장품 또는 동물실험을 실시한 화장품 원료를 사용하여 제조(위탁제조를 포함한다) 또는 수입한 화장품을 유통ㆍ판매하여서는 아니 된다.\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "맞춤형화장품의 이해 (400제)",
   "answer": "5"
  },
@@ -20634,35 +20634,35 @@ var COMBO_DRILLS_subject4 = [
    {
     "id": "ㄱ",
     "sid": "understanding_st_7a1748",
-    "conceptId": "L249",
+    "conceptId": "L179",
     "text": "강하게 한 번에 혼합",
     "truth": false
    },
    {
     "id": "ㄴ",
     "sid": "understanding_st_5c2c9c",
-    "conceptId": "L249",
+    "conceptId": "L179",
     "text": "혼합하지 않고 순서대로 층층이 쌓기",
     "truth": false
    },
    {
     "id": "ㄷ",
     "sid": "understanding_st_a3d00d",
-    "conceptId": "L249",
+    "conceptId": "L179",
     "text": "천천히 균일하게 교반하며 혼합",
     "truth": true
    },
    {
     "id": "ㄹ",
     "sid": "understanding_st_6532e8",
-    "conceptId": "L249",
+    "conceptId": "L179",
     "text": "뜨거운 물에 모두 붓기",
     "truth": false
    },
    {
     "id": "ㅁ",
     "sid": "understanding_st_abe3e7",
-    "conceptId": "L249",
+    "conceptId": "L179",
     "text": "냉동 상태에서 혼합",
     "truth": false
    }
@@ -20712,7 +20712,7 @@ var COMBO_DRILLS_subject4 = [
    "절차"
   ],
   "derivedFrom": "subject4_q225",
-  "explain": "📖 법령 근거 (L249(제20901호)(20260402)/화장품법(법률)(제20901호)(20260402).md#L249>)):\n1. 거짓이나 그 밖의 부정한 방법으로 맞춤형화장품조제관리사의 자격을 취득한 경우\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
+  "explain": "📖 법령 근거 (L179(제21525호)(20261008)/화장품법(법률)(제21525호)(20261008).md#L179>)):\n1. 거짓이나 그 밖의 부정한 방법으로 맞춤형화장품조제관리사의 자격을 취득한 경우\n⚠️ *인용 위치 자동검증 불가 — 근거가 부정확할 수 있습니다*",
   "source": "맞춤형화장품의 이해 (400제)",
   "answer": "2"
  },

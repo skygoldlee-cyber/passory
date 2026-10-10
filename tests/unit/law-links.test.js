@@ -7,7 +7,7 @@ import { lawUrlFor } from '../../src/law-links.js';
 
 describe('lawUrlFor', () => {
     it('법률·시행규칙 본문 → 법령 한글주소', () => {
-        assert.equal(lawUrlFor('화장품법(법률)(제20901호)(20260402).pdf'),
+        assert.equal(lawUrlFor('화장품법(법률)(제21525호)(20261008).pdf'),
             'https://www.law.go.kr/법령/화장품법');
         assert.equal(lawUrlFor('화장품법 시행규칙(총리령)(제02109호)(20260402).pdf'),
             'https://www.law.go.kr/법령/화장품법시행규칙');

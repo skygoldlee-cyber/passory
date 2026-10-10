@@ -6,7 +6,7 @@ import { getGlossaryIndex } from './keyword-index.js';
 
 /**
  * 특정 참조문서 파일명에 해당하는 용어집 항목들을 반환합니다.
- * @param {string} refFileName - 참조문서 파일명 (예: "화장품법(법률)(제20901호)(20260402).md")
+ * @param {string} refFileName - 참조문서 파일명 (예: "화장품법(법률)(제21525호)(20261008).md")
  * @param {Set<string>} [seenKeys] - 중복 방지용 Set (선택)
  * @returns {Array<{idxKey:string, keyword:string, explanation:string, refDoc:string, curated?:boolean}>}
  */
