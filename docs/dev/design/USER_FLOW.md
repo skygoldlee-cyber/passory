@@ -4,6 +4,7 @@
 > **작성 규칙**: 각 흐름은 ① 진입 조건 ② 분기 다이어그램 ③ 종료/전이 조건 ④ 상태 저장 지점(localStorage 키) 순으로 기술. 새 화면 간 전환을 추가할 때는 해당 흐름을 먼저 갱신한다.
 > **최종 업데이트**: 2026-10-03
 > **문서 ID**: DOC-DSN-11
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: `UX-NAV-06~08`(팔레트·스크롤·해시 라우팅) · `UX-FB-05`(온보딩) · `UM-01~05`(모드 전환) · `TR-01~23`(리더) · `FO-01~23`(Formula OS) · `AU-01~08`(계정·동기화 §3.19)
 
 ---
@@ -106,7 +107,7 @@ flowchart TD
     B --> P["산출물 인쇄<br/>조제 기록지 / 라벨(70mm) / 사용 안내문"]
 ```
 
-상세 엔티티·생명주기는 [FORMULA_OS_WORKFLOW_DESIGN.md](FORMULA_OS_WORKFLOW_DESIGN.md) (DOC-DSN-02) 참조.
+상세 엔티티·생명주기는 [FORMULA_OS_WORKFLOW_DESIGN.md](../../exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md) (DOC-DSN-02) 참조.
 
 ## 6. 시험 전환 흐름
 

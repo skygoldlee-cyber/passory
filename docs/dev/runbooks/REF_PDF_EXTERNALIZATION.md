@@ -4,6 +4,7 @@
 > **목적**: `content/exams/cosmetic/참조자료/`의 원본 PDF(73MB, 41개)를 git 저장소에서 분리해 클론 비용을 줄이는 절차
 > **관련 SPEC ID**: `RR-13` (참조자료 레지스트리)
 > **문서 ID**: DOC-RBK-12
+> **범위**: platform · 판본: none
 
 ---
 

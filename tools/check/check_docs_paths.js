@@ -13,7 +13,7 @@
  * 범위/예외:
  *   - 인라인 코드 `path/to/x` 토큰 (저장소 루트 접두사로 시작하는 것만)
  *   - 마크다운 링크 [x](상대경로) — 문서 파일 기준 상대경로 해석
- *   - docs/report_archive/·docs/dev/CHANGES.md = 이력 영역이라 검사 제외
+ *   - `report_archive` 세그먼트를 포함하는 디렉터리(docs/exams/<id>/ 등)·docs/dev/CHANGES.md = 이력 영역이라 검사 제외
  *   - 플레이스홀더(<id>, {과목}, *, xxx, ... 등)는 구체 접두사까지만 검증
  *   - 의도된 미래 파일 등 예외는 tools/config/docs_paths_allowlist.json에 등록
  */
@@ -27,7 +27,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 // 검사 대상 문서
 const DOC_DIRS = ['docs', 'ref-pipeline'];
 const DOC_FILES = ['AGENTS.md', 'README.md'];
-const EXCLUDE_DIRS = [path.join('docs', 'report_archive')];
+const EXCLUDE_DIR_SEGMENTS = new Set(['report_archive']); // docs/exams/<id>/report_archive 등 이력 영역
 const EXCLUDE_FILES = [path.join('docs', 'dev', 'CHANGES.md')];
 
 // 저장소 루트 기준 경로로 보이는 토큰의 접두사
@@ -73,7 +73,7 @@ function docFiles() {
   }
   return files.filter(f => {
     const rel = path.relative(ROOT, f);
-    return !EXCLUDE_DIRS.some(ex => rel.startsWith(ex + path.sep)) &&
+    return !rel.split(path.sep).some(seg => EXCLUDE_DIR_SEGMENTS.has(seg)) &&
       !EXCLUDE_FILES.includes(rel);
   });
 }

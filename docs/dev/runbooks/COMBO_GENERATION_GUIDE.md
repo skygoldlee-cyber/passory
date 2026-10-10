@@ -5,6 +5,7 @@
 > 전체 과정을 설명합니다. 스키마 자체는 `QUESTION_SCHEMA_DESIGN.md` §6 참조.
 > **관련 SPEC ID**: `DR-02~07` (복수정답형 드릴) · `BP-*` (빌드 파이프라인)
 > **문서 ID**: DOC-RBK-02
+> **범위**: platform · 판본: none
 
 ## 1. 개요
 

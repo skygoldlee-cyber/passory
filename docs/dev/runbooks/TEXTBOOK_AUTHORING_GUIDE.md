@@ -4,6 +4,7 @@
 > 이 규칙을 지키면 **소스코드 수정 없이** `npm run build:data`만으로 앱에 반영된다.
 > **관련 SPEC ID**: `CS-01~10` (콘텐츠 구조) · `CE-01~05` (학습 보조 요소) · `ST-01~07` (이야기형 서사) · `TR-*` (리더 렌더링)
 > **문서 ID**: DOC-RBK-07
+> **범위**: platform · 판본: none
 
 ---
 
@@ -185,7 +186,7 @@ content/
 | `####` | `N.M 더 세부 내용` | `#### 1.1 법령 위계` |
 | `#####` | `N.M.K 소분류` | `##### 1.1.1 법률` |
 
-> **번호체계 상세**: [`docs/dev/reference/NUMBERING_SYSTEM.md`](../reference/NUMBERING_SYSTEM.md) 참조
+> **번호체계 상세**: [`docs/exams/cosmetic/reference/NUMBERING_SYSTEM.md`](../../exams/cosmetic/reference/NUMBERING_SYSTEM.md) 참조
 
 **2-D: 챕터 내 비챕터 항목** — 각 챕터 본문 뒤에 배치
 

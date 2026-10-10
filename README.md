@@ -5,6 +5,7 @@
 > 첫 콘텐츠 팩: **맞춤형화장품 조제관리사** (앱명 Passmula — Pass + Formula).
 > 교재 읽기 · 플래시카드 · 기출 퀴즈 · 오답 복습 · 성적 분석 · 오디오북 · Formula OS 실무 배합까지 하나로.
 > **문서 ID**: DOC-ROOT-01
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (프로젝트 소개)
 
 [![Deploy](https://img.shields.io/badge/deploy-Vercel-black?logo=vercel)](vercel.json)
@@ -191,22 +192,17 @@ passory/
 │
 └── 📂 docs/                         ← 문서 (개발 + 사용자)
     ├── README.md                    ← 문서 인덱스
-    ├── dev/                         ← 개발 문서
-    │   ├── ARCHITECTURE.md          ← 아키텍처 및 설계 표준 가이드
-    │   ├── AUDIO_HOSTING_GUIDE.md   ← 오디오북 호스팅 및 청취 가이드
-    │   ├── DEPLOYMENT_GUIDE.md      ← Vercel 배포 및 오디오 호스팅 가이드
-    │   ├── MULTI_MACHINE_SETUP.md   ← 멀티 머신 개발 환경 설정
-    │   ├── TEXTBOOK_AUTHORING_GUIDE.md ← 교재 Markdown 작성 지침
-    │   ├── CHANGES.md               ← 코드 변경 이력 (Changelog)
-    │   ├── SPEC.md                  ← 기능 명세
-    │   ├── FLASHCARD_LOGIC.md       ← 플래시카드 로직 명세
-    │   ├── MD_TO_HTML_LOGIC.md      ← MD→HTML 변환 로직
-    │   ├── TESTING.md               ← 테스트 가이드
-    │   ├── STUDY_APP_DESIGN_GUIDE.md ← 학습 앱 설계 가이드 (다른 교재 적용용)
-    │   └── SUBSCRIPTION_ROADMAP.md  ← 구독 로드맵
-    ├── report_archive/              ← 분석 보고서 아카이브 (앱 미참조)
-    └── user/                        ← 사용자 문서
-        └── user_manual.md           ← 사용자 매뉴얼 (앱 내 뷰어 연동)
+    ├── dev/                         ← 플랫폼 공통 개발 문서
+    │   ├── ARCHITECTURE.md·SPEC.md·CHANGES.md  ← 아키텍처·기능 명세·변경 이력
+    │   ├── adr/                     ← 아키텍처 결정 기록
+    │   ├── runbooks/                ← 실행 절차·운영 런북 (배포·콘텐츠·환경·교재 등)
+    │   ├── design/                  ← 설계·계획 문서 (동기화·문항 스키마·테스트 설계 등)
+    │   └── reference/               ← 명세·로직·참조 문서 (TESTING·FLASHCARD_LOGIC 등)
+    └── exams/cosmetic/              ← 시험 종속 문서 (맞춤형화장품 조제관리사)
+        ├── user/                    ← 학습자 문서 (시험 공략·과목별 숫자 암기)
+        ├── business/                ← 사업 기획·시장 조사·마케팅 문서
+        ├── design/·reference/       ← Formula OS 설계·교재 종속 참조
+        └── report_archive/          ← 분석 보고서 아카이브 (앱 미참조)
 ```
 
 > **범례:** ✅ 배포 포함 · ❌ 배포 제외 · 🆕 최신 모듈러 개편 반영 (2026-09-03)

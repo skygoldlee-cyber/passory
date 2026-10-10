@@ -2,6 +2,7 @@
 
 > 이 파일은 Devin, Claude Code, Cursor 등 AI 코딩 에이전트가 프로젝트에 진입했을 때 참조하는 가이드라인입니다.
 > **문서 ID**: DOC-ROOT-02
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (작업 가이드 — ID 인용 규약은 별도 절)
 
 ## 프로젝트 개요
@@ -126,7 +127,7 @@ python ref-pipeline/check_mfds_notice.py --update   # 키: LAW_OC_KEY 환경변�
 # ※ 앱은 Formula OS 진입 시 배너 표시 + 허브 '식약처 고시 확인' 버튼으로 law.go.kr 등록 문서 병렬 실시간 조회(src/notice-check.js, 시험별 referenceLaw)
 # ※ Actions 크론(주1회 자동)은 선택사항 — 저장소 Settings → Secrets에 LAW_OC_KEY 등록 시 활성화.
 #   미등록이면 수동 실행만 가능. 앱 내 실시간 버튼이 확인을 커버하나, 크론은 이슈 자동 생성 안전망 역할
-# ※ 대조 절차: docs/dev/ingredients_audit_제2026-19호.md
+# ※ 대조 절차: docs/exams/cosmetic/ingredients_audit_제2026-19호.md
 ```
 
 ## 디렉토리 구조
@@ -320,10 +321,10 @@ vendor/                 # 자체 호스팅 자산 (fonts/, fontawesome/)
 tests/                  # 테스트
   unit/                 # node --test 유닛 테스트 (도메인 테스트는 unit/exams/<id>/ 하위)
   dom/                  # Vitest + jsdom DOM 테스트 (도메인 테스트는 dom/exams/<id>/ 하위)
-docs/                   # 개발 문서
-  dev/                  # 아키텍처, 배포 가이드, 변경 이력
+docs/                   # 문서 (인덱스: docs/README.md)
+  dev/                  # 플랫폼 공통 개발 문서 — 아키텍처, 명세, 런북, 설계, 참조
     adr/                # 아키텍처 결정 기록 (ADR — 결정의 "왜" 보존, README.md 템플릿·규약)
-  user/                 # 사용자 매뉴얼
+  exams/cosmetic/       # 시험 종속 문서 — user·business·design·reference·report_archive (범위·판본 헤더로 선언)
 ```
 
 ## 아키텍처 핵심
@@ -341,7 +342,7 @@ docs/                   # 개발 문서
 - **시험별 루트 (대칭)**: 모든 시험이 `content/exams/<id>/`(manifest.json + references.json + 교재/문제은행/참조자료/audiobook 등)와 `data/exams/<id>/`(registry.js, subjects/, exams/, drills/, study_md/, docs_md/, supplements/, id_migration.js 등) 구조 — 기본 시험(cosmetic)도 예외 없음. `content/`·`data/` 루트에는 전역 파일만: `exams.json`/`exams.js`, `audio_manifest.js`(시험 id 키 분리), `docs_md/`(앱 공용 문서)
 - **시험 컨텍스트**: `src/exam-context.js` — `contentPath()`/`dataPath()`(경로 해석), `hasFeature()`(기능 게이팅), `selectExam()`(전환 = `location.reload()`로 모듈 상태 리셋), `scopedKey()`(진도 네임스페이스 `<examId>:key`)
 - **진도 격리**: `safeGetItem`/`safeSetItem` 등이 자동으로 시험 접두사 적용. 테마·리더 설정 등 `GLOBAL_KEYS`만 비네임스페이스. 백업 파일은 비접두사 논리 키(시험 간 호환)
-- **새 시험 추가 절차**: ① `content/exams/<id>/`에 manifest.json + references.json + 교재/문제은행 배치 — 법령 참조가 있으면 `content/lawdb.json`에 엔트리 + `references.json.lawRefs`·`noticeCore` 설정, 사전이 있으면 `manifest.knowledge` 스키마 선언 ② `content/exams.json`에 엔트리 추가 (`contentRoot`/`dataRoot`/`registryBundle`/`registryGlobal` 지정 — 비기본 시험은 `registryGlobal: "DATA_REGISTRY_<id>"`) ③ `npm.cmd run check:content -- --build` → 끝 (앱 로직 변경 불필요). **도메인 자산 규약**: 시험 전용 코드·마크업·스타일·테스트는 `src/exams/<id>/`·`html/exams/<id>/`·`css/exams/<id>/`·`tests/{unit,dom}/exams/<id>/`에 배치 — 플랫폼 레지스트리가 `exams/${getActiveExamId()}/` 규약으로 해석하므로 기존 실무 피처 재사용은 파일 배치만으로 동작. 상세: `docs/dev/runbooks/NEW_EXAM_RUNBOOK.md`·`docs/dev/design/MULTI_EXAM_DB_DESIGN.md`
+- **새 시험 추가 절차**: ① `content/exams/<id>/`에 manifest.json + references.json + 교재/문제은행 배치 — 법령 참조가 있으면 `content/lawdb.json`에 엔트리 + `references.json.lawRefs`·`noticeCore` 설정, 사전이 있으면 `manifest.knowledge` 스키마 선언 ② `content/exams.json`에 엔트리 추가 (`contentRoot`/`dataRoot`/`registryBundle`/`registryGlobal` 지정 — 비기본 시험은 `registryGlobal: "DATA_REGISTRY_<id>"`) ③ `npm.cmd run check:content -- --build` → 끝 (앱 로직 변경 불필요). **도메인 자산 규약**: 시험 전용 코드·마크업·스타일·테스트는 `src/exams/<id>/`·`html/exams/<id>/`·`css/exams/<id>/`·`tests/{unit,dom}/exams/<id>/`에, 시험 종속 문서는 `docs/exams/<id>/`에 배치 — 플랫폼 레지스트리가 `exams/${getActiveExamId()}/` 규약으로 해석하므로 기존 실무 피처 재사용은 파일 배치만으로 동작. 상세: `docs/dev/runbooks/NEW_EXAM_RUNBOOK.md`·`docs/dev/design/MULTI_EXAM_DB_DESIGN.md`
 - **기능 플래그**: `features`에 없는 기능은 `data-feature` 속성/`hasFeature()`로 자동 숨김 — 성분사전·원료배합·계산연습·오디오북·참조자료 등 도메인 특화 기능
 - **Node 도구**: `EXAM_ID`/`EXAM_CONTENT_ROOT`/`EXAM_DATA_ROOT` env로 대상 시험 지정 (예: `EXAM_ID=<id> node tools/build/index.js`)
 - **Python 도구**: ref-pipeline 전 스크립트가 `ref-pipeline/_exam_root.py`로 동일 순서 해석 — `--exam` 인자 > `EXAM_CONTENT_ROOT` > `EXAM_ID` > exams.json default (예: `python ref-pipeline/check_laws.py --exam <id>`)
@@ -372,7 +373,8 @@ docs/                   # 개발 문서
 ## 문서 ID 체계 (DOC ID)
 
 - 모든 마크다운 문서(`docs/`, `ref-pipeline/`, 루트 `README.md`·`AGENTS.md`)는 상단에 `> **문서 ID**: DOC-XX-NN` 헤더를 갖는다.
-- 접두사는 영역별 구분 — `DOC-ROOT`(루트) · `DOC-IDX`(인덱스) · `DOC-DEV`(수위 문서) · `DOC-DSN`(design/) · `DOC-REF`(reference/) · `DOC-RBK`(runbooks/) · `DOC-USR`(user/) · `DOC-BIZ`(business/) · `DOC-ARC`(report_archive/) · `DOC-PPL`(ref-pipeline/).
+- 접두사는 문서 종류별 구분 — `DOC-ROOT`(루트) · `DOC-IDX`(인덱스) · `DOC-DEV`(수위 문서) · `DOC-DSN`(design/) · `DOC-REF`(reference/) · `DOC-RBK`(runbooks/) · `DOC-USR`(사용자 문서) · `DOC-BIZ`(사업 문서) · `DOC-ARC`(아카이브) · `DOC-PPL`(ref-pipeline/). 시험 종속 문서도 같은 종류 접두사를 쓰되 위치는 `docs/exams/<id>/` 또는 `content/exams/<id>/docs/`다.
+- 모든 문서는 `> **범위**: platform | exam:<id>` + `· 판본: none | textbook | refmat` 헤더로 시험·판본 종속성을 선언한다 — `check:docs`가 누락·위치 불일치를 검증. `판본: textbook`은 교재 교체 시, `판본: refmat`은 법령·고시 등 참조자료 판본 변경 시 갱신 대상.
 - ID → 파일 매핑 레지스트리는 `docs/README.md` "문서 ID 레지스트리" 절 — 신규 문서는 해당 영역 다음 번호를 채번해 표에 등록한다.
 - `npm.cmd run check:docs`(check_doc_ids.js 포함)가 헤더 누락·형식 오류·ID 중복을 검증한다.
 
@@ -459,9 +461,9 @@ docs/                   # 개발 문서
 - `docs/dev/design/DOM_TEST_DESIGN.md` — jsdom UI 시나리오 테스트 설계
 - `docs/dev/design/SUPABASE_DESIGN.md` — 계정·클라우드 동기화 설계안 (Phase 1~2 구현 완료, Pro entitlement는 미구현)
 - `docs/dev/runbooks/TEXTBOOK_AUTHORING_GUIDE.md` — 교재 작성 가이드
-- `docs/dev/reference/NUMBERING_SYSTEM.md` — 교재 번호체계 가이드 (십진법)
+- `docs/exams/cosmetic/reference/NUMBERING_SYSTEM.md` — 교재 번호체계 가이드 (십진법)
 - `docs/dev/design/QUESTION_SCHEMA_DESIGN.md` — 문항 스키마 + 복수정답형 변환 파이프라인 설계
-- `docs/dev/design/FORMULA_OS_WORKFLOW_DESIGN.md` — 조제관리사 9개 업무 전체 커버리지 확장 설계안 (고객·배치·원료장부·안내문)
+- `docs/exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md` — 조제관리사 9개 업무 전체 커버리지 확장 설계안 (고객·배치·원료장부·안내문)
 - `docs/dev/runbooks/COMBO_GENERATION_GUIDE.md` — 복수정답형 문항 생성 절차·품질 게이트·수치 조정 가이드
 - `docs/dev/reference/COMBO_STUDY_STRATEGY.md` — 복수정답형 학습 전략 (전략→기능 매핑 포함)
 - `content/exams/cosmetic/docs/user_manual.md` — 학습 매뉴얼 (시험 대비 — 시험별 문서)

@@ -4,7 +4,7 @@
 // 기성품 전성분 DB — 목록(formula-product-panel) · 등록/수정 폼
 // (formula-product-form-panel) · 상세+교차 분석(formula-product-detail-panel).
 // formula.js의 showPanel/subNav 재사용 — 고객 관리(formula-customer.js)와
-// 동일한 3패널 패턴. 설계: docs/dev/design/PRODUCT_DB_DESIGN.md
+// 동일한 3패널 패턴. 설계: docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md
 //
 // 핵심 원칙: 전성분은 사용자 기록, 판정은 공식+자가 병합 인덱스의
 // 조회 시점 라이브 매칭 — 원료 DB 갱신이 등록 제품 전체에 자동 반영된다.

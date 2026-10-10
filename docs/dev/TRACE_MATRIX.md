@@ -1,9 +1,10 @@
 # 🔗 TRACE MATRIX — 요구사양 추적 매트릭스
 
 > **문서 ID**: DOC-DEV-04
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: 989bc4dfa80c2564
+> 입력 해시: 26ee181bf9b7fc8f
 > 생성: 2026-10-10 · 원천: SPEC.md(460개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -665,20 +666,20 @@
 | ID | 상태 | 검증 수단 | 문서 | 소스 | 테스트 | 보고서 | 출처 |
 |----|------|-----------|------|------|--------|--------|------|
 | ROAD-P0 | ✅ | 테스트 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 4개 | src/pro-upgrade.js<br>tools/check/check_plan_features.js | tests/dom/pro-plan.dom.test.js<br>tests/unit/learning-pro.test.js | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06 | — |
-| ROAD-P1 | 미구현 (유일한 Phase 1~2 잔여) | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
-| ROAD-P2 | 미구현 | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
-| ROAD-P3 | 미구현 | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-02<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
-| ROAD-P4 | ✅ 결정·게이트 구현 | 테스트 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | src/sync.js | tests/dom/common-sync.dom.test.js | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06<br>DOC-ARC-07 | 사업 문서 — docs/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
+| ROAD-P1 | 미구현 (유일한 Phase 1~2 잔여) | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
+| ROAD-P2 | 미구현 | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
+| ROAD-P3 | 미구현 | 문서 검토 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | — | — | DOC-ARC-01<br>DOC-ARC-02<br>DOC-ARC-03<br>DOC-ARC-06 | 사업 문서 — docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
+| ROAD-P4 | ✅ 결정·게이트 구현 | 테스트 | DOC-BIZ-01<br>DOC-BIZ-02<br>DOC-BIZ-03<br>DOC-BIZ-04<br>…외 2개 | src/sync.js | tests/dom/common-sync.dom.test.js | DOC-ARC-01<br>DOC-ARC-03<br>DOC-ARC-06<br>DOC-ARC-07 | 사업 문서 — docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
 
 ## 7.3 Learning Pro 잔여·차별화
 
 | ID | 상태 | 검증 수단 | 문서 | 소스 | 테스트 | 보고서 | 출처 |
 |----|------|-----------|------|------|--------|--------|------|
-| ROAD-L1 | 🟡 부분 (예상 점수만) | 테스트 | — | src/recommendations.js | tests/unit/learning-pro.test.js | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
-| ROAD-L2 | 미구현 | — | — | — | — | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
-| ROAD-L3 | 미구현 | — | — | — | — | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
-| ROAD-L4 | 미구현 | — | — | — | — | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
-| ROAD-L5 | ✅ 카운터 구현 (판정 데이터 수집 중) | 테스트 | — | src/usage-stats.js | tests/dom/usage-stats.dom.test.js | — | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-L1 | 🟡 부분 (예상 점수만) | 테스트 | — | src/recommendations.js | tests/unit/learning-pro.test.js | — | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-L2 | 미구현 | — | — | — | — | — | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-L3 | 미구현 | — | — | — | — | — | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-L4 | 미구현 | — | — | — | — | — | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-L5 | ✅ 카운터 구현 (판정 데이터 수집 중) | 테스트 | — | src/usage-stats.js | tests/dom/usage-stats.dom.test.js | — | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
 
 ---
 
@@ -690,30 +691,30 @@
 | DOC-ADR-01 | docs/dev/adr/0001-exam-data-boot-document-write.md | P-01, P-02, P-03, P-04, P-05, P-06 |
 | DOC-ADR-02 | docs/dev/adr/0002-domain-asset-convention-paths.md | P-01, P-02, P-03, P-04, P-05, P-06 |
 | DOC-ADR-03 | docs/dev/adr/0003-localstorage-first-storage.md | AU-01, AU-02, AU-03, AU-04, AU-05, AU-06, AU-07, AU-08, ST-01, ST-02, ST-03, ST-04, ST-05 |
-| DOC-ARC-01 | docs/report_archive/Cosmetic Master Business Plan.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-ARC-02 | docs/report_archive/EXTERNAL_REVIEW_LEARNING_PRO.md | ROAD-P3 |
-| DOC-ARC-03 | docs/report_archive/FEATURE_PROPOSALS.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-ARC-04 | docs/report_archive/FORMULA_OS_DESIGN.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23 |
-| DOC-ARC-05 | docs/report_archive/PASS_CORE_LOOP_REVIEW.md | D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, DR-01, DR-02, DR-03, DR-04, DR-05, DR-06, DR-07, E-01, E-02, E-03, E-04, E-05, E-06, E-07, F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11, SC-01, SC-02, SC-03, T-01, T-02, T-03, T-04, T-05 |
-| DOC-ARC-06 | docs/report_archive/PASS_TO_PRACTICE_STRATEGY.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4, UM-01, UM-02, UM-03, UM-04, UM-05 |
-| DOC-ARC-07 | docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md | ES-01, ES-02, ES-03, ES-04, ES-05, ROAD-P4 |
-| DOC-ARC-08 | docs/report_archive/법령최신확인결과.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10 |
-| DOC-ARC-09 | docs/report_archive/오답위험_분석보고서.md | AN-01, AN-02, AN-03, DR-01, DR-02, DR-03, DR-04, DR-05, DR-06, DR-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
-| DOC-ARC-10 | docs/report_archive/출제비중기반학습방법.md | D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, E-01, E-02, E-03, E-04, E-05, E-06, E-07 |
-| DOC-ARC-11 | docs/report_archive/출제비중분포조사결과.md | E-01, E-02, E-03, E-04, E-05, E-06, E-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
-| DOC-BIZ-01 | docs/business/FORMULA_OS_경쟁전략.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-BIZ-02 | docs/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md | FO-33, FO-34, FO-35, FO-36, FO-37, FO-38, FO-39, FO-40, FO-41, FO-42, FO-43, FO-44, FO-45, FO-46, FO-47, FO-48, FO-49, FO-50, FO-51, FO-52, FO-53, FO-54, FO-55, FO-56, FO-57, FO-58, FO-59, FO-60, FO-61, FO-62, FO-63, FO-64, FO-65, FO-66, FO-67, FO-68, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-BIZ-03 | docs/business/맞춤형화장품판매업소_조사_2026-09.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-BIZ-04 | docs/business/유튜브_홍보동영상_제작의뢰서.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
-| DOC-BIZ-05 | docs/business/판매업소_인터뷰_스크립트.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-ARC-01 | docs/exams/cosmetic/report_archive/Cosmetic Master Business Plan.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-ARC-02 | docs/exams/cosmetic/report_archive/EXTERNAL_REVIEW_LEARNING_PRO.md | ROAD-P3 |
+| DOC-ARC-03 | docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-ARC-04 | docs/exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23 |
+| DOC-ARC-05 | docs/exams/cosmetic/report_archive/PASS_CORE_LOOP_REVIEW.md | D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, DR-01, DR-02, DR-03, DR-04, DR-05, DR-06, DR-07, E-01, E-02, E-03, E-04, E-05, E-06, E-07, F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11, SC-01, SC-02, SC-03, T-01, T-02, T-03, T-04, T-05 |
+| DOC-ARC-06 | docs/exams/cosmetic/report_archive/PASS_TO_PRACTICE_STRATEGY.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4, UM-01, UM-02, UM-03, UM-04, UM-05 |
+| DOC-ARC-07 | docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md | ES-01, ES-02, ES-03, ES-04, ES-05, ROAD-P4 |
+| DOC-ARC-08 | docs/exams/cosmetic/report_archive/법령최신확인결과.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10 |
+| DOC-ARC-09 | docs/exams/cosmetic/report_archive/오답위험_분석보고서.md | AN-01, AN-02, AN-03, DR-01, DR-02, DR-03, DR-04, DR-05, DR-06, DR-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
+| DOC-ARC-10 | docs/exams/cosmetic/report_archive/출제비중기반학습방법.md | D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, E-01, E-02, E-03, E-04, E-05, E-06, E-07 |
+| DOC-ARC-11 | docs/exams/cosmetic/report_archive/출제비중분포조사결과.md | E-01, E-02, E-03, E-04, E-05, E-06, E-07, Q-01, Q-02, Q-03, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
+| DOC-BIZ-01 | docs/exams/cosmetic/business/FORMULA_OS_경쟁전략.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-BIZ-02 | docs/exams/cosmetic/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md | FO-33, FO-34, FO-35, FO-36, FO-37, FO-38, FO-39, FO-40, FO-41, FO-42, FO-43, FO-44, FO-45, FO-46, FO-47, FO-48, FO-49, FO-50, FO-51, FO-52, FO-53, FO-54, FO-55, FO-56, FO-57, FO-58, FO-59, FO-60, FO-61, FO-62, FO-63, FO-64, FO-65, FO-66, FO-67, FO-68, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-BIZ-03 | docs/exams/cosmetic/business/맞춤형화장품판매업소_조사_2026-09.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-BIZ-04 | docs/exams/cosmetic/business/유튜브_홍보동영상_제작의뢰서.md | ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
+| DOC-BIZ-05 | docs/exams/cosmetic/business/판매업소_인터뷰_스크립트.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, ROAD-P0, ROAD-P1, ROAD-P2, ROAD-P3, ROAD-P4 |
 | DOC-DEV-01 | docs/dev/SPEC.md | — |
 | DOC-DEV-02 | docs/dev/ARCHITECTURE.md | — |
 | DOC-DEV-03 | docs/dev/CHANGES.md | — |
 | DOC-DEV-04 | docs/dev/TRACE_MATRIX.md | — |
-| DOC-DEV-05 | docs/dev/ingredients_audit_제2026-19호.md | DI-05, FO-05, FO-24, RR-19 |
+| DOC-DEV-05 | docs/exams/cosmetic/ingredients_audit_제2026-19호.md | DI-05, FO-05, FO-24, RR-19 |
 | DOC-DEV-07 | docs/dev/UIUX_외주전달_패키지.md | — |
 | DOC-DSN-01 | docs/dev/design/DOM_TEST_DESIGN.md | A-01, A-02, A-03, A-04, A-05, A-06, A-07, R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09, TH-01, TH-02, TH-03, TH-04, TH-05, TH-06, UM-01, UM-02, UM-03, UM-04, UM-05, UX-NAV-01, UX-NAV-02, UX-NAV-03, UX-NAV-04, UX-NAV-05, UX-NAV-06, UX-NAV-07 |
-| DOC-DSN-02 | docs/dev/design/FORMULA_OS_WORKFLOW_DESIGN.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, UM-01, UM-02, UM-03, UM-04, UM-05 |
+| DOC-DSN-02 | docs/exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md | FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, UM-01, UM-02, UM-03, UM-04, UM-05 |
 | DOC-DSN-03 | docs/dev/design/LEARNING_PREMIUM_PLAN.md | AN-01, AN-02, AN-03, ROAD-P0 |
 | DOC-DSN-04 | docs/dev/design/QUESTION_SCHEMA_DESIGN.md | DR-02, ID-01, ID-02, ID-03, ID-04, Q-04, Q-05, Q-06, Q-07, Q-08, Q-09, Q-10, Q-11 |
 | DOC-DSN-05 | docs/dev/design/READER_FEEDBACK_DESIGN.md | FB-01, FB-02, FB-03, FB-04, FB-05, FB-06, FB-07, FB-08 |
@@ -723,12 +724,13 @@
 | DOC-DSN-09 | docs/dev/design/USER_FEEDBACK_DESIGN.md | AU-01, AU-02, AU-03, AU-04, AU-05, AU-06, AU-07, AU-08, FB-01, FB-02, FB-03, FB-04, FB-05, FB-06, FB-07, FB-08, S-01 |
 | DOC-DSN-10 | docs/dev/design/MULTI_EXAM_DB_DESIGN.md | DA-06, DA-07, DA-08, ES-01, ES-02, ES-03, ES-04, ES-05, FO-24, RR-13, RR-17, RR-19 |
 | DOC-DSN-11 | docs/dev/design/USER_FLOW.md | AU-01, AU-02, AU-03, AU-04, AU-05, AU-06, AU-07, AU-08, FO-01, FO-02, FO-03, FO-04, FO-05, FO-06, FO-07, FO-08, FO-09, FO-10, FO-11, FO-12, FO-13, FO-14, FO-15, FO-16, FO-17, FO-18, FO-19, FO-20, FO-21, FO-22, FO-23, TR-01, TR-02, TR-03, TR-04, TR-05, TR-06, TR-07, TR-08, TR-09, TR-10, TR-11, TR-12, TR-13, TR-14, TR-15, TR-16, TR-17, TR-18, TR-19, TR-20, TR-21, TR-22, TR-23, UM-01, UM-02, UM-03, UM-04, UM-05, UX-FB-05, UX-NAV-06, UX-NAV-07, UX-NAV-08 |
-| DOC-DSN-12 | docs/dev/design/PRODUCT_DB_DESIGN.md | FO-14, FO-32, FO-37, FO-38, FO-39, FO-40, FO-44, FO-45, FO-47, FO-48, FO-49, FO-50, FO-51, FO-52, FO-53 |
-| DOC-DSN-13 | docs/dev/design/PRODUCT_VISION_DESIGN.md | FO-32, FO-41, FO-42, FO-43, FO-46, FO-54, FO-55 |
-| DOC-DSN-14 | docs/dev/design/AUDIT_REPORT_DESIGN.md | FO-14, FO-24, FO-34, FO-35, FO-36, FO-56, FO-63, FO-64, FO-65, FO-66, FO-67, FO-68 |
-| DOC-DSN-15 | docs/dev/design/PRACTICAL_TOOLS_DESIGN.md | FO-16, FO-18, FO-33, FO-34, FO-57, FO-58, FO-59, FO-60, FO-61, FO-62, FO-63 |
+| DOC-DSN-12 | docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md | FO-14, FO-32, FO-37, FO-38, FO-39, FO-40, FO-44, FO-45, FO-47, FO-48, FO-49, FO-50, FO-51, FO-52, FO-53 |
+| DOC-DSN-13 | docs/exams/cosmetic/design/PRODUCT_VISION_DESIGN.md | FO-32, FO-41, FO-42, FO-43, FO-46, FO-54, FO-55 |
+| DOC-DSN-14 | docs/exams/cosmetic/design/AUDIT_REPORT_DESIGN.md | FO-14, FO-24, FO-34, FO-35, FO-36, FO-56, FO-63, FO-64, FO-65, FO-66, FO-67, FO-68 |
+| DOC-DSN-15 | docs/exams/cosmetic/design/PRACTICAL_TOOLS_DESIGN.md | FO-16, FO-18, FO-33, FO-34, FO-57, FO-58, FO-59, FO-60, FO-61, FO-62, FO-63 |
 | DOC-DSN-16 | docs/dev/design/STUDY_PLAN_PRO_DESIGN.md | D-17, SC-06, SC-07, SC-08 |
 | DOC-IDX-01 | docs/README.md | — |
+| DOC-IDX-02 | docs/exams/cosmetic/README.md | — |
 | DOC-PPL-01 | ref-pipeline/README.md | AO-01, AO-02, AO-03, AO-04, AO-05, BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10 |
 | DOC-PPL-02 | ref-pipeline/audiobook/README.md | AO-01, AO-02, AO-03, AO-04, AO-05 |
 | DOC-PPL-03 | ref-pipeline/audiobook/AUDIOBOOK_SUMMARY.md | AO-01, AO-02, AO-03, AO-04, AO-05 |
@@ -749,9 +751,9 @@
 | DOC-REF-02 | docs/dev/reference/DEV_ENVIRONMENT.md | — |
 | DOC-REF-03 | docs/dev/reference/FLASHCARD_LOGIC.md | F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, ID-01, ID-02, ID-03, ID-04, TR-01 |
 | DOC-REF-04 | docs/dev/reference/MD_TO_HTML_LOGIC.md | EV-01, EV-02, EV-03, EV-04, EV-05, EV-06, EV-07, EV-08, MV-01, MV-02, MV-03, MV-04, RR-01, RR-02, RR-03, RR-04, RR-05, RR-06, RR-07, RR-08, RR-09, RR-10, RR-11, RR-12, RR-13, RR-14, RR-15, RR-16, TR-01 |
-| DOC-REF-05 | docs/dev/reference/NUMBERING_SYSTEM.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, ID-01, ID-02, ID-03, ID-04, TR-01, TR-02, TR-03, TR-04, TR-05, TR-06, TR-07, TR-08, TR-09, TR-10, TR-11, TR-12, TR-13, TR-14, TR-15, TR-16, TR-16a, TR-17, TR-18, TR-19, TR-20, TR-21, TR-22, TR-23 |
+| DOC-REF-05 | docs/exams/cosmetic/reference/NUMBERING_SYSTEM.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, ID-01, ID-02, ID-03, ID-04, TR-01, TR-02, TR-03, TR-04, TR-05, TR-06, TR-07, TR-08, TR-09, TR-10, TR-11, TR-12, TR-13, TR-14, TR-15, TR-16, TR-16a, TR-17, TR-18, TR-19, TR-20, TR-21, TR-22, TR-23 |
 | DOC-REF-06 | docs/dev/reference/TESTING.md | — |
-| DOC-REF-07 | docs/dev/reference/TEXTBOOK_REFERENCE_MAPPING.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, RR-01, RR-02, RR-03, RR-04, RR-05, RR-06, RR-07, RR-08, RR-09, RR-10, RR-11, RR-12, RR-13, RR-14, RR-15, RR-16 |
+| DOC-REF-07 | docs/exams/cosmetic/reference/TEXTBOOK_REFERENCE_MAPPING.md | CS-01, CS-02, CS-03, CS-04, CS-05, CS-06, CS-07, CS-08, CS-09, CS-10, RR-01, RR-02, RR-03, RR-04, RR-05, RR-06, RR-07, RR-08, RR-09, RR-10, RR-11, RR-12, RR-13, RR-14, RR-15, RR-16 |
 | DOC-REF-08 | docs/dev/reference/ENGINEERING_PRACTICES.md | BP-01, BP-02, BP-03, BP-04, BP-05, BP-06, BP-07, BP-08, DA-01, DA-02, DA-03, DA-04, DA-05, DA-06, DA-07, DA-08, DA-09 |
 | DOC-REF-09 | docs/dev/reference/SCREEN_MAP.md | UM-01, UM-02, UM-03, UM-04, UM-05, UX-NAV-01, UX-NAV-08 |
 | DOC-REF-10 | docs/dev/reference/SOFTWARE_ENGINEERING_TECHNIQUES.md | — |
@@ -760,11 +762,11 @@
 | DOC-REF-13 | docs/dev/reference/FEATURE_MAP.md | — |
 | DOC-ROOT-01 | README.md | — |
 | DOC-ROOT-02 | AGENTS.md | — |
-| DOC-USR-01 | docs/user/exam_strategy.md | — |
-| DOC-USR-03 | docs/user/subject1_numbers.md | ND-01 |
-| DOC-USR-04 | docs/user/subject2_numbers.md | ND-01 |
-| DOC-USR-05 | docs/user/subject3_numbers.md | ND-01 |
-| DOC-USR-06 | docs/user/subject4_numbers.md | ND-01 |
+| DOC-USR-01 | docs/exams/cosmetic/user/exam_strategy.md | — |
+| DOC-USR-03 | docs/exams/cosmetic/user/subject1_numbers.md | ND-01 |
+| DOC-USR-04 | docs/exams/cosmetic/user/subject2_numbers.md | ND-01 |
+| DOC-USR-05 | docs/exams/cosmetic/user/subject3_numbers.md | ND-01 |
+| DOC-USR-06 | docs/exams/cosmetic/user/subject4_numbers.md | ND-01 |
 
 ## 부록 B — 테스트 갭 (소스 연결 있으나 테스트 @spec 미연결)
 

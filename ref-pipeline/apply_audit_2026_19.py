@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """제2026-19호 고시 전수 대조 결과를 원료 DB에 일괄 반영하는 1회성 마이그레이션.
 
-근거: docs/dev/ingredients_audit_제2026-19호.md
+근거: docs/exams/cosmetic/ingredients_audit_제2026-19호.md
 원문: ref_md/과목2/화장품 안전기준 등에 관한 규정(식품의약품안전처고시)(제2026-19호)(20260318)
 
 적용 내용:

@@ -4,6 +4,7 @@
 > **목적**: 이 저장소에 적용된 소프트웨어 공학적 패턴·기법·검증 기반을 항목별로 정리 — "왜 이렇게 되어 있는가"를 이해하고 같은 원칙으로 확장하기 위한 참조
 > **관련 문서**: [VERIFY_DEPLOY_PIPELINE.md](../runbooks/VERIFY_DEPLOY_PIPELINE.md) (게이트 실행 절차) · [ARCHITECTURE.md](../ARCHITECTURE.md) (구조 상세) · [TESTING.md](TESTING.md) (테스트 정책)
 > **문서 ID**: DOC-REF-08
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: `BP-01~08` (빌드 파이프라인) · `DA-01~09` (데이터 아키텍처)
 
 ---

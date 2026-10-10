@@ -4,6 +4,7 @@
 > **목적**: 이 저장소를 clone해 개발·빌드·테스트·배포까지 수행하는 데 필요한 도구·버전·설정을 한 문서에 명세
 > **관련 문서**: [MULTI_MACHINE_SETUP.md](../runbooks/MULTI_MACHINE_SETUP.md) (인증·배포 계정 설정), [DEPLOYMENT_GUIDE.md](../runbooks/DEPLOYMENT_GUIDE.md) (배포 절차), `AGENTS.md` (작업 규칙·명령어)
 > **문서 ID**: DOC-REF-02
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (개발환경 요구사양 — 인프라)
 
 ---

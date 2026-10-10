@@ -5,6 +5,7 @@
 > **버전 규약**: 본문 요구사항의 추가·변경·제거 시 마이너 버전을 갱신하고 변경 내역은 `CHANGES.md`에 기록한다 — 기준선은 커밋 해시로 확정한다
 > **문서 성격**: 구현 완료된 기능을 역공학하여 체계적으로 정리한 요구사양 명세서
 > **문서 ID**: DOC-DEV-01
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (본 문서가 요구사항 ID 원천)
 >
 > **검증 수단 규약**: 각 요구사항의 검증 방법은 `TRACE_MATRIX.md`의 "검증 수단" 열이 연결 산출물에서 자동 파생한다 — `테스트`(tests/ @spec) · `도구 검증`(tools/·ref-pipeline/ 감사 스크립트) · `구현(테스트 갭)` · `문서 검토` · `—`(미연결). 표에 별도 열을 두지 않는 이유: 검증 수단은 선언이 아니라 연결 상태의 파생값이라 수동 기입 시 drift가 생긴다.
@@ -1047,14 +1048,14 @@ UI/UX 요구사양은 기능 요구사양과 달리 단위 테스트만으로는
 | ROAD-L1 | **합격 예측 보정**: `estimateExpectedScore`의 "예상 점수"를 실제 결과 데이터로 보정한 합격 확률로 격상 | `actual_exam_result` 자가 보고 데이터 축적 후 2단계 | 🟡 부분 (예상 점수만) |
 | ROAD-L2 | **AI 오답 원인 자동 분류**: 현재 자가 태깅(암기부족/개념오해/계산실수)을 누적 데이터 기반 자동 분류로 | 태깅 데이터 축적 후 | 미구현 |
 | ROAD-L3 | **오답 체인 잔여**: `핵심 문장(ref_md 조문 원문 인라인)` → 관련 카드 → 유사문제 → 재시험 추적 | A3 출처 근거의 후속 체인 | 미구현 |
-| ROAD-L4 | **Phase 2 차별화**: 출제 패턴 분석·코칭 리포트·지식 맵·요약 노트 | FEATURE_PROPOSALS Phase 2 (`docs/report_archive/`) | 미구현 |
+| ROAD-L4 | **Phase 2 차별화**: 출제 패턴 분석·코칭 리포트·지식 맵·요약 노트 | FEATURE_PROPOSALS Phase 2 (`docs/exams/cosmetic/report_archive/`) | 미구현 |
 | ROAD-L5 | **기능 검증 측정**: 개발 완료 기능(오답 루프·합격 전략·진단 평가)의 사용률·만족도 로컬 측정 → 유료가치 판정 데이터 확보 | `usage-stats.js` 뷰·액션 카운터 + 설정 '내 사용 통계' (로컬 전용, 백업·동기화 제외). **유저 단위 = 기기별 익명 `owner`(device_id) — 로그인 없는 프로모션 기간 대응, GLOBAL 키라 시험 전환해도 누적 유지**. **판정 기준: Pro 후보 액션(`VALUE_ACTIONS` — 오답 루프·진단 평가·이야기형·맞춤 리포트·실제 결과 보고) 합계 20회** (`PRO_VALUE_THRESHOLD`) — 편의/UI 액션(검색·플랜 비교)은 제외. 도달 시 유료가치 인정, ROAD-P1 착수 근거 | ✅ 카운터 구현 (판정 데이터 수집 중) |
 
 ### 7.4 멀티시험·도메인 확장
 
 | ID | 요구사항 | 비고 | 상태 |
 |----|---------|------|------|
-| ROAD-M1 | **타 시험 등록**: 멀티시험 구조(DA-06)는 완비 — 신규 시험은 콘텐츠 배치+레지스트리 엔트리만으로 추가 가능. 후보 시험 평가는 `docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md` | 시험 선정·콘텐츠 제작이 실제 병목 | 구조 완비, 시험 미선정 |
+| ROAD-M1 | **타 시험 등록**: 멀티시험 구조(DA-06)는 완비 — 신규 시험은 콘텐츠 배치+레지스트리 엔트리만으로 추가 가능. 후보 시험 평가는 `docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md` | 시험 선정·콘텐츠 제작이 실제 병목 | 구조 완비, 시험 미선정 |
 | ROAD-M2 | **Formula OS Phase 3 (append-only 장부)**: 판매·조제 기록을 건별 append-only로 축적 — ROAD-S3의 실제 트리거 | 전략 문서 Phase 3 방향 | 미구현 |
 | ROAD-M3 | **고객 데이터 동기화 정책**: 현재 고객 키는 동기화 제외(개인정보) — 클라우드 동기화 포함 여부는 암호화·동의 정책과 함께 재검토 | sync.js SYNC_STATIC 화이트리스트 | 정책 유지 중 |
 
@@ -1240,5 +1241,5 @@ UI/UX 요구사양은 기능 요구사양과 달리 단위 테스트만으로는
 | ROAD-M3 | 개인정보보호법·사업 판단 — 고객 동기화 정책의 암호화·동의 재검토 조건 |
 | FO-23 | 사업 판단 — docs/dev/design/SUBSCRIPTION_ROADMAP.md |
 | FB-01~08 | 사업 판단 — docs/dev/design/USER_FEEDBACK_DESIGN.md (유튜브 유입 대응) |
-| ROAD-P1~P4 | 사업 문서 — docs/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
-| ROAD-L1~L5 | 사업 문서 — docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |
+| ROAD-P1~P4 | 사업 문서 — docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md · SUBSCRIPTION_ROADMAP.md |
+| ROAD-L1~L5 | 사업 문서 — docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md · FEATURE_PROPOSALS.md |

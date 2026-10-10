@@ -5,6 +5,7 @@
 > **프레임워크**: Node.js 내장 `node:test` (Unit) + Vitest/jsdom (DOM) + Playwright (E2E)
 > **SPEC 추적**: 각 테스트의 검증 대상은 `SPEC.md`의 기능 ID와 대응 — 매핑은 `ARCHITECTURE.md` §"요구사양 추적 (SPEC ID 매트릭스)" 참조. 신규 테스트 추가 시 검증 대상 행에 관련 SPEC ID 기재 권장
 > **문서 ID**: DOC-REF-06
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 전 영역 (테스트 프레임워크·커버리지 규약 — 각 테스트는 @spec으로 개별 요구사항 연결)
 
 ---

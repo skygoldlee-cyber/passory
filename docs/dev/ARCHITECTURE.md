@@ -4,6 +4,7 @@
 > **최종 업데이트**: 2026-09-24
 > **목적**: 시스템의 설계 철학, 아키텍처 구조, 주요 설계 결정 사항을 설명 — 이 문서만으로 신규 기여자가 설계 의도를 파악하고 동일한 패턴으로 구현할 수 있는 수준을 지향
 > **문서 ID**: DOC-DEV-02
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 전 영역 — §27 "요구사양 추적" 매트릭스가 본 문서의 ID↔구조 매핑
 
 ---
@@ -488,10 +489,9 @@ passory/
 │   └── supabase/
 │       └── supabase.js         #   Supabase UMD — 로그인 시에만 동적 로드
 │
-└── docs/                       # 프로젝트 문서
-    ├── README.md               #   문서 인덱스
-    ├── business/               #   사업 기획·시장 조사·마케팅 문서
-    ├── dev/                    #   개발자 문서
+└── docs/                       # 프로젝트 문서 — platform(docs/dev) ↔ exam(docs/exams/<id>) 범위 분리
+    ├── README.md               #   문서 인덱스 (범위·판본 선언 규약 포함)
+    ├── dev/                    #   플랫폼 공통 개발자 문서
     │   ├── ARCHITECTURE.md     #     아키텍처 설계서 (본 문서)
     │   ├── SPEC.md             #     요구사양 명세서
     │   ├── CHANGES.md          #     변경 이력
@@ -505,9 +505,8 @@ passory/
     │   │   ├── COMBO_GENERATION_GUIDE.md  #  복수정답형 드릴 생성 절차
     │   │   ├── MULTI_MACHINE_SETUP.md     #  다중 머신 환경 재현
     │   │   └── Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md # SMTP·매직링크 설정
-    │   ├── design/             #     설계·계획·평가 문서
+    │   ├── design/             #     설계·계획·평가 문서 (플랫폼)
     │   │   ├── SUPABASE_DESIGN.md         #  Supabase 계정·동기화 설계안
-    │   │   ├── FORMULA_OS_WORKFLOW_DESIGN.md # 배치·고객·장부 업무 플로우 설계
     │   │   ├── QUESTION_SCHEMA_DESIGN.md  #  문항 스키마 + 복수정답형 변환 설계
     │   │   ├── DOM_TEST_DESIGN.md         #  jsdom 시나리오 테스트 설계
     │   │   ├── READER_FEEDBACK_DESIGN.md  #  교재 리더 피드백 설계
@@ -515,24 +514,19 @@ passory/
     │   │   ├── STUDY_APP_DESIGN_GUIDE.md  #  학습 앱 디자인 가이드
     │   │   ├── LEARNING_PREMIUM_PLAN.md   #  Learning Pro 구현 과제
     │   │   └── SUBSCRIPTION_ROADMAP.md    #  월 구독 전환 로드맵
-    │   └── reference/          #     명세·로직·참조 문서
+    │   └── reference/          #     명세·로직·참조 문서 (플랫폼)
     │       ├── TESTING.md                 #  테스트 가이드
-    │       ├── NUMBERING_SYSTEM.md        #  교재 번호체계
     │       ├── FLASHCARD_LOGIC.md         #  플래시카드·SM-2 로직
     │       ├── MD_TO_HTML_LOGIC.md        #  MD→HTML 변환 로직
     │       ├── COMBO_STUDY_STRATEGY.md    #  복수정답형 학습전략
-    │       ├── TEXTBOOK_REFERENCE_MAPPING.md # 교재↔참조자료 매핑
     │       └── ENGINEERING_PRACTICES.md   #  소프트웨어 공학 요소 정리
-    ├── report_archive/         #   분석 보고서·대체된 전략 문서 아카이브 (앱 미참조)
-    │   #   — Cosmetic Master Business Plan·FEATURE_PROPOSALS·PASS_TO_PRACTICE_STRATEGY·
-    │   #     PASS_CORE_LOOP_REVIEW·FORMULA_OS_DESIGN·PRO_MULTI_EXAM_EVALUATION·
-    │   #     EXTERNAL_REVIEW_LEARNING_PRO 등 (현행 기준서는 SPEC.md·사업기획서 v3.5)
-    └── user/
-        ├── exam_strategy.md    #   시험 전략
-        ├── subject1_numbers.md #   1과목 핵심 숫자
-        ├── subject2_numbers.md #   2과목 핵심 숫자
-        ├── subject3_numbers.md #   3과목 핵심 숫자
-        └── subject4_numbers.md #   4과목 핵심 숫자
+    └── exams/cosmetic/         #   시험 종속 문서 (맞춤형화장품 조제관리사)
+        ├── design/             #     Formula OS 계열 설계 — WORKFLOW·PRODUCT_DB/VISION·AUDIT_REPORT·PRACTICAL_TOOLS
+        ├── reference/          #     교재 종속 참조 — NUMBERING_SYSTEM·TEXTBOOK_REFERENCE_MAPPING
+        ├── user/               #     학습자 문서 — exam_strategy·subject1~4_numbers
+        ├── business/           #     사업 기획·시장 조사·마케팅 문서
+        ├── report_archive/     #     시점 스냅샷 보고서·대체된 전략 원전 (앱 미참조)
+        └── ingredients_audit_제2026-19호.md #  고시 대조 리포트 (판본: refmat)
 ```
 
 ---
@@ -995,7 +989,7 @@ pullSync() (로그인 시 / "지금 동기화" 버튼)
 
 ## 🧪 Formula OS 도메인 아키텍처
 
-> 설계안: [`FORMULA_OS_DESIGN.md`](../report_archive/FORMULA_OS_DESIGN.md) (Phase 5-A, 아카이브) · 업무 플로우: [`FORMULA_OS_WORKFLOW_DESIGN.md`](design/FORMULA_OS_WORKFLOW_DESIGN.md) · 사용자 매뉴얼: `content/exams/cosmetic/docs/formula_manual.md`
+> 설계안: [`FORMULA_OS_DESIGN.md`](../exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md) (Phase 5-A, 아카이브) · 업무 플로우: [`FORMULA_OS_WORKFLOW_DESIGN.md`](../exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md) · 사용자 매뉴얼: `content/exams/cosmetic/docs/formula_manual.md`
 
 학습 앱 안에 내장된 실무 작업실. 9개 조제관리 업무 영역을 6개 패널로 묶어 `formula-view` 하나의 뷰 안에서 서브내비 칩으로 전환한다.
 
@@ -2197,6 +2191,6 @@ SPEC.md의 기능/비기능 ID와 이 문서의 설명 위치·구현 모듈 대
 - [`ENGINEERING_PRACTICES.md`](reference/ENGINEERING_PRACTICES.md) — 소프트웨어 공학 요소 정리 (SSOT·신선도 게이트·추적성)
 - [`DOM_TEST_DESIGN.md`](design/DOM_TEST_DESIGN.md) — jsdom UI 시나리오 테스트 설계 (helpers·모킹 전략·Playwright 확장 경로)
 - [`SPEC.md`](SPEC.md) — 요구사양 명세서 (기능 ID별 구현 상태, UI/UX 재사용 가이드 §4.8, 디자인 토큰·상태 규약 §4.9)
-- [`FORMULA_OS_WORKFLOW_DESIGN.md`](design/FORMULA_OS_WORKFLOW_DESIGN.md) — 배치·고객·원료 장부 업무 플로우 설계 (Phase 5-A 기본 설계는 `docs/report_archive/FORMULA_OS_DESIGN.md`)
+- [`FORMULA_OS_WORKFLOW_DESIGN.md`](../exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md) — 배치·고객·원료 장부 업무 플로우 설계 (Phase 5-A 기본 설계는 `docs/exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md`)
 - [`SUPABASE_DESIGN.md`](design/SUPABASE_DESIGN.md) — Supabase 계정·클라우드 동기화 설계안 (Phase 1~2 구현 완료 — §10)
 - [`Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md`](runbooks/Supabase_Custom_SMTP_MagicLink_OTP_설정가이드.md) — SMTP·매직링크·OTP 설정 가이드

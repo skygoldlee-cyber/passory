@@ -1,6 +1,7 @@
 # Supabase Custom SMTP + Magic Link/OTP 설정 가이드
 
 > **문서 ID**: DOC-RBK-06
+> **범위**: platform · 판본: none
 
 ## 1. 개요
 

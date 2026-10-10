@@ -1,6 +1,7 @@
 # ADR-0003: localStorage 1차 저장 + Supabase 선택적 동기화
 
 > **문서 ID**: DOC-ADR-03
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: ST-01~05,AU-01~08
 > **상태**: accepted (2026-09-30 — 프로젝트 초기부터 유지된 결정의 사후 문서화)
 

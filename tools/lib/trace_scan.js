@@ -28,7 +28,9 @@ const EXCLUDE_FILES = [
 // 문서 스캔 범위 (check_doc_ids.js와 동일)
 const DOC_DIRS = ['docs', 'ref-pipeline'];
 const DOC_FILES = ['AGENTS.md', 'README.md'];
-const REPORT_DIR = 'docs/report_archive';
+// 보고서 디렉터리 — docs/exams/<id>/report_archive (시험별 이력 영역, 경로 무관하게 이름으로 판별)
+const REPORT_DIR_RE = /(^|\/)report_archive\//;
+const isReport = (rel) => REPORT_DIR_RE.test(rel + '/');
 
 // check_spec_refs.js와 동일 규격 — 문자 접미사(TR-16a)·로드맵(ROAD-P/L) 모두 지원
 const ID_RE = /\b([A-Z]{1,4}(?:-[A-Z]{1,4})?-(?:\d{2}[a-z]?|[PL]\d))\b/g;
@@ -182,7 +184,7 @@ function collectDocRefs(specIds) {
     meta.set(docId, { file: rel, title });
     const m = text.match(RELATED_RE);
     if (!m) { missingRef.push(rel); continue; }
-    const map = rel.startsWith(REPORT_DIR) ? reports : docs;
+    const map = isReport(rel) ? reports : docs;
     for (const id of expandIds(m[1], specIds, docErrors, rel)) {
       if (!map.has(id)) map.set(id, new Set());
       map.get(id).add(docId);
@@ -217,7 +219,7 @@ function scanAll() {
 
 module.exports = {
   ROOT, SPEC_FILE, SCAN_DIRS, SCAN_FILES, SCAN_EXTS, EXCLUDE_DIRS, EXCLUDE_FILES,
-  DOC_DIRS, DOC_FILES, REPORT_DIR,
+  DOC_DIRS, DOC_FILES, REPORT_DIR_RE, isReport,
   ID_RE, SPEC_TAG_RE, RANGE_RE, WILDCARD_ID_RE, PURE_ID_RE, DOC_ID_RE, RELATED_RE,
   walk, expandIds, extractSpec, extractSpecStatus, extractSpecSources,
   collectCodeRefs, collectDocRefs, idsInFile, scanAll,

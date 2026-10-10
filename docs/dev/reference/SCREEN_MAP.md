@@ -4,6 +4,7 @@
 > **관련 문서**: [SPEC.md](../SPEC.md) (요구사항 원천 — 기기별 배치 계약은 §4.10) · [USER_FLOW.md](../design/USER_FLOW.md) (화면 간 전환 흐름) · [ARCHITECTURE.md](../ARCHITECTURE.md) (뷰 라우팅 구조)
 > **최종 업데이트**: 2026-10-03
 > **문서 ID**: DOC-REF-09
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: `UX-NAV-01`(3단계 네비) · `UX-NAV-08`(해시 라우팅) · `UM-01~05`(학습↔실무 모드)
 
 ---

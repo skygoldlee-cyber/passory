@@ -2,7 +2,7 @@
 /**
  * check_numbering.js — 교재 번호체계 정합성 게이트
  *
- * 기준: docs/dev/reference/NUMBERING_SYSTEM.md §2(헤딩 레벨)·§3.1(연속)·§3.3(금지 패턴)·§5.2(검증 항목)·§5.3(표준↔이야기 동기화)
+ * 기준: docs/exams/cosmetic/reference/NUMBERING_SYSTEM.md §2(헤딩 레벨)·§3.1(연속)·§3.3(금지 패턴)·§5.2(검증 항목)·§5.3(표준↔이야기 동기화)
  *
  * 검사 범위: content/exams/<id>/교재/ 아래의 *_표준형.md·*_이야기형.md
  *   서사 패치(*_서사.md)는 패치 DSL 문서로 렌더링 대상이 아니므로 제외 — 패치가 만든 산출물은

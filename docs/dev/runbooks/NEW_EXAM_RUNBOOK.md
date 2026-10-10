@@ -1,6 +1,7 @@
 ﻿# 새 시험 추가 런북
 
 > **문서 ID**: DOC-RBK-10
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: ES-01, DA-11, DA-12, BP-09
 > **대상**: Passmula 플랫폼에 새 자격시험을 추가하는 사람
 > **전제**: 멀티시험 아키텍처 — `docs/dev/ARCHITECTURE.md` "새 시험 추가 절차"·"시험별 문서 규약"·"파일 계층 분류" 절

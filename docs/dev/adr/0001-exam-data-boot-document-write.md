@@ -1,6 +1,7 @@
 # ADR-0001: 활성 시험 데이터 번들을 document.write 부트 스크립트로 로드
 
 > **문서 ID**: DOC-ADR-01
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: P-01~06
 > **상태**: accepted (2026-10-03)
 

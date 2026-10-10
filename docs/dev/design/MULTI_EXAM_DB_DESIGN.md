@@ -1,8 +1,9 @@
 # 멀티시험 확장 설계 — 법령DB·지식DB 일반화
 
-> 상위 문서: [`../ARCHITECTURE.md`](../ARCHITECTURE.md) §9 멀티시험 플랫폼 구조 · [`LEARNING_PREMIUM_PLAN.md`](LEARNING_PREMIUM_PLAN.md) "두 번째 시험 추가 전 선결 과제" · [`../../report_archive/PRO_MULTI_EXAM_EVALUATION.md`](../../report_archive/PRO_MULTI_EXAM_EVALUATION.md) (시험 후보 평가)
+> 상위 문서: [`../ARCHITECTURE.md`](../ARCHITECTURE.md) §9 멀티시험 플랫폼 구조 · [`LEARNING_PREMIUM_PLAN.md`](LEARNING_PREMIUM_PLAN.md) "두 번째 시험 추가 전 선결 과제" · [`../../report_archive/PRO_MULTI_EXAM_EVALUATION.md`](../../exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md) (시험 후보 평가)
 > **관련 SPEC ID**: `ES-01~05` (시험 선택·전환) · `DA-06~08` (멀티시험 대칭 구조·경로) · `RR-13` (참조자료 레지스트리) · `RR-17` (law.go.kr 링크) · `RR-19`, `FO-24` (고시 감시) — 로드맵 항목 ROAD-M1(타 시험 등록)의 실행 설계
 > **문서 ID**: DOC-DSN-10
+> **범위**: platform · 판본: none
 > **상태**: Phase A·B·C 구현 완료 (2026-09-30) — A1·A2는 기존 코드가 이미 시험별 테이블 구조라 확인으로 종결, A3~A7 본 문서대로 구현. B는 스캐폴더 라운드트립 검증, C는 식품기사(food) 파일럿으로 전 체인 검증 (§9 표 하단 주석 참조)
 > **목적**: 다른 자격시험을 "콘텐츠 팩"으로 온보딩할 수 있도록, 현재 cosmetic에 결합된 법령·지식 데이터 계층을 시험 비종속으로 일반화한다.
 
@@ -355,5 +356,5 @@ const _EXAM_LAW_URLS = {
 
 - [`../ARCHITECTURE.md`](../ARCHITECTURE.md) — §9 멀티시험 플랫폼 구조, §20 데이터 파이프라인
 - [`LEARNING_PREMIUM_PLAN.md`](LEARNING_PREMIUM_PLAN.md) — 멀티시험 확장 KPI, ref-pipeline 선결 과제 (본 문서 §6 A5·§8로 이관)
-- [`../../report_archive/PRO_MULTI_EXAM_EVALUATION.md`](../../report_archive/PRO_MULTI_EXAM_EVALUATION.md) — 시험 후보 유형 평가, 킬러 피처 분석
+- [`../../report_archive/PRO_MULTI_EXAM_EVALUATION.md`](../../exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md) — 시험 후보 유형 평가, 킬러 피처 분석
 - [`../SPEC.md`](../SPEC.md) — §7.4 ROAD-M1 (타 시험 등록)

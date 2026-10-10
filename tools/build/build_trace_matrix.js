@@ -8,7 +8,7 @@
  *   요구사항 (SPEC.md) ─┬─ 문서   : 각 .md 헤더의 "관련 SPEC ID" 행
  *                     ├─ 소스   : src/·css/·tools/·ref-pipeline/ 의 @spec 태그
  *                     ├─ 테스트 : tests/ 의 @spec 태그
- *                     └─ 보고서 : docs/report_archive/ 의 관련 SPEC ID
+ *                     └─ 보고서 : docs/exams/cosmetic/report_archive/ 의 관련 SPEC ID
  *
  * 사용법:
  *   npm.cmd run build:trace                    # TRACE_MATRIX.md 재생성
@@ -76,6 +76,7 @@ function build(specIds, src, tst, docs, reports, meta, missingRef, status, sourc
   const out = [];
   out.push('# 🔗 TRACE MATRIX — 요구사양 추적 매트릭스', '');
   out.push('> **문서 ID**: DOC-DEV-04');
+  out.push('> **범위**: platform · 판본: none');
   out.push('> **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)');
   out.push('> ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.');
   out.push(`> 입력 해시: ${inputsHash(specIds)}`);

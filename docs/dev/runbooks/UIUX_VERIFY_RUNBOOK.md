@@ -4,6 +4,7 @@
 > **관련 문서**: [SPEC.md](../SPEC.md) §4.8.8 (UX-VFY-01~05 — 본 절차의 요구사양 원천) · §4.10 (기기별 배치 계약 — 검증 대상 정의) · [VERIFY_DEPLOY_PIPELINE.md](VERIFY_DEPLOY_PIPELINE.md) (전체 게이트 파이프라인) · [TESTING.md](../reference/TESTING.md)
 > **최종 업데이트**: 2026-10-03
 > **문서 ID**: DOC-RBK-11
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: `UX-VFY-01~05`
 
 ---

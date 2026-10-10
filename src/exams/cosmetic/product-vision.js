@@ -5,7 +5,7 @@
 // 전성분을 JSON으로 추출한다. 추출 결과는 기성품 폼에 프리필되는 초안이며
 // 직접 저장 경로는 없다 — 사용자 검토(칩) 후 기존 productSave 경로로 저장.
 //
-// BYOK 계약 (설계: docs/dev/design/PRODUCT_VISION_DESIGN.md):
+// BYOK 계약 (설계: docs/exams/cosmetic/design/PRODUCT_VISION_DESIGN.md):
 //   - 사용자 자기 Gemini API 키 — FORMULA_GEMINI_KEY에 디바이스 로컬 저장
 //   - BACKUP_KEYS 제외 — 백업·동기로 키가 새지 않도록 의도적 제외
 //   - 사진·응답 원문은 영속하지 않는다 — 추출 후 폐기

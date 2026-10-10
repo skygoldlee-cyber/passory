@@ -5,6 +5,7 @@
 > **관련 문서**: [SUBSCRIPTION_ROADMAP.md](SUBSCRIPTION_ROADMAP.md), [ARCHITECTURE.md](../ARCHITECTURE.md)
 > **관련 SPEC ID**: `FB-01~08` (수신 인프라 — USER_FEEDBACK_DESIGN.md), 본 문서는 큐레이션·공유 쪽 미구현 확장
 > **문서 ID**: DOC-DSN-05
+> **범위**: platform · 판본: none
 
 ---
 

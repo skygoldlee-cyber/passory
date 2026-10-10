@@ -1,6 +1,7 @@
 # 🛠 적용 소프트웨어 공학 기법 카탈로그
 
 > **문서 ID**: DOC-REF-10
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (공학 기법 색인 — 개별 항목이 관련 ID를 인용)
 > **목적**: 이 저장소에 실제 적용된 소프트웨어 공학 기법을 한눈에 정리 — 각 기법의 개념·구현물·검증 명령을 짝지어 기록. 표준·프레임워크 대응 평가는 [ENGINEERING_PRACTICES.md](ENGINEERING_PRACTICES.md)(DOC-REF-08) 부록 A, 게이트 실행 절차는 [VERIFY_DEPLOY_PIPELINE.md](../runbooks/VERIFY_DEPLOY_PIPELINE.md) 참조.
 

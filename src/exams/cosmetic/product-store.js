@@ -3,7 +3,7 @@
 //
 // 시판 제품(브랜드·제형·전성분)을 등록해 개인 기성품 DB를 구축한다.
 // localStorage `product_items` (scopedKey → 시험별 네임스페이스 자동).
-// 설계: docs/dev/design/PRODUCT_DB_DESIGN.md (DOC-DSN-12)
+// 설계: docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md (DOC-DSN-12)
 //
 // 스키마:
 //   { id:'prod_…', name, brand, category, ingredients:string[] (전성분 표시

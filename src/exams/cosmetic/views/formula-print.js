@@ -163,7 +163,7 @@ export function buildWorkOrderHtml(f) {
 /* =======================================================
    종합 규정 점검 보고서 (FO-56) — 수집 뷰모델 → fp-doc A4 문서
    섹션은 수집기(formula-audit.js)가 bizVisible 게이트를 적용해
-   이미 걸러진 상태로 온다. 설계: docs/dev/design/AUDIT_REPORT_DESIGN.md
+   이미 걸러진 상태로 온다. 설계: docs/exams/cosmetic/design/AUDIT_REPORT_DESIGN.md
    ======================================================= */
 
 const AUDIT_SECTION_MARK = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];

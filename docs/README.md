@@ -3,6 +3,7 @@
 > **Cosmetic Pass Master / Passmula** — 맞춤형화장품 조제관리사 스마트 학습 + 실무(Formula OS) 플랫폼
 > 최종 갱신: 2026-10-10
 > **문서 ID**: DOC-IDX-01
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (문서 인덱스·ID 레지스트리)
 
 이 문서는 `docs/` 아래 모든 문서의 **역할 설명**과 **목적별 읽기 순서**를 제공합니다.
@@ -44,7 +45,7 @@
 ```
 1. FORMULA_OS_WORKFLOW_DESIGN.md — 9개 조제 업무 확장 설계 (Phase A~D)
 2. SPEC.md §3.18                 — 구현된 상세 요구사양
-3. report_archive/FORMULA_OS_DESIGN.md — Phase 5-A 기본 설계 (아카이브, 설계 근거 참고용)
+3. exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md — Phase 5-A 기본 설계 (아카이브, 설계 근거 참고용)
 ```
 
 ### ④ 배포·환경·운영 작업
@@ -60,7 +61,7 @@
 ### ⑤ 제품 전략·수익화 방향 검토
 
 ```
-1. docs/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md — 플랫폼 사업기획서 v3.5 (현행 기준서)
+1. docs/exams/cosmetic/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md — 플랫폼 사업기획서 v3.5 (현행 기준서)
 2. LEARNING_PREMIUM_PLAN.md      — Learning Pro 구현 과제 (우선순위·공수·전제)
 3. SUBSCRIPTION_ROADMAP.md       — 월 구독 전환 로드맵
 4. READER_FEEDBACK_DESIGN.md     — 독자 피드백 공유 기능 설계안 (미구현)
@@ -70,7 +71,7 @@
 8. business/유튜브_홍보동영상_제작의뢰서.md   — 홍보 영상 외주 제작 브리프 (콘티·사양·납품 기준)
 ```
 
-> **전략 원전 문서 (아카이브)**: 사업기획서 v3.5가 재구성한 상위 전략 문서들은 `report_archive/`에 보관 —
+> **전략 원전 문서 (아카이브)**: 사업기획서 v3.5가 재구성한 상위 전략 문서들은 `exams/cosmetic/report_archive/`에 보관 —
 > Cosmetic Master Business Plan(구판 기획서)·PASS_TO_PRACTICE_STRATEGY(Pass→Practice 전략)·
 > FEATURE_PROPOSALS(핵심 루프 제안)·PASS_CORE_LOOP_REVIEW(코드 반영도 진단)·
 > EXTERNAL_REVIEW_LEARNING_PRO·PRO_MULTI_EXAM_EVALUATION. 설계 근거·결정 이력 참고용.
@@ -78,25 +79,32 @@
 ### ⑥ 학습자(사용자) 관점 문서
 
 ```
-user/user_manual.md → 학습안내서(앱 내) → user/exam_strategy.md → user/subject1~4_numbers.md
+user_manual.md(앱 내) → 학습안내서(앱 내) → exams/cosmetic/user/exam_strategy.md → exams/cosmetic/user/subject1~4_numbers.md
 ```
 
 ---
 
 ## 📂 문서 구조
 
+> **범위 체계**: `docs/dev/`는 플랫폼 공통(범위 `platform`), `docs/exams/<id>/`는 시험 종속(범위 `exam:<id>`)이다. 각 문서 헤더의 `> **범위**: … · 판본: …`가 기계 검증되는 선언 — `판본: textbook`이면 교재 교체 시 갱신 대상, `판본: refmat`이면 참조자료(법령·고시) 판본 변경 시 갱신 대상. 교재 교체 런북이 이 선언으로 영향 문서를 자동 조회한다 (`docs/dev/runbooks/TEXTBOOK_REPLACEMENT_RUNBOOK.md`).
+
 ```
 docs/
 ├── README.md                    ← 본 파일 (문서 인덱스 + 읽기 순서)
-├── business/                    ← 사업 기획·시장 조사·마케팅 문서 (5개)
-├── dev/                         ← 개발 문서 (52개)
-│   ├── 수위 문서 (6개)         ← ARCHITECTURE·SPEC·CHANGES·TRACE_MATRIX·UIUX_외주전달_패키지·ingredients_audit_제2026-19호
+├── dev/                         ← 플랫폼 공통 개발 문서 (44개)
+│   ├── 수위 문서 (5개)         ← ARCHITECTURE·SPEC·CHANGES·TRACE_MATRIX·UIUX_외주전달_패키지
 │   ├── adr/                   ← 아키텍처 결정 기록 (4개 — README + ADR 3건)
 │   ├── runbooks/              ← 실행 절차·운영 런북 (13개)
-│   ├── design/                ← 설계·계획·평가 문서 (16개)
-│   └── reference/             ← 명세·로직·참조 문서 (13개)
-├── user/                        ← 사용자/학습자 문서 (5개)
-└── report_archive/              ← 분석 보고서 + 대체된 전략 문서 아카이브 (11개)
+│   ├── design/                ← 설계·계획·평가 문서 (11개)
+│   └── reference/             ← 명세·로직·참조 문서 (11개 + images/)
+└── exams/<id>/                  ← 시험 종속 문서 — docs/exams/cosmetic/ (30개)
+    ├── README.md              ← 시험별 문서 인덱스
+    ├── user/                  ← 학습자 문서 (5개)
+    ├── business/              ← 사업 기획·시장 조사·마케팅 문서 (5개)
+    ├── design/                ← 시험 종속 설계 문서 (5개 — Formula OS 계열)
+    ├── reference/             ← 교재 종속 참조 문서 (2개 — 번호체계·참조매핑)
+    ├── report_archive/        ← 시점 스냅샷 보고서 + 대체된 전략 원전 (11개)
+    └── ingredients_audit_제2026-19호.md  ← 고시 대조 리포트 (판본: refmat)
 ```
 
 ---
@@ -143,24 +151,24 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | [ref-pipeline/README.md](../ref-pipeline/README.md) | 교재·참조자료 변환 도구 — PDF→MD, MD→HTML, 오디오북 TTS, 법령 검증 (독립 실행) |
 | [TEXTBOOK_AUTHORING_GUIDE.md](dev/runbooks/TEXTBOOK_AUTHORING_GUIDE.md) | 교재 Markdown 작성 지침 — 카드/퀴즈 추출 규칙, manifest.json, 빌드 검증 |
 | [STORY_PATCH_GUIDE.md](dev/runbooks/STORY_PATCH_GUIDE.md) | 이야기형 교재 서사 패치 작성 — 슬롯 마커·지시어 문법 (`*_이야기형.md`는 `build:story` 생성물, 직접 편집 금지) |
-| [NUMBERING_SYSTEM.md](dev/reference/NUMBERING_SYSTEM.md) | 교재 챕터/섹션 십진 번호체계 |
+| [NUMBERING_SYSTEM.md](exams/cosmetic/reference/NUMBERING_SYSTEM.md) | 교재 챕터/섹션 십진 번호체계 |
 | [QUESTION_SCHEMA_DESIGN.md](dev/design/QUESTION_SCHEMA_DESIGN.md) | 문항 데이터 스키마 — 복수정답형의 "진술 단위 O/X → 조합 도출" 구조 |
 | [COMBO_GENERATION_GUIDE.md](dev/runbooks/COMBO_GENERATION_GUIDE.md) | 복수정답형 드릴 생성 도구 — `build_combo_drills.js` + `ref_statements.js` |
-| [TEXTBOOK_REFERENCE_MAPPING.md](dev/reference/TEXTBOOK_REFERENCE_MAPPING.md) | 교재 챕터/섹션 ↔ 참조자료 파일 매핑 정의 |
+| [TEXTBOOK_REFERENCE_MAPPING.md](exams/cosmetic/reference/TEXTBOOK_REFERENCE_MAPPING.md) | 교재 챕터/섹션 ↔ 참조자료 파일 매핑 정의 |
 | [COMBO_STUDY_STRATEGY.md](dev/reference/COMBO_STUDY_STRATEGY.md) | 복수정답형 학습 전략 — 진술 원자 단위 학습법, 전략→기능 매핑 (코드 주석에서 참조) |
 | [ENGINEERING_PRACTICES.md](dev/reference/ENGINEERING_PRACTICES.md) | 소프트웨어 공학 요소 — SSOT, 신선도 게이트, 추적성, 다층 검증, 결정성 빌드 등 |
 | [SOFTWARE_ENGINEERING_TECHNIQUES.md](dev/reference/SOFTWARE_ENGINEERING_TECHNIQUES.md) | 적용 공학 기법 카탈로그 — PBT·변이 테스트·성능 예산·ADR·도메인 경계·오류 텔레메트리 포함 전 기법 색인 |
-| [ingredients_audit_제2026-19호.md](dev/ingredients_audit_제2026-19호.md) | 원료 DB ↔ 고시 제2026-19호 별표1·별표2 전수 대조 리포트 — 오류 정정·누락 추가·반영 결과 (`ref-pipeline/compare_ingredients_official.py`) |
+| [ingredients_audit_제2026-19호.md](exams/cosmetic/ingredients_audit_제2026-19호.md) | 원료 DB ↔ 고시 제2026-19호 별표1·별표2 전수 대조 리포트 — 오류 정정·누락 추가·반영 결과 (`ref-pipeline/compare_ingredients_official.py`) |
 
 ### Formula OS (실무)
 
 | 문서 | 설명 |
 |------|------|
-| [FORMULA_OS_WORKFLOW_DESIGN.md](dev/design/FORMULA_OS_WORKFLOW_DESIGN.md) | 조제관리사 9개 업무 전체 커버리지 — 고객·배치·원료장부·법규 (Phase A~D 구현 완료). Phase 5-A 기본 설계는 `report_archive/FORMULA_OS_DESIGN.md` |
-| [PRODUCT_DB_DESIGN.md](dev/design/PRODUCT_DB_DESIGN.md) | 기성품 전성분 DB 설계 — 개인 기성품 DB 구축·교차 분석 (FO-37~40 + 보완, 구현 완료) |
-| [PRODUCT_VISION_DESIGN.md](dev/design/PRODUCT_VISION_DESIGN.md) | 기성품 사진 인식 등록 — Gemini Flash BYOK·멀티샷 전성분 추출 (FO-41~43, 구현 완료) |
-| [AUDIT_REPORT_DESIGN.md](dev/design/AUDIT_REPORT_DESIGN.md) | 종합 규정 점검 보고서 — 체크리스트·표시사항·광고 점검·포뮬러 검증 통합 출력 (FO-56, 구현 완료) |
-| [PRACTICAL_TOOLS_DESIGN.md](dev/design/PRACTICAL_TOOLS_DESIGN.md) | 실무 도구 확장 — LOT 역추적·판매내역서·이상사례·동의서·재고 차감·리마인더 (FO-57~63) |
+| [FORMULA_OS_WORKFLOW_DESIGN.md](exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md) | 조제관리사 9개 업무 전체 커버리지 — 고객·배치·원료장부·법규 (Phase A~D 구현 완료). Phase 5-A 기본 설계는 `docs/exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md` |
+| [PRODUCT_DB_DESIGN.md](exams/cosmetic/design/PRODUCT_DB_DESIGN.md) | 기성품 전성분 DB 설계 — 개인 기성품 DB 구축·교차 분석 (FO-37~40 + 보완, 구현 완료) |
+| [PRODUCT_VISION_DESIGN.md](exams/cosmetic/design/PRODUCT_VISION_DESIGN.md) | 기성품 사진 인식 등록 — Gemini Flash BYOK·멀티샷 전성분 추출 (FO-41~43, 구현 완료) |
+| [AUDIT_REPORT_DESIGN.md](exams/cosmetic/design/AUDIT_REPORT_DESIGN.md) | 종합 규정 점검 보고서 — 체크리스트·표시사항·광고 점검·포뮬러 검증 통합 출력 (FO-56, 구현 완료) |
+| [PRACTICAL_TOOLS_DESIGN.md](exams/cosmetic/design/PRACTICAL_TOOLS_DESIGN.md) | 실무 도구 확장 — LOT 역추적·판매내역서·이상사례·동의서·재고 차감·리마인더 (FO-57~63) |
 
 ### 테스트·품질
 
@@ -194,41 +202,41 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 
 ---
 
-## � 사업 문서 (docs/business/)
+## � 사업 문서 (docs/exams/cosmetic/business/)
 
 | 문서 | 설명 |
 |------|------|
-| [맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md](business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md) | 플랫폼 사업기획서 v3.5 — 현행 기준서 (구판은 report_archive) |
-| [FORMULA_OS_경쟁전략.md](business/FORMULA_OS_경쟁전략.md) | Formula OS 경쟁 지도·차별화 축·시나리오별 대응 |
-| [판매업소_인터뷰_스크립트.md](business/판매업소_인터뷰_스크립트.md) | Step 0 판매업소 인터뷰 질문·중단 기준·집계 시트 |
-| [맞춤형화장품판매업소_조사_2026-09.md](business/맞춤형화장품판매업소_조사_2026-09.md) | 판매업소·솔루션 공급사·시장 수치·규제 동향 조사 |
-| [유튜브_홍보동영상_제작의뢰서.md](business/유튜브_홍보동영상_제작의뢰서.md) | 홍보 영상 외주 제작 브리프 (콘티·사양·납품 기준) |
+| [맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md](exams/cosmetic/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md) | 플랫폼 사업기획서 v3.5 — 현행 기준서 (구판은 아카이브) |
+| [FORMULA_OS_경쟁전략.md](exams/cosmetic/business/FORMULA_OS_경쟁전략.md) | Formula OS 경쟁 지도·차별화 축·시나리오별 대응 |
+| [판매업소_인터뷰_스크립트.md](exams/cosmetic/business/판매업소_인터뷰_스크립트.md) | Step 0 판매업소 인터뷰 질문·중단 기준·집계 시트 |
+| [맞춤형화장품판매업소_조사_2026-09.md](exams/cosmetic/business/맞춤형화장품판매업소_조사_2026-09.md) | 판매업소·솔루션 공급사·시장 수치·규제 동향 조사 |
+| [유튜브_홍보동영상_제작의뢰서.md](exams/cosmetic/business/유튜브_홍보동영상_제작의뢰서.md) | 홍보 영상 외주 제작 브리프 (콘티·사양·납품 기준) |
 
 > `.html`은 `md2doc.py` 생성물 (gitignore 대상) — `.md`가 원본입니다.
 
 ---
 
-## �👤 사용자 문서 (docs/user/)
+## �👤 사용자 문서 (docs/exams/cosmetic/user/)
 
 | 문서 | 설명 | 접근 방법 |
 |------|------|-----------|
 | [user_manual.md](../content/exams/cosmetic/docs/user_manual.md) | 사용자 매뉴얼 | 앱 내 "매뉴얼" 메뉴 (manual-viewer 렌더, 시험별 문서) |
 | [formula_manual.md](../content/exams/cosmetic/docs/formula_manual.md) | Formula OS 실무 매뉴얼 | 앱 내 실무 매뉴얼 (doc: 링크 연동, 시험별 문서) |
-| [exam_strategy.md](user/exam_strategy.md) | 시험 합격 공략법 — 4과목·100문항·과락 기준 전략 | 직접 열기 |
-| [subject1~4_numbers.md](user/subject1_numbers.md) | 과목별 숫자 암기 요약정리 (4파일) | 직접 열기 |
+| [exam_strategy.md](exams/cosmetic/user/exam_strategy.md) | 시험 합격 공략법 — 4과목·100문항·과락 기준 전략 | 직접 열기 |
+| [subject1~4_numbers.md](exams/cosmetic/user/subject1_numbers.md) | 과목별 숫자 암기 요약정리 (4파일) | 직접 열기 |
 | [학습안내서.md](../content/exams/cosmetic/docs/학습안내서.md) | 학습 안내서 | 앱 내 "요약집" 메뉴 (`content/exams/cosmetic/docs/`) |
 
 > 사용자 문서는 앱의 `manual-viewer.js`가 런타임에 fetch하여 인앱 오버레이로 렌더링합니다.
 
 ---
 
-## 🗄️ 아카이브 (docs/report_archive/)
+## 🗄️ 아카이브 (docs/exams/cosmetic/report_archive/)
 
 1회성 분석 보고서 + **대체된 전략/설계 원전** — 앱 코드에서 참조하지 않음. 이력·설계 근거 보관용.
 
 | 문서 | 설명 |
 |------|------|
-| Cosmetic Master Business Plan.md | 구판 사업기획서 — 사업기획서 v3.5(`docs/business/`)로 대체됨 |
+| Cosmetic Master Business Plan.md | 구판 사업기획서 — 사업기획서 v3.5(`docs/exams/cosmetic/business/`)로 대체됨 |
 | PASS_TO_PRACTICE_STRATEGY.md | Pass→Practice 전략 원전 — 사업기획서·SPEC §3.18에 흡수 |
 | FEATURE_PROPOSALS.md | 합격 핵심 루프 11단계 제안 원전 — 잔여 과제는 SPEC §7·LEARNING_PREMIUM_PLAN |
 | PASS_CORE_LOOP_REVIEW.md | 핵심 루프 코드 반영도 진단 (2026-09-11 스냅샷) |
@@ -255,7 +263,7 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 
 - **문서 ID**: 모든 문서 상단에 `> **문서 ID**: DOC-XX-NN` 표기 — 아래 레지스트리에서 채번. `npm run check:docs`가 누락·중복을 검증
 - **업데이트 날짜**: 각 문서 상단에 `최종 업데이트` 명시
-- **링크**: 상대 경로 사용 (`../`, `dev/`, `user/`); 공백 파일명은 `%20` 인코딩
+- **링크**: 상대 경로 사용 (`../`, `dev/`, `exams/<id>/`); 공백 파일명은 `%20` 인코딩
 - **Mermaid 다이어그램**: `securityLevel: 'strict'` + crypto nonce로 인앱 및 GitHub 렌더링 지원
 
 ---
@@ -267,15 +275,15 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | 접두사 | 영역 | 범위 |
 |--------|------|------|
 | `DOC-ROOT` | 루트 문서 | README.md · AGENTS.md |
-| `DOC-IDX` | 문서 인덱스 | docs/README.md (본 파일) |
+| `DOC-IDX` | 문서 인덱스 | docs/README.md (본 파일) · docs/exams/<id>/README.md |
 | `DOC-DEV` | 개발 수위 문서 | SPEC · ARCHITECTURE · CHANGES · TRACE_MATRIX |
-| `DOC-DSN` | 설계·계획 | docs/dev/design/ |
-| `DOC-REF` | 명세·로직 참조 | docs/dev/reference/ |
+| `DOC-DSN` | 설계·계획 | docs/dev/design/ · docs/exams/<id>/design/ |
+| `DOC-REF` | 명세·로직 참조 | docs/dev/reference/ · docs/exams/<id>/reference/ |
 | `DOC-RBK` | 운영 런북·절차 | docs/dev/runbooks/ |
 | `DOC-ADR` | 아키텍처 결정 기록 | docs/dev/adr/ |
-| `DOC-USR` | 사용자 문서 | docs/user/ |
-| `DOC-BIZ` | 사업 문서 | docs/business/ |
-| `DOC-ARC` | 아카이브 | docs/report_archive/ |
+| `DOC-USR` | 사용자 문서 | docs/exams/<id>/user/ · content/exams/<id>/docs/ |
+| `DOC-BIZ` | 사업 문서 | docs/exams/<id>/business/ |
+| `DOC-ARC` | 아카이브 | docs/exams/<id>/report_archive/ |
 | `DOC-PPL` | 파이프라인 도구 | ref-pipeline/ |
 
 | ID | 파일 |
@@ -284,14 +292,15 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-ROOT-02 | `AGENTS.md` |
 | DOC-ROOT-03 | `combo_review_queue.md` (자동 생성, gitignore) |
 | DOC-IDX-01 | `docs/README.md` |
+| DOC-IDX-02 | `docs/exams/cosmetic/README.md` |
 | DOC-DEV-01 | `docs/dev/SPEC.md` |
 | DOC-DEV-02 | `docs/dev/ARCHITECTURE.md` |
 | DOC-DEV-03 | `docs/dev/CHANGES.md` |
 | DOC-DEV-04 | `docs/dev/TRACE_MATRIX.md` (자동 생성 — npm run build:trace) |
-| DOC-DEV-05 | `docs/dev/ingredients_audit_제2026-19호.md` |
+| DOC-DEV-05 | `docs/exams/cosmetic/ingredients_audit_제2026-19호.md` |
 | DOC-DEV-07 | `docs/dev/UIUX_외주전달_패키지.md` |
 | DOC-DSN-01 | `docs/dev/design/DOM_TEST_DESIGN.md` |
-| DOC-DSN-02 | `docs/dev/design/FORMULA_OS_WORKFLOW_DESIGN.md` |
+| DOC-DSN-02 | `docs/exams/cosmetic/design/FORMULA_OS_WORKFLOW_DESIGN.md` |
 | DOC-DSN-03 | `docs/dev/design/LEARNING_PREMIUM_PLAN.md` |
 | DOC-DSN-04 | `docs/dev/design/QUESTION_SCHEMA_DESIGN.md` |
 | DOC-DSN-05 | `docs/dev/design/READER_FEEDBACK_DESIGN.md` |
@@ -301,18 +310,18 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-DSN-09 | `docs/dev/design/USER_FEEDBACK_DESIGN.md` |
 | DOC-DSN-10 | `docs/dev/design/MULTI_EXAM_DB_DESIGN.md` |
 | DOC-DSN-11 | `docs/dev/design/USER_FLOW.md` |
-| DOC-DSN-12 | `docs/dev/design/PRODUCT_DB_DESIGN.md` |
-| DOC-DSN-13 | `docs/dev/design/PRODUCT_VISION_DESIGN.md` |
-| DOC-DSN-14 | `docs/dev/design/AUDIT_REPORT_DESIGN.md` |
-| DOC-DSN-15 | `docs/dev/design/PRACTICAL_TOOLS_DESIGN.md` |
+| DOC-DSN-12 | `docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md` |
+| DOC-DSN-13 | `docs/exams/cosmetic/design/PRODUCT_VISION_DESIGN.md` |
+| DOC-DSN-14 | `docs/exams/cosmetic/design/AUDIT_REPORT_DESIGN.md` |
+| DOC-DSN-15 | `docs/exams/cosmetic/design/PRACTICAL_TOOLS_DESIGN.md` |
 | DOC-DSN-16 | `docs/dev/design/STUDY_PLAN_PRO_DESIGN.md` |
 | DOC-REF-01 | `docs/dev/reference/COMBO_STUDY_STRATEGY.md` |
 | DOC-REF-02 | `docs/dev/reference/DEV_ENVIRONMENT.md` |
 | DOC-REF-03 | `docs/dev/reference/FLASHCARD_LOGIC.md` |
 | DOC-REF-04 | `docs/dev/reference/MD_TO_HTML_LOGIC.md` |
-| DOC-REF-05 | `docs/dev/reference/NUMBERING_SYSTEM.md` |
+| DOC-REF-05 | `docs/exams/cosmetic/reference/NUMBERING_SYSTEM.md` |
 | DOC-REF-06 | `docs/dev/reference/TESTING.md` |
-| DOC-REF-07 | `docs/dev/reference/TEXTBOOK_REFERENCE_MAPPING.md` |
+| DOC-REF-07 | `docs/exams/cosmetic/reference/TEXTBOOK_REFERENCE_MAPPING.md` |
 | DOC-REF-08 | `docs/dev/reference/ENGINEERING_PRACTICES.md` |
 | DOC-REF-09 | `docs/dev/reference/SCREEN_MAP.md` |
 | DOC-REF-10 | `docs/dev/reference/SOFTWARE_ENGINEERING_TECHNIQUES.md` |
@@ -336,32 +345,35 @@ UI/UX 작업의 문서 계열 — 역할 분담과 읽기 순서는 "무엇을(S
 | DOC-ADR-01 | `docs/dev/adr/0001-exam-data-boot-document-write.md` |
 | DOC-ADR-02 | `docs/dev/adr/0002-domain-asset-convention-paths.md` |
 | DOC-ADR-03 | `docs/dev/adr/0003-localstorage-first-storage.md` |
-| DOC-USR-01 | `docs/user/exam_strategy.md` |
+| DOC-USR-01 | `docs/exams/cosmetic/user/exam_strategy.md` |
 | DOC-USR-02 | `content/exams/cosmetic/docs/formula_manual.md` |
-| DOC-USR-03 | `docs/user/subject1_numbers.md` |
-| DOC-USR-04 | `docs/user/subject2_numbers.md` |
-| DOC-USR-05 | `docs/user/subject3_numbers.md` |
-| DOC-USR-06 | `docs/user/subject4_numbers.md` |
+| DOC-USR-03 | `docs/exams/cosmetic/user/subject1_numbers.md` |
+| DOC-USR-04 | `docs/exams/cosmetic/user/subject2_numbers.md` |
+| DOC-USR-05 | `docs/exams/cosmetic/user/subject3_numbers.md` |
+| DOC-USR-06 | `docs/exams/cosmetic/user/subject4_numbers.md` |
 | DOC-USR-07 | `content/exams/cosmetic/docs/user_manual.md` |
-| DOC-BIZ-01 | `docs/business/FORMULA_OS_경쟁전략.md` |
-| DOC-BIZ-02 | `docs/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md` |
-| DOC-BIZ-03 | `docs/business/맞춤형화장품판매업소_조사_2026-09.md` |
-| DOC-BIZ-04 | `docs/business/유튜브_홍보동영상_제작의뢰서.md` |
-| DOC-BIZ-05 | `docs/business/판매업소_인터뷰_스크립트.md` |
-| DOC-ARC-01 | docs/report_archive/Cosmetic Master Business Plan.md |
-| DOC-ARC-02 | `docs/report_archive/EXTERNAL_REVIEW_LEARNING_PRO.md` |
-| DOC-ARC-03 | `docs/report_archive/FEATURE_PROPOSALS.md` |
-| DOC-ARC-04 | `docs/report_archive/FORMULA_OS_DESIGN.md` |
-| DOC-ARC-05 | `docs/report_archive/PASS_CORE_LOOP_REVIEW.md` |
-| DOC-ARC-06 | `docs/report_archive/PASS_TO_PRACTICE_STRATEGY.md` |
-| DOC-ARC-07 | `docs/report_archive/PRO_MULTI_EXAM_EVALUATION.md` |
-| DOC-ARC-08 | `docs/report_archive/법령최신확인결과.md` |
-| DOC-ARC-09 | `docs/report_archive/오답위험_분석보고서.md` |
-| DOC-ARC-10 | `docs/report_archive/출제비중기반학습방법.md` |
-| DOC-ARC-11 | `docs/report_archive/출제비중분포조사결과.md` |
+| DOC-USR-08 | `content/exams/cosmetic/docs/학습안내서.md` |
+| DOC-USR-09 | `content/exams/cosmetic/docs/두음법_암기_총정리.md` |
+| DOC-BIZ-01 | `docs/exams/cosmetic/business/FORMULA_OS_경쟁전략.md` |
+| DOC-BIZ-02 | `docs/exams/cosmetic/business/맞춤형화장품_조제관리사_자격증플랫폼_사업기획서.md` |
+| DOC-BIZ-03 | `docs/exams/cosmetic/business/맞춤형화장품판매업소_조사_2026-09.md` |
+| DOC-BIZ-04 | `docs/exams/cosmetic/business/유튜브_홍보동영상_제작의뢰서.md` |
+| DOC-BIZ-05 | `docs/exams/cosmetic/business/판매업소_인터뷰_스크립트.md` |
+| DOC-ARC-01 | docs/exams/cosmetic/report_archive/Cosmetic Master Business Plan.md |
+| DOC-ARC-02 | `docs/exams/cosmetic/report_archive/EXTERNAL_REVIEW_LEARNING_PRO.md` |
+| DOC-ARC-03 | `docs/exams/cosmetic/report_archive/FEATURE_PROPOSALS.md` |
+| DOC-ARC-04 | `docs/exams/cosmetic/report_archive/FORMULA_OS_DESIGN.md` |
+| DOC-ARC-05 | `docs/exams/cosmetic/report_archive/PASS_CORE_LOOP_REVIEW.md` |
+| DOC-ARC-06 | `docs/exams/cosmetic/report_archive/PASS_TO_PRACTICE_STRATEGY.md` |
+| DOC-ARC-07 | `docs/exams/cosmetic/report_archive/PRO_MULTI_EXAM_EVALUATION.md` |
+| DOC-ARC-08 | `docs/exams/cosmetic/report_archive/법령최신확인결과.md` |
+| DOC-ARC-09 | `docs/exams/cosmetic/report_archive/오답위험_분석보고서.md` |
+| DOC-ARC-10 | `docs/exams/cosmetic/report_archive/출제비중기반학습방법.md` |
+| DOC-ARC-11 | `docs/exams/cosmetic/report_archive/출제비중분포조사결과.md` |
 | DOC-PPL-01 | `ref-pipeline/README.md` |
 | DOC-PPL-02 | `ref-pipeline/audiobook/README.md` |
 | DOC-PPL-03 | `ref-pipeline/audiobook/AUDIOBOOK_SUMMARY.md` |
 - **인코딩**: UTF-8 (BOM 없음)
 - **신규 문서 추가 시**: 이 인덱스의 해당 분류 표에 행 추가 + 읽기 순서 경로에 필요 시 반영
-- **시점 스냅샷 문서** (리뷰·조사 보고서): `report_archive/`에 두거나 문서 상단에 작성 시점 명시
+- **시점 스냅샷 문서** (리뷰·조사 보고서): `docs/exams/<id>/report_archive/`에 두거나 문서 상단에 작성 시점 명시
+- **문서 범위**: 모든 문서 상단에 `> **범위**: platform | exam:<id>` + `· 판본: none | textbook | refmat` 표기 — `check:docs`가 누락·위치 불일치를 검증. `docs/exams/<id>/` 아래 문서는 반드시 `exam:<id>`, 그 외는 `platform`

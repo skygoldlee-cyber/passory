@@ -1,6 +1,7 @@
 # Architecture Decision Records (ADR)
 
 > **문서 ID**: DOC-ADR-00
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (결정 기록 색인 — 프로세스 문서)
 
 아키텍처 결정의 **"왜"**를 보존한다. 코드는 "무엇"을, 설계 문서는 "어떻게"를 말하지만

@@ -4,6 +4,7 @@
 > **목적**: "전체구조 점검"부터 "배포"까지 이 저장소가 강제하는 검증 게이트의 전체 그림 — 각 게이트가 무엇을 검사하고, 실패 시 어떻게 복구하는지를 한 문서에 정리
 > **관련 문서**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) (Vercel·PWA 배포 상세) · [CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md) (콘텐츠 변경 절차) · `AGENTS.md` (명령어 목록)
 > **문서 ID**: DOC-RBK-09
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: `BP-01~08` (빌드 파이프라인) · `P-13` (릴리스 노트·버전 스탬프)
 
 ---
@@ -129,6 +130,6 @@ ubuntu + Node 20에서 순서대로 실행 — 로컬 `check:ci`와 대응 관�
 | `TRACE_MATRIX.md가 입력과 다릅니다` | SPEC·`@spec`·문서 헤더/파일 인벤토리 변경 | `npm run build:trace` 후 커밋 |
 | `생성물 드리프트 N건` | content 변경 후 `build:data` 누락 | `npm run build:data` 후 diff 확인·커밋 |
 | `생성물 경로에 미커밋 변경` (check:datafresh 중단) | data/ 등 생성물이 dirty | 커밋 또는 스태시 후 재실행 |
-| `docs_md 번들 불일치` | `docs/user/*.md`·학습안내서 변경 후 번들 재생성 누락 | `node tools/build/build_doc_bundles.js` 후 커밋 |
+| `docs_md 번들 불일치` | `docs/exams/cosmetic/user/*.md`·학습안내서 변경 후 번들 재생성 누락 | `node tools/build/build_doc_bundles.js` 후 커밋 |
 | `문서 동기화 게이트` 실패 | src/tools/tests 변경에 docs 갱신 미동반 | 관련 문서 갱신 후 재시도 (정말 불필요 시 `[no-docs]`) |
 | check:html/trace만 로컬 실패·CI 통과 | 과거 EOL 이슈 — `.gitattributes` 적용 후엔 발생하지 않아야 함 | 재현 시 `git add --renormalize .` + 개행 상태 확인 |

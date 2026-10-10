@@ -6,6 +6,10 @@
  * `> **문서 ID**: DOC-XX-NN` 헤더가 존재하고, ID가 전체 문서에서 유일한지 검사한다.
  * 새 문서 추가 시 ID 누락·중복을 자동 탐지한다.
  *
+ * 또한 `> **범위**: platform|exam:<id> · 판본: none|textbook|refmat` 헤더의 존재와
+ * 위치↔선언 일치(docs/exams/<id>/ 아래는 exam:<id>, 그 외는 platform)를 검증한다.
+ * 판본 선언은 교재(textbook)·참조자료(refmat) 교체 시 갱신 대상 문서를 기계 조회하는 근거다.
+ *
  * 사용법:
  *   npm.cmd run check:docs          # 경로 검증 + 문서 ID 검증 (연쇄 실행)
  *   node tools/check/check_doc_ids.js     # 문서 ID만 검증
@@ -22,6 +26,8 @@ const DOC_FILES = ['AGENTS.md', 'README.md'];
 
 const ID_RE = /^\s*>\s*\*\*문서 ID\*\*:\s*(DOC-[A-Z]+-\d+)\s*$/m;
 const ID_FIND_RE = /\*\*문서 ID\*\*:\s*(DOC-[A-Z]+-\d+)/g;
+const SCOPE_RE = /\*\*범위\*\*:\s*(\S+)\s*·\s*판본:\s*(\S+)/;
+const SCOPE_LINE_RE = /^>\s*\*\*범위\*\*:\s*(platform|exam:[a-z0-9-]+)\s*·\s*판본:\s*(none|textbook|refmat)\s*$/m;
 
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -69,6 +75,20 @@ for (const file of files) {
       seen.set(id, rel);
     }
   }
+
+  // 범위 헤더 — 존재·형식·위치↔선언 일치
+  const scopeM = text.match(SCOPE_RE);
+  if (!scopeM) {
+    issues.push({ file: rel, msg: '범위 헤더 없음 — `> **범위**: platform|exam:<id> · 판본: none|textbook|refmat` 추가 필요' });
+  } else if (!SCOPE_LINE_RE.test(text)) {
+    issues.push({ file: rel, msg: `범위 헤더 형식 오류 — 선언값: ${scopeM[1]} · 판본: ${scopeM[2]}` });
+  } else {
+    const em = rel.match(/^docs\/exams\/([a-z0-9-]+)\//);
+    const expected = em ? `exam:${em[1]}` : 'platform';
+    if (scopeM[1] !== expected) {
+      issues.push({ file: rel, msg: `범위 불일치 — 위치상 ${expected}여야 함 (선언: ${scopeM[1]})` });
+    }
+  }
 }
 
 if (!issues.length) {
@@ -79,4 +99,5 @@ if (!issues.length) {
 console.log(`⚠ 문서 ID 문제 ${issues.length}건 발견:\n`);
 for (const i of issues) console.log(` ${i.file}\n   ✗ ${i.msg}`);
 console.log(`\nID 규약: DOC-{영역}-{NN} — 영역 접두사는 docs/README.md "문서 ID 레지스트리" 참조`);
+console.log(`범위 규약: platform(플랫폼 공통) | exam:<id>(docs/exams/<id>/ 소속) + 판본 none|textbook|refmat`);
 process.exit(1);

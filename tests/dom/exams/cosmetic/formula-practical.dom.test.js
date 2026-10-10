@@ -1,6 +1,6 @@
 // tests/dom/exams/cosmetic/formula-practical.dom.test.js — 실무 도구 확장 시나리오
 // @spec FO-57,FO-58,FO-59,FO-60,FO-62,FO-63
-// 설계: docs/dev/design/PRACTICAL_TOOLS_DESIGN.md (DOC-DSN-15)
+// 설계: docs/exams/cosmetic/design/PRACTICAL_TOOLS_DESIGN.md (DOC-DSN-15)
 // 검증: LOT 추적·판매내역서·동의서 인쇄, 이상사례 패널 CRUD,
 //       점검 리마인더 배지, 보고서 출력 이력 표시
 

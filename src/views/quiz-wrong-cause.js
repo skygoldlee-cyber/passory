@@ -12,7 +12,7 @@ import { showToast } from '../ui-utils.js';
 import { _beginQuizRun, renderQuizResult } from './quiz.js';
 
 /* =======================================================
-   오답 원인 태깅 + 재학습 연결 (docs/report_archive/FEATURE_PROPOSALS.md §4.2)
+   오답 원인 태깅 + 재학습 연결 (docs/exams/<id>/report_archive/FEATURE_PROPOSALS.md §4.2)
    ======================================================= */
 
 /**

@@ -1,7 +1,7 @@
 // tests/dom/formula-products.dom.test.js — 기성품 전성분 DB 시나리오
 // @spec FO-37,FO-38,FO-39,FO-40,FO-41,FO-42,FO-43,FO-44,FO-45,FO-46,FO-47,FO-49,FO-51,FO-52,FO-54,FO-55
-// 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/dev/design/PRODUCT_DB_DESIGN.md
-//       · docs/dev/design/PRODUCT_VISION_DESIGN.md
+// 설계: docs/dev/design/DOM_TEST_DESIGN.md §4 · docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md
+//       · docs/exams/cosmetic/design/PRODUCT_VISION_DESIGN.md
 // 검증: 허브 카드·목록, 붙여넣기→칩 미리보기(자릿수 쉼표·미등록 칩), 저장→상세 분석,
 //       미등록 칩 '사전 등록' 단축(FO-32 재사용), 성분 필터 역조회,
 //       고객 알레르기 교차, 포뮬러 전성분 비교, JSON 임포트·익스포트,

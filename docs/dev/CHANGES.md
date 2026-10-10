@@ -4,6 +4,7 @@
 > 작업일: 2026-08-23
 > 검증: 모든 `src/*.js` `node --check` 통과 · `node tools/build/index.js` 재빌드 성공 ·
 > **문서 ID**: DOC-DEV-03
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (변경 이력 — 개별 항목이 관련 ID 인용)
 
 ## 2026-10-06 증적 문서 페이지 워터마크 (FO-70)
@@ -423,7 +424,7 @@
 
 ## 2026-10-19 기성품 사진 인식 등록 설계안 — FO-41~43 SPEC 선행 선언
 
-- 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내 전성분을 추출, 기성품 폼에 프리필하는 설계 확정 — `docs/dev/design/PRODUCT_VISION_DESIGN.md` (DOC-DSN-13)
+- 제품 사진(정면: 제품명·브랜드 / 후면: 전성분)을 Gemini Flash에 보내 전성분을 추출, 기성품 폼에 프리필하는 설계 확정 — `docs/exams/cosmetic/design/PRODUCT_VISION_DESIGN.md` (DOC-DSN-13)
 - 승인된 결정: **BYOK**(사용자 자기 Gemini 키 — 정적 배포라 공유 키 프록시 불가, 키는 디바이스 로컬·백업 제외) + **멀티샷**(정면·후면 1~2장) + **프리필 전용**(LLM 결과는 기존 칩 검토 단계를 거쳐야 저장 — 직접 저장 경로 없음)
 - 인프라 변경은 `vercel.json` CSP `connect-src`에 `generativelanguage.googleapis.com` 추가 1건 — 서버리스 함수·신규 의존 없음
 - 할루시네이션 방어: 추출 성분을 기존 미등록 칩 강조로 시각화 + 원본 사진 썸네일 대조 + '인식 초안' 안내
@@ -441,7 +442,7 @@
 
 ## 2026-10-19 기성품 전성분 DB 설계안 — FO-37~40 SPEC 선행 선언
 
-- Formula OS에 시판 제품의 전성분을 등록해 개인 기성품 DB를 구축하는 설계 확정 — `docs/dev/design/PRODUCT_DB_DESIGN.md` (DOC-DSN-12)
+- Formula OS에 시판 제품의 전성분을 등록해 개인 기성품 DB를 구축하는 설계 확정 — `docs/exams/cosmetic/design/PRODUCT_DB_DESIGN.md` (DOC-DSN-12)
 - 핵심 결정: 성분명 문자열만 저장(농도 없음)·전성분 순서 보존·조회 시점 라이브 매칭(스냅샷 아님 — 원료 DB 갱신 자동 반영)·독립 스토어 `product_items`·전 유형 노출·미등록 성분은 칩 보존+FO-32 단축 경로
 - SPEC §3.18에 FO-37(스토어)·FO-38(전성분 파싱 — `1,2-헥산디올` 자릿수 쉼표 보호)·FO-39(라이브 분석)·FO-40(교차 분석)을 `미구현` 상태로 선행 선언
 - Phase A(스토어+파싱+목록+상세 분석+역조회)·B(알레르기 교차+포뮬러 비교+JSON I/O) 범위 승인됨 — 구현 시 상태 ✅ 갱신
@@ -1110,7 +1111,7 @@
 ## 2026-09-29 EOL 구조 정리 — .gitattributes 도입 + docs_md 번들 신선도 게이트
 
 - **`.gitattributes` 신설**: `* text=auto eol=lf` + 바이너리(png·jpg·webp·ico·pdf·ttf·woff·woff2) 명시 — 커밋 blob뿐 아니라 체크아웃 작업트리까지 LF로 고정해 개행 기반 오탐 부류의 근본 원인 제거. 기존 blob은 전부 LF라 renormalize 무충돌
-- **`build_doc_bundles.js --check` 신설** (`npm run check:docbundles`): 재생성 결과와 디스크 번들 비교 — `docs/user/`·시험 docs 수정 후 번들 재생성 누락을 `check:content`의 [문서번들] 단계에서 감지 (content-only 플래그 포함 → CI 커버). 기존에는 신선도 게이트 없이 수동 절차에만 의존
+- **`build_doc_bundles.js --check` 신설** (`npm run check:docbundles`): 재생성 결과와 디스크 번들 비교 — `docs/exams/cosmetic/user/`·시험 docs 수정 후 번들 재생성 누락을 `check:content`의 [문서번들] 단계에서 감지 (content-only 플래그 포함 → CI 커버). 기존에는 신선도 게이트 없이 수동 절차에만 의존
 - **번들 생성 시 원본 개행 정규화**: `readFileSync` 후 `CRLF → LF` 정규화하고 JSON 임베드 — CRLF 원본으로 구우면 `\r\n` 이스케이프가 번들에 번지던 문제 해소. 기존 4개 번들 재생성(이스케이프 정규화만, 내용 동일)
 - **`check:all:quick` 스크립트 신설**: `check:all -- --quick`은 npm이 인자를 마지막 `npm run check:content --quick` 형태로 붙여 안쪽 npm이 플래그를 삼켜 DOM 테스트 생략이 무력하던 문제 — 전용 스크립트로 `-- --quick` 전달 보장. AGENTS.md 명령 정정
 - **문서**: AGENTS.md에 check:docbundles 명령 추가
@@ -1152,7 +1153,7 @@
 
 ## 2026-09-28 원료 DB — 고시 제2026-19호 별표1·별표2 전수 대조 전체 반영 (db_version 2026.09.7)
 
-- **대조 기준**: 「화장품 안전기준 등에 관한 규정」식약처고시 제2026-19호(2026.3.18 시행) 통합본 — `ref-pipeline/compare_ingredients_official.py` + 수동 검증, 리포트 `docs/dev/ingredients_audit_제2026-19호.md`
+- **대조 기준**: 「화장품 안전기준 등에 관한 규정」식약처고시 제2026-19호(2026.3.18 시행) 통합본 — `ref-pipeline/compare_ingredients_official.py` + 수동 검증, 리포트 `docs/exams/cosmetic/ingredients_audit_제2026-19호.md`
 - **banned_ingredients.md**: 이름 오기 85건 고시 표기로 교정(벤지단→벤지딘·디노셀→디노셉·유카인 피페리딜 등) · 손상 행 복구 4건(카본블랙·니트로스아민류·벤질바이올렛·프로판디일) · 누락 31종 추가(클로로파시논·잔류성오염물질·각주1) 염모제 예외 27종) · 자일렌/2-메칠레조시놀 예외조건 정규화
 - **restricted_ingredients.md**: 한도 정정 2건(에칠헥실살리실레이트 5%·2-헥실리덴사이클로펜타논 0.06%) · 조건 보강(시스테인·치오글라이콜릭 가온/발열/제모 한도) · 이름 오기 25건 교정 · 누락 34종 추가(옥티녹세이트 7.5%·D5 19.7%·염모제 30종 등) — 원료행 249건
 - **db_version.json → 2026.09.7**, 두 파일 헤더의 "전수 대조 못함·D5 보류" 구식 주석 해소, 반영 이력 명기
@@ -1715,7 +1716,7 @@
 
 ## 2026-09-26 docs/dev 문서 아카이브 정리
 
-- 대체된 전략/설계 원전 7건을 `docs/report_archive/`로 이동: Cosmetic Master
+- 대체된 전략/설계 원전 7건을 `docs/exams/cosmetic/report_archive/`로 이동: Cosmetic Master
   Business Plan(구판, 사업기획서 v3.5로 대체), PASS_TO_PRACTICE_STRATEGY,
   FEATURE_PROPOSALS, PASS_CORE_LOOP_REVIEW(시점 진단), EXTERNAL_REVIEW_LEARNING_PRO,
   PRO_MULTI_EXAM_EVALUATION, FORMULA_OS_DESIGN(Phase 5-A — 현행은 SPEC §3.18 +
@@ -3155,7 +3156,7 @@ check_combo_pilot 전 과목 무결성.
 ### 🔄 추천 회독법 섹션 완전 제거 (중복 제거)
 - 4개 과목 모두 동일한 내용이 파일 끝에 중복되어 8개 파일에서 `## 🔄 추천 회독법` 섹션 및 목차 항목 제거
 - 인용 라인번호 345개 동기화
-- 제거한 추천 회독법 안내를 `docs/user/user_manual.md` 교재 리더 섹션으로 이동
+- 제거한 추천 회독법 안내를 `docs/exams/cosmetic/user/user_manual.md` 교재 리더 섹션으로 이동
 
 ### 사용자 매뉴얼 점검 및 최신 기능 반영
 - 가독성 도구 섹션 추가 (글자 크기, 줄 간격, 집중 모드, 섹션 진행률, 본문 검색, 표 확장, 챕터 끝 마커)
@@ -3291,7 +3292,7 @@ check_combo_pilot 전 과목 무결성.
 
 ## 2026-09-12 시험 직전 체크리스트 교재 대조 정정
 
-> `docs/user/exam_strategy.md`의 시험 직전 체크리스트가 교재 실제 내용과 불일치하여 정정.
+> `docs/exams/cosmetic/user/exam_strategy.md`의 시험 직전 체크리스트가 교재 실제 내용과 불일치하여 정정.
 
 ### 정정 항목
 - **1과목 체크리스트**: "벌칙 금액, 개인정보 과태료 vs 벌칙" → 교재 체크리스트 기반 핵심 항목으로 재작성 (영업 3종, 법령 4단 체계, 행정처분 4단계, 결격사유, 기능성화장품 11가지, 천연/유기농 기준)
@@ -4313,11 +4314,11 @@ check_combo_pilot 전 과목 무결성.
 
 ## 27. 사용자 매뉴얼 전면 재정리 (2026-08-27)
 
-> **목표**: 사용자 매뉴얼(`docs/user/user_manual.md`)의 섹션 번호 불연속(7→11 점프), `신규!` 태그 잔존, Mermaid 미렌더링, 누락 기능(교재 리더·학습 보조·5대 개선) 설명 부재 문제를 일괄 해결
+> **목표**: 사용자 매뉴얼(`docs/exams/cosmetic/user/user_manual.md`)의 섹션 번호 불연속(7→11 점프), `신규!` 태그 잔존, Mermaid 미렌더링, 누락 기능(교재 리더·학습 보조·5대 개선) 설명 부재 문제를 일괄 해결
 
 ### 수정 내역
 
-- **`docs/user/user_manual.md`** 전면 개편:
+- **`docs/exams/cosmetic/user/user_manual.md`** 전면 개편:
   - **섹션 번호 재정렬**: 1~6 유지, 구 section 7(7대 편의 기능)을 7~12로 분리, 구 section 11(모바일)을 13으로 이동, 테마/PWA를 14/15로 재번호 부여
   - **신규 section 7 (교재 리더)**: 교재 본문 읽기, 인터랙티브 개념 맵, 학습 보조 도구(4종), 5대 학습 보조 요소, 교재 본문 통합 검색을 하나의 섹션으로 통합
   - **Mermaid 다이어그램 복원**: 상단 Workflow를 ASCII → Mermaid `graph TD`로 변환 (manual-viewer.js 온디맨드 mermaid.js 로드 지원 확인)
@@ -5200,7 +5201,7 @@ PWA에서 교재 근거 인용 링크(`[교재: L####](<../교재/.../*.md#L####
 
 ### 변경 내용
 
-1. **`docs/user/user_manual.md` 전면 갱신** (42050 bytes, 433 lines)
+1. **`docs/exams/cosmetic/user/user_manual.md` 전면 갱신** (42050 bytes, 433 lines)
    - **대시보드**: 오늘 복습 카드 수, 과목별 정답률 히트맵, 약점 과목 자동 추천, 인터랙티브 툴팁, 진도 초기화 연동 추가
    - **플래시카드**: SM-2 간격 반복 학습, 난이도 필터(easy/medium/hard), 키보드 지원(Enter/Space) 추가
    - **교재 리더**:
@@ -5539,7 +5540,7 @@ PWA에서 교재 근거 인용 링크(`[교재: L####](<../교재/.../*.md#L####
 2. **`AGENTS.md`**:
    - `4과목 19단원 MD 파일` → `4과목 20챕터 MD 파일 (표준형 20 + 이야기형 20)`
 
-3. **`docs/user/user_manual.md`**:
+3. **`docs/exams/cosmetic/user/user_manual.md`**:
    - `전 교재 19단원` → `전 교재 4과목 20챕터(표준형 20 + 이야기형 20)`
    - `핵심 용어 정리표` → `📌 용어 정리` 표
 

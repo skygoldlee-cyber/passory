@@ -5,6 +5,7 @@
 > **대상 독자**: 비개발자·기획자·PM (개발자용 설계 상세는 [ARCHITECTURE.md](../ARCHITECTURE.md) 참조)
 > **최종 업데이트**: 2026-10-06
 > **문서 ID**: DOC-REF-11
+> **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (온보딩·구조 개요 자료)
 
 ---
@@ -130,10 +131,10 @@ Passory는 **자격시험 학습 앱 + 조제 실무 도구**를 하나로 합�
 
 | 나는 누구인가 | 먼저 볼 문서 |
 |---------------|--------------|
-| 기획자·사업 담당 | `docs/business/` 사업기획서 → 본 문서 → `docs/dev/design/` |
+| 기획자·사업 담당 | `docs/exams/cosmetic/business/` 사업기획서 → 본 문서 → `docs/dev/design/` |
 | 신규 개발자 | `README.md` → `AGENTS.md` → `docs/dev/ARCHITECTURE.md` |
 | 콘텐츠 편집자 | `docs/dev/runbooks/CONTENT_WORKFLOW.md` |
-| 앱 이용자 | 앱 내 "매뉴얼·학습안내서" 메뉴 (`docs/user/` 참조) |
+| 앱 이용자 | 앱 내 "매뉴얼·학습안내서" 메뉴 (`docs/exams/cosmetic/user/` 참조) |
 | AI 코딩 에이전트 | `AGENTS.md` |
 
 전체 문서 목록과 목적별 읽기 순서는 인덱스 [`docs/README.md`](../../README.md)가 안내합니다.

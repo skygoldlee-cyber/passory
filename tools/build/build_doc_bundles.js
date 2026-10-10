@@ -6,7 +6,7 @@
  * 클래식 <script>로 불러올 수 있는 JS 번들로 굽는다.
  * → file:// 로 index.html을 더블클릭핸들 때 fetch 없이 문서를 열 수 있게 하기 위함.
  *
- * 입력 : docs/user/*.md (GLOBAL_DOCS 선언분), content/exams/<id>/docs/*.md (디렉터리 스캔)
+ * 입력 : docs/exams/<id>/user/*.md (GLOBAL_DOCS 선언분), content/exams/<id>/docs/*.md (디렉터리 스캔)
  * 출력 : data/docs_md/<파일명>.js, {dataRoot}/docs_md/<파일명>.js
  *        각 파일은 다음 형태로 전역에 등록한다.
  *          (window.__DOC_MD__ = window.__DOC_MD__ || {})["<경로>/<파일명>.md"] = "<마크다운>";

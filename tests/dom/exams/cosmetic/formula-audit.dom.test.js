@@ -1,6 +1,6 @@
 // tests/dom/exams/cosmetic/formula-audit.dom.test.js — 종합 규정 점검 보고서 시나리오
 // @spec FO-56,FO-69
-// 설계: docs/dev/design/AUDIT_REPORT_DESIGN.md (DOC-DSN-14)
+// 설계: docs/exams/cosmetic/design/AUDIT_REPORT_DESIGN.md (DOC-DSN-14)
 // 검증: 보고서 버튼 존재, auditPrintReport→print-area 렌더·print 호출,
 //       체크 상태 반영, 유형별 섹션 게이트, 광고 점검 영속 왕복
 

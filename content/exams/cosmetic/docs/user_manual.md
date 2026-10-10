@@ -3,6 +3,7 @@
 > **최종 업데이트**: 2026-10-19 · 앱 버전은 설정 메뉴 하단에 `vYYYY.MM.DD` 형식으로 표시됩니다 · 변경 이력은 설정 메뉴의 "변경 이력"에서 확인할 수 있습니다
 > 실무 배합 기능(Formula OS)은 별도 문서로 분리되었습니다 → [실무 매뉴얼](doc:formula_manual)
 > **문서 ID**: DOC-USR-07
+> **범위**: exam:cosmetic · 판본: none
 > **관련 SPEC ID**: MV-01~04 (기능 전반은 SPEC §3 전 영역 대응)
 
 Passmula는 맞춤형화장품 조제관리사 자격증 취득을 위한 법령 암기, 플래시카드, 계산식 연습, 실전 모의고사를 한곳에서 수행할 수 있도록 설계된 프리미엄 SPA(Single Page Application) 통합 포털입니다. 실무 배합 작업(Formula OS)은 별도 [실무 매뉴얼](doc:formula_manual)을 참조하세요.
