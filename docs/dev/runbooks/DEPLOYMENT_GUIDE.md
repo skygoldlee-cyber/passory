@@ -217,6 +217,72 @@ Production:  https://passory.vercel.app
 
 ---
 
+## 5-2. PR 기반 자동 배포 도입안 (단계별)
+
+> 현재는 단일 배포자 워크플로(`npm run deploy` 수동 실행). `vercel git connect`를 그냥 켜면
+> **main 푸시마다 프로덕션 배포**가 시작되어 `CACHE_VERSION` 스탬프 커밋 ↔ 빌드 대상 커밋의
+> 정합이 깨지므로, 아래 단계로 도입한다.
+
+### 핵심 제약 — 스탬프 정합
+
+```
+npm run deploy = 가드 → 타입/린트/시크릿 게이트 → stamp 커밋(v<날짜>-<해시>)
+               → push → vercel --prod → 프로덕션 스모크
+```
+
+`CACHE_VERSION`/`APP_VERSION`이 **배포 시점의 커밋 해시**에 묶여 있어, git 연동
+자동 배포로 전환하려면 스탬프 방식 자체를 바꿔야 한다 (Phase 2 참조).
+
+### Phase 1 — PR 프리뷰 + 수동 프로덕션 (즉시 적용 가능·무위험)
+
+```jsonc
+// vercel.json에 추가
+"git": { "deploymentEnabled": { "main": false } }
+```
+
+| 변경 | 내용 |
+|---|---|
+| `vercel git connect` | 저장소 연결 (프로젝트는 `.vercel/project.json`으로 이미 링크됨) |
+| `vercel.json` | `main`의 git 빌드 비활성화 → **브랜치/PR 푸시 → 자동 Preview URL**, main 푸시 → 빌드 없음 |
+| `npm run deploy` | **변경 없음** — 스탬프·게이트·스모크 그대로 프로덕션 경로 |
+
+효과: 협업자가 PR을 열면 Vercel이 자동으로 프리뷰를 올려 리뷰어가 실제 앱을 확인.
+프로덕션 배포 권한·스탬프 정합은 기존 스크립트가 유지하므로 회귀 위험 없음.
+
+**GitHub 측 동반 권장** — `main`에 branch protection 설정 (CI `check` 잡 필수 +
+PR 경유 강제). `ci.yml`은 이미 `pull_request: [main]` 트리거가 있어 추가 작업 불필요.
+
+### Phase 2 — 완전 자동 프로덕션 (PR 기반 플로우 정착 후)
+
+`git.deploymentEnabled` 제거 + **빌드타임 스탬프**로 전환:
+
+```jsonc
+// vercel.json
+"buildCommand": "node tools/deploy/stamp_vercel_build.js"
+```
+
+```js
+// stamp_vercel_build.js — 커밋 없이 빌드 산출물만 스탬프
+// VERCEL_GIT_COMMIT_SHA + VERCEL_GIT_COMMIT_DATE → v<날짜>-<해시7>
+// sw.js CACHE_VERSION · data/version.js · release-notes APP_VERSION을
+// 정확히 "이 빌드의 커밋"으로 스탬프 (repo 파일 미변경 — 정합 보장)
+```
+
+| 해결 과제 | 방안 |
+|---|---|
+| 스탬프 정합 | 위 스크립트 — 수동 스탬프 커밋 폐기 → 커밋 노이즈도 감소 |
+| 배포 후 스모크 | GitHub Actions `deployment_status` 이벤트 → 기존 `smokeCheck` 재사용, 실패 시 이슈 생성 |
+| 게이트 공백 | `deploy.js`의 배포 직전 타입/린트/시크릿 검사 → **branch protection 필수화**로 대체 (CI green 없이 main 도달 불가) |
+| 잡푸시 배포 | 선택: `ignoreCommand`로 docs-only diff 빌드 스킵 |
+
+### 도입 순서
+
+1. **지금: Phase 1** — 변경량: `vercel.json` 1줄 + `vercel git connect` 1회 + 본 절 문서
+2. **협업 시작 시: branch protection** (CI 필수화)
+3. **직접 push 관행 종료 시: Phase 2** — 스탬프 빌드타임화 + `deployment_status` 스모크
+
+---
+
 ## 4. vercel.json 헤더 및 캐시 정책
 
 [`vercel.json`](../../../vercel.json)은 CSP 헤더, 보안 헤더, 캐시 정책을 정의합니다.
