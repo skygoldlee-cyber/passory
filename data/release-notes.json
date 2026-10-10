@@ -1,5 +1,12 @@
 [
   {
+    "version": "v20261010-e55d630",
+    "date": "2026-10-10",
+    "notes": [
+      "[check·manifest] 표시 수치 정합 게이트 — desc N과목/N문·title N제 ↔ ###Q 실측"
+    ]
+  },
+  {
     "version": "v20261010-b3725b7",
     "date": "2026-10-10",
     "notes": [
@@ -135,13 +142,6 @@
     "date": "2026-10-05",
     "notes": [
       "[문서·manual] 실무 매뉴얼 업무 처리 흐름 머메이드 → SVG 교체"
-    ]
-  },
-  {
-    "version": "v20261005-b2217d6",
-    "date": "2026-10-05",
-    "notes": [
-      "[문서·manual] 학습 흐름 머메이드 → SVG 이미지 교체 + docs/images 정리"
     ]
   }
 ]
