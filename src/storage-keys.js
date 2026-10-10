@@ -139,6 +139,7 @@ export const STORAGE_KEYS = {
   // 식약처 고시 감지 배너 (notice-check.js) — 로컬 전용, 백업 제외
   NOTICE_CHECKED_AT: 'notice_checked_at',        // 마지막 원격 조회 시각 (24h 스로틀)
   NOTICE_DISMISSED_DATE: 'notice_dismissed_date',// 닫은 고시의 시행일 — 그 고시는 억제
+  NOTICE_DIFF_SEEN: 'notice_diff_seen',          // 확인한 개정 내역 맵 {docKey: toDoc} — 판본별 1회 고지
 
   // 교재 리더
   EXAM_VIEW_POS: 'exam_view_pos_v1',   // 문제집 뷰어 이어보기 — 문서별 마지막 스크롤 위치 (exam-viewer.js)

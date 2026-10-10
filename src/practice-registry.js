@@ -124,7 +124,7 @@ const formula = {
             'productVisionKeyTest', 'productVisionModelSave', 'productVisionHiRes',
         ]],
         ['notice', [
-            'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus',
+            'checkMfdsNoticeNow', 'dismissMfdsNotice', 'viewMfdsNoticeStatus', 'dismissRefRevision',
         ]],
     ],
     // 뷰 진입 — 피처가 자체 로딩·데이터 선행·초기화·도메인 훅을 소유한다.

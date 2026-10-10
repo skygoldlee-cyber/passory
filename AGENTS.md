@@ -126,6 +126,9 @@ python ref-pipeline/check_mfds_notice.py --update   # 키: LAW_OC_KEY 환경변�
 # ※ docs[].currentUrl = 시행일자≤오늘 최신본(현행본)의 시리얼 URL — 한글주소가 시행 예정 개정본으로 연결될 때 앱이
 #   ↗원문 링크를 현행본(lsInfoP/admRulInfoP)으로 보정하고 '⏳ 시행 예정 개정본' 배지 표시 (notice-check.js markStaleRefLinks)
 # ※ 앱은 Formula OS 진입 시 배너 표시 + 허브 '식약처 고시 확인' 버튼으로 law.go.kr 등록 문서 병렬 실시간 조회(src/notice-check.js, 시험별 referenceLaw)
+npm.cmd run build:noticediff           # ref_md 현행본 ↔ _archive 구본 조문 단위 diff → data/exams/<id>/notice_diff.json
+#   (build:data 체인에 포함 — 문서명 '이름(기관)(제N호)(날짜)' 규약으로 자동 쌍지음. 신설·개정·삭제 조문을
+#    Formula OS 개정 배너 + '고시 정보 보기' 패널에 표시 — 사용자 확인 시 notice_diff_seen 기록으로 억제)
 # ※ Actions 크론(주1회 자동)은 선택사항 — 저장소 Settings → Secrets에 LAW_OC_KEY 등록 시 활성화.
 #   미등록이면 수동 실행만 가능. 앱 내 실시간 버튼이 확인을 커버하나, 크론은 이슈 자동 생성 안전망 역할
 # ※ 대조 절차: docs/exams/cosmetic/ingredients_audit_제2026-19호.md

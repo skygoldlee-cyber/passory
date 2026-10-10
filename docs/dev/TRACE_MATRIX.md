@@ -4,7 +4,7 @@
 > **범위**: platform · 판본: none
 > **관련 SPEC ID**: 해당 없음 (본 문서가 추적 산출물)
 > ⚠️ 자동 생성 파일 — `npm run build:trace`로 재생성. 직접 편집 금지.
-> 입력 해시: c08615cb80f31ef4
+> 입력 해시: 24e8027e135343c1
 > 생성: 2026-10-10 · 원천: SPEC.md(461개 ID) + @spec 태그 + 문서 헤더
 
 | 열 | 의미 | 원천 |
@@ -309,7 +309,7 @@
 | FO-21 | ✅ | 테스트 | DOC-BIZ-01<br>DOC-BIZ-05<br>DOC-DSN-02<br>DOC-DSN-11 | css/print.css<br>src/exams/cosmetic/views/formula-print.js | tests/dom/exams/cosmetic/formula-print.dom.test.js | DOC-ARC-01<br>DOC-ARC-04<br>DOC-ARC-06 | 화장품법 표시 규정 — 용기 라벨 기재사항·조제 기록지 |
 | FO-22 | ✅ | 테스트 | DOC-BIZ-01<br>DOC-BIZ-05<br>DOC-DSN-02<br>DOC-DSN-11 | src/csv-utils.js | tests/unit/exams/cosmetic/csv-import.test.js | DOC-ARC-01<br>DOC-ARC-04<br>DOC-ARC-06 | — |
 | FO-23 | ✅ | 테스트 | DOC-BIZ-01<br>DOC-BIZ-05<br>DOC-DSN-02<br>DOC-DSN-11 | src/exams/cosmetic/batch-store.js<br>src/exams/cosmetic/formula-store.js | tests/unit/exams/cosmetic/batch-store.test.js<br>tests/unit/exams/cosmetic/formula-store.test.js | DOC-ARC-01<br>DOC-ARC-04<br>DOC-ARC-06 | 사업 판단 — docs/dev/design/SUBSCRIPTION_ROADMAP.md |
-| FO-24 | ✅ | 테스트 | DOC-DEV-05<br>DOC-DSN-10<br>DOC-DSN-14 | html/exams/cosmetic/formula.html<br>ref-pipeline/check_mfds_notice.py<br>src/notice-check.js | tests/dom/exams/cosmetic/formula-nav.dom.test.js<br>tests/unit/notice-check.test.js | — | 식약처 고시 개정 추적 — law.go.kr 오픈API(법제처) + `content/exams/cosmetic/참조자료/법령고시/` PDF 기준본 |
+| FO-24 | ✅ | 테스트 | DOC-DEV-05<br>DOC-DSN-10<br>DOC-DSN-14 | html/exams/cosmetic/formula.html<br>ref-pipeline/check_mfds_notice.py<br>src/notice-check.js<br>tools/build/build_notice_diff.js | tests/dom/exams/cosmetic/formula-nav.dom.test.js<br>tests/unit/notice-check.test.js<br>tests/unit/notice-diff.test.js | — | 식약처 고시 개정 추적 — law.go.kr 오픈API(법제처) + `content/exams/cosmetic/참조자료/법령고시/` PDF 기준본 |
 | FO-25 | ✅ | 테스트 | — | html/exams/cosmetic/formula.html | tests/dom/exams/cosmetic/formula-nav.dom.test.js | — | 화장품 안전기준 등에 관한 규정(별표1·2) — 네거티브 리스트 판정 원칙 · 색소/기능성 고시 — 지정 목록 예외 |
 | FO-26 | ✅ | E2E 테스트 | — | css/exams/cosmetic/formula.css<br>html/exams/cosmetic/formula.html | tests/e2e/exams/cosmetic/formula-tablet.spec.js | — | — |
 | FO-27 | ✅ | E2E 테스트 | — | html/exams/cosmetic/formula.html<br>src/exams/cosmetic/views/formula.js | tests/dom/exams/cosmetic/formula-calc.dom.test.js<br>tests/e2e/exams/cosmetic/formula-tablet.spec.js | — | — |

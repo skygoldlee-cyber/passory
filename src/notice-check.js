@@ -114,6 +114,8 @@ function renderBanner(latest, extraDocs) {
 // ——— 상태 파일 캐시 (다문서 docs[] — 참조 링크 '갱신 필요' 배지에 사용) ———
 let _lastStatus = null;
 let _statusPromise = null;
+let _lastDiff = null;
+let _diffPromise = null;
 
 /**
  * 현재 고시 기준 스탬프 (FO-64) — 종합 보고서 푸터 '기준 고시' 표기용.
@@ -152,6 +154,82 @@ export function ensureNoticeStatus() {
   return _statusPromise;
 }
 
+// ——— 개정 조문 diff (notice_diff.json — build:noticediff가 ref_md↔_archive 비교로 생성) ———
+
+function diffUrl(examId) {
+  return `https://raw.githubusercontent.com/${STATUS_REPO}/main/data/exams/${examId}/notice_diff.json`;
+}
+
+/** notice_diff.json 캐시 반환 — 원격 우선, 번들 폴백. 없으면 {docs:[]} */
+export function ensureNoticeDiff() {
+  if (_diffPromise) return _diffPromise;
+  const examId = getActiveExamId();
+  _diffPromise = (async () => {
+    for (const url of [diffUrl(examId), `data/exams/${examId}/notice_diff.json`]) {
+      try {
+        const r = await fetch(url, { cache: 'no-store' });
+        if (r.ok) { _lastDiff = await r.json(); break; }
+      } catch (_) { /* 다음 후보 */ }
+    }
+    return _lastDiff || { docs: [] };
+  })();
+  return _diffPromise;
+}
+
+/** 확인 마커 맵 — {docKey: 마지막 확인한 to.doc} */
+function diffSeenMap() {
+  try { return JSON.parse(getItem(STORAGE_KEYS.NOTICE_DIFF_SEEN) || '{}'); } catch (_) { return {}; }
+}
+
+/** 아직 사용자에게 고지하지 않은 개정 항목만 필터 (순수 함수 — 테스트용) */
+export function unseenRevisions(docs, seen) {
+  return (docs || []).filter(d => d?.to?.doc && seen?.[d.key] !== d.to.doc);
+}
+
+/** 개정 1건 요약 문구 — '신설 제2조의4·제2조의5 · 개정 제3조의3' (순수 함수 — 테스트용) */
+export function diffSummary(d) {
+  const parts = [];
+  if (d.added?.length) parts.push(`신설 ${d.added.join('·')}`);
+  if (d.changed?.length) parts.push(`개정 ${d.changed.join('·')}`);
+  if (d.removed?.length) parts.push(`삭제 ${d.removed.join('·')}`);
+  return parts.join(' · ') || '조문 단위 차이 없음(서식 수준)';
+}
+
+/** 개정 감지 배너(신판 공포 알림)와 별개 — 앱에 새 판본이 반영됐을 때 1회 알림 */
+function renderRevisionBanner(docs) {
+  const el = document.getElementById('formula-notice-banner');
+  if (!el || !el.classList.contains('is-hidden')) return; // 개정 감지 배너 우선
+  const first = docs[0];
+  const more = docs.length > 1 ? ` 외 ${docs.length - 1}종` : '';
+  el.innerHTML = html`
+    <div class="notice-banner-body">
+      <span class="notice-banner-icon" aria-hidden="true">ℹ</span>
+      <div class="notice-banner-text">
+        <strong>${first.name} ${first.to.notice}(${first.to.effectiveDate} 시행)으로 갱신됨${more}</strong><br>
+        ${diffSummary(first)}.
+        <button type="button" class="notice-banner-link" data-click="viewMfdsNoticeStatus">변경 내역 보기</button>
+      </div>
+      <button type="button" class="notice-banner-close" data-click="dismissRefRevision" aria-label="닫기">×</button>
+    </div>`;
+  el.classList.remove('is-hidden');
+}
+
+/** 개정 내역 고지 — 스로틀 무관하게 매 진입 시 검사 (번들 데이터라 비용 없음) */
+async function checkRevisionNotice() {
+  const diff = await ensureNoticeDiff();
+  const unseen = unseenRevisions(diff.docs, diffSeenMap());
+  if (unseen.length) renderRevisionBanner(unseen);
+}
+
+/** 개정 내역 배너 닫기 (data-click 위임) — 현재 판본을 확인함으로 기록 */
+export function dismissRefRevision() {
+  const seen = diffSeenMap();
+  for (const d of _lastDiff?.docs || []) seen[d.key] = d.to?.doc;
+  setItem(STORAGE_KEYS.NOTICE_DIFF_SEEN, JSON.stringify(seen));
+  const el = document.getElementById('formula-notice-banner');
+  if (el) el.classList.add('is-hidden');
+}
+
 /** 렌더된 참조 링크(data-law-url)를 스캔해 원문 링크를 현행본 URL로 보정하고 개정 배지 삽입.
  *  한글주소는 시행 예정 개정본으로도 연결되므로(currentUrl=현행본 일련번호 URL) href를 갱신한다. */
 export function markStaleRefLinks(root = document) {
@@ -181,7 +259,7 @@ export function markStaleRefLinks(root = document) {
 export async function checkMfdsNotice() {
   try {
     const last = parseInt(getItem(STORAGE_KEYS.NOTICE_CHECKED_AT) || '0', 10);
-    if (Date.now() - last < CHECK_INTERVAL_MS) { ensureNoticeStatus(); return; }
+    if (Date.now() - last < CHECK_INTERVAL_MS) { ensureNoticeStatus(); checkRevisionNotice(); return; }
 
     const res = await fetch(statusUrl(getActiveExamId()), { cache: 'no-store' });
     if (!res.ok) return; // 실패 시 스탬프 안 찍음 — 다음 진입에 재시도
@@ -203,6 +281,8 @@ export async function checkMfdsNotice() {
           target: changed[0].target, url: changed[0].currentUrl || changed[0].url },
         changed.slice(1).map(d => d.name),
       );
+    } else {
+      checkRevisionNotice(); // 신규 고시가 없을 때만 판본 반영 알림 (개정 감지 배너 우선)
     }
   } catch (_) { /* 네트워크/파싱 실패 — 배너 생략 */ }
 }
@@ -356,11 +436,32 @@ export async function viewMfdsNoticeStatus() {
   const lawLink = ruleInfoUrl(status.latest?.serialNo, coreDoc.target, null, coreDoc.url);
   panel.innerHTML = html`
     ${rows}
+    <div id="notice-diff-list" class="notice-diff-list"></div>
     <div class="notice-status-links">
       <a href="${statusUrl(examId)}" target="_blank" rel="noopener">상태 파일 원문</a>
       <a href="${lawLink}" target="_blank" rel="noopener">고시 원문(law.go.kr)</a>
       <span class="notice-status-src">출처: ${source}</span>
     </div>`;
+  renderDiffList(document.getElementById('notice-diff-list'));
+}
+
+/** 개정 내역 섹션 — notice_diff.json의 문서별 신설·개정·삭제 조문을 패널에 렌더 */
+async function renderDiffList(el) {
+  if (!el) return;
+  const diff = await ensureNoticeDiff();
+  if (!diff.docs?.length) return;
+  const blocks = diff.docs.map(d => {
+    const seen = diffSeenMap()[d.key] === d.to?.doc;
+    const line = (label, list) => list?.length
+      ? html`<div class="notice-diff-line"><strong>${label}</strong> ${list.join(' · ')}</div>` : '';
+    return html`
+      <div class="notice-diff-entry">
+        <div class="notice-diff-head">📋 ${d.name} 개정 내역 — ${d.from.notice}(${d.from.effectiveDate}) → ${d.to.notice}(${d.to.effectiveDate})${seen ? ' <span class="notice-diff-seen">확인됨</span>' : ''}</div>
+        ${line('신설', d.added)}${line('개정', d.changed)}${line('삭제', d.removed)}
+        <div class="notice-diff-note">기계 비교(ref_md 조문 대조) 기준 — 상세 변경은 공식 원문을 확인하세요.</div>
+      </div>`;
+  });
+  el.innerHTML = html`<div class="notice-diff-title">참조 문서 개정 내역</div>${blocks}`;
 }
 
 // ——— 성분사전 성분 고시 확인 (DI-11) ———

@@ -1086,6 +1086,44 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .notice-status-loading {
     color: var(--color-text-muted);
 }
+/* 개정 내역 (notice_diff.json — build:noticediff 생성, FO-24) */
+.notice-banner-link {
+    border: none;
+    background: none;
+    padding: 0;
+    color: var(--color-primary, #1f6feb);
+    font-size: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.notice-diff-list {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--color-border, #30363d);
+}
+.notice-diff-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.notice-diff-entry {
+    padding: 6px 0;
+}
+.notice-diff-head {
+    margin-bottom: 2px;
+}
+.notice-diff-line {
+    padding-left: 1em;
+    line-height: 1.6;
+}
+.notice-diff-note {
+    padding-left: 1em;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+}
+.notice-diff-seen {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+}
 
 /* ============================================================
    태블릿·현장 작업 대응 (FO-26~31)
